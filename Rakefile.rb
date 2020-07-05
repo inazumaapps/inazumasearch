@@ -1,4 +1,4 @@
-VERSION = '0.7.1'
+VERSION = '0.7.2'
 MSBUILD = 'C:\\Program Files (x86)\\MSBuild\\14.0\\Bin\\MSBuild.exe'
 
 DEST_ZIP = "out/InazumaSearch-#{VERSION}.zip"
