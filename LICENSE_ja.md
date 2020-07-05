@@ -78,7 +78,7 @@ Caleb Jacob氏およびLouis Ameline氏によって制作されたCSS/JSライ�
 
 詳細は <http://iamceege.github.io/tooltipster/> を参照してください。
 
-(4) アイコン画像 (InazumaSearch/inazumasearch-icon.ico)
+(5) アイコン画像 (InazumaSearch/inazumasearch-icon.ico)
 -----------
 
 上記ファイルは、Bitsiesに含まれるアイコン画像を元に、Inazuma Appsが変更を行った画像であり
