@@ -1,0 +1,241 @@
+/* Custom Stylesheet */
+/**
+ * Use this file to override Materialize files so you can update
+ * the core Materialize files in the future
+ *
+ * Made By MaterializeCSS.com
+ */
+
+ * {
+ 	font-family: "Meiryo UI", sans-serif;
+ }
+
+ .cloning-base {
+ 	display: none;
+ }
+
+/* 縦スクロールバーを常に表示 <http://app.road.jp.net/?p=1274> */
+/* 横スクロールバーは表示しない */
+
+html {
+  overflow-y: scroll;
+  overflow-x: hidden;
+}
+
+.drilldown-result{
+	text-align: right;
+	font-size: small;
+	margin-top: 0.2em;
+	margin-bottom: 0.2em;
+}
+
+.keyword {
+	background-color: yellow;
+	font-weight: bold;
+}
+
+.subtext{
+	color: gray;
+	font-size: small;
+	margin-top: 0.2em;
+	margin-bottom: 0.2em;
+}
+
+.help-link {
+	font-size: 12px !important;
+}
+.help-link i {
+	font-size: 16px !important;
+	vertical-align: middle;
+	padding-bottom: 2px;
+}
+.file-name-link {
+	font-size: 20px;
+}
+
+.card {
+	overflow: hidden; /* for icon background */
+}
+
+.card,
+.card .card-action {
+	background-color: transparent; /* for icon background */
+}
+
+.card .card-action a {
+	text-transform: none !important;
+}
+
+.card-content {
+	/* for search result footer (e.g. timestamp) */
+	position: relative;
+}
+
+.document-information-footer {
+	position: absolute;
+	font-size: x-small;
+	right: 16px;
+	bottom: 8px;
+	color: gray;
+}
+
+.icon-block {
+  padding: 0 15px;
+}
+
+.dropping{
+	border: 1px blue solid;
+	/*background: rgb(200, 200, 255);*/
+}
+
+.icon {
+	position: relative;
+	top: 1px;
+	display: inline-block;
+	width: 16px;
+	height: 16px;
+	margin-right: 8px;
+	background-position: center center;
+	background-repeat: no-repeat;
+	background-image: url(../../fugue-icons/document.png);
+}
+
+.icon.file-type-htm,
+.icon.file-type-html {
+	background-image: url(../../fugue-icons/document-globe.png);
+}
+
+.icon.file-type-doc,
+.icon.file-type-docx,
+.icon.file-type-docm,
+.icon.file-type-dot,
+.icon.file-type-dotx,
+.icon.file-type-dotm {
+	background-image: url(../../fugue-icons/document-word.png);
+}
+
+.icon.file-type-xls,
+.icon.file-type-xlsx,
+.icon.file-type-xlsm,
+.icon.file-type-xlt {
+	background-image: url(../../fugue-icons/document-excel.png);
+}
+
+.icon.file-type-ppt,
+.icon.file-type-pptx,
+.icon.file-type-pptm {
+	background-image: url(../../fugue-icons/document-powerpoint.png);
+}
+
+.icon.file-type-pdf {
+	background-image: url(../../fugue-icons/document-pdf.png);
+}
+
+.icon.file-type-txt {
+	background-image: url(../../fugue-icons/document-text.png);
+}
+
+.background-icon i.material-icons{
+	position: absolute;
+	top: 8px;
+	right: 16px;
+	display: block;
+	font-size: 64px;
+	color: #d4d4ca;
+  }
+
+.row .card:before{
+  position: absolute;
+  top: 64px;
+  right: 64px;
+  line-height: 1.0;
+  display: block;
+  width: 128px;
+  height: 128px;
+  font-size: 128px;
+  content:'';
+  font-family: 'icomoon';
+  color: #f0f0f0;
+  z-index: -1000;
+}
+
+.row .card:hover:before{
+
+}
+
+.row.file-type-htm .card:before,
+.row.file-type-html .card:before {
+  content:'\e909';
+}
+
+
+.row.file-type-doc .card:before,
+.row.file-type-docx .card:before {
+  content:'\e90d';
+}
+
+.row.file-type-pdf .card:before {
+  content:'\e90b';
+}
+
+.row.file-type-xls .card:before,
+.row.file-type-xlsx .card:before,
+.row.file-type-xlst .card:before {
+  content:'\e90e';
+}
+
+.row.file-type-txt .card:before {
+  content:'\e901';
+}
+
+div {
+	webkit-transition: opacity 0.2s ease-out;
+	transition: opacity 0.2s ease-out;
+}
+
+#SEARCH-RESULT-LOADING {
+	display: none;
+}
+
+#SEARCH-RESULT-HEADER  {
+	opacity: 0;
+}
+
+#SEARCH-RESULT-BODY .search-result-row{
+	webkit-transition: left 0.2s ease-out;
+	transition: left 0.2s ease-out;
+	opacity: 0;
+}
+
+
+#SEARCH-RESULT-LIST-VIEW-BODY {
+	font-size: small !important;
+}
+
+.debug-mode-only {
+	display: none;
+}
+
+
+pre .keyword {
+    font-family: monospace !important;
+}
+
+
+
+/*
+* {
+		-webkit-transition: all 1s linear;
+	transition: all 1s linear;
+
+}
+
+.card{
+	position: relative;
+	-webkit-transition: all 1s linear;
+	transition: all 1s linear;
+}
+
+.card:hover {
+	left: 50px;
+}*/

@@ -1,0 +1,182 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Drawing;
+using System.Drawing.Imaging;
+using System.IO;
+using System.Linq;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+using InazumaSearch.Core;
+using Microsoft.WindowsAPICodePack.Shell;
+
+namespace InazumaSearch.Forms
+{
+    public partial class DipswForm : Form
+    {
+        public Core.Application Application { get; set; }
+
+        public DipswForm()
+        {
+            InitializeComponent();
+        }
+        public DipswForm(Core.Application app)
+        {
+            InitializeComponent();
+            Application = app;
+        }
+        private void BtnClearCrawledData_Click(object sender, EventArgs e)
+        {
+            if (Util.Confirm(this, "クロール時に収集した文書データと、文書のサムネイル画像をクリアします。\nよろしいですか？", defaultNo: true))
+            {
+                var t = Task.Run(() =>
+                {
+                    Application.GM.Truncate(Table.Documents);
+                    Application.GM.Truncate(Table.DocumentsIndex);
+                    Application.DeleteAllThumbnailFiles();
+                });
+                var f = new ProgressForm(t, "文書データをクリアしています...");
+                f.ShowDialog();
+                UpdateLabels();
+            }
+        }
+
+        private void BtnClearAllData_Click(object sender, EventArgs e)
+        {
+            if (Util.Confirm(this, "ユーザー設定を含む全てのデータを初期化します。\nこの操作は取り消せません。\n\nよろしいですか？", defaultNo: true))
+            {
+                var t = Task.Run(() =>
+                {
+                    Application.GM.Shutdown();
+                    CleanDBFiles();
+                    Application.GM.Boot();
+                    var dummy = false;
+                    Application.GM.SetupSchema(0, out dummy);
+                    Application.DeleteAllThumbnailFiles();
+
+                    var newSetting = new UserSetting.Store(Application.UserSettings.SettingFilePath);
+                    newSetting.Save();
+                    Application.UserSettings.Load();
+                });
+                var f = new ProgressForm(t, "全てのデータを初期化しています...");
+                f.ShowDialog();
+                UpdateLabels();
+            }
+        }
+
+        /// <summary>
+        /// データベースファイルをすべて削除
+        /// </summary>
+        public void CleanDBFiles()
+        {
+            if (!System.IO.Directory.Exists(Application.GM.DBDirPath))
+            {
+                System.IO.Directory.CreateDirectory(Application.GM.DBDirPath);
+            }
+
+            if (System.IO.File.Exists(Application.GM.DBPath))
+            {
+                foreach (var path in System.IO.Directory.GetFiles(Application.GM.DBDirPath))
+                {
+                    if (System.IO.Directory.Exists(path))
+                    {
+                        System.IO.Directory.Delete(path, true);
+                    }
+                    else
+                    {
+                        System.IO.File.Delete(path);
+                    }
+                }
+            }
+        }
+
+        private void BtnClose_Click(object sender, EventArgs e)
+        {
+            Close();
+        }
+
+        private void trackBar1_Scroll(object sender, EventArgs e)
+        {
+
+        }
+
+        private void DipswForm_Load(object sender, EventArgs e)
+        {
+            UpdateLabels();
+            lblVersion.Text = Util.GetVersion().ToString();
+            tblDebug.Visible = Application.DebugMode;
+            UpdateExtensionList();
+        }
+
+        protected void UpdateLabels()
+        {
+            TxtDocumentDBDirPath.Text = Path.GetFullPath(Application.GM.DBDirPath);
+            lblDocumentDBSize.Text = Util.FormatFileSizeByMB(Application.GM.GetDBFileSizeTotal());
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            var t = Task.Run(() =>
+            {
+                Application.GM.ExecuteCommand("defrag");
+            });
+            var f = new ProgressForm(t, "データベースをデフラグしています...");
+            f.ShowDialog();
+            UpdateLabels();
+        }
+
+        private void BtnAddTextExt_Click(object sender, EventArgs e)
+        {
+            var f = new ExtNameAddDialog();
+            if (f.ShowDialog(this) == DialogResult.OK)
+            {
+                var newExtensions = new List<UserSetting.Extension>(Application.UserSettings.TextExtensions);
+                foreach (var extName in f.ExtNames)
+                {
+                    newExtensions.Add(new UserSetting.Extension() { ExtName = extName.TrimStart('.').ToLower(), Label = f.ExtLabel });
+                }
+
+                // 設定ファイルに保存
+                Application.UserSettings.SaveTextExtNames(newExtensions.Distinct().OrderBy(ext => ext.ExtName).ToList());
+
+                // フォーマット一覧の更新
+                Application.RefreshFormats();
+
+                // リストボックスの表示を更新
+                UpdateExtensionList();
+
+            }
+        }
+
+        protected virtual void UpdateExtensionList()
+        {
+            lsvTextExtensions.Items.Clear();
+            foreach (var ext in Application.UserSettings.TextExtensions)
+            {
+                lsvTextExtensions.Items.Add(new ListViewItem(new[] { "." + ext.ExtName, ext.Label }));
+            }
+        }
+
+        private void lsvTextExtensions_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            BtnDeleteTextExt.Enabled = (lsvTextExtensions.SelectedIndices.Count >= 1);
+        }
+
+        private void BtnDeleteTextExt_Click(object sender, EventArgs e)
+        {
+            var selectedExtName = lsvTextExtensions.SelectedItems[0].Text.TrimStart('.').ToLower();
+            lsvTextExtensions.SelectedItems[0].Selected = false;
+
+            // 設定ファイルに保存
+            var remIndex = Application.UserSettings.TextExtensions.FindIndex(ext => ext.ExtName == selectedExtName);
+            Application.UserSettings.TextExtensions.RemoveAt(remIndex);
+            Application.UserSettings.Save();
+
+            // フォーマット一覧の更新
+            Application.RefreshFormats();
+
+            // リストボックスの表示を更新
+            UpdateExtensionList();
+        }
+    }
+}

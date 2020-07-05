@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no"/>
+  <title>設定 - InazumaSearch</title>
+
+  <!-- CSS  -->
+  <link href="materialize/css/materialize.css" type="text/css" rel="stylesheet" media="screen,projection"/>
+  <link href="materialize/css/style.css" type="text/css" rel="stylesheet" media="screen,projection"/>
+  <link href="material-icons/material-icons.css" rel="stylesheet">
+  <link rel="stylesheet" type="text/css" href="tooltipster/css/tooltipster.bundle.min.css" />
+</head>
+<body style="-webkit-app-region: drag">
+  <nav class="light-blue lighten-1" role="navigation">
+    <div class="nav-wrapper container">
+      <a href="#" class="brand-logo">Inazuma Search</a>
+      <ul id="nav-mobile" class="right">
+        <li><a href="index.html"><i class="material-icons left">search</i>検索</a></li>
+        <li class="active"><a href="setting.html"><i class="material-icons left">settings</i>設定</a></li>
+      </ul>
+    </div>
+  </nav>
+
+    <div class="container">
+    <div class="section">
+  <div class="progress" id="PROGRESS-BAR">
+      <div class="indeterminate"></div>
+  </div>
+
+<h5>検索対象フォルダ</h5>
+<ul class="collection droppable">
+  <li class="collection-item avatar folder-item cloning-base">
+    <div class="row">
+      <div class="col s8">
+          <i class="material-icons circle yellow darken-3">folder</i>
+          <span class="title path"></span>
+           <p style="font-size: smaller; color: gray">登録済み文書数: <span class="file-count">0</span></p>
+      
+
+      </div>
+      <div class="col s3 input-field after-tooltipped folder-label-col">
+              <input type="text" class="validate" style="margin: 0;">
+              <label>ラベル</label>
+              <!-- <a href="#" ><i class="material-icons" style="font-size: 20px;">live_help</i></a> -->
+      </div>
+      <div class="col s1">
+          <a href="#!" class="secondary-content delete-link after-tooltipped" title="削除"><i class="material-icons">delete</i></a>
+
+      </div>
+    </div>
+  </li>
+  <li class="collection-item avatar">
+  <a class="waves-effect waves-light btn add-folder-select"><i class="material-icons left">add</i>検索対象フォルダを追加</a>
+    <!--<span class="title" style="font-size: smaller; color: gray">　　(ここにフォルダをドラッグ＆ドロップして追加することも可能です)</span>-->
+  </li>
+</ul>
+
+<p class="subtext">※変更の内容は、次のクロール実行まで反映されません。<br>
+※フォルダにラベルを付けると、検索実行後にラベルによる絞り込みを行うことができるようになります。</p>
+
+<h5 style="margin-top: 2em;">その他</h5>
+
+<p>
+  <label>
+    <input type="checkbox" class="filled-in" id="ALWAYS-CRAWL-MODE" />
+    <span>常駐クロールモードを有効にする</span>
+  </label>
+  <br>
+  <label style="margin-left: 2em;" id="STARTUP-AREA">
+    <input type="checkbox" class="filled-in" id="STARTUP" />
+    <span>Windowsログイン時に自動でクロール開始 (現在ログイン中のWindowsユーザーのみ)</span>
+  </label>
+</p>
+<p class="subtext">※常駐クロールモードでは、検索ウインドウを閉じてもアプリを常駐させ、常に少しずつクロールを実行します。<br>
+  また、起動中にファイルの変更があれば、すぐにそのファイルを登録します。</p>
+
+
+<p style="text-align: right;">
+    <a href="#" id="DIPSW-LINK"><i class="material-icons" style="vertical-align: middle; font-size: 1.5rem">settings</i> 詳細設定と特殊機能</a>
+</p>
+<p style="text-align: right;">
+    <a href="#" id="ABOUT-MODAL-TRIGGER"><i class="material-icons" style="vertical-align: middle; font-size: 1.5rem">info_outline</i> Inazuma Searchについて</a>
+</p>
+
+<!--<p><button class="btn waves-effect waves-light" id="SAVE-BUTTON"><i class="material-icons left">save</i>設定を保存</button></p>-->
+<!-- </div> --><!-- / #TAB-SEARCH-RESULT -->
+
+<!-- </div> --><!-- /tab-container-row -->
+  </div><!-- /.section -->
+</div><!-- / .container -->
+<!-- <div id="FOLDER-LABEL-HELP">
+  <div>
+      フォルダにラベルを付けることで、検索実行後にラベルによる絞り込みを行うことができるようになります。<br>
+      複数のフォルダに同じ名前を付けることも可能です。
+  </div>
+</div> -->
+
+    <!-- Modal Structure -->
+    <div id="ABOUT-MODAL" class="modal modal-fixed-footer" style="width: 96% !important; height: 96% !important;">
+        <div class="modal-content">
+            <h5>Inazuma Searchについて</h5>
+            <ul class="browser-default">
+                <li>バージョン: <span class="application-version"></span></li>
+                <li>制作: Inazuma Apps</li>
+            </ul>
+            <p style="margin-top: 3rem;">
+                このアプリケーションは開発中のバージョン（β版）です。
+          意見、要望、感想、バグ報告などは、下記のいずれかまでお送りください。
+            </p>
+<ul class="browser-default">
+  <li><a href="https://twitter.com/inazumaapps" class="external-link">Twitter (@inazumaapps)</a></li>
+  <li><a href="https://its.morphball.net/projects/inazumasearch/issues/new?issue[subject]=%EF%BC%88%E5%85%A5%E5%8A%9B%E4%B8%8D%E8%A6%81%EF%BC%89"
+      class="external-link">要望・バグ報告ポスト</a>　※ログイン不要</li>
+</ul>
+            <h6 style="margin-top: 3rem;">ライセンス情報</h6>
+            <ul class="collection">
+                <li class="collection-item">全文検索エンジン: Groonga (by Groonga Project)<br />
+                    <a href="http://groonga.org/ja/" class="external-link">http://groonga.org/ja/</a><br />
+                    ライセンス: <a href="https://ja.wikipedia.org/wiki/MIT_License" class="external-link">MIT</a>
+                </li>
+                <li class="collection-item">テキストコンバータ: xdoc2txt (by hishida)<br />
+                    <a href="http://ebstudio.info/home/xdoc2txt.html" class="external-link">http://ebstudio.info/home/xdoc2txt.html</a><br />
+                    ライセンス: <a href="https://ja.wikipedia.org/wiki/MIT_License" class="external-link">配布サイトを参照</a>
+                </li>
+                <li class="collection-item">ブラウザコントロール: Chromium &amp; CefSharp (by the Chromium Authors and the CefSharp Authors.)<br>
+                    <a href="http://cefsharp.github.io/" class="external-link">http://cefsharp.github.io/</a><br />
+                    ライセンス: <a href="https://ja.wikipedia.org/wiki/BSDライセンス" class="external-link">修正BSD</a>
+                </li>
+                <li class="collection-item">JSONシリアライザ: Json.NET (by Newtonsoft)<br>
+                    <a href="https://www.newtonsoft.com/json" class="external-link">https://www.newtonsoft.com/json</a><br />
+                    ライセンス: <a href="https://ja.wikipedia.org/wiki/MIT_License" class="external-link">MIT</a>
+                </li>
+                <li class="collection-item">ログライブラリ: NLog (by Jaroslaw Kowalski, Kim Christensen, Julian Verdurmen)<br>
+                    <a href="https://nlog-project.org/" class="external-link">https://nlog-project.org/</a><br />
+                    ライセンス: <a href="https://ja.wikipedia.org/wiki/BSDライセンス" class="external-link">修正BSD</a>
+                </li>
+                <li class="collection-item">コマンドラインパーサ: CommandLineParser (by Giacomo Stelluti Scala and Contributors)<br>
+                    <a href="https://github.com/commandlineparser/commandline" class="external-link">https://github.com/commandlineparser/commandline</a><br />
+                    ライセンス: <a href="https://ja.wikipedia.org/wiki/MIT_License" class="external-link">MIT</a>
+                </li>
+                <li class="collection-item">文字コード種類自動判別ライブラリ: ReadJEnc (by hnx8)<br>
+                    <a href="https://github.com/hnx8/ReadJEnc" class="external-link">https://github.com/hnx8/ReadJEnc</a><br />
+                    ライセンス: <a href="https://ja.wikipedia.org/wiki/MIT_License" class="external-link">MIT</a>
+                </li>
+                <li class="collection-item">セマンティックバージョニング実装: Semver (by Max Hauser)<br>
+                    <a href="https://github.com/maxhauser/semver" class="external-link">https://github.com/maxhauser/semver</a><br />
+                    ライセンス: <a href="https://ja.wikipedia.org/wiki/MIT_License" class="external-link">MIT</a>
+                </li>
+                <li class="collection-item">ライブラリ: Windows API CodePack (by Microsoft)<br>
+                    ライセンス: <a href="https://github.com/aybe/Windows-API-Code-Pack-1.1/blob/master/LICENCE" class="external-link">Windows API CodePackの独自ライセンス</a>
+                </li>
+                <li class="collection-item">アイコン: Bitsies! (by recep kütük)<br>
+                    <a href="https://www.recepkutuk.com/bitsies/" class="external-link">https://www.recepkutuk.com/bitsies/</a><br />
+                    ライセンス: <a href="https://creativecommons.org/licenses/by/4.0/deed.ja" class="external-link">クリエイティブ・コモンズ 表示</a>
+                </li>
+                <li class="collection-item">CSSフレームワーク: Materialize (by Materialize)<br />
+                    <a href="http://materializecss.com/" class="external-link">http://materializecss.com/</a><br />
+                    ライセンス: <a href="https://ja.wikipedia.org/wiki/MIT_License" class="external-link">MIT</a>
+                </li>
+                <li class="collection-item">JavaScriptライブラリ: JQuery (by jQuery Foundation)<br />
+                    <a href="https://jquery.com/" class="external-link">https://jquery.com/</a><br />
+                    ライセンス: <a href="https://ja.wikipedia.org/wiki/MIT_License" class="external-link">MIT</a>
+                </li>
+                <li class="collection-item">ページ内スクロールライブラリ: smoothScroll.js (by 西畑一馬)<br />
+                    <a href="https://blog.webcreativepark.net/2007/07/12-143406.html" class="external-link">https://blog.webcreativepark.net/2007/07/12-143406.html</a><br />
+                    ライセンス: <a href="https://ja.wikipedia.org/wiki/MIT_License" class="external-link">MIT</a>
+                </li>
+                <li class="collection-item">ツールチップライブラリ: tooltipster (by Caleb Jacob and Louis Ameline)<br />
+                    <a href="https://iamceege.github.io/tooltipster/" class="external-link">https://iamceege.github.io/tooltipster/</a><br />
+                    ライセンス: <a href="https://ja.wikipedia.org/wiki/MIT_License" class="external-link">MIT</a>
+                </li>
+                <li class="collection-item">アイコン: Icomoon (by Keyamoon)<br>
+                    <a href="https://icomoon.io/" class="external-link">https://icomoon.io/</a><br />
+                    ライセンス: <a href="https://creativecommons.org/licenses/by/4.0/deed.ja" class="external-link">クリエイティブ・コモンズ 表示 4.0</a>
+                </li>
+                <li class="collection-item">アイコン: Fugue Icons (by yusukekamiyamane)<br>
+                    <a href="https://p.yusukekamiyamane.com/" class="external-link">https://p.yusukekamiyamane.com/</a><br />
+                    ライセンス: <a href="https://creativecommons.org/licenses/by/3.0/deed.ja" class="external-link">クリエイティブ・コモンズ 表示 3.0</a>
+                </li>
+                <li class="collection-item">アイコン: Material Icons (by Google Inc.)<br>
+                    <a href="https://material.io/resources/icons/" class="external-link">https://material.io/resources/icons/</a><br />
+                    ライセンス: <a href="https://ja.wikipedia.org/wiki/Apache_License" class="external-link">Apache license version 2.0</a>
+                </li>
+            </ul>
+        </div>
+        <div class="modal-footer">
+            <a href="#!" class="modal-action modal-close waves-effect waves-green btn-flat">閉じる</a>
+        </div>
+    </div>
+
+  <!--  Scripts-->
+  <script src="jquery/jquery-3.3.1.min.js"></script>
+  <script type="text/javascript" src="tooltipster/js/tooltipster.bundle.min.js"></script>
+  <script src="smoothScroll/smoothScroll.js"></script>
+  <script src="materialize/js/materialize.js"></script>
+  <script src="inazuma.js"></script>
+
+<script type="text/javascript">
+//対象要素と子要素とでの移動フラグ
+var innerFlag = false;
+//汎用ID番号
+var idNumber = 1;
+
+function handleDragEnter(e){
+  e.preventDefault(); 
+  $(this).addClass('dropping');
+
+  innerFlag = true; //移動フラグ
+
+}
+function handleDragOver(e){
+  if (e.preventDefault) {
+    e.preventDefault(); // Necessary. Allows us to drop.
+  }
+
+  //フラグを「握りつぶ」す
+  innerFlag = false;
+
+  return false;
+}
+function handleDragLeave(e){
+  e.preventDefault(); 
+  
+
+  if (innerFlag) {
+      //フラグがセットされている場合、フラグを戻す
+      innerFlag = false;
+  } else {
+      //フラグがセットされていない場合、クラスを削除
+      $(this).removeClass('dropping');
+  }
+
+}
+
+function handleDrop(e) {
+  console.log("handleDrop called.");
+  e.stopPropagation(); // Stops some browsers from redirecting.
+  e.preventDefault();
+
+  var files = e.dataTransfer.files;
+  for (var i = 0, f; f = files[i]; i++) {
+    console.log(f);
+    console.log(f.path);
+    addFolder(f.path, "", 0);
+  }
+
+  $(this).removeClass('dropping');
+
+  return false;
+}
+
+function addFolder(path, label, file_count){
+  var $newItem = $('.folder-item.cloning-base').clone().removeClass('cloning-base');
+  $newItem.find('.path').text(path);
+  $newItem.find('.file-count').text(file_count);
+  var id = "FOLDER-ITEM-INPUT-"+ idNumber.toString();
+  $newItem.find('.folder-label-col input').val(label).attr('id', id );
+  $newItem.find('.folder-label-col label').attr('for', id );
+  idNumber++;
+
+   $('ul.collection li.folder-item:last').after($newItem);
+   $newItem.fadeIn();
+
+   $newItem.find('.after-tooltipped').tooltipster();
+   M.updateTextFields();
+
+   
+
+   //fs.writeFile('inazuma-setting.json', JSON.stringify({'path': path}), function(){
+   //console.log('written.');
+}
+
+$(function () {
+    var userSettings = JSON.parse(api.getUserSettings());
+    console.log(userSettings);
+
+    // 情報ダイアログにバージョンを設定
+    $('.application-version').text(api.getVersion());
+
+    // モーダル設定
+    $('.modal').modal();
+
+    $('#ABOUT-MODAL-TRIGGER').click(function () {
+        $('#ABOUT-MODAL').modal('open');
+        return false;
+    });
+
+    // 外部リンククリック時処理
+    $('.external-link').click(function (e) {
+        api.openExternalLink($(e.target).attr('href'));
+        return false;
+    })
+
+    var updateStartUpEnabled = function () {
+        if ($('#ALWAYS-CRAWL-MODE').is(':checked')) {
+            $('#STARTUP').removeAttr('disabled');
+        } else {
+            $('#STARTUP').prop('checked', false);
+            $('#STARTUP').attr('disabled', 'disabled');
+        }
+    }
+
+    $('#ALWAYS-CRAWL-MODE').prop('checked', userSettings.AlwaysCrawlMode);
+    $('#STARTUP').prop('checked', userSettings.StartUp);
+    updateStartUpEnabled();
+
+    // ポータブルモードならスタートアップ起動の設定は不可
+    if (api.isPortableMode()) {
+        $('#STARTUP-AREA').hide();
+    }
+
+    $('body').on('change', '.folder-label-col input', function () {
+        var $input = $(this);
+        var $li = $input.closest('li');
+        api.updateFolderLabel($li.find('.path').text(), $input.val());
+        return false;
+    });
+
+
+    $('#DIPSW-LINK').on('click', function () {
+        api.openDipswForm();
+        return false;
+    });
+
+    $('#ALWAYS-CRAWL-MODE').on('change', function () {
+        updateStartUpEnabled();
+        api.changeAlwaysCrawlMode($(this).is(':checked'));
+    });
+    $('#STARTUP').on('change', function () {
+        api.changeStartUp($(this).is(':checked'));
+    });
+
+    $('ul.collection').on('click', 'a.delete-link', function () {
+        var $li = $(this).closest('li');
+        api.deleteTargetDirectory($li.find('.path').text());
+        $li.fadeOut();
+        return false;
+    });
+
+    $('a.add-folder-select').on('click', function () {
+        var selectedPath = api.selectDirectory();
+        if (selectedPath != null) {
+
+            if (api.addTargetDirectory(selectedPath)) {
+                addFolder(selectedPath, "", 0);
+            }
+        }
+        return false;
+    });
+
+
+
+    // $('#SAVE-BUTTON').on('click', function(){
+    //   data = {};
+    //   data.target_directories = [];
+
+    //   $('li.folder-item:visible').each(function(){
+    //     data.target_directories.push($(this).find('.path').text());
+    //   });
+
+    //   console.log(data);
+
+    //   // プログレスバーを表示
+    //   $('#PROGRESS-BAR').show();
+
+    //   $.post('http://localhost:9500/setting', JSON.stringify(data), function(got_data){
+    //     console.log(got_data);
+    //     // プログレスバーを隠す
+    //     $('#PROGRESS-BAR').hide();
+
+    //   });
+    // });
+
+    // 最初のデータ読み込み
+    asyncApi.searchTargetDirectories().then(function (json) {
+        var data = JSON.parse(json);
+        console.log(data);
+        if (data) {
+            for(dir of data.target_directories) {
+                addFolder(dir.Path, dir.Label, data.file_counts[dir.Path]);
+            }
+        }
+
+        // プログレスバーを消す
+        $('#PROGRESS-BAR').hide();
+    });
+
+});
+
+cols = document.querySelectorAll('.droppable');
+[].forEach.call(cols, function(col) {
+  console.log("event assigned." + col.toString());
+  //col.addEventListener('dragstart', handleDragStart, false);
+  col.addEventListener('dragenter', handleDragEnter, false)
+  col.addEventListener('dragover', handleDragOver, false);
+  col.addEventListener('dragleave', handleDragLeave, false);
+  col.addEventListener('drop', handleDrop, false);
+  //col.addEventListener('dragend', handleDragEnd, false);
+});
+</script>
+
+  </body>
+</html>

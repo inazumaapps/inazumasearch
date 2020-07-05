@@ -1,0 +1,304 @@
+
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no"/>
+  <title>InazumaSearch</title>
+
+  <!-- CSS  -->
+  <link href="materialize/css/materialize.css" type="text/css" rel="stylesheet" media="screen,projection"/>
+  <link href="materialize/css/style.css" type="text/css" rel="stylesheet" media="screen,projection"/>
+  <link href="material-icons/material-icons.css" rel="stylesheet">
+  <link href="icomoon/style.css" type="text/css" rel="stylesheet" media="screen,projection"/>
+  <link rel="stylesheet" type="text/css" href="tooltipster/css/tooltipster.bundle.min.css" />
+  <!-- <link rel="stylesheet" type="text/css" href="tooltipster/css/plugins/tooltipster/sideTip/themes/tooltipster-sideTip-shadow.min.css" /> -->
+</head>
+<body style="-webkit-app-region: drag">
+  <nav class="light-blue lighten-1" role="navigation" id="PAGETOP">
+    <div class="nav-wrapper container">
+      <a href="#" class="brand-logo">Inazuma Search</a>
+      <ul id="nav-mobile" class="right ">
+        <li class="active"><a href="index.html"><i class="material-icons left">search</i>検索</a></li>
+        <li><a href="setting.html"><i class="material-icons left">settings</i>設定</a></li>
+      </ul>
+    </div>
+  </nav>
+
+    <div class="container">
+        <div class="fixed-action-btn tooltipped" id="PAGETOP-BUTTON" title="ページトップへ戻る" >
+      <a class="btn-floating btn-large waves-effect waves-light blue lighten-2" href="#PAGETOP"><i class="material-icons">keyboard_arrow_up</i></a>
+      </div>
+      <div class="section" id="SEARCH-FORM">
+        <div class="card lime lighten-5" id="MESSAGE-AREA" style="display: none; margin-bottom: 2em;">
+          <div class="background-icon"><i class="material-icons">warning</i></div>
+          <div class="card-content" id="FOLDER-ADD-REQUIRED-MESSAGE" style="display: none;">
+            <p>検索を実行する前に、検索対象とするフォルダを登録し、「クロール」を実行して文書情報を集める必要があります。</p>
+            <p>右上の [<i class="material-icons tiny">settings</i> 設定] リンクをクリックし、設定画面から検索対象とするフォルダを登録してください。</p>
+          </div>
+          <div class="card-content" id="CRAWL-REQUIRED-MESSAGE" style="display: none;">
+            <p>文書情報が収集されていません。「クロール」を実行して文書情報を収集してください。</p>
+          </div>
+          <!--
+          <div class="card-action">
+            <a href="setting.html"><i class="material-icons left">settings</i>設定画面を開く</a>
+          </div>
+        -->
+        </div><!-- /#MESSAGE-AREA -->
+
+        <div class="right-align">
+          <button class="btn waves-effect waves-light" id="CRAWL-START">クロール (文書情報の収集)<i class="mdi-action-search right"></i>
+          </button>
+          <p class="subtext" id="LAST-CRAWL-TIME-CAPTION">&nbsp;</p>
+          <!-- <button class="btn waves-effect waves-light" id="DEVTOOL" draggable="true">開発ツール<i class="mdi-action-search right"></i>
+          </button> -->
+          <div class="progress" id="PROGRESS-BAR" style="display: none;">
+              <div class="indeterminate"></div>
+          </div>
+          <p id="PROGRESS-MESSAGE"></p>
+        </div>
+
+			<div class="row">
+			<div class="col s8">
+			    <div class="row">
+              <form>
+                <div class="input-field col s9">
+                  <input placeholder="検索キーワードを入力" type="text" class="validate" value="" name="keyword" id="KEYWORD-INPUT">
+                  <div class="left subtext" id="BACKGROUND-SEARCH-RESULT" style="font-size: 0.8rem"></div>
+                  <div class="right">
+                  <a href="#" id="QUERY-GUIDE-MODAL-TRIGGER" class="help-link"><i class="material-icons tiny">help_outline</i> 検索のヒント</a>
+                  </div>
+                </div>
+                <div class="input-field col s3">
+                  <button class="btn waves-effect waves-light search-button" name="action">検索
+                    <i class="mdi-action-search right"></i>
+                  </button>
+                </div>
+              
+              </form>
+              
+            </div><!-- /.row -->
+
+          </div><!-- /.col -->
+          
+          <div class="col s4">
+            <label>詳細検索</label>
+            <div class="switch" id="DETAIL-SEARCH-SWITCH"><label>Off<input type="checkbox"><span class="lever"></span>On</label></div> 
+           </div><!-- /.col -->
+        </div><!-- /.row -->
+
+        <form id="DETAIL-SEARCH" style="display: none">
+          <div class="row">
+            <div class="input-field col s4">
+              <input id="ADVSEARCH-FILE-NAME" name="file_name" type="text" class="validate">
+              <label for="ADVSEARCH-FILE-NAME">ファイル名</label>
+            </div>
+            <div class="input-field col s4">
+              <input id="ADVSEARCH-BODY" type="text" name="body" class="validate">
+              <label for="ADVSEARCH-BODY">本文</label>
+            </div>
+            <div class="input-field col s4">
+              <select name="updated">
+                <option value="">指定なし</option>
+                <option value="day">1日以内</option>
+                <option value="week">1週間以内</option>
+                <option value="month">1ヶ月以内</option>
+                <option value="half_year">半年以内</option>
+                <option value="year">1年以内</option>
+                <option value="3years">3年以内</option>
+              </select>
+              <label>更新日付</label>
+            </div>
+          </div><!-- /.row -->
+          <div class="row">
+            <div class="input-field col s4">
+              <select name="sort_by">
+                <option value="">標準 (関連度順)</option>
+                <option value="path">ファイルパス順</option>
+                <option value="updated_desc">更新日が新しい順</option>
+                <option value="updated">更新日が古い順</option>
+                <option value="size_desc">ファイルサイズが大きい順</option>
+                <option value="size">ファイルサイズが小さい順</option>
+              </select>
+              <label>並び順</label>
+            </div>
+              <!-- <div class="input-field col s4">
+                <select>
+                  <option value="">指定なし</option>
+                  <option value="updated">プロジェクト1</option>
+                  <option value="path">プロジェクト2</option>
+                </select>
+                <label>検索対象グループ</label>
+              </div> -->
+
+            <div class="col s4">
+              <label>一覧表示</label>
+              <div class="switch"><label>Off<input type="checkbox" name="list_view">
+                  <span class="lever"></span>On</label></div> 
+              <!-- <label>TF-IDF</label>
+              <div class="switch"><label>Off<input type="checkbox" name="tf_idf">
+                  <span class="lever"></span>On</label></div>  -->
+            </div><!-- /.col -->
+          </div><!-- /.row -->
+        </form>
+      </div><!-- /.section -->
+      <div class="progress" id="SEARCH-PROGRESS-BAR" style="opacity: 0;">
+          <div class="indeterminate"></div>
+      </div>
+
+      <div class="section" id="SEARCH-RESULT">
+<!-- <div class="row">
+  <div class="col s12">
+    <ul class="tabs">
+      <li class="tab col s3"><a href="#TAB-SEARCH-RESULT">検索結果</a></li>
+      <li class="tab col s3"><a href="#TAB-SETTING">設定</a></li>
+    </ul>
+  </div>
+  <div id="TAB-SEARCH-RESULT" class="col s12">
+ -->
+
+
+<div id="SEARCH-RESULT-HEADER">
+<h3>検索結果</h3>
+
+<p id="SEARCH-RESULT-MESSAGE"></p>
+<p class="subtext" id="SEARCH-RESULT-SUB-MESSAGE"></p>
+
+<p class="drilldown-result" id="DRILLDOWN-RESULT-EXT"></p>
+<p class="drilldown-result" id="DRILLDOWN-RESULT-YEAR"></p>
+<p class="drilldown-result" id="DRILLDOWN-RESULT-FOLDER-LABEL"></p>
+<!-- <ul class="pagination">
+</ul> -->
+</div><!-- / #SEARCH-RESULT-HEADER -->
+
+<div id="SEARCH-RESULT-BODY">
+    <div class="row search-result-row" id="RESULT-ROW-BASE" style="display: none;">
+      <div class="col s12">
+        <div class="card z-depth-2">
+            <div class="card-content">
+              <div class="card-title"><span class="icon"></span><a href="#" data-file-path="/" class="file-name-link">[TITLE]</a></div>
+              <img src="" class="thumbnail-image" />
+              <div class="body-snippets">
+              </div>
+              <div class="document-information-footer">
+                <span class="document-information-size">9,999KB</span> / 更新: <span class="document-information-file-updated">9999/99/99(日) 99:99</span>
+                <span class="debug-mode-only"> / スコア: <span class="document-information-score">9,999</span>
+                / <a href="#" class="display-highlight-link">本文のマッチ箇所を全表示</a></span>
+              </div>
+            </div><!-- / .card-content -->
+            <div class="card-action">
+                  <a class="file-path" href="#" data-file-path="/">[PATH]</a>
+                  <div class="right"><a href="#" class="after-tooltipped" title="フォルダを開く" data-folder-path=""><i class="tiny material-icons">folder</i></a></div>
+            </div>
+    
+        </div><!-- / .card -->
+      </div>
+    </div><!-- / #RESULT-ROW-BASE -->
+</div><!-- / #SEARCH-RESULT-BODY -->
+
+
+<table class="bordered" id="SEARCH-RESULT-LIST-VIEW-BODY" style="display: none;">
+  <thead>
+    <tr>
+        <th>ファイル名</th>
+        <th>パス</th>
+        <th>更新日 / サイズ</th>
+        <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr id="RESULT-LIST-VIEW-ROW-BASE" style="display: none;">
+      <td><span class="icon"></span><a href="#" data-file-path="/" class="file-name-link" style="font-size: small">[TITLE]</a></td>
+      <td class="file-path">[PATH]</td>
+      <td nowrap style="text-align: right;"><span class="document-information-file-updated">9999/99/99(日) 99:99</span><br><span class="document-information-size">9,999KB</span></td>
+      <td><a href="#" class="after-tooltipped" title="フォルダを開く" data-folder-path=""><i class="tiny material-icons">folder</i></a></td>
+    </tr>
+  </tbody>
+</table>
+
+<div id="SEARCH-RESULT-LOADING" style="margin: 32px auto 64px; width: 80px;">
+  <div class="preloader-wrapper big active">
+    <div class="spinner-layer spinner-blue-only">
+      <div class="circle-clipper left">
+        <div class="circle"></div>
+      </div><div class="gap-patch">
+        <div class="circle"></div>
+      </div><div class="circle-clipper right">
+        <div class="circle"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- </div> --><!-- / #TAB-SEARCH-RESULT -->
+
+<!-- </div> --><!-- /tab-container-row -->
+
+  </div><!-- /.section -->
+
+
+</div><!-- / .container -->
+<div id="SEARCH-DATA"></div>
+
+<!-- 再検索時に、スクロールバーのスクロール可能量が一瞬0に戻って、画面が上に戻ることを防ぐ要素 -->
+<div id="SCROLL-ADJUSTER" style="display: none; position: absolute; visibility: hidden">[SCROLL-ADJUSTER]</div>
+
+<!-- Modal Structure -->
+<div id="DISPLAY-HIGHLIGHT-MODAL" class="modal modal-fixed-footer" style="width: 96% !important; height: 96% !important;">
+  <div class="modal-content">
+    <p>本文マッチ数: <span class="body-match-count"></span></p>
+    <!--<h4>本文</h4>-->
+    <pre class="display-highlight-body" style="font-size: small; overflow-y: auto;"></pre>
+  </div>
+  <div class="modal-footer">
+    <a href="#!" class="modal-action modal-close waves-effect waves-green btn-flat">閉じる</a>
+  </div>
+</div>
+
+<!-- Modal Structure -->
+<div id="QUERY-GUIDE-MODAL" class="modal modal-fixed-footer" style="width: 96% !important; height: 96% !important;">
+  <div class="modal-content">
+  <h5>検索のヒント</h5>
+  <ul>
+      <li>下記のような書き方をすることで、AND検索やOR検索などの特殊な検索を行うことができます。</li>
+  </ul>
+  <h6>例:</h6>
+  <ul class="collection">
+      <li class="collection-item row">
+        <div class="col m4 l2" style="font-weight: bold"><code>雨 嵐</code></div>
+        <div class="col m8 l10"> 「雨」と「嵐」の両方が含まれる文書を検索（AND検索）</div>
+      </li>
+      <li class="collection-item row">
+        <div class="col m4 l2" style="font-weight: bold"><code>雨 OR 嵐</code></div>
+        <div class="col m8 l10"> 「雨」か「嵐」のどちらか片方が含まれる文書を検索（OR検索）</div>
+      </li>
+      <li class="collection-item row">
+        <div class="col m4 l2" style="font-weight: bold"><code>"雨 嵐"</code></div>
+        <div class="col m8 l10"> 「雨 嵐」という言葉が含まれる文書を検索（フレーズ検索）</div>
+      </li>
+      <li class="collection-item row">
+        <div class="col m4 l2" style="font-weight: bold"><code>雨 - 雷雨</code></div>
+        <div class="col m8 l10"> 「雨」は含まれるが、「雷雨」が含まれない文書を検索（除外）</div>
+      </li>
+      <li class="collection-item row">
+        <div class="col m4 l2" style="font-weight: bold"><code>(雨 OR 嵐) 降水</code></div>
+        <div class="col m8 l10"> 「降水」が含まれ、かつ「雨」か「嵐」のいずれかが含まれる文書を検索（カッコによるグループ化）</div>
+      </li>
+    </ul>
+  </div>
+  <div class="modal-footer">
+    <a href="#!" class="modal-action modal-close waves-effect waves-green btn-flat">閉じる</a>
+  </div>
+</div>
+        
+  <!--  Scripts-->
+  <script src="jquery/jquery-3.3.1.min.js"></script>
+  <script type="text/javascript" src="tooltipster/js/tooltipster.bundle.min.js"></script>
+  <script src="smoothScroll/smoothScroll.js"></script>
+  <script src="materialize/js/materialize.js"></script>
+  <script src="inazuma.js"></script>
+
+
+  </body>
+</html>
