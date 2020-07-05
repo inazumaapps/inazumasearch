@@ -1,28 +1,16 @@
 ライセンス (利用条件)
 ====================
 
-概要
-----
-
-Inazuma Searchは複数のソフトウェア、および画像によって構成されているため
+Inazuma Searchは複数のソフトウェアやリソース（画像、JavaScriptなど）によって構成されているため、
 利用条件は各部分により異なります。
 
-
-
-
-Inazuma Search全体、下記の条件で利用することが可能です。
-
-* 一切の変更なしでInazuma Searchの再配布を行う場合、制限なしで行うことが可能です。
-* Inazuma Searchのプログラム部分にのみ何らかの改変を加え、その上で再配布を行う場合、MIT Licenseに従って行うことが可能です。  
-    「Inazuma Searchのプログラム部分」とは、下記の範囲が該当します。
-    * 通常版やポータブル版に含まれる 
-    * ソースコードに含まれる src/InazumaSearch フォルダ以下の全ファイル  
-* その他の箇所に何らかの改変を加え
-
+アプリケーション内で使用しているxdoc2txtの利用条件により、個人利用/商用利用、改変の有無によらず、**無許可での再配布を行うことができない**ことに注意してください。
+再配布を行う必要がある場合には、xdoc2txtの作者であるhishida氏に配布許可をとる必要があります。
+（Inazuma Appsに許可をとる必要はありません）
 
 
 (1) Inazuma Searchの独自ソースコード (htmlソース含む)
---------------------------------------------
+-----------------------------------------------------
 Inazuma Appsの制作物であり、MITライセンスに従って利用可能です。
 
 ライセンスの条文は <https://opensource.org/licenses/mit-license.php> （英語）を参照してください。
@@ -36,12 +24,17 @@ Groonga Projectによって制作された全文検索エンジンであり、GN
 
 
 (3) xdoc2txt
+------------
+
+hishida氏によって開発された文書ファイルコンバータであり、xdoc2txtの利用条件に基づいて利用可能です。
+
+詳細は  <http://ebstudio.info/home/xdoc2txt.html> を参照してください。
 
 
-(2) html内で使用しているライブラリ
+
+(4) html内で使用しているライブラリ
 ----------------------------
-InazumaSearch/html/* フォルダに含まれるjs, css, 画像, フォントについては
-それぞれ個別のライセンスが適用されます。
+InazumaSearch/html/* フォルダに含まれるjs, css, 画像, フォントについては、それぞれ個別のライセンスが適用されます。
 
 ### Fugue Icons (InazumaSearch/html/fugue-icons/ 以下のファイル) ### 
 
@@ -85,10 +78,8 @@ Caleb Jacob氏およびLouis Ameline氏によって制作されたCSS/JSライ�
 
 詳細は <http://iamceege.github.io/tooltipster/> を参照してください。
 
-(3) アイコン画像 (InazumaSearch/inazumasearch-icon.ico)
+(4) アイコン画像 (InazumaSearch/inazumasearch-icon.ico)
 -----------
 
 上記ファイルは、Bitsiesに含まれるアイコン画像を元に、Inazuma Appsが変更を行った画像であり
-クリエイティブ・コモンズ 3.0 表示 に従って利用可能です。
-
-ライセンス
+[クリエイティブ・コモンズ 3.0 表示](https://creativecommons.org/licenses/by/3.0/deed.ja) に従って利用可能です。
