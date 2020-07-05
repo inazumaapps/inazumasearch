@@ -417,16 +417,17 @@ namespace InazumaSearch.Core
                             _app.GM.Load(new[] { obj }, Table.Documents);
 
                             // 同時に、可能であればサムネイルも保存
-                            var sh = ShellObject.FromParsingName(target.Path);
-                            sh.Thumbnail.FormatOption = ShellThumbnailFormatOption.ThumbnailOnly;
-
                             try
                             {
+                                var sh = ShellObject.FromParsingName(target.Path);
+                                sh.Thumbnail.FormatOption = ShellThumbnailFormatOption.ThumbnailOnly;
+
                                 var bmp = sh.Thumbnail.Bitmap;
                                 bmp.Save(Path.Combine(thumbnailDirPath, target.ThumbnailName));
                             }
                             catch (Exception ex)
                             {
+                                Logger.Debug(ex.ToString());
                                 Debug.Print(ex.ToString());
                             }
 
