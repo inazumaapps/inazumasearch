@@ -175,6 +175,7 @@ namespace InazumaSearch.Core
                 var label = pair.Value;
                 formats.Add(new Format("plugindoc", label, new[] { extName }));
             }
+            formats.Add(new Format("text", "テキストファイル", new[] { "txt" }));
             foreach (var ext in UserSettings.TextExtensions)
             {
                 formats.Add(new Format("text", ext.Label, new[] { ext.ExtName }));

@@ -250,7 +250,8 @@ namespace InazumaSearch.Core
                 var thumbnailDirPath = _app.ThumbnailDirPath;
                 var externalDirPath = Directory.CreateDirectory(thumbnailDirPath);
                 var pluginExtNames = _app.PluginManager.GetTextExtNameToLabelMap().Keys.ToList();
-                var textExtNames = _app.UserSettings.TextExtensions.Select(x => x.ExtName);
+                var textExtNames = _app.UserSettings.TextExtensions.Select(x => x.ExtName).ToList();
+                textExtNames.Add("txt");
 
                 var extractableExtNames = new List<string>();
                 foreach (var format in _app.Formats)
