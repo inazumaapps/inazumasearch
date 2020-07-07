@@ -15,7 +15,6 @@ namespace InazumaSearch.Core
         /// <summary>
         /// バージョンを取得 (セマンティックバージョニング準拠)
         /// </summary>
-        /// <returns></returns>
         public static SemVersion GetVersion()
         {
             // アセンブリバージョンを取得
@@ -24,6 +23,15 @@ namespace InazumaSearch.Core
 
             // アセンブリバージョンをSemVer形式とする
             return new SemVersion(asmVer.Major, asmVer.Minor, asmVer.Build);
+        }
+
+        /// <summary>
+        /// プラットフォーム文字列を取得 "x86" or "x64"
+        /// </summary>
+        /// <returns></returns>
+        public static string GetPlatform()
+        {
+            return (Environment.Is64BitProcess ? "x64" : "x86");
         }
 
         /// <summary>

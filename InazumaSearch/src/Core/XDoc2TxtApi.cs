@@ -30,7 +30,7 @@ namespace InazumaSearch.Core
 
             var fileText = "";
             // 動的にdllをロードし、使用後に解放
-            var handle = LoadLibrary("externals/x86/xdoc2txt/xd2txlib.dll");
+            var handle = LoadLibrary($"externals/{Util.GetPlatform()}/xdoc2txt/xd2txlib.dll");
             var funcPtr = GetProcAddress(handle, "ExtractText");
 
             var extractText = (ExtractText)Marshal.GetDelegateForFunctionPointer(funcPtr, typeof(ExtractText));

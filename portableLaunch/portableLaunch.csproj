@@ -21,7 +21,7 @@
     <ApplicationIcon>icon\inazumasearch-icon.ico</ApplicationIcon>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release %28Portable%29|AnyCPU'">
-    <OutputPath>..\InazumaSearch\bin\Release_Portable\x86\</OutputPath>
+    <OutputPath>..\InazumaSearch\bin\Release_Portable\anycpu\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <Optimize>true</Optimize>
     <DebugType>pdbonly</DebugType>

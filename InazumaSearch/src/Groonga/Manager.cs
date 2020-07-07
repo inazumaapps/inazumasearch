@@ -22,7 +22,7 @@ namespace InazumaSearch.Groonga
         /// <summary>
         /// Groonga.exeのパス
         /// </summary>
-        public string GroongaExePath { get { return Path.Combine(System.Windows.Forms.Application.StartupPath, @"externals/x86/groonga/bin/groonga.exe"); } }
+        public string GroongaExePath { get { return Path.Combine(System.Windows.Forms.Application.StartupPath, $"externals/{Core.Util.GetPlatform()}/groonga/bin/groonga.exe"); } }
 
         /// <summary>
         /// Groonga.exeが存在するディレクトリのパス

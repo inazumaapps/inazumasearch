@@ -1,12 +1,21 @@
-VERSION = '0.7.2'
+VERSION = '0.8.0'
 MSBUILD = 'C:\\Program Files (x86)\\MSBuild\\14.0\\Bin\\MSBuild.exe'
 
-DEST_ZIP = "out/InazumaSearch-#{VERSION}.zip"
-DEST_ZIP_SRC = "out/InazumaSearch-#{VERSION}-Source.zip"
-DEST_ZIP_PORTABLE = "out/InazumaSearch-#{VERSION}-Portable.zip"
+PLATFORMS = ['x86', 'x64']
 
-RELEASE_EXE = "InazumaSearch/bin/Release/x86/InazumaSearch.exe"
-RELEASE_PORTABLE_EXE = "InazumaSearch/bin/Release_Portable/x86/program/InazumaSearch.exe"
+DEST_ZIPS = {}
+DEST_ZIPS['x86'] = "out/InazumaSearch-#{VERSION}-x86.zip"
+DEST_ZIPS['x64'] = "out/InazumaSearch-#{VERSION}-x64.zip"
+DEST_ZIPS_PORTABLE = {}
+DEST_ZIPS_PORTABLE['x86'] = "out/InazumaSearch-#{VERSION}-Portable-x86.zip"
+DEST_ZIPS_PORTABLE['x64'] = "out/InazumaSearch-#{VERSION}-Portable-x64.zip"
+
+RELEASE_EXE = {}
+RELEASE_EXE['x86'] = "InazumaSearch/bin/Release/x86/InazumaSearch.exe"
+RELEASE_EXE['x64'] = "InazumaSearch/bin/Release/x64/InazumaSearch.exe"
+RELEASE_PORTABLE_EXE = {}
+RELEASE_PORTABLE_EXE['x86'] = "InazumaSearch/bin/Release_Portable/x86/program/InazumaSearch.exe"
+RELEASE_PORTABLE_EXE['x64'] = "InazumaSearch/bin/Release_Portable/x64/program/InazumaSearch.exe"
 
 SRCS = FileList['InazumaSearch/**/*']
 SRCS.exclude('InazumaSearch/bin/**/*')
@@ -15,81 +24,85 @@ SRCS.exclude('InazumaSearch/obj/**/*')
 task :default => :zip
 
 desc "-"
-task :zip => ['zip:standard', 'zip:source', 'zip:portable']
+task :zip => ['zip:standard', 'zip:portable']
 
 desc "-"
-task 'zip:standard' => DEST_ZIP
+task 'zip:standard' => DEST_ZIPS.values
 
 desc "-"
-task 'zip:source' => DEST_ZIP_SRC
+task 'zip:portable' => DEST_ZIPS_PORTABLE.values
 
 desc "-"
-task 'zip:portable' => DEST_ZIP_PORTABLE
+task :build => RELEASE_EXE.values + RELEASE_PORTABLE_EXE.values
 
-file DEST_ZIP => [RELEASE_EXE] do |task|
-    # zipファイルを作成
-    make_zip("Release", DEST_ZIP)
 
-    # zipファイルの内容を一度展開
-    rm_r 'out/content' if File.exist?('out/content')
-    sh %Q|7z x "#{DEST_ZIP}" -o"out/content" |
+PLATFORMS.each do |platform|
+	file DEST_ZIPS[platform] => [RELEASE_EXE[platform]] do |task|
+	    # zipファイルを作成
+	    make_zip("Release", platform, DEST_ZIPS[platform])
 
-    # ExePress用のiniファイルを作成
-    express_enc = 'UTF-16LE'
-    inibody = File.read('InazumaSearch_exepress_template.ini', encoding: express_enc, mode: 'rb')
-    inibody.gsub!('${CHDIR}'.encode(express_enc), Dir.pwd.gsub('/', '\\').encode(express_enc));
-    inibody.gsub!('${VERSION}'.encode(express_enc), VERSION.encode(express_enc));
-    File.write("out/InazumaSearch_exepress_#{VERSION}.ini", inibody, encoding: express_enc, mode: 'wb')
+	    # zipファイルの内容を一度展開
+	    rm_r "out/content/#{platform}" if File.exist?("out/content/#{platform}")
+	    sh %Q|7z x "#{DEST_ZIPS[platform]}" -o"out/content/#{platform}" |
+
+	    # ExePress用のiniファイルを作成
+	    express_enc = 'UTF-16LE'
+	    inibody = File.read('InazumaSearch_exepress_template.ini', encoding: express_enc, mode: 'rb')
+	    inibody.gsub!('${CHDIR}'.encode(express_enc), Dir.pwd.gsub('/', '\\').encode(express_enc));
+	    inibody.gsub!('${VERSION}'.encode(express_enc), VERSION.encode(express_enc));
+	    File.write("out/InazumaSearch_exepress_#{VERSION}_#{platform}.ini", inibody, encoding: express_enc, mode: 'wb')
+	end
+
+	desc '-'
+	file DEST_ZIPS_PORTABLE[platform] => [RELEASE_PORTABLE_EXE[platform], __FILE__] do |task|
+	    # ポータブル版のzipファイルを作成
+	    make_portable_zip("Release_Portable", platform, DEST_ZIPS_PORTABLE[platform])
+	end
+
+	file RELEASE_EXE[platform] => [__FILE__] + SRCS.to_a do
+	    # リリース版ビルド
+	    sh %Q|"#{MSBUILD}" /maxcpucount /t:Rebuild "/p:Configuration=Release;Platform=#{platform}"|
+	end
+
+	file RELEASE_PORTABLE_EXE[platform] => [__FILE__] + SRCS.to_a do
+	    # リリース版（Portable）ビルド
+	    sh %Q|"#{MSBUILD}" /maxcpucount /t:Rebuild "/p:Configuration=Release (Portable);Platform=#{platform}"|
+	end
 end
 
-file DEST_ZIP_PORTABLE => [RELEASE_PORTABLE_EXE, __FILE__] do |task|
-    # ポータブル版のzipファイルを作成
-    make_portable_zip("Release_Portable", DEST_ZIP_PORTABLE)
-end
-
-file DEST_ZIP_SRC => [__FILE__] do |task|
-    # ソースzipを作成
-    rm task.name if File.exist?(task.name)
-    sh %Q|7z a -i!InazumaSearch -i!InazumaSearch_Debug -i!portableLaunch -i!PluginSDK -i!Plugins -i!InazumaSearch.sln -i!restarter -x!InazumaSearch/bin -x!InazumaSearch_Debug/bin -x!PluginSDK/bin -xr!obj -xr!.vs -x!InazumaSearch/Icon -x!InazumaSearch/*.ico "#{task.name}"|
-    sh %Q|7z a -i!InazumaSearch/Icon/inazumasearch-icon.ico "#{task.name}"|
-end
-
-desc "-"
-task :build => [RELEASE_EXE, RELEASE_PORTABLE_EXE]
-
-file RELEASE_EXE => [__FILE__] + SRCS.to_a do
-    # リリース版ビルド
-    sh %Q|"#{MSBUILD}" /maxcpucount /t:Rebuild "/p:Configuration=Release;Platform=x86"|
-end
-
-file RELEASE_PORTABLE_EXE => [__FILE__] + SRCS.to_a do
-    # リリース版（Portable）ビルド
-    sh %Q|"#{MSBUILD}" /maxcpucount /t:Rebuild "/p:Configuration=Release (Portable);Platform=x86"|
-end
 
 desc "-"
 task :clean do
     # クリーン
-    sh %Q|"#{MSBUILD}" /maxcpucount /t:Clean "/p:Configuration=Release;Platform=x86"|
-    sh %Q|"#{MSBUILD}" /maxcpucount /t:Clean "/p:Configuration=Release (Portable);Platform=x86"|
-    if Dir.exist?('InazumaSearch/bin/Release/x86') then
-    	rm_r 'InazumaSearch/bin/Release/x86'
-    end
-    
-    if Dir.exist?('InazumaSearch/bin/Release_Portable/x86') then
-    	rm_r 'InazumaSearch/bin/Release_Portable/x86'
+    PLATFORMS.each do |platform|
+	    sh %Q|"#{MSBUILD}" /maxcpucount /t:Clean "/p:Configuration=Release;Platform=#{platform}"|
+	    sh %Q|"#{MSBUILD}" /maxcpucount /t:Clean "/p:Configuration=Release (Portable);Platform=#{platform}"|
+	    
+	    if Dir.exist?("InazumaSearch/bin/Release/#{platform}") then
+	    	rm_r "InazumaSearch/bin/Release/#{platform}"
+	    end
+
+	    if Dir.exist?("InazumaSearch/bin/Release_Portable/#{platform}") then
+	    	rm_r "InazumaSearch/bin/Release_Portable/#{platform}"
+	    end
+
+	end
+
+    if Dir.exist?("out/content") then
+    	rm_r "out/content"
     end
 end
 
-def make_zip(platform, dest_zip_path)
+def make_zip(conf_type, platform, dest_zip_path)
 	begin
 	    rm dest_zip_path if File.exist?(dest_zip_path)
 	    
-	    cd "InazumaSearch/bin/#{platform}/x86" do
+	    cd "InazumaSearch/bin/#{conf_type}/#{platform}" do
 	        mkpath 'plugins'
 	        sh %Q|7z a -x!data -x!NLog.config -x!GPUCache -x!*.vshost.exe -x!*.vshost.exe.* -x!_DebugExeTemporary -x!locales -x!swiftshader -x!debug.log "../../../../#{dest_zip_path}" .|
 	        sh %Q|7z a "../../../../#{dest_zip_path}" locales/ja.pak|
 	    end
+
 	    cd 'InazumaSearch' do
 	        sh %Q|7z a "../#{dest_zip_path}" html|
 	    end
@@ -99,20 +112,22 @@ def make_zip(platform, dest_zip_path)
     end
 end
 
-def make_portable_zip(platform, dest_zip_path)
+def make_portable_zip(conf_type, platform, dest_zip_path)
 	begin
 	    rm dest_zip_path if File.exist?(dest_zip_path)
-	    
-	    cd "InazumaSearch/bin/#{platform}/x86" do
+	    cd "InazumaSearch/bin/#{conf_type}/anycpu" do
 	    	# exe名リネーム
 	    	rm 'InazumaSearchPortable.exe' if File.exist?('InazumaSearchPortable.exe')
 	    	mv 'portableLaunch.exe', 'InazumaSearchPortable.exe'
+	    end	    
 	    
+	    cd "InazumaSearch/bin/#{conf_type}/#{platform}" do
 	    	# pluginsディレクトリ追加
 	        mkpath 'program/plugins'
 	        
 	        # 圧縮
 	        sh %Q|7z a -x!*.pdb -x!portableLaunch.exe.config -x!data -x!program/NLog.config -x!program/GPUCache -x!program/*.vshost.exe -x!program/*.vshost.exe.* -x!program/_DebugExeTemporary -x!program/locales/*.pak -x!program/swiftshader -x!program/debug.log "../../../../#{dest_zip_path}" .|
+	        sh %Q|7z a "../../../../#{dest_zip_path}" ../anycpu/InazumaSearchPortable.exe|
 	        sh %Q|7z a "../../../../#{dest_zip_path}" program/locales/ja.pak|
 	    end
 	   	    

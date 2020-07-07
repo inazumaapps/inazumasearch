@@ -49,7 +49,8 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
     <OutputPath>bin\Release\x86\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
+    <DefineConstants>
+    </DefineConstants>
     <Optimize>true</Optimize>
     <DebugType>pdbonly</DebugType>
     <PlatformTarget>x86</PlatformTarget>
@@ -79,7 +80,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release %28Portable%29|x86'">
     <OutputPath>bin\Release_Portable\x86\program\</OutputPath>
-    <DefineConstants>TRACE;PORTABLE</DefineConstants>
+    <DefineConstants>PORTABLE</DefineConstants>
     <Optimize>true</Optimize>
     <DebugType>pdbonly</DebugType>
     <PlatformTarget>x86</PlatformTarget>
@@ -90,6 +91,31 @@
   <PropertyGroup />
   <PropertyGroup>
     <ApplicationManifest>Properties\app.manifest</ApplicationManifest>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release %28Portable%29|x64'">
+    <OutputPath>bin\Release_Portable\x64\program\</OutputPath>
+    <PlatformTarget>x64</PlatformTarget>
+    <Optimize>true</Optimize>
+    <DefineConstants>PORTABLE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <DebugType>pdbonly</DebugType>
+    <DebugSymbols>true</DebugSymbols>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
+    <PlatformTarget>x64</PlatformTarget>
+    <DefineConstants>TRACE;DEBUG</DefineConstants>
+    <OutputPath>bin\Debug\x64\</OutputPath>
+    <ErrorReport>prompt</ErrorReport>
+    <DebugType>full</DebugType>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
+    <OutputPath>bin\Release\x64\</OutputPath>
+    <WarningLevel>2</WarningLevel>
+    <Optimize>true</Optimize>
+    <PlatformTarget>x64</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <DebugType>pdbonly</DebugType>
+    <DebugSymbols>true</DebugSymbols>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="CommandLine, Version=2.8.0.0, Culture=neutral, PublicKeyToken=5a870481e358d379, processorArchitecture=MSIL">
@@ -236,6 +262,7 @@
     <Compile Include="src\Core\XDoc2TxtApi.cs" />
     <EmbeddedResource Include="src\Forms\BrowserForm.resx">
       <DependentUpon>BrowserForm.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="src\Controls\HiddenableTabControl.resx">
       <DependentUpon>HiddenableTabControl.cs</DependentUpon>
@@ -333,6 +360,8 @@
   <PropertyGroup>
     <PostBuildEvent>set TARGETDIR=$(TargetDir)
 set PROJECTDIR=$(ProjectDir)
+set PROJECTDIR=$(ProjectDir)
+set PLATFORMNAME=$(PlatformName)
 call "$(ProjectDir)buildbatch\postbuild.cmd"</PostBuildEvent>
   </PropertyGroup>
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
