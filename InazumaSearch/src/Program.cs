@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Linq;
 
 namespace InazumaSearch
@@ -21,6 +22,13 @@ namespace InazumaSearch
             if (opts == null)
             {
                 Core.Util.ShowErrorMessage(errorMessage);
+                return;
+            }
+
+            // HTMLフォルダが存在しなければエラー
+            if (!Directory.Exists(opts.HtmlFullPath))
+            {
+                Core.Util.ShowErrorMessage("htmlフォルダが見つかりませんでした。\nデバッグ起動の場合は、コマンドライン引数の --html-path でhtmlフォルダのパスを指定してください。");
                 return;
             }
 
