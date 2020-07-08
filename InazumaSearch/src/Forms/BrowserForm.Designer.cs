@@ -38,7 +38,7 @@
             this.ClientSize = new System.Drawing.Size(1182, 642);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "BrowserForm";
-            this.Text = "Inazuma Search x.x.x";
+            this.Text = "Inazuma Search";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Browser_FormClosing);
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.BrowserForm_FormClosed);
             this.Load += new System.EventHandler(this.BrowserForm_Load);

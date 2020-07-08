@@ -788,10 +788,10 @@ namespace InazumaSearch.Forms
 
         private void BrowserForm_Load(object sender, EventArgs e)
         {
-            Text = string.Format("Inazuma Search {0}", Util.GetVersion().ToString());
+
             if (App.DebugMode)
             {
-                Text += " (Debug Mode)";
+                Text = $"Inazuma Search {Util.GetVersion().ToString()} {Util.GetPlatform()} (Debug Mode)";
             }
 
             Debug.Print(Thread.CurrentThread.ManagedThreadId.ToString());

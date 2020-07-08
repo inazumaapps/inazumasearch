@@ -77,9 +77,9 @@
             // BtnClose
             // 
             this.BtnClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.BtnClose.Location = new System.Drawing.Point(635, 304);
+            this.BtnClose.Location = new System.Drawing.Point(602, 266);
             this.BtnClose.Name = "BtnClose";
-            this.BtnClose.Size = new System.Drawing.Size(75, 23);
+            this.BtnClose.Size = new System.Drawing.Size(110, 28);
             this.BtnClose.TabIndex = 4;
             this.BtnClose.Text = "閉じる";
             this.BtnClose.UseVisualStyleBackColor = true;
@@ -140,9 +140,9 @@
             this.groupBox1.Controls.Add(this.label3);
             this.groupBox1.Controls.Add(this.label2);
             this.groupBox1.Controls.Add(this.BarCrawlPower);
-            this.groupBox1.Location = new System.Drawing.Point(437, 198);
+            this.groupBox1.Location = new System.Drawing.Point(346, 243);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(293, 100);
+            this.groupBox1.Size = new System.Drawing.Size(125, 44);
             this.groupBox1.TabIndex = 21;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "クロールに使用するCPUパワー";
@@ -173,12 +173,11 @@
             this.tblDebug.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 38.53659F));
             this.tblDebug.Controls.Add(this.lblDocumentDBSize, 1, 0);
             this.tblDebug.Controls.Add(this.label6, 0, 0);
-            this.tblDebug.Location = new System.Drawing.Point(182, 116);
+            this.tblDebug.Location = new System.Drawing.Point(177, 186);
             this.tblDebug.Name = "tblDebug";
-            this.tblDebug.RowCount = 2;
+            this.tblDebug.RowCount = 1;
             this.tblDebug.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 47.76119F));
-            this.tblDebug.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 52.23881F));
-            this.tblDebug.Size = new System.Drawing.Size(235, 67);
+            this.tblDebug.Size = new System.Drawing.Size(235, 31);
             this.tblDebug.TabIndex = 22;
             this.tblDebug.Visible = false;
             // 
@@ -205,7 +204,7 @@
             // groupBox2
             // 
             this.groupBox2.Controls.Add(this.TxtDocumentDBDirPath);
-            this.groupBox2.Location = new System.Drawing.Point(13, 145);
+            this.groupBox2.Location = new System.Drawing.Point(13, 130);
             this.groupBox2.Name = "groupBox2";
             this.groupBox2.Size = new System.Drawing.Size(399, 50);
             this.groupBox2.TabIndex = 2;
@@ -223,23 +222,22 @@
             // tableLayoutPanel2
             // 
             this.tableLayoutPanel2.ColumnCount = 2;
-            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 28.03468F));
-            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 71.96532F));
+            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 20.23121F));
+            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 79.76878F));
             this.tableLayoutPanel2.Controls.Add(this.lblVersion, 1, 0);
             this.tableLayoutPanel2.Controls.Add(this.label8, 0, 0);
-            this.tableLayoutPanel2.Location = new System.Drawing.Point(34, 249);
+            this.tableLayoutPanel2.Location = new System.Drawing.Point(13, 269);
             this.tableLayoutPanel2.Name = "tableLayoutPanel2";
-            this.tableLayoutPanel2.RowCount = 2;
+            this.tableLayoutPanel2.RowCount = 1;
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 45.28302F));
-            this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 54.71698F));
-            this.tableLayoutPanel2.Size = new System.Drawing.Size(346, 53);
+            this.tableLayoutPanel2.Size = new System.Drawing.Size(282, 25);
             this.tableLayoutPanel2.TabIndex = 23;
             // 
             // lblVersion
             // 
             this.lblVersion.Anchor = System.Windows.Forms.AnchorStyles.Left;
             this.lblVersion.AutoSize = true;
-            this.lblVersion.Location = new System.Drawing.Point(99, 6);
+            this.lblVersion.Location = new System.Drawing.Point(60, 6);
             this.lblVersion.Name = "lblVersion";
             this.lblVersion.Size = new System.Drawing.Size(27, 12);
             this.lblVersion.TabIndex = 1;
@@ -276,6 +274,7 @@
             this.columnHeader2});
             this.lsvTextExtensions.Font = new System.Drawing.Font("ＭＳ ゴシック", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
             this.lsvTextExtensions.FullRowSelect = true;
+            this.lsvTextExtensions.HideSelection = false;
             this.lsvTextExtensions.Location = new System.Drawing.Point(19, 18);
             this.lsvTextExtensions.Name = "lsvTextExtensions";
             this.lsvTextExtensions.Size = new System.Drawing.Size(231, 126);
@@ -336,14 +335,14 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(742, 339);
+            this.ClientSize = new System.Drawing.Size(742, 314);
+            this.Controls.Add(this.BtnClose);
             this.Controls.Add(this.groupBox3);
             this.Controls.Add(this.tableLayoutPanel2);
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.tblDebug);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.BtnClearAllData);
-            this.Controls.Add(this.BtnClose);
             this.Controls.Add(this.BtnClearDocumentDB);
             this.Controls.Add(this.groupBox1);
             this.Name = "DipswForm";
