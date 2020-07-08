@@ -122,11 +122,11 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(61, 353);
+            this.label2.Location = new System.Drawing.Point(150, 353);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(382, 12);
+            this.label2.Size = new System.Drawing.Size(293, 12);
             this.label2.TabIndex = 7;
-            this.label2.Text = "※返信が必要な場合は、下記公式サイトよりメールやGitter等でご連絡ください。";
+            this.label2.Text = "※返信が必要な場合は、下記公式サイトよりご連絡ください。";
             // 
             // BtnQuitAndRestart
             // 
@@ -144,12 +144,12 @@
             // 
             this.LblWebsiteUrl.AutoSize = true;
             this.LblWebsiteUrl.LinkVisited = true;
-            this.LblWebsiteUrl.Location = new System.Drawing.Point(237, 374);
+            this.LblWebsiteUrl.Location = new System.Drawing.Point(225, 376);
             this.LblWebsiteUrl.Name = "LblWebsiteUrl";
-            this.LblWebsiteUrl.Size = new System.Drawing.Size(206, 12);
+            this.LblWebsiteUrl.Size = new System.Drawing.Size(218, 12);
             this.LblWebsiteUrl.TabIndex = 9;
             this.LblWebsiteUrl.TabStop = true;
-            this.LblWebsiteUrl.Text = "http://inazumaapp.info/inazumasearch/";
+            this.LblWebsiteUrl.Text = "https://inazumaapps.info/inazumasearch/";
             this.LblWebsiteUrl.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.LblWebsiteUrl_LinkClicked);
             // 
             // label3
