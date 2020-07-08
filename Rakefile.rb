@@ -25,7 +25,7 @@ SRCS = FileList['InazumaSearch/**/*']
 SRCS.exclude('InazumaSearch/bin/**/*')
 SRCS.exclude('InazumaSearch/obj/**/*')
 
-task :default => ['cab:standard', 'zip:portable']
+task :default => ['cab:standard', 'zip:portable', "express:ini"]
 
 desc "-"
 task 'cab:standard' => DEST_CABS.values
@@ -38,6 +38,8 @@ task 'zip:portable' => DEST_ZIPS_PORTABLE.values
 
 desc "-"
 task :build => RELEASE_EXE.values + RELEASE_PORTABLE_EXE.values
+
+EXEPRESS_INI_LIST = FileList.new
 
 PLATFORMS.each do |platform|
 	file DEST_CABS[platform] => [DEST_ZIPS[platform]] do |task|
@@ -67,16 +69,9 @@ PLATFORMS.each do |platform|
 		end
 	end
 	
-	file DEST_ZIPS[platform] => [RELEASE_EXE[platform]] do |task|
-	    # zipファイルを作成
-	    make_zip("Release", platform, task.name)
-
-	    # zipファイルの内容を一度展開
-	    rm_r "out/content/#{platform}" if File.exist?("out/content/#{platform}")
-	    sh %Q|7z x "#{task.name}" -o"out/content/#{platform}" |
-	    
-
-
+	ini_path = "out/InazumaSearch_exepress_#{VERSION}_#{platform}.ini"
+	EXEPRESS_INI_LIST.include(ini_path)
+	file ini_path => 'InazumaSearch_exepress_template.ini' do |task|
 	    # ExePress用のiniファイルを作成
 	    express_enc = 'UTF-16LE'
 	    inibody = File.read('InazumaSearch_exepress_template.ini', encoding: express_enc, mode: 'rb')
@@ -87,10 +82,20 @@ PLATFORMS.each do |platform|
 	    inibody.gsub!('${TITLE_SUFFIX}'.encode(express_enc), (platform == 'x64' ? '' : ' (32ビット版)').encode(express_enc));
 	    inibody.gsub!('${STARTMENU_TITLE_SUFFIX}'.encode(express_enc), (platform == 'x64' ? '' : ' (x86)').encode(express_enc));
 	    inibody.gsub!('${UnInstallKey}'.encode(express_enc), (platform == 'x64' ? 'Inazuma Search' : 'Inazuma Search x86').encode(express_enc));
-	    File.write("out/InazumaSearch_exepress_#{VERSION}_#{platform}.ini", inibody, encoding: express_enc, mode: 'wb')
+	    File.write(task.name, inibody, encoding: express_enc, mode: 'wb')
+	    
+	    $stderr.puts "-> #{task.name}"
+	end
+	
+	file DEST_ZIPS[platform] => [RELEASE_EXE[platform]] do |task|
+	    # zipファイルを作成
+	    make_zip("Release", platform, task.name)
+
+	    # zipファイルの内容を一度展開
+	    rm_r "out/content/#{platform}" if File.exist?("out/content/#{platform}")
+	    sh %Q|7z x "#{task.name}" -o"out/content/#{platform}" |
 	end
 
-	desc '-'
 	file DEST_ZIPS_PORTABLE[platform] => [RELEASE_PORTABLE_EXE[platform], __FILE__] do |task|
 	    # ポータブル版のzipファイルを作成
 	    make_portable_zip("Release_Portable", platform, task.name)
@@ -106,6 +111,9 @@ PLATFORMS.each do |platform|
 	    sh %Q|"#{MSBUILD}" /maxcpucount /t:Rebuild "/p:Configuration=Release (Portable);Platform=#{platform}"|
 	end
 end
+
+desc "-"
+task "express:ini" => EXEPRESS_INI_LIST
 
 
 desc "-"
@@ -127,6 +135,10 @@ task :clean do
 
     if Dir.exist?("out/content") then
     	rm_r "out/content"
+    end
+    
+    EXEPRESS_INI_LIST.each do |ini_path|
+    	rm ini_path if File.exist?(ini_path)
     end
 end
 
