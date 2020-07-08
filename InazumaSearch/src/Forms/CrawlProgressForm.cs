@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
 using InazumaSearch.Core;
+using Microsoft.WindowsAPICodePack.Taskbar;
 
 namespace InazumaSearch.Forms
 {
@@ -50,8 +51,12 @@ namespace InazumaSearch.Forms
                 }
 
                 // フルクロール開始
+                TaskbarManager.Instance.SetProgressState(TaskbarProgressBarState.Indeterminate, this.Handle);
+
                 var res = await App.Crawler.RunFullCrawlAsync((progSender, state) =>
                 {
+                    if (this.IsDisposed) return;
+
                     switch (state.CurrentStep)
                     {
                         case CrawlState.Step.DBRecordListUpBegin:
@@ -65,6 +70,8 @@ namespace InazumaSearch.Forms
                         case CrawlState.Step.RecordAddBegin:
                             ProgressBar.Style = ProgressBarStyle.Continuous;
                             ProgressBar.Maximum = state.TotalValue;
+                            TaskbarManager.Instance.SetProgressState(TaskbarProgressBarState.Normal, this.Handle);
+                            TaskbarManager.Instance.SetProgressValue(ProgressBar.Value, ProgressBar.Maximum, this.Handle);
                             statusText.Text = string.Format("インデックス登録中...");
                             statusText.GetCurrentParent().Refresh();
                             statusText.GetCurrentParent().Update();
@@ -78,11 +85,13 @@ namespace InazumaSearch.Forms
                             //    ProgressBar.Value = state.CurrentValue + 1;
                             //}
                             ProgressBar.Value = state.CurrentValue;
+                            TaskbarManager.Instance.SetProgressValue(ProgressBar.Value, ProgressBar.Maximum, this.Handle);
                             statusText.Text = string.Format("インデックス登録中... ({0})", state.UpdatedDocumentCount);
                             break;
 
                         case CrawlState.Step.PurgeBegin:
                             ProgressBar.Style = ProgressBarStyle.Marquee;
+                            TaskbarManager.Instance.SetProgressState(TaskbarProgressBarState.Indeterminate, this.Handle);
                             statusText.Text = string.Format("存在しない文書データを削除中...");
 
                             break;
@@ -96,6 +105,8 @@ namespace InazumaSearch.Forms
                             ProgressBar.Value = ProgressBar.Maximum;
                             ProgressBar.Value--;
                             ProgressBar.Maximum--;
+
+                            TaskbarManager.Instance.SetProgressState(TaskbarProgressBarState.NoProgress, this.Handle);
 
                             break;
 
