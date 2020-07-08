@@ -6,6 +6,10 @@ PLATFORMS = ['x86', 'x64']
 DEST_ZIPS = {}
 DEST_ZIPS['x86'] = "out/InazumaSearch-#{VERSION}-x86.zip"
 DEST_ZIPS['x64'] = "out/InazumaSearch-#{VERSION}-x64.zip"
+DEST_CABS = {}
+PLATFORMS.each do |platform|
+	DEST_CABS[platform] = DEST_ZIPS[platform].sub(/zip$/, 'cab')
+end
 DEST_ZIPS_PORTABLE = {}
 DEST_ZIPS_PORTABLE['x86'] = "out/InazumaSearch-#{VERSION}-Portable-x86.zip"
 DEST_ZIPS_PORTABLE['x64'] = "out/InazumaSearch-#{VERSION}-Portable-x64.zip"
@@ -21,10 +25,10 @@ SRCS = FileList['InazumaSearch/**/*']
 SRCS.exclude('InazumaSearch/bin/**/*')
 SRCS.exclude('InazumaSearch/obj/**/*')
 
-task :default => :zip
+task :default => ['cab:standard', 'zip:portable']
 
 desc "-"
-task :zip => ['zip:standard', 'zip:portable']
+task 'cab:standard' => DEST_CABS.values
 
 desc "-"
 task 'zip:standard' => DEST_ZIPS.values
@@ -35,28 +39,61 @@ task 'zip:portable' => DEST_ZIPS_PORTABLE.values
 desc "-"
 task :build => RELEASE_EXE.values + RELEASE_PORTABLE_EXE.values
 
-
 PLATFORMS.each do |platform|
+	file DEST_CABS[platform] => [DEST_ZIPS[platform]] do |task|
+	    # cab形式で再圧縮
+	    cab_path = File.expand_path(task.name).gsub('/', '\\')
+		cd "out/content" do
+			outlines = []
+			outlines.push(".Set CabinetNameTemplate=\"#{cab_path}\"")
+			outlines.push(".Set DiskDirectoryTemplate=")
+			outlines.push(".Set MaxDiskSize=102400000") # サイズ制限は1GB
+			outlines.push(".Set CompressionType=LZX")
+			outlines.push(".Set CompressionMemory=21")
+		
+			current_dest_dir = ''
+			Dir.glob("#{platform}/**/*") do |path|
+				if File.file?(path) then
+					dest_dir = File.dirname(path).sub(/^#{platform}\/?/, '').gsub('/', '\\')
+					if current_dest_dir != dest_dir then
+						outlines.push(%Q|.Set DestinationDir=#{dest_dir}|)
+						current_dest_dir = dest_dir
+					end
+					outlines.push('"' + path.gsub('/', '\\') + '"')
+				end
+			end
+			File.write('cab.ddf', outlines.join("\n"), encoding: 'cp932')
+			sh %Q|makecab /F cab.ddf|
+		end
+	end
+	
 	file DEST_ZIPS[platform] => [RELEASE_EXE[platform]] do |task|
 	    # zipファイルを作成
-	    make_zip("Release", platform, DEST_ZIPS[platform])
+	    make_zip("Release", platform, task.name)
 
 	    # zipファイルの内容を一度展開
 	    rm_r "out/content/#{platform}" if File.exist?("out/content/#{platform}")
-	    sh %Q|7z x "#{DEST_ZIPS[platform]}" -o"out/content/#{platform}" |
+	    sh %Q|7z x "#{task.name}" -o"out/content/#{platform}" |
+	    
+
 
 	    # ExePress用のiniファイルを作成
 	    express_enc = 'UTF-16LE'
 	    inibody = File.read('InazumaSearch_exepress_template.ini', encoding: express_enc, mode: 'rb')
 	    inibody.gsub!('${CHDIR}'.encode(express_enc), Dir.pwd.gsub('/', '\\').encode(express_enc));
 	    inibody.gsub!('${VERSION}'.encode(express_enc), VERSION.encode(express_enc));
+	    inibody.gsub!('${PLATFORM}'.encode(express_enc), platform.encode(express_enc));
+	    inibody.gsub!('${64bitSFX}'.encode(express_enc), (platform == 'x64' ? '1' : '0').encode(express_enc));
+	    inibody.gsub!('${TITLE_SUFFIX}'.encode(express_enc), (platform == 'x64' ? '' : ' (32ビット版)').encode(express_enc));
+	    inibody.gsub!('${STARTMENU_TITLE_SUFFIX}'.encode(express_enc), (platform == 'x64' ? '' : ' (x86)').encode(express_enc));
+	    inibody.gsub!('${UnInstallKey}'.encode(express_enc), (platform == 'x64' ? 'Inazuma Search' : 'Inazuma Search x86').encode(express_enc));
 	    File.write("out/InazumaSearch_exepress_#{VERSION}_#{platform}.ini", inibody, encoding: express_enc, mode: 'wb')
 	end
 
 	desc '-'
 	file DEST_ZIPS_PORTABLE[platform] => [RELEASE_PORTABLE_EXE[platform], __FILE__] do |task|
 	    # ポータブル版のzipファイルを作成
-	    make_portable_zip("Release_Portable", platform, DEST_ZIPS_PORTABLE[platform])
+	    make_portable_zip("Release_Portable", platform, task.name)
 	end
 
 	file RELEASE_EXE[platform] => [__FILE__] + SRCS.to_a do
