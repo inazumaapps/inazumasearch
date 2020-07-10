@@ -49,6 +49,7 @@
             this.BtnGetSmallSystemIco = new System.Windows.Forms.Button();
             this.LstIcons = new System.Windows.Forms.ListView();
             this.BtnOpenExcelFile = new System.Windows.Forms.Button();
+            this.BtnOpenIgnoreDialog = new System.Windows.Forms.Button();
             this.statusStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
@@ -159,6 +160,7 @@
             this.ObjName,
             this.ObjSize});
             this.LsvObjectList.GridLines = true;
+            this.LsvObjectList.HideSelection = false;
             this.LsvObjectList.Location = new System.Drawing.Point(750, 138);
             this.LsvObjectList.Name = "LsvObjectList";
             this.LsvObjectList.Size = new System.Drawing.Size(401, 275);
@@ -226,6 +228,7 @@
             // 
             // LstIcons
             // 
+            this.LstIcons.HideSelection = false;
             this.LstIcons.Location = new System.Drawing.Point(23, 402);
             this.LstIcons.Name = "LstIcons";
             this.LstIcons.Size = new System.Drawing.Size(497, 97);
@@ -243,11 +246,22 @@
             this.BtnOpenExcelFile.UseVisualStyleBackColor = true;
             this.BtnOpenExcelFile.Click += new System.EventHandler(this.BtnOpenExcelFile_Click);
             // 
+            // BtnOpenIgnoreDialog
+            // 
+            this.BtnOpenIgnoreDialog.Location = new System.Drawing.Point(12, 109);
+            this.BtnOpenIgnoreDialog.Name = "BtnOpenIgnoreDialog";
+            this.BtnOpenIgnoreDialog.Size = new System.Drawing.Size(145, 23);
+            this.BtnOpenIgnoreDialog.TabIndex = 32;
+            this.BtnOpenIgnoreDialog.Text = "無視設定ダイアログを開く";
+            this.BtnOpenIgnoreDialog.UseVisualStyleBackColor = true;
+            this.BtnOpenIgnoreDialog.Click += new System.EventHandler(this.BtnOpenIgnoreDialog_Click);
+            // 
             // DebugForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1163, 563);
+            this.Controls.Add(this.BtnOpenIgnoreDialog);
             this.Controls.Add(this.BtnOpenExcelFile);
             this.Controls.Add(this.LstIcons);
             this.Controls.Add(this.BtnGetSmallSystemIco);
@@ -298,6 +312,7 @@
         private System.Windows.Forms.Button BtnGetSmallSystemIco;
         private System.Windows.Forms.ListView LstIcons;
         private System.Windows.Forms.Button BtnOpenExcelFile;
+        private System.Windows.Forms.Button BtnOpenIgnoreDialog;
     }
 }
 

@@ -26,20 +26,35 @@ namespace InazumaSearch
             public virtual bool Relative { get; set; }
 
             /// <summary>
-            /// マッチ用の正規表現
+            /// ディレクトリのみを対象とするかどうか
             /// </summary>
-            public virtual Regex Regex { get; set; }
+            public virtual bool DirectoryOnly { get; set; }
+
+            /// <summary>
+            /// ファイルマッチ用の正規表現
+            /// </summary>
+            public virtual Regex FileRegex { get; set; }
+
+            /// <summary>
+            /// ディレクトリマッチ用の正規表現
+            /// </summary>
+            public virtual Regex DirRegex { get; set; }
         }
 
         /// <summary>
         /// .inazumaignore が存在するフォルダのパス。比較のために小文字に変換されている
         /// </summary>
-        public virtual string DirPathLower { get; set; }
+        public virtual string DirPathLower { get; protected set; }
 
         /// <summary>
         /// 無視パターンのリスト
         /// </summary>
-        public virtual IList<Pattern> Patterns { get; set; } = new List<Pattern>();
+        protected virtual IList<Pattern> Patterns { get; set; } = new List<Pattern>();
+
+        public IgnoreSetting(string dirPath)
+        {
+            DirPathLower = dirPath.ToLower().TrimEnd('\\'); // 正規化のため、最後に\マークがついていれば取り除く
+        }
 
         /// <summary>
         /// .inazumaignore ファイルの内容を読み込んでインスタンスを生成
@@ -47,7 +62,7 @@ namespace InazumaSearch
         /// <param name="path">.inazumaignore ファイルのパス</param>
         public static IgnoreSetting Load(string path)
         {
-            var setting = new IgnoreSetting();
+            var setting = new IgnoreSetting(Path.GetDirectoryName(path));
             setting.LoadInternal(path);
             return setting;
         }
@@ -58,7 +73,6 @@ namespace InazumaSearch
         /// <param name="path">.inazumaignore ファイルのパス</param>
         protected virtual void LoadInternal(string path)
         {
-            DirPathLower = Path.GetDirectoryName(path).ToLower();
             Patterns.Clear();
 
             // ファイルの内容を1行ずつ読み込む
@@ -69,60 +83,108 @@ namespace InazumaSearch
                 if (string.IsNullOrWhiteSpace(line)) continue;
                 if (line.StartsWith("#")) continue;
 
-                // 正規表現に変換したうえで格納
-                // 最初が "/" で始まるならば、.inazumasetting 直下からの相対パスとして適用
-                // 最初が "/" で始まらないならば、 サブフォルダ内も含めた全ファイルに適用
-                var relative = false;
-                string pat;
-                if (line.StartsWith("/"))
+                // 無視設定を追加
+                AddPattern(line);
+            }
+        }
+
+        /// <summary>
+        /// 無視パターンの追加
+        /// </summary>
+        /// <param name="patternStr"></param>
+        public virtual void AddPattern(string patternStr)
+        {
+            var pattern = new Pattern();
+
+            // パターンの末尾が "/" で終わるならば、ディレクトリのみを対象とする
+            if (patternStr.EndsWith("/"))
+            {
+                pattern.DirectoryOnly = true;
+                patternStr = patternStr.TrimEnd('/');
+            }
+
+            // パターンが末尾以外に "/" を含むならば、.inazumasetting 直下からの相対パスとして適用
+            // 含まないならば、 サブフォルダ内も含めた全ファイルに適用
+            if (patternStr.Contains("/"))
+            {
+                pattern.Relative = true;
+            }
+
+            // 先頭の "/" は削除 (ルートパスとして扱わない)
+            if (patternStr.StartsWith("/"))
+            {
+                patternStr = patternStr.Substring(1);
+            }
+
+            // パターン指定を正規表現に変換
+            var regexPattern = Regex.Replace(
+            patternStr,
+            ".",
+            m =>
+            {
+                var s = m.Value;
+                if (s.Equals("?"))
                 {
-                    pat = line.Substring(1).Trim();
-                    relative = true;
+                    //?は、任意の1文字（\マーク除く）を示す正規表現に変換
+                    return @"[^\\]";
+                }
+                else if (s.Equals("*"))
+                {
+                    //*は、0文字以上の任意の文字列（\マーク除く）を示す正規表現に変換
+                    return @"[^\\]*";
+                }
+                else if (s.Equals("/"))
+                {
+                    //スラッシュは\マーク扱い
+                    return Regex.Escape("\\");
                 }
                 else
                 {
-                    pat = line.Trim();
+                    //上記以外はエスケープする
+                    return Regex.Escape(s);
                 }
-
-
-                var regexPattern = Regex.Replace(
-                pat,
-                ".",
-                m =>
-                {
-                    var s = m.Value;
-                    if (s.Equals("?"))
-                    {
-                        //?は任意の1文字を示す正規表現(.)に変換
-                        return ".";
-                    }
-                    else if (s.Equals("*"))
-                    {
-                        //*は0文字以上の任意の文字列を示す正規表現(.*)に変換
-                        return ".*";
-                    }
-                    else if (s.Equals("/"))
-                    {
-                        //スラッシュは\マークと同じ扱い
-                        return Regex.Escape("\\");
-                    }
-                    else
-                    {
-                        //上記以外はエスケープする
-                        return Regex.Escape(s);
-                    }
-                }
-                );
-                var regex = new Regex($"^{regexPattern}$", RegexOptions.Compiled | RegexOptions.IgnoreCase);
-
-                Patterns.Add(new Pattern { Regex = regex, Relative = relative });
             }
+            );
+
+            if (pattern.Relative)
+            {
+                // 相対パス指定の場合 (パス構成要素の前方一致)
+                pattern.DirRegex = new Regex($@"^{regexPattern}(?:$|\\)", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+
+                if (pattern.DirectoryOnly)
+                {
+                    // フォルダを対象とするパターン（末尾が "/" ）の場合は、ファイルパスに対して末尾にマッチしてはならない
+                    pattern.FileRegex = new Regex($@"^{regexPattern}\\", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+                }
+                else
+                {
+                    pattern.FileRegex = pattern.DirRegex;
+                }
+            }
+            else
+            {
+                // 相対パス指定でない場合 (パス構成要素のうち、どれか1つだけでもマッチするならOK)
+                pattern.DirRegex = new Regex($@"(?:^|\\){regexPattern}(?:$|\\)", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+
+                if (pattern.DirectoryOnly)
+                {
+                    // フォルダを対象とするパターン（末尾が "/" ）の場合は、ファイルパスに対して末尾にマッチしてはならない
+                    pattern.FileRegex = new Regex($@"(?:^|\\){regexPattern}\\", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+                }
+                else
+                {
+                    pattern.FileRegex = pattern.DirRegex;
+                }
+            }
+
+            // 追加
+            Patterns.Add(pattern);
         }
 
         /// <summary>
         /// 無視設定パターンにマッチするかどうかチェック
         /// </summary>
-        public virtual bool IsMatch(string filePath)
+        public virtual bool IsMatch(string filePath, bool isDirectory)
         {
             // 小文字に変換してから比較
             var pathLower = filePath.ToLower();
@@ -138,19 +200,10 @@ namespace InazumaSearch
                 // マッチするパターンが1つでもあるならtrue
                 foreach (var pattern in Patterns)
                 {
-                    if (pattern.Relative)
+                    var regex = (isDirectory ? pattern.DirRegex : pattern.FileRegex);
+                    if (regex.IsMatch(relPath))
                     {
-                        if (pattern.Regex.IsMatch(relPath))
-                        {
-                            return true;
-                        }
-                    }
-                    else
-                    {
-                        if (pattern.Regex.IsMatch(fileName))
-                        {
-                            return true;
-                        }
+                        return true;
                     }
                 }
             }
