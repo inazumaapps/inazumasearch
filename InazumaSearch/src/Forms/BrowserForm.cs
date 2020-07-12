@@ -163,6 +163,21 @@ namespace InazumaSearch.Forms
                 });
             }
 
+
+            public void ShowIgnoreEditForm(string path)
+            {
+                // 既存データのラベル値を更新
+                OwnerForm.InvokeOnUIThread((f) =>
+                {
+                    var dirPath = Path.GetDirectoryName(path);
+                    var defaultPattern = "/" + Path.GetFileName(path);
+                    var dialog = new IgnoreEditForm(dirPath, defaultPattern);
+                    dialog.ShowDialog(f);
+                });
+
+            }
+
+
             public void UpdateFolderLabel(string path, string label)
             {
 

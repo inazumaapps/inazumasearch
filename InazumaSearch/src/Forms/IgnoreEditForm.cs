@@ -19,9 +19,14 @@ namespace InazumaSearch.Forms
         private CancellationTokenSource currentCTokenSource = null;
         private Task searchTask = null;
 
-        public IgnoreEditForm()
+        private readonly string baseDirPath;
+        private readonly string defaultPattern;
+
+        public IgnoreEditForm(string baseDirPath, string defaultPattern)
         {
             InitializeComponent();
+            this.baseDirPath = baseDirPath;
+            this.defaultPattern = defaultPattern;
         }
 
         private void BtnClose_Click(object sender, EventArgs e)
@@ -31,7 +36,8 @@ namespace InazumaSearch.Forms
 
         private void IgnoreEditForm_Load(object sender, EventArgs e)
         {
-            TxtBaseDirPath.Text = @"d:\document";
+            TxtBaseDirPath.Text = this.baseDirPath;
+            TxtSetting.Text = this.defaultPattern;
         }
 
         private void TxtSetting_TextChanged(object sender, EventArgs e)

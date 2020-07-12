@@ -1,4 +1,4 @@
-
+﻿
 <!DOCTYPE html>
 <html lang="ja">
 <head>
@@ -147,95 +147,97 @@
       </div>
 
       <div class="section" id="SEARCH-RESULT">
-<!-- <div class="row">
-  <div class="col s12">
-    <ul class="tabs">
-      <li class="tab col s3"><a href="#TAB-SEARCH-RESULT">検索結果</a></li>
-      <li class="tab col s3"><a href="#TAB-SETTING">設定</a></li>
-    </ul>
-  </div>
-  <div id="TAB-SEARCH-RESULT" class="col s12">
- -->
-
-
-<div id="SEARCH-RESULT-HEADER">
-<h3>検索結果</h3>
-
-<p id="SEARCH-RESULT-MESSAGE"></p>
-<p class="subtext" id="SEARCH-RESULT-SUB-MESSAGE"></p>
-
-<p class="drilldown-result" id="DRILLDOWN-RESULT-EXT"></p>
-<p class="drilldown-result" id="DRILLDOWN-RESULT-YEAR"></p>
-<p class="drilldown-result" id="DRILLDOWN-RESULT-FOLDER-LABEL"></p>
-<!-- <ul class="pagination">
-</ul> -->
-</div><!-- / #SEARCH-RESULT-HEADER -->
-
-<div id="SEARCH-RESULT-BODY">
-    <div class="row search-result-row" id="RESULT-ROW-BASE" style="display: none;">
+          <!-- <div class="row">
       <div class="col s12">
-        <div class="card z-depth-2">
-            <div class="card-content">
-              <div class="card-title"><span class="icon"></span><a href="#" data-file-path="/" class="file-name-link">[TITLE]</a></div>
-              <img src="" class="thumbnail-image" />
-              <div class="body-snippets">
-              </div>
-              <div class="document-information-footer">
-                <span class="document-information-size">9,999KB</span> / 更新: <span class="document-information-file-updated">9999/99/99(日) 99:99</span>
-                <span class="debug-mode-only"> / スコア: <span class="document-information-score">9,999</span>
-                / <a href="#" class="display-highlight-link">本文のマッチ箇所を全表示</a></span>
-              </div>
-            </div><!-- / .card-content -->
-            <div class="card-action">
-                  <a class="file-path" href="#" data-file-path="/">[PATH]</a>
-                  <div class="right"><a href="#" class="after-tooltipped" title="フォルダを開く" data-folder-path=""><i class="tiny material-icons">folder</i></a></div>
-            </div>
-    
-        </div><!-- / .card -->
+        <ul class="tabs">
+          <li class="tab col s3"><a href="#TAB-SEARCH-RESULT">検索結果</a></li>
+          <li class="tab col s3"><a href="#TAB-SETTING">設定</a></li>
+        </ul>
       </div>
-    </div><!-- / #RESULT-ROW-BASE -->
-</div><!-- / #SEARCH-RESULT-BODY -->
+      <div id="TAB-SEARCH-RESULT" class="col s12">
+     -->
 
 
-<table class="bordered" id="SEARCH-RESULT-LIST-VIEW-BODY" style="display: none;">
-  <thead>
-    <tr>
-        <th>ファイル名</th>
-        <th>パス</th>
-        <th>更新日 / サイズ</th>
-        <th></th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr id="RESULT-LIST-VIEW-ROW-BASE" style="display: none;">
-      <td><span class="icon"></span><a href="#" data-file-path="/" class="file-name-link" style="font-size: small">[TITLE]</a></td>
-      <td class="file-path">[PATH]</td>
-      <td nowrap style="text-align: right;"><span class="document-information-file-updated">9999/99/99(日) 99:99</span><br><span class="document-information-size">9,999KB</span></td>
-      <td><a href="#" class="after-tooltipped" title="フォルダを開く" data-folder-path=""><i class="tiny material-icons">folder</i></a></td>
-    </tr>
-  </tbody>
-</table>
+          <div id="SEARCH-RESULT-HEADER">
+              <h3>検索結果</h3>
 
-<div id="SEARCH-RESULT-LOADING" style="margin: 32px auto 64px; width: 80px;">
-  <div class="preloader-wrapper big active">
-    <div class="spinner-layer spinner-blue-only">
-      <div class="circle-clipper left">
-        <div class="circle"></div>
-      </div><div class="gap-patch">
-        <div class="circle"></div>
-      </div><div class="circle-clipper right">
-        <div class="circle"></div>
-      </div>
-    </div>
-  </div>
-</div>
+              <p id="SEARCH-RESULT-MESSAGE"></p>
+              <p class="subtext" id="SEARCH-RESULT-SUB-MESSAGE"></p>
+
+              <p class="drilldown-result" id="DRILLDOWN-RESULT-EXT"></p>
+              <p class="drilldown-result" id="DRILLDOWN-RESULT-YEAR"></p>
+              <p class="drilldown-result" id="DRILLDOWN-RESULT-FOLDER-LABEL"></p>
+              <!-- <ul class="pagination">
+        </ul> -->
+          </div><!-- / #SEARCH-RESULT-HEADER -->
+
+          <div id="SEARCH-RESULT-BODY">
+              <div class="row search-result-row" id="RESULT-ROW-BASE" style="display: none;">
+                  <div class="col s12">
+                      <div class="card z-depth-2">
+                          <div class="card-content">
+                              <div class="card-title"><span class="icon"></span><a href="#" data-file-path="/" class="file-name-link">[TITLE]</a></div>
+                              <img src="" class="thumbnail-image" />
+                              <div class="body-snippets">
+                              </div>
+                              <div class="document-information-footer">
+                                  <span class="document-information-size">9,999KB</span> / 更新: <span class="document-information-file-updated">9999/99/99(日) 99:99</span>
+                                  <span class="debug-mode-only">
+                                      / スコア: <span class="document-information-score">9,999</span>
+                                      / <a href="#" class="display-highlight-link">本文のマッチ箇所を全表示</a>
+                                  </span>
+                                  <a href="#" class="ignore-dialog-link">無視設定</a>
+                              </div>
+                          </div><!-- / .card-content -->
+                          <div class="card-action">
+                              <a class="file-path" href="#" data-file-path="/">[PATH]</a>
+                              <div class="right"><a href="#" class="after-tooltipped" title="フォルダを開く" data-folder-path=""><i class="tiny material-icons">folder</i></a></div>
+                          </div>
+
+                      </div><!-- / .card -->
+                  </div>
+              </div><!-- / #RESULT-ROW-BASE -->
+          </div><!-- / #SEARCH-RESULT-BODY -->
 
 
-<!-- </div> --><!-- / #TAB-SEARCH-RESULT -->
+          <table class="bordered" id="SEARCH-RESULT-LIST-VIEW-BODY" style="display: none;">
+              <thead>
+                  <tr>
+                      <th>ファイル名</th>
+                      <th>パス</th>
+                      <th>更新日 / サイズ</th>
+                      <th></th>
+                  </tr>
+              </thead>
+              <tbody>
+                  <tr id="RESULT-LIST-VIEW-ROW-BASE" style="display: none;">
+                      <td><span class="icon"></span><a href="#" data-file-path="/" class="file-name-link" style="font-size: small">[TITLE]</a></td>
+                      <td class="file-path">[PATH]</td>
+                      <td nowrap style="text-align: right;"><span class="document-information-file-updated">9999/99/99(日) 99:99</span><br><span class="document-information-size">9,999KB</span></td>
+                      <td><a href="#" class="after-tooltipped" title="フォルダを開く" data-folder-path=""><i class="tiny material-icons">folder</i></a></td>
+                  </tr>
+              </tbody>
+          </table>
 
-<!-- </div> --><!-- /tab-container-row -->
+          <div id="SEARCH-RESULT-LOADING" style="margin: 32px auto 64px; width: 80px;">
+              <div class="preloader-wrapper big active">
+                  <div class="spinner-layer spinner-blue-only">
+                      <div class="circle-clipper left">
+                          <div class="circle"></div>
+                      </div><div class="gap-patch">
+                          <div class="circle"></div>
+                      </div><div class="circle-clipper right">
+                          <div class="circle"></div>
+                      </div>
+                  </div>
+              </div>
+          </div>
 
-  </div><!-- /.section -->
+
+          <!-- </div> --><!-- / #TAB-SEARCH-RESULT -->
+          <!-- </div> --><!-- /tab-container-row -->
+
+      </div><!-- /.section -->
 
 
 </div><!-- / .container -->

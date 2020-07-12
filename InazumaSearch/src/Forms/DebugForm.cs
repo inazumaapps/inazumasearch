@@ -248,12 +248,5 @@ namespace InazumaSearch.Forms
         {
             //ExcelManipulator.OpenFile(TxtPath.Text);
         }
-
-        private void BtnOpenIgnoreDialog_Click(object sender, EventArgs e)
-        {
-            var form = new IgnoreEditForm();
-
-            form.Show();
-        }
     }
 }

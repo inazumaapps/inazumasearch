@@ -143,7 +143,7 @@ function displayResultRows(getJsonData, g_searchOffset = 0){
 
     // イベントやプラグインの登録
     $('[data-search-offset=' + g_searchOffset + '] .after-tooltipped').tooltipster();
-    $('[data-search-offset=' + g_searchOffset + '] a[data-file-path]').click(function(){
+    $('[data-search-offset=' + g_searchOffset + '] a.file-path[data-file-path]').click(function(){
         var path = $(this).attr('data-file-path');
         api.openFile(path);
         return false;
@@ -195,6 +195,7 @@ function displayResultRows_NormalView(getJsonData, g_searchOffset){
         $new_row.find('.document-information-score').text(res.final_score);
 
         $new_row.find('.display-highlight-link').attr('data-key', res.key);
+        $new_row.find('.ignore-dialog-link').attr('data-file-path', res.file_path);
         // $new_row.find('.display-similar-documents').attr('data-key', res.key);
 
         $new_row.addClass('file-type-' + res.ext);
@@ -384,6 +385,12 @@ $(function(){
                 api.showErrorMessage("本文にマッチしていません。");
             }
         });
+        return false;
+    });
+
+    $('#SEARCH-RESULT-BODY').on('click', '.ignore-dialog-link', function () {
+        var path = $(this).attr('data-file-path');
+        api.showIgnoreEditForm(path);
         return false;
     });
 
