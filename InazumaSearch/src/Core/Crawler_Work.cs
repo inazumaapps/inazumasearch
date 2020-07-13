@@ -285,20 +285,28 @@ namespace InazumaSearch.Core
                     var ignoreSettingsLocal = ignoreSettings.Where(s => targetSubDir.ToLower().StartsWith(s.DirPathLower));
 
                     // ディレクトリ内にある対象ファイルを検索
-                    foreach (var filePath in Directory.GetFiles(targetSubDir))
+                    try
                     {
-                        // ファイルの拡張子を "txt" 形式で取得
-                        var ext = Path.GetExtension(filePath).TrimStart('.').ToLower();
-
-                        // 登録対象の拡張子であれば処理
-                        if (extractableExtNames.Contains(ext))
+                        foreach (var filePath in Directory.GetFiles(targetSubDir))
                         {
-                            Logger.Trace("FileListUp/Target File Found - {0}", filePath);
+                            // ファイルの拡張子を "txt" 形式で取得
+                            var ext = Path.GetExtension(filePath).TrimStart('.').ToLower();
 
-                            var tg = TargetFile.Make(filePath, cryptProvider);
-                            currentSubDirTargets.Add(tg);
-                            Thread.Sleep(0); // 他のスレッドに処理を渡す
+                            // 登録対象の拡張子であれば処理
+                            if (extractableExtNames.Contains(ext))
+                            {
+                                Logger.Trace("FileListUp/Target File Found - {0}", filePath);
+
+                                var tg = TargetFile.Make(filePath, cryptProvider);
+                                currentSubDirTargets.Add(tg);
+                                Thread.Sleep(0); // 他のスレッドに処理を渡す
+                            }
                         }
+                    }
+                    catch (UnauthorizedAccessException ex)
+                    {
+                        // 権限の問題でアクセスできなかった場合はスキップ
+                        Debug.WriteLine(ex.ToString());
                     }
 
                     // 無視設定に合致するファイルはスキップ
