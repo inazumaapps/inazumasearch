@@ -195,7 +195,8 @@ function displayResultRows_NormalView(getJsonData, g_searchOffset){
         $new_row.find('.document-information-score').text(res.final_score);
 
         $new_row.find('.display-highlight-link').attr('data-key', res.key);
-        $new_row.find('.ignore-dialog-link').attr('data-file-path', res.file_path);
+        $new_row.find('.submenu-link').dropdown({ constrainWidth: false, container: $('body').get(0) });
+
         // $new_row.find('.display-similar-documents').attr('data-key', res.key);
 
         $new_row.addClass('file-type-' + res.ext);
@@ -211,6 +212,8 @@ function displayResultRows_NormalView(getJsonData, g_searchOffset){
         } else {
             $new_row.find('.thumbnail-image').hide();
         }
+
+        $new_row.attr('data-file-path', res.file_path);
 
         $new_row.show();
         $new_row.attr('id', 'RESULT-ROW-' + (g_searchOffset + i)).addClass('generated-search-result-row');
@@ -388,9 +391,18 @@ $(function(){
         return false;
     });
 
-    $('#SEARCH-RESULT-BODY').on('click', '.ignore-dialog-link', function () {
-        var path = $(this).attr('data-file-path');
-        api.showIgnoreEditForm(path);
+    let lastClickedPath;
+    $('#SEARCH-RESULT-BODY').on('click', '.submenu-link', function (e) {
+        //var instance = M.Dropdown.init(e.target, { constrainWidth: false, container: $('body').get(0) });
+        //instance.open();
+        lastClickedPath = $(this).closest('.search-result-row').attr('data-file-path');
+        console.log(lastClickedPath);
+        $(e.target).closest('.submenu-link').dropdown('open');
+        return false;
+    });
+
+    $('body').on('click', '.ignore-dialog-link', function () {
+        api.showIgnoreEditForm(lastClickedPath);
         return false;
     });
 
