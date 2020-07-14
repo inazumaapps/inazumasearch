@@ -29,15 +29,35 @@ namespace InazumaSearch.Forms
             this.defaultPattern = defaultPattern;
         }
 
-        private void BtnClose_Click(object sender, EventArgs e)
+        /// <summary>
+        /// 確定ボタン押下
+        /// </summary>
+        private void BtnSave_Click(object sender, EventArgs e)
+        {
+            var ignorePath = Path.Combine(TxtBaseDirPath.Text, ".inazumaignore");
+            List<string> origLines = null;
+            if (File.Exists(ignorePath)) {
+                origLines = File.ReadAllLines(ignorePath).ToList();
+            }
+            var inputLines = TxtSetting.Text.Replace("\r", "").Split('\n');
+            File.WriteAllLines(ignorePath, (origLines != null ? origLines.Concat(inputLines) : inputLines));
+            Close();
+        }
+
+        /// <summary>
+        /// キャンセルボタン押下
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void BtnCancel_Click(object sender, EventArgs e)
         {
             Close();
         }
 
         private void IgnoreEditForm_Load(object sender, EventArgs e)
         {
-            TxtBaseDirPath.Text = this.baseDirPath;
-            TxtSetting.Text = this.defaultPattern;
+            TxtBaseDirPath.Text = baseDirPath;
+            TxtSetting.Text = defaultPattern;
         }
 
         private void TxtSetting_TextChanged(object sender, EventArgs e)

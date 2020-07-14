@@ -28,30 +28,30 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.BtnClose = new System.Windows.Forms.Button();
+            this.BtnCancel = new System.Windows.Forms.Button();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.TxtSetting = new System.Windows.Forms.TextBox();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.ProgPreviewing = new System.Windows.Forms.ProgressBar();
             this.LstPreview = new System.Windows.Forms.ListBox();
-            this.BtnRefreshPreview = new System.Windows.Forms.Button();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
             this.TxtBaseDirPath = new System.Windows.Forms.TextBox();
+            this.BtnSave = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
             this.SuspendLayout();
             // 
-            // BtnClose
+            // BtnCancel
             // 
-            this.BtnClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.BtnClose.Location = new System.Drawing.Point(602, 396);
-            this.BtnClose.Name = "BtnClose";
-            this.BtnClose.Size = new System.Drawing.Size(110, 28);
-            this.BtnClose.TabIndex = 4;
-            this.BtnClose.Text = "閉じる";
-            this.BtnClose.UseVisualStyleBackColor = true;
-            this.BtnClose.Click += new System.EventHandler(this.BtnClose_Click);
+            this.BtnCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.BtnCancel.Location = new System.Drawing.Point(577, 396);
+            this.BtnCancel.Name = "BtnCancel";
+            this.BtnCancel.Size = new System.Drawing.Size(135, 28);
+            this.BtnCancel.TabIndex = 4;
+            this.BtnCancel.Text = "キャンセル";
+            this.BtnCancel.UseVisualStyleBackColor = true;
+            this.BtnCancel.Click += new System.EventHandler(this.BtnCancel_Click);
             // 
             // groupBox1
             // 
@@ -109,17 +109,6 @@
             this.LstPreview.Size = new System.Drawing.Size(686, 184);
             this.LstPreview.TabIndex = 0;
             // 
-            // BtnRefreshPreview
-            // 
-            this.BtnRefreshPreview.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.BtnRefreshPreview.Location = new System.Drawing.Point(20, 396);
-            this.BtnRefreshPreview.Name = "BtnRefreshPreview";
-            this.BtnRefreshPreview.Size = new System.Drawing.Size(208, 28);
-            this.BtnRefreshPreview.TabIndex = 7;
-            this.BtnRefreshPreview.Text = "プレビュー表示の強制更新";
-            this.BtnRefreshPreview.UseVisualStyleBackColor = true;
-            this.BtnRefreshPreview.Click += new System.EventHandler(this.BtnRefreshPreview_Click);
-            // 
             // groupBox3
             // 
             this.groupBox3.Controls.Add(this.TxtBaseDirPath);
@@ -138,16 +127,27 @@
             this.TxtBaseDirPath.Size = new System.Drawing.Size(686, 19);
             this.TxtBaseDirPath.TabIndex = 0;
             // 
+            // BtnSave
+            // 
+            this.BtnSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.BtnSave.Location = new System.Drawing.Point(401, 396);
+            this.BtnSave.Name = "BtnSave";
+            this.BtnSave.Size = new System.Drawing.Size(135, 28);
+            this.BtnSave.TabIndex = 8;
+            this.BtnSave.Text = "確定";
+            this.BtnSave.UseVisualStyleBackColor = true;
+            this.BtnSave.Click += new System.EventHandler(this.BtnSave_Click);
+            // 
             // IgnoreEditForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(742, 444);
+            this.Controls.Add(this.BtnSave);
             this.Controls.Add(this.groupBox3);
-            this.Controls.Add(this.BtnRefreshPreview);
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.groupBox1);
-            this.Controls.Add(this.BtnClose);
+            this.Controls.Add(this.BtnCancel);
             this.Name = "IgnoreEditForm";
             this.Text = "ファイル無視設定";
             this.Load += new System.EventHandler(this.IgnoreEditForm_Load);
@@ -161,15 +161,15 @@
         }
 
         #endregion
-        private System.Windows.Forms.Button BtnClose;
+        private System.Windows.Forms.Button BtnCancel;
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.GroupBox groupBox2;
         private System.Windows.Forms.TextBox TxtSetting;
         private System.Windows.Forms.ListBox LstPreview;
-        private System.Windows.Forms.Button BtnRefreshPreview;
         private System.Windows.Forms.GroupBox groupBox3;
         private System.Windows.Forms.TextBox TxtBaseDirPath;
         private System.Windows.Forms.ProgressBar ProgPreviewing;
+        private System.Windows.Forms.Button BtnSave;
     }
 }
 
