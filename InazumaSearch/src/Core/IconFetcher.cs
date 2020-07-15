@@ -30,7 +30,7 @@ namespace InazumaSearch.Core
         /// </summary>
         /// <remarks>from http://acha-ya.cocolog-nifty.com/blog/2010/11/1-d49b.html </remarks>
         [DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Auto)]
-        protected static extern int SendMessage(IntPtr hWnd, uint Msg, uint wParam, int lParam);
+        protected static extern int SendMessage(IntPtr hWnd, uint Msg, uint wParam, IntPtr lParam);
 
         public const int LVSIL_NORMAL = 0;
         public const int LVSIL_SMALL = 1;
@@ -146,7 +146,7 @@ namespace InazumaSearch.Core
         /// <remarks>from https://www.ipentec.com/document/document.aspx?page=csharp-create-system-imagelist</remarks>
         public static void SetImageListToListView(ListView targetListView, IntPtr imgListHandle)
         {
-            var hRes = SendMessage(targetListView.Handle, LVM_SETIMAGELIST, LVSIL_SMALL, imgListHandle.ToInt32());
+            var hRes = SendMessage(targetListView.Handle, LVM_SETIMAGELIST, LVSIL_SMALL, imgListHandle);
             if (hRes != 0)
                 Marshal.ThrowExceptionForHR(hRes);
         }
@@ -157,7 +157,7 @@ namespace InazumaSearch.Core
         /// <param name="tvHandle">The window handle of the TreeView control</param>
         public static void SetImageListToTreeView(TreeView targetTreeView, IntPtr imgListHandle)
         {
-            var hRes = SendMessage(targetTreeView.Handle, TVM_SETIMAGELIST, TVSIL_NORMAL, imgListHandle.ToInt32());
+            var hRes = SendMessage(targetTreeView.Handle, TVM_SETIMAGELIST, TVSIL_NORMAL, imgListHandle);
             if (hRes != 0)
                 Marshal.ThrowExceptionForHR(hRes);
         }
