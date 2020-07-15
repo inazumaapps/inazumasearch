@@ -2,13 +2,14 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing.Imaging;
-using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
+using Alphaleonis.Win32.Filesystem;
+using Hnx8.ReadJEnc;
 using Microsoft.WindowsAPICodePack.Shell;
 using Newtonsoft.Json;
 
@@ -33,7 +34,7 @@ namespace InazumaSearch.Core
             {
                 var tg = new TargetFile
                 {
-                    Path = System.IO.Path.GetFullPath(path)
+                    Path = Alphaleonis.Win32.Filesystem.Path.GetFullPath(path)
                 };
                 tg.Key = Util.MakeDocumentFileKey(tg.Path);
                 tg.ThumbnailName = Util.HexDigest(cryptProvider, tg.Key) + ".png";
@@ -287,8 +288,6 @@ namespace InazumaSearch.Core
                     // ディレクトリ内にある対象ファイルを検索
                     try
                     {
-                        var tooLongPathConfirmed = false;
-
                         foreach (var filePath in Directory.GetFiles(targetSubDir))
                         {
                             // ファイルの拡張子を "txt" 形式で取得
@@ -299,19 +298,8 @@ namespace InazumaSearch.Core
                             {
                                 Logger.Trace("FileListUp/Target File Found - {0}", filePath);
 
-                                try
-                                {
-                                    var tg = TargetFile.Make(filePath, cryptProvider);
-                                    currentSubDirTargets.Add(tg);
-                                }
-                                catch (PathTooLongException)
-                                {
-                                    if (!tooLongPathConfirmed)
-                                    {
-                                        Util.ShowWarningMessage($"クロール対象のファイルの中に、260文字を超えるファイルパスのものが含まれています。それらのファイルはクロールできません。\n\n{filePath}");
-                                        tooLongPathConfirmed = true;
-                                    }
-                                }
+                                var tg = TargetFile.Make(filePath, cryptProvider);
+                                currentSubDirTargets.Add(tg);
                                 Thread.Sleep(0); // 他のスレッドに処理を渡す
                             }
                         }
@@ -393,12 +381,8 @@ namespace InazumaSearch.Core
                             {
                                 // テキストの拡張子として登録されている場合は、テキストファイルとして読み込み
                                 body = "";
-                                var fi = new FileInfo(target.Path);
-                                using (var input = new Hnx8.ReadJEnc.FileReader(fi))
-                                {
-                                    var charCode = input.Read(fi);
-                                    body = input.Text;
-                                }
+                                var bytes = File.ReadAllBytes(target.Path);
+                                var charCode = ReadJEnc.JP.GetEncoding(bytes, bytes.Length, out body);
                             }
                             else
                             {
@@ -561,10 +545,6 @@ namespace InazumaSearch.Core
                     {
                         Debug.WriteLine(ex.ToString());
                     }
-                    catch (IOException ex)
-                    {
-                        Debug.WriteLine(ex.ToString());
-                    }
                 }
                 foreach (var subDir in Directory.GetDirectories(folder))
                 {
@@ -574,10 +554,6 @@ namespace InazumaSearch.Core
                         if (aborting) return;
                     }
                     catch (UnauthorizedAccessException ex)
-                    {
-                        Debug.WriteLine(ex.ToString());
-                    }
-                    catch (IOException ex)
                     {
                         Debug.WriteLine(ex.ToString());
                     }
@@ -601,10 +577,6 @@ namespace InazumaSearch.Core
                     {
                         Debug.WriteLine(ex.ToString());
                     }
-                    catch (IOException ex)
-                    {
-                        Debug.WriteLine(ex.ToString());
-                    }
                 }
                 foreach (var subDir in Directory.GetDirectories(folder))
                 {
@@ -614,10 +586,6 @@ namespace InazumaSearch.Core
                         if (aborting) return;
                     }
                     catch (UnauthorizedAccessException ex)
-                    {
-                        Debug.WriteLine(ex.ToString());
-                    }
-                    catch (IOException ex)
                     {
                         Debug.WriteLine(ex.ToString());
                     }
