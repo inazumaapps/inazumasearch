@@ -287,6 +287,8 @@ namespace InazumaSearch.Core
                     // ディレクトリ内にある対象ファイルを検索
                     try
                     {
+                        var tooLongPathConfirmed = false;
+
                         foreach (var filePath in Directory.GetFiles(targetSubDir))
                         {
                             // ファイルの拡張子を "txt" 形式で取得
@@ -297,8 +299,19 @@ namespace InazumaSearch.Core
                             {
                                 Logger.Trace("FileListUp/Target File Found - {0}", filePath);
 
-                                var tg = TargetFile.Make(filePath, cryptProvider);
-                                currentSubDirTargets.Add(tg);
+                                try
+                                {
+                                    var tg = TargetFile.Make(filePath, cryptProvider);
+                                    currentSubDirTargets.Add(tg);
+                                }
+                                catch (PathTooLongException)
+                                {
+                                    if (!tooLongPathConfirmed)
+                                    {
+                                        Util.ShowWarningMessage($"クロール対象のファイルの中に、260文字を超えるファイルパスのものが含まれています。それらのファイルはクロールできません。\n\n{filePath}");
+                                        tooLongPathConfirmed = true;
+                                    }
+                                }
                                 Thread.Sleep(0); // 他のスレッドに処理を渡す
                             }
                         }

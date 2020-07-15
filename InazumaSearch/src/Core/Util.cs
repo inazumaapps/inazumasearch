@@ -57,6 +57,10 @@ namespace InazumaSearch.Core
         {
             MessageBox.Show(owner, message, "情報", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
+        public static void ShowWarningMessage(string message)
+        {
+            MessageBox.Show(message, "警告", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+        }
         public static void ShowErrorMessage(string message)
         {
             MessageBox.Show(message, "エラー", MessageBoxButtons.OK, MessageBoxIcon.Error);
