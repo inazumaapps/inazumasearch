@@ -194,7 +194,7 @@ function displayResultRows_NormalView(getJsonData, g_searchOffset){
         $new_row.find('.document-information-file-updated').text(res.timestamp_updated_caption);
         $new_row.find('.document-information-score').text(res.final_score);
 
-        $new_row.find('.display-highlight-link').attr('data-key', res.key);
+        $new_row.attr('data-key', res.key);
         $new_row.find('.submenu-link').dropdown({ constrainWidth: false, container: $('body').get(0) });
 
         // $new_row.find('.display-similar-documents').attr('data-key', res.key);
@@ -374,35 +374,35 @@ $(function(){
 
 
     $('.modal').modal();
-    $('#SEARCH-RESULT-BODY').on('click', '.display-highlight-link', function(){
-        var key = $(this).attr('data-key');
-        var keyword = $('input[name=keyword]').val();
-        var body = $('input[name=body]').val();
-        asyncApi.getHighlightedBody(key, keyword, body).then(function(resJson){
-            var res = JSON.parse(resJson);
-            if(res !== null){
-                $('.display-highlight-body').html(res.body);
-                $('.body-match-count').text(res.hitCount);
-                $('#DISPLAY-HIGHLIGHT-MODAL').modal('open');
-            } else {
-                api.showErrorMessage("本文にマッチしていません。");
-            }
-        });
-        return false;
-    });
 
     let lastClickedPath;
+    let lastClickedKey;
     $('#SEARCH-RESULT-BODY').on('click', '.submenu-link', function (e) {
         //var instance = M.Dropdown.init(e.target, { constrainWidth: false, container: $('body').get(0) });
         //instance.open();
-        lastClickedPath = $(this).closest('.search-result-row').attr('data-file-path');
-        console.log(lastClickedPath);
+        var $row = $(this).closest('.search-result-row');
+        lastClickedPath = $row.attr('data-file-path');
+        lastClickedKey = $row.attr('data-key');
         $(e.target).closest('.submenu-link').dropdown('open');
         return false;
     });
 
     $('body').on('click', '.ignore-dialog-link', function () {
         api.showIgnoreEditForm(lastClickedPath);
+        return false;
+    });
+    $('body').on('click', '.display-all-body-link', function () {
+        asyncApi.getHighlightedBody(lastClickedKey, g_lastQueryObject.keyword, g_lastQueryObject.body).then(function (resJson) {
+            var res = JSON.parse(resJson);
+            if (res !== null) {
+                $('.display-highlight-body').html(res.body);
+                $('.body-match-count').text(res.hitCount);
+                $('#DISPLAY-HIGHLIGHT-MODAL').modal('open');
+                $('#DISPLAY-HIGHLIGHT-MODAL .modal-content').scrollTop(0); // なぜかopenの後にスクロールを設定しないと、正常にスクロール位置が移動しない
+            } else {
+                api.showErrorMessage("本文にマッチしていません。");
+            }
+        });
         return false;
     });
 

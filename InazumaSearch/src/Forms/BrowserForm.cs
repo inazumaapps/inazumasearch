@@ -340,7 +340,7 @@ namespace InazumaSearch.Forms
                         var segments = new List<Tuple<int, int>>();
                         int? firstMatchInSegment = null;
                         int? lastMatchInSegment = null;
-                        var segmentRange = 2;
+                        var segmentRange = 3;
 
                         for (var i = 0; i < lines.Count; i++)
                         {
@@ -362,7 +362,6 @@ namespace InazumaSearch.Forms
                                 // マッチ情報初期化
                                 lastMatchInSegment = null;
                                 firstMatchInSegment = null;
-                                Debug.WriteLine($"segment: ({segments.Last().Item1}..{segments.Last().Item2})");
                             }
                         }
 
@@ -373,15 +372,13 @@ namespace InazumaSearch.Forms
                             if (start < 0) start = 0;
                             var end = lines.Count - 1;
                             segments.Add(Tuple.Create(start, end));
-
-                            Debug.WriteLine($"segment: ({segments.Last().Item1}..{segments.Last().Item2})");
                         }
 
                         // ハイライトHTMLの抜粋を生成
                         var outLines = new List<string>();
                         foreach (var segment in segments)
                         {
-                            outLines.Add("<div style=\"border: 1px solid #f0f0f0; margin: 1em 0; padding: 1em; font-size: small;\">");
+                            outLines.Add("<div style=\"border: 1px solid silver; margin: 0; padding: 1em; font-size: small;\">");
                             outLines.AddRange(lines.GetRange(segment.Item1, segment.Item2 - segment.Item1 + 1));
                             outLines.Add("</div>");
                         }

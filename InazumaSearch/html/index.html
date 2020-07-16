@@ -257,15 +257,15 @@
 
     <!-- 検索結果サブメニュー（ドロップダウン） -->
     <ul id="dropdown1" class="dropdown-content">
-        <li><a href="#">マッチした箇所を全表示</a></li>
-        <li class="divider" tabindex="-1"></li>
-        <li><a href="#" class="ignore-dialog-link">無視設定</a></li>
+        <li><a href="#" class="display-all-body-link">マッチした箇所を全表示</a></li>
+        <!--<li class="divider" tabindex="-1"></li>
+    <li><a href="#" class="ignore-dialog-link">無視設定</a></li>-->
     </ul>
 
     <!-- Modal Structure -->
     <div id="DISPLAY-HIGHLIGHT-MODAL" class="modal modal-fixed-footer" style="width: 96% !important; height: 96% !important;">
         <div class="modal-content">
-            <p>本文マッチ数: <span class="body-match-count"></span></p>
+            <p>マッチした箇所（本文マッチ数: <span class="body-match-count"></span>）</p>
             <!--<h4>本文</h4>-->
             <pre class="display-highlight-body" style="font-size: small; overflow-y: auto;"></pre>
         </div>
