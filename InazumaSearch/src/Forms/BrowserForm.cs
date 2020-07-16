@@ -332,7 +332,62 @@ namespace InazumaSearch.Forms
                     var searchResult = selectRes.SearchResult;
                     if (searchResult.NHits >= 1)
                     {
-                        var res = new { body = searchResult.Records[0].GetTextValue(expr), hitCount = searchResult.Records[0].GetIntValue(Groonga.VColumn.SCORE) };
+                        // ハイライトHTMLを取得
+                        var html = searchResult.Records[0].GetTextValue(expr);
+
+                        // 行単位で分割し、「ハイライトを含む行数」の前後N行を取得
+                        var lines = html.Split(new[] { "\r\n" }, StringSplitOptions.None).ToList();
+                        var segments = new List<Tuple<int, int>>();
+                        int? firstMatchInSegment = null;
+                        int? lastMatchInSegment = null;
+                        var segmentRange = 2;
+
+                        for (var i = 0; i < lines.Count; i++)
+                        {
+                            var line = lines[i];
+                            if (line.Contains("<span class=\"keyword\">"))
+                            {
+                                firstMatchInSegment = firstMatchInSegment ?? i; // セグメントがまだ開始していなければ開始
+                                lastMatchInSegment = i;
+                            }
+
+                            // 最後にハイライトが含まれていた行から、規定行数以上離れていれば、セグメント確定
+                            if (lastMatchInSegment != null && i > lastMatchInSegment + segmentRange)
+                            {
+                                var start = firstMatchInSegment.Value - segmentRange;
+                                if (start < 0) start = 0;
+                                var end = lastMatchInSegment.Value + segmentRange;
+                                segments.Add(Tuple.Create(start, end));
+
+                                // マッチ情報初期化
+                                lastMatchInSegment = null;
+                                firstMatchInSegment = null;
+                                Debug.WriteLine($"segment: ({segments.Last().Item1}..{segments.Last().Item2})");
+                            }
+                        }
+
+                        // ループ終了時に終了していない情報があれば、同様にセグメント確定
+                        if (lastMatchInSegment != null)
+                        {
+                            var start = firstMatchInSegment.Value - segmentRange;
+                            if (start < 0) start = 0;
+                            var end = lines.Count - 1;
+                            segments.Add(Tuple.Create(start, end));
+
+                            Debug.WriteLine($"segment: ({segments.Last().Item1}..{segments.Last().Item2})");
+                        }
+
+                        // ハイライトHTMLの抜粋を生成
+                        var outLines = new List<string>();
+                        foreach (var segment in segments)
+                        {
+                            outLines.Add("<div style=\"border: 1px solid #f0f0f0; margin: 1em 0; padding: 1em; font-size: small;\">");
+                            outLines.AddRange(lines.GetRange(segment.Item1, segment.Item2 - segment.Item1 + 1));
+                            outLines.Add("</div>");
+                        }
+
+                        // ハイライトされたHTML
+                        var res = new { body = string.Join("\r\n", outLines), hitCount = searchResult.Records[0].GetIntValue(Groonga.VColumn.SCORE) };
                         return JsonConvert.SerializeObject(res);
                     }
                     else
