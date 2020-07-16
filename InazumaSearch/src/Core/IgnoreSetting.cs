@@ -53,7 +53,7 @@ namespace InazumaSearch
 
         public IgnoreSetting(string dirPath)
         {
-            DirPathLower = dirPath.ToLower().TrimEnd('\\'); // 正規化のため、最後に\マークがついていれば取り除く
+            DirPathLower = dirPath.ToLower().Replace('/', '\\').TrimEnd('\\'); // 正規化のため、/マークは\に置換。また、最後に\マークがついていれば取り除く
         }
 
         /// <summary>
@@ -96,22 +96,25 @@ namespace InazumaSearch
         {
             var pattern = new Pattern();
 
-            // パターンの末尾が "/" で終わるならば、ディレクトリのみを対象とする
-            if (patternStr.EndsWith("/"))
+            // 正規化
+            patternStr = patternStr.Replace('/', '\\');
+
+            // パターンの末尾が "\" で終わるならば、ディレクトリのみを対象とする
+            if (patternStr.EndsWith("\\"))
             {
                 pattern.DirectoryOnly = true;
-                patternStr = patternStr.TrimEnd('/');
+                patternStr = patternStr.TrimEnd('\\');
             }
 
-            // パターンが末尾以外に "/" を含むならば、.inazumasetting 直下からの相対パスとして適用
+            // パターンが末尾以外に "\" を含むならば、.inazumasetting 直下からの相対パスとして適用
             // 含まないならば、 サブフォルダ内も含めた全ファイルに適用
-            if (patternStr.Contains("/"))
+            if (patternStr.Contains("\\"))
             {
                 pattern.Relative = true;
             }
 
-            // 先頭の "/" は削除 (ルートパスとして扱わない)
-            if (patternStr.StartsWith("/"))
+            // 先頭の "\\" は削除 (ルートパスとして扱わない)
+            if (patternStr.StartsWith("\\"))
             {
                 patternStr = patternStr.Substring(1);
             }
@@ -133,11 +136,6 @@ namespace InazumaSearch
                     //*は、0文字以上の任意の文字列（\マーク除く）を示す正規表現に変換
                     return @"[^\\]*";
                 }
-                else if (s.Equals("/"))
-                {
-                    //スラッシュは\マーク扱い
-                    return Regex.Escape("\\");
-                }
                 else
                 {
                     //上記以外はエスケープする
@@ -153,7 +151,7 @@ namespace InazumaSearch
 
                 if (pattern.DirectoryOnly)
                 {
-                    // フォルダを対象とするパターン（末尾が "/" ）の場合は、ファイルパスに対して末尾にマッチしてはならない
+                    // フォルダを対象とするパターン（末尾が "\" ）の場合は、ファイルパスに対して末尾にマッチしてはならない
                     pattern.FileRegex = new Regex($@"^{regexPattern}\\", RegexOptions.Compiled | RegexOptions.IgnoreCase);
                 }
                 else
@@ -168,7 +166,7 @@ namespace InazumaSearch
 
                 if (pattern.DirectoryOnly)
                 {
-                    // フォルダを対象とするパターン（末尾が "/" ）の場合は、ファイルパスに対して末尾にマッチしてはならない
+                    // フォルダを対象とするパターン（末尾が "\" ）の場合は、ファイルパスに対して末尾にマッチしてはならない
                     pattern.FileRegex = new Regex($@"(?:^|\\){regexPattern}\\", RegexOptions.Compiled | RegexOptions.IgnoreCase);
                 }
                 else

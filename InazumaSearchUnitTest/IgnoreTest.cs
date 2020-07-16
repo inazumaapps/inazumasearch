@@ -64,6 +64,7 @@ namespace InazumaSearchUnitTest
                 dataSet.AddPattern("document", false);
 
                 dataSet.AddPattern("/dir1/dir2/file1", true);
+                dataSet.AddPattern("\\dir1\\dir2\\file1", true); // \マークパターン
                 dataSet.AddPattern("dir1/dir2/file1", true);
                 dataSet.AddPattern("/dir1/dir2/file*", true);
                 dataSet.AddPattern("/dir1/dir2/file1/", false);
