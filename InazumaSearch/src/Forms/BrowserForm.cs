@@ -163,6 +163,29 @@ namespace InazumaSearch.Forms
                 });
             }
 
+
+            public void ShowIgnoreEditForm(string path)
+            {
+                // 無視設定フォームを開く
+                OwnerForm.InvokeOnUIThread((form) =>
+                {
+                    // 登録された対象フォルダのリストを取得し、パスが長い順に並べておく
+                    var folders = App.UserSettings.TargetFolders.OrderByDescending(folder => folder.Path.Length);
+
+                    // クリックしたファイルについて、どの対象フォルダに存在するかを特定（最もパスが長い＝階層が深いものを優先）
+                    var dirPath = Path.GetDirectoryName(path);
+                    var baseDirPath = folders.First(folder => dirPath.ToLower().StartsWith(folder.Path.ToLower())).Path;
+
+                    // 無視設定ダイアログを開く
+                    var relPath = path.Substring(baseDirPath.Length + 1);
+                    var defaultPattern = "/" + relPath.Replace('\\', '/');
+                    var dialog = new IgnoreEditForm(baseDirPath, defaultPattern);
+                    dialog.ShowDialog(form);
+                });
+
+            }
+
+
             public void UpdateFolderLabel(string path, string label)
             {
 

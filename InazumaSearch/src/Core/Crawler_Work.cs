@@ -274,7 +274,7 @@ namespace InazumaSearch.Core
                     }
 
                     // 無視設定に合致するフォルダはスキップ
-                    if (ignoreSettings.Any(s => s.IsMatch(targetSubDir)))
+                    if (ignoreSettings.Any(s => s.IsMatch(targetSubDir, true)))
                     {
                         Logger.Trace("Ignore directory - {0}", targetSubDir);
                         cur += SubDirWeight;
@@ -314,7 +314,7 @@ namespace InazumaSearch.Core
                     {
                         currentSubDirTargets = currentSubDirTargets.Where(target =>
                         {
-                            if (ignore.IsMatch(target.Path))
+                            if (ignore.IsMatch(target.Path, false))
                             {
                                 Logger.Trace("Ignore file - {0}", target.Path);
                                 return false;

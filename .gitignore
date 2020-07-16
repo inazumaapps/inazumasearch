@@ -8,3 +8,4 @@ obj
 /releases
 *.csproj.user
 packages
+/InazumaSearchUnitTest/bin/

@@ -159,6 +159,7 @@
             this.ObjName,
             this.ObjSize});
             this.LsvObjectList.GridLines = true;
+            this.LsvObjectList.HideSelection = false;
             this.LsvObjectList.Location = new System.Drawing.Point(750, 138);
             this.LsvObjectList.Name = "LsvObjectList";
             this.LsvObjectList.Size = new System.Drawing.Size(401, 275);
@@ -226,6 +227,7 @@
             // 
             // LstIcons
             // 
+            this.LstIcons.HideSelection = false;
             this.LstIcons.Location = new System.Drawing.Point(23, 402);
             this.LstIcons.Name = "LstIcons";
             this.LstIcons.Size = new System.Drawing.Size(497, 97);
