@@ -36,7 +36,8 @@ namespace InazumaSearch.Forms
         {
             var ignorePath = Path.Combine(TxtBaseDirPath.Text, ".inazumaignore");
             List<string> origLines = null;
-            if (File.Exists(ignorePath)) {
+            if (File.Exists(ignorePath))
+            {
                 origLines = File.ReadAllLines(ignorePath).ToList();
             }
             var inputLines = TxtSetting.Text.Replace("\r", "").Split('\n');

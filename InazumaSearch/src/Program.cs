@@ -1,6 +1,6 @@
 ﻿using System;
-using Alphaleonis.Win32.Filesystem;
 using System.Linq;
+using Alphaleonis.Win32.Filesystem;
 
 namespace InazumaSearch
 {

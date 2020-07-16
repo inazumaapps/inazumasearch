@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using Alphaleonis.Win32.Filesystem;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Alphaleonis.Win32.Filesystem;
 using CommandLine;
 using CommandLine.Text;
 using InazumaSearch.Forms;

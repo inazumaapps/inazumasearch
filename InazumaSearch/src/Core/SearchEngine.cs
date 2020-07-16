@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using Alphaleonis.Win32.Filesystem;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using Alphaleonis.Win32.Filesystem;
 using InazumaSearch.Groonga.Exceptions;
 
 namespace InazumaSearch.Core

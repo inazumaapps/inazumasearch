@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using Alphaleonis.Win32.Filesystem;
 using System.Linq;
 using System.Net;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using Alphaleonis.Win32.Filesystem;
 using CefSharp;
 
 namespace InazumaSearch

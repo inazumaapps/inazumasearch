@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
-using Alphaleonis.Win32.Filesystem;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Alphaleonis.Win32.Filesystem;
 using InazumaSearch.Core;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
