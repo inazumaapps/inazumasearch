@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.IO;
+using Alphaleonis.Win32.Filesystem;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -160,21 +160,21 @@ namespace InazumaSearch.Core
             {
 
                 // ファイル監視オブジェクトを生成
-                var watchers = new List<FileSystemWatcher>();
+                var watchers = new List<System.IO.FileSystemWatcher>();
                 Logger.Info("常駐クロール開始");
                 try
                 {
                     foreach (var targetFolder in App.UserSettings.TargetFolders)
                     {
-                        var watcher = new FileSystemWatcher(targetFolder.Path)
+                        var watcher = new System.IO.FileSystemWatcher(targetFolder.Path)
                         {
                             NotifyFilter =
-                            NotifyFilters.LastWrite |
-                            NotifyFilters.DirectoryName |
-                            NotifyFilters.FileName |
-                            NotifyFilters.Security |
-                            NotifyFilters.Size |
-                            NotifyFilters.Attributes,
+                            System.IO.NotifyFilters.LastWrite |
+                            System.IO.NotifyFilters.DirectoryName |
+                            System.IO.NotifyFilters.FileName |
+                            System.IO.NotifyFilters.Security |
+                            System.IO.NotifyFilters.Size |
+                            System.IO.NotifyFilters.Attributes,
                             Filter = "" // すべてのファイルが対象
                         };
 
@@ -299,14 +299,14 @@ namespace InazumaSearch.Core
             }, CancellationTokenSource.Token, TaskCreationOptions.LongRunning, TaskScheduler.Default);
         }
 
-        private void Watcher_Deleted(object sender, FileSystemEventArgs e)
+        private void Watcher_Deleted(object sender, System.IO.FileSystemEventArgs e)
         {
             Logger.Trace("[FileSystemWatcher] Deleted - {0}", e.FullPath);
             var targetType = (Directory.Exists(e.FullPath) ? FileSystemEventTargetType.FOLDER : FileSystemEventTargetType.FILE);
             FileSystemEventQueue.Add(new FileSystemEvent() { Type = FileSystemEventType.DELETE, Path = e.FullPath, TargetType = targetType });
         }
 
-        private void Watcher_Renamed(object sender, RenamedEventArgs e)
+        private void Watcher_Renamed(object sender, System.IO.RenamedEventArgs e)
         {
             Logger.Trace("[FileSystemWatcher] Renamed - {0} -> {1}", e.OldFullPath, e.FullPath);
             var targetType = (Directory.Exists(e.FullPath) ? FileSystemEventTargetType.FOLDER : FileSystemEventTargetType.FILE);
@@ -314,14 +314,14 @@ namespace InazumaSearch.Core
             FileSystemEventQueue.Add(new FileSystemEvent() { Type = FileSystemEventType.UPDATE, Path = e.FullPath, TargetType = targetType });
         }
 
-        private void Watcher_Changed(object sender, FileSystemEventArgs e)
+        private void Watcher_Changed(object sender, System.IO.FileSystemEventArgs e)
         {
             Logger.Trace("[FileSystemWatcher] Changed - {0}", e.FullPath);
             var targetType = (Directory.Exists(e.FullPath) ? FileSystemEventTargetType.FOLDER : FileSystemEventTargetType.FILE);
             FileSystemEventQueue.Add(new FileSystemEvent() { Type = FileSystemEventType.UPDATE, Path = e.FullPath, TargetType = targetType });
         }
 
-        private void Watcher_Created(object sender, FileSystemEventArgs e)
+        private void Watcher_Created(object sender, System.IO.FileSystemEventArgs e)
         {
             Logger.Trace("[FileSystemWatcher] Created - {0}", e.FullPath);
             var targetType = (Directory.Exists(e.FullPath) ? FileSystemEventTargetType.FOLDER : FileSystemEventTargetType.FILE);

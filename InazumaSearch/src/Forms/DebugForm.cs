@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
-using System.IO;
+using Alphaleonis.Win32.Filesystem;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -40,22 +40,22 @@ namespace InazumaSearch.Forms
 
         public void CleanDBFiles()
         {
-            if (!System.IO.Directory.Exists(Application.GM.DBDirPath))
+            if (!Directory.Exists(Application.GM.DBDirPath))
             {
-                System.IO.Directory.CreateDirectory(Application.GM.DBDirPath);
+                Directory.CreateDirectory(Application.GM.DBDirPath);
             }
 
-            if (System.IO.File.Exists(Application.GM.DBPath))
+            if (File.Exists(Application.GM.DBPath))
             {
-                foreach (var path in System.IO.Directory.GetFiles(Application.GM.DBDirPath))
+                foreach (var path in Directory.GetFiles(Application.GM.DBDirPath))
                 {
-                    if (System.IO.Directory.Exists(path))
+                    if (Directory.Exists(path))
                     {
-                        System.IO.Directory.Delete(path, true);
+                        Directory.Delete(path, true);
                     }
                     else
                     {
-                        System.IO.File.Delete(path);
+                        File.Delete(path);
                     }
                 }
             }

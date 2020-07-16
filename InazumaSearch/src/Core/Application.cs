@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.IO;
+using Alphaleonis.Win32.Filesystem;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -567,7 +567,7 @@ namespace InazumaSearch.Core
                 "\"" + waitTime.ToString() + "\" " +
                 Environment.CommandLine;
             //再起動用アプリケーションのパスを取得する
-            var restartPath = System.IO.Path.Combine(
+            var restartPath = Path.Combine(
                 System.Windows.Forms.Application.StartupPath, "restart.exe");
             //再起動用アプリケーションを起動する
             System.Diagnostics.Process.Start(restartPath, cmd);
