@@ -108,4 +108,11 @@ namespace InazumaSearch.Core
         public const string SearchEngine = "SearchEngine";
     }
 
+    public class SystemConst
+    {
+        /// <summary>
+        /// Windowsにおける通常の最大パス長 (このパスを超えると、他アプリケーションで正しく処理できない場合がある)
+        /// </summary>
+        public const int WindowsMaxPath = 260 - 1; // NULL文字
+    }
 }

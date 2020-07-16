@@ -808,6 +808,16 @@ namespace InazumaSearch.Forms
                 );
                 return;
             }
+
+            // ファイルパスがWindowsの標準最大長を超えている場合は確認
+            if (path.Length > SystemConst.WindowsMaxPath)
+            {
+                if (!Util.Confirm($"ファイルパスが{SystemConst.WindowsMaxPath}文字を越えているため、このファイルを正しく開けない可能性があります。\n（エクスプローラを含む多くのアプリケーションでは、{SystemConst.WindowsMaxPath}文字を超えるパスのファイルを正しく扱えません）\n\n開いてもよろしいですか？"))
+                {
+                    return;
+                }
+            }
+
             Process.Start(path);
             var valueDict = new Dictionary<string, object>
             {
