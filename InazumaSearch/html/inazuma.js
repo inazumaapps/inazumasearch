@@ -38,6 +38,9 @@ function executeSearch(queryObject, selectedFormatName = null, selectedFolderLab
     g_lastSearchOffset = 0;
     g_searchFinished = false;
 
+    // 検索を実行した場合は、更新表示を隠す
+    $('#UPDATE-LINK').hide();
+
     // 既存の検索結果行を削除
     $('.generated-search-result-row').remove();
 
@@ -403,6 +406,11 @@ $(function(){
                 api.showErrorMessage("本文にマッチしていません。");
             }
         });
+        return false;
+    });
+
+    $('#UPDATE-LINK').click(function () {
+        api.showUpdateForm();
         return false;
     });
 

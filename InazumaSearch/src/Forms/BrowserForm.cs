@@ -27,7 +27,7 @@ namespace InazumaSearch.Forms
 {
     public partial class BrowserForm : Form
     {
-        public ChromiumWebBrowser chromeBrowser { get; set; }
+        public ChromiumWebBrowser ChromeBrowser { get; set; }
         public Core.Application App { get; set; }
         public DBStateApi DBState { get; set; }
         public CefApi Api { get; set; }
@@ -61,6 +61,11 @@ namespace InazumaSearch.Forms
             public bool IsPortableMode()
             {
                 return App.PortableMode;
+            }
+
+            public bool IsUpdateCheckFailed()
+            {
+                return !ISAutoUpdater.UpdateCheckFinished;
             }
 
             public string GetUserSettings()
@@ -185,6 +190,15 @@ namespace InazumaSearch.Forms
 
             }
 
+            public void ShowUpdateForm()
+            {
+                // 無視設定フォームを開く
+                OwnerForm.InvokeOnUIThread((form) =>
+                {
+                    ISAutoUpdater.ShowUpdateForm();
+                });
+
+            }
 
             public void UpdateFolderLabel(string path, string label)
             {
@@ -530,25 +544,25 @@ namespace InazumaSearch.Forms
             }
 
             // Create a browser component
-            chromeBrowser = new ChromiumWebBrowser(Path.Combine(htmlDirPath, "index.html"));
-            chromeBrowser.BrowserSettings.AcceptLanguageList = "ja-JP";
-            chromeBrowser.BrowserSettings.WebSecurity = CefState.Disabled;
+            ChromeBrowser = new ChromiumWebBrowser(Path.Combine(htmlDirPath, "index.html"));
+            ChromeBrowser.BrowserSettings.AcceptLanguageList = "ja-JP";
+            ChromeBrowser.BrowserSettings.WebSecurity = CefState.Disabled;
 
             // Add it to the form and fill it to the form window.
-            Controls.Add(chromeBrowser);
-            chromeBrowser.Dock = DockStyle.Fill;
+            Controls.Add(ChromeBrowser);
+            ChromeBrowser.Dock = DockStyle.Fill;
 
             Api = new CefApi();
-            chromeBrowser.JavascriptObjectRepository.Register("api", Api, isAsync: false);
-            AsyncApi = new CefAsyncApi(chromeBrowser);
-            chromeBrowser.JavascriptObjectRepository.Register("asyncApi", AsyncApi, isAsync: true);
+            ChromeBrowser.JavascriptObjectRepository.Register("api", Api, isAsync: false);
+            AsyncApi = new CefAsyncApi(ChromeBrowser);
+            ChromeBrowser.JavascriptObjectRepository.Register("asyncApi", AsyncApi, isAsync: true);
             DBState = new DBStateApi();
-            chromeBrowser.JavascriptObjectRepository.Register("dbState", DBState, isAsync: false);
+            ChromeBrowser.JavascriptObjectRepository.Register("dbState", DBState, isAsync: false);
 
-            chromeBrowser.IsBrowserInitializedChanged += ChromeBrowser_IsBrowserInitializedChanged;
-            chromeBrowser.FrameLoadStart += ChromeBrowser_FrameLoadStart;
+            ChromeBrowser.IsBrowserInitializedChanged += ChromeBrowser_IsBrowserInitializedChanged;
+            ChromeBrowser.FrameLoadStart += ChromeBrowser_FrameLoadStart;
 
-            chromeBrowser.KeyDown += BrowserForm_KeyDown;
+            ChromeBrowser.KeyDown += BrowserForm_KeyDown;
 
         }
 
@@ -579,6 +593,12 @@ namespace InazumaSearch.Forms
                     }
                 }
 
+                // 更新の有無をチェック
+                ISAutoUpdater.Check(App.PortableMode, (args) =>
+                {
+                    var msg = $"新しいバージョン ({args.CurrentVersion.TrimEnd('0').TrimEnd('.')}) に更新可能です";
+                    ChromeBrowser.EvaluateScriptAsync($"$('#UPDATE-LINK .message').text('{msg}'); $('#UPDATE-LINK').show();");
+                });
             }
         }
 
@@ -589,7 +609,7 @@ namespace InazumaSearch.Forms
             Api.OwnerForm = this;
             AsyncApi.App = App;
             AsyncApi.OwnerForm = this;
-            chromeBrowser.MenuHandler = new MenuHandler(this, App);
+            ChromeBrowser.MenuHandler = new MenuHandler(this, App);
 
             // フォルダ選択ダイアログの初期パスを設定
             //DlgDirectorySelect.SelectedPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
@@ -754,11 +774,11 @@ namespace InazumaSearch.Forms
                 }
             }
 
-            chromeBrowser.EvaluateScriptAsync("$('#CRAWL-START').addClass('disabled');");
+            ChromeBrowser.EvaluateScriptAsync("$('#CRAWL-START').addClass('disabled');");
 
             var f = new CrawlProgressForm(App, () =>
             {
-                chromeBrowser.EvaluateScriptAsync("$('#CRAWL-START').removeClass('disabled');");
+                ChromeBrowser.EvaluateScriptAsync("$('#CRAWL-START').removeClass('disabled');");
             });
             f.Show(this);
         }

@@ -10,6 +10,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Alphaleonis.Win32.Filesystem;
+using AutoUpdaterDotNET;
 using InazumaSearch.Core;
 using Microsoft.WindowsAPICodePack.Shell;
 
@@ -125,6 +126,7 @@ namespace InazumaSearch.Forms
                 var size = new FileInfo(fullPath).Length;
                 LsvObjectList.Items.Add(new ListViewItem(new string[] { objPair.Key, Util.FormatFileSizeByMB(size) }));
             }
+
         }
 
         private void BtnGetExcelText_Click(object sender, EventArgs e)
@@ -247,6 +249,12 @@ namespace InazumaSearch.Forms
         private void BtnOpenExcelFile_Click(object sender, EventArgs e)
         {
             //ExcelManipulator.OpenFile(TxtPath.Text);
+        }
+
+        private void BtnAutoUpdate_Click(object sender, EventArgs e)
+        {
+
+
         }
     }
 }
