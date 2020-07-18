@@ -191,6 +191,7 @@
   <ItemGroup>
     <Compile Include="src\ApplicationContext.cs" />
     <Compile Include="src\Core\Application.cs" />
+    <Compile Include="src\Core\ISAutoUpdater.cs" />
     <Compile Include="src\Core\CommandLineOptions.cs" />
     <Compile Include="src\Core\Crawler_Work.cs" />
     <Compile Include="src\Core\ExcelManipulator.cs" />

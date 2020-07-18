@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="ja">
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
@@ -23,71 +23,78 @@
   </nav>
 
     <div class="container">
-    <div class="section">
-  <div class="progress" id="PROGRESS-BAR">
-      <div class="indeterminate"></div>
-  </div>
+        <div class="section">
+            <div class="progress" id="PROGRESS-BAR">
+                <div class="indeterminate"></div>
+            </div>
 
-<h5>検索対象フォルダ</h5>
-<ul class="collection droppable">
-  <li class="collection-item avatar folder-item cloning-base">
-    <div class="row">
-      <div class="col s8">
-          <i class="material-icons circle yellow darken-3">folder</i>
-          <span class="title path"></span>
-           <p style="font-size: smaller; color: gray">登録済み文書数: <span class="file-count">0</span></p>
-      
-
-      </div>
-      <div class="col s3 input-field after-tooltipped folder-label-col">
-              <input type="text" class="validate" style="margin: 0;">
-              <label>ラベル</label>
-              <!-- <a href="#" ><i class="material-icons" style="font-size: 20px;">live_help</i></a> -->
-      </div>
-      <div class="col s1">
-          <a href="#!" class="secondary-content delete-link after-tooltipped" title="削除"><i class="material-icons">delete</i></a>
-
-      </div>
-    </div>
-  </li>
-  <li class="collection-item avatar">
-  <a class="waves-effect waves-light btn add-folder-select"><i class="material-icons left">add</i>検索対象フォルダを追加</a>
-    <!--<span class="title" style="font-size: smaller; color: gray">　　(ここにフォルダをドラッグ＆ドロップして追加することも可能です)</span>-->
-  </li>
-</ul>
-
-<p class="subtext">※変更の内容は、次のクロール実行まで反映されません。<br>
-※フォルダにラベルを付けると、検索実行後にラベルによる絞り込みを行うことができるようになります。</p>
-
-<h5 style="margin-top: 2em;">その他</h5>
-
-<p>
-  <label>
-    <input type="checkbox" class="filled-in" id="ALWAYS-CRAWL-MODE" />
-    <span>常駐クロールモードを有効にする</span>
-  </label>
-  <br>
-  <label style="margin-left: 2em;" id="STARTUP-AREA">
-    <input type="checkbox" class="filled-in" id="STARTUP" />
-    <span>Windowsログイン時に自動でクロール開始 (現在ログイン中のWindowsユーザーのみ)</span>
-  </label>
-</p>
-<p class="subtext">※常駐クロールモードでは、検索ウインドウを閉じてもアプリを常駐させ、常に少しずつクロールを実行します。<br>
-  また、起動中にファイルの変更があれば、すぐにそのファイルを登録します。</p>
+            <h5>検索対象フォルダ</h5>
+            <ul class="collection droppable">
+                <li class="collection-item avatar folder-item cloning-base">
+                    <div class="row">
+                        <div class="col s8">
+                            <i class="material-icons circle yellow darken-3">folder</i>
+                            <span class="title path"></span>
+                            <p style="font-size: smaller; color: gray">登録済み文書数: <span class="file-count">0</span></p>
 
 
-<p style="text-align: right;">
-    <a href="#" id="DIPSW-LINK"><i class="material-icons" style="vertical-align: middle; font-size: 1.5rem">settings</i> 詳細設定と特殊機能</a>
-</p>
-<p style="text-align: right;">
-    <a href="#" id="ABOUT-MODAL-TRIGGER"><i class="material-icons" style="vertical-align: middle; font-size: 1.5rem">info_outline</i> Inazuma Searchについて</a>
-</p>
+                        </div>
+                        <div class="col s3 input-field after-tooltipped folder-label-col">
+                            <input type="text" class="validate" style="margin: 0;">
+                            <label>ラベル</label>
+                            <!-- <a href="#" ><i class="material-icons" style="font-size: 20px;">live_help</i></a> -->
+                        </div>
+                        <div class="col s1">
+                            <a href="#!" class="secondary-content delete-link after-tooltipped" title="削除"><i class="material-icons">delete</i></a>
 
-<!--<p><button class="btn waves-effect waves-light" id="SAVE-BUTTON"><i class="material-icons left">save</i>設定を保存</button></p>-->
-<!-- </div> --><!-- / #TAB-SEARCH-RESULT -->
+                        </div>
+                    </div>
+                </li>
+                <li class="collection-item avatar">
+                    <a class="waves-effect waves-light btn add-folder-select"><i class="material-icons left">add</i>検索対象フォルダを追加</a>
+                    <!--<span class="title" style="font-size: smaller; color: gray">　　(ここにフォルダをドラッグ＆ドロップして追加することも可能です)</span>-->
+                </li>
+            </ul>
 
-<!-- </div> --><!-- /tab-container-row -->
-  </div><!-- /.section -->
+            <p class="subtext">
+                ※変更の内容は、次のクロール実行まで反映されません。<br>
+                ※フォルダにラベルを付けると、検索実行後にラベルによる絞り込みを行うことができるようになります。
+            </p>
+
+            <h5 style="margin-top: 2em;">その他</h5>
+
+            <p>
+                <label>
+                    <input type="checkbox" class="filled-in" id="ALWAYS-CRAWL-MODE" />
+                    <span>常駐クロールモードを有効にする</span>
+                </label>
+                <br>
+                <label style="margin-left: 2em;" id="STARTUP-AREA">
+                    <input type="checkbox" class="filled-in" id="STARTUP" />
+                    <span>Windowsログイン時に自動でクロール開始 (現在ログイン中のWindowsユーザーのみ)</span>
+                </label>
+            </p>
+            <p class="subtext">
+                ※常駐クロールモードでは、検索ウインドウを閉じてもアプリを常駐させ、常に少しずつクロールを実行します。<br>
+                また、起動中にファイルの変更があれば、すぐにそのファイルを登録します。
+            </p>
+
+
+            <p style="text-align: right;">
+                <a href="#" id="DIPSW-LINK"><i class="material-icons" style="vertical-align: middle; font-size: 1.5rem">settings</i> 詳細設定と特殊機能</a>
+            </p>
+            <p style="text-align: right;">
+                <a href="#" id="ABOUT-MODAL-TRIGGER"><i class="material-icons" style="vertical-align: middle; font-size: 1.5rem">info_outline</i> Inazuma Searchについて</a>
+            </p>
+            <p style="text-align: right; display: none;" id="UPDATE-CHECK-ERROR-MESSAGE">
+                ×アップデートの自動確認を行えませんでした
+            </p>
+
+
+            <!--<p><button class="btn waves-effect waves-light" id="SAVE-BUTTON"><i class="material-icons left">save</i>設定を保存</button></p>-->
+            <!-- </div> --><!-- / #TAB-SEARCH-RESULT -->
+            <!-- </div> --><!-- /tab-container-row -->
+        </div><!-- /.section -->
 </div><!-- / .container -->
 <!-- <div id="FOLDER-LABEL-HELP">
   <div>
@@ -115,70 +122,92 @@
 </ul>
             <h6 style="margin-top: 3rem;">ライセンス情報</h6>
             <ul class="collection">
-                <li class="collection-item">全文検索エンジン: Groonga (by Groonga Project)<br />
+                <li class="collection-item">
+                    全文検索エンジン: Groonga (by Groonga Project)<br />
                     <a href="http://groonga.org/ja/" class="external-link">http://groonga.org/ja/</a><br />
                     ライセンス: <a href="https://ja.wikipedia.org/wiki/MIT_License" class="external-link">MIT</a>
                 </li>
-                <li class="collection-item">テキストコンバータ: xdoc2txt (by hishida)<br />
+                <li class="collection-item">
+                    テキストコンバータ: xdoc2txt (by hishida)<br />
                     <a href="http://ebstudio.info/home/xdoc2txt.html" class="external-link">http://ebstudio.info/home/xdoc2txt.html</a><br />
                     ライセンス: <a href="https://ja.wikipedia.org/wiki/MIT_License" class="external-link">配布サイトを参照</a>
                 </li>
-                <li class="collection-item">ブラウザコントロール: Chromium &amp; CefSharp (by the Chromium Authors and the CefSharp Authors.)<br>
+                <li class="collection-item">
+                    ブラウザコントロール: Chromium &amp; CefSharp (by the Chromium Authors and the CefSharp Authors.)<br>
                     <a href="http://cefsharp.github.io/" class="external-link">http://cefsharp.github.io/</a><br />
                     ライセンス: <a href="https://ja.wikipedia.org/wiki/BSDライセンス" class="external-link">修正BSD</a>
                 </li>
-                <li class="collection-item">JSONシリアライザ: Json.NET (by Newtonsoft)<br>
+                <li class="collection-item">
+                    JSONシリアライザ: Json.NET (by Newtonsoft)<br>
                     <a href="https://www.newtonsoft.com/json" class="external-link">https://www.newtonsoft.com/json</a><br />
                     ライセンス: <a href="https://ja.wikipedia.org/wiki/MIT_License" class="external-link">MIT</a>
                 </li>
-                <li class="collection-item">ログライブラリ: NLog (by Jaroslaw Kowalski, Kim Christensen, Julian Verdurmen)<br>
+                <li class="collection-item">
+                    ログライブラリ: NLog (by Jaroslaw Kowalski, Kim Christensen, Julian Verdurmen)<br>
                     <a href="https://nlog-project.org/" class="external-link">https://nlog-project.org/</a><br />
                     ライセンス: <a href="https://ja.wikipedia.org/wiki/BSDライセンス" class="external-link">修正BSD</a>
                 </li>
-                <li class="collection-item">コマンドラインパーサ: CommandLineParser (by Giacomo Stelluti Scala and Contributors)<br>
+                <li class="collection-item">
+                    コマンドラインパーサ: CommandLineParser (by Giacomo Stelluti Scala and Contributors)<br>
                     <a href="https://github.com/commandlineparser/commandline" class="external-link">https://github.com/commandlineparser/commandline</a><br />
                     ライセンス: <a href="https://ja.wikipedia.org/wiki/MIT_License" class="external-link">MIT</a>
                 </li>
-                <li class="collection-item">文字コード種類自動判別ライブラリ: ReadJEnc (by hnx8)<br>
+                <li class="collection-item">
+                    文字コード種類自動判別ライブラリ: ReadJEnc (by hnx8)<br>
                     <a href="https://github.com/hnx8/ReadJEnc" class="external-link">https://github.com/hnx8/ReadJEnc</a><br />
                     ライセンス: <a href="https://ja.wikipedia.org/wiki/MIT_License" class="external-link">MIT</a>
                 </li>
-                <li class="collection-item">セマンティックバージョニング実装: Semver (by Max Hauser)<br>
+                <li class="collection-item">
+                    セマンティックバージョニング実装: Semver (by Max Hauser)<br>
                     <a href="https://github.com/maxhauser/semver" class="external-link">https://github.com/maxhauser/semver</a><br />
                     ライセンス: <a href="https://ja.wikipedia.org/wiki/MIT_License" class="external-link">MIT</a>
                 </li>
-                <li class="collection-item">ライブラリ: Windows API CodePack (by Microsoft)<br>
+                <li class="collection-item">
+                    自動更新ライブラリ: AutoUpdater.NET (by RBSoft)<br>
+                    <a href="https://github.com/ravibpatel/AutoUpdater.NET" class="external-link">https://github.com/ravibpatel/AutoUpdater.NET</a><br />
+                    ライセンス: <a href="https://ja.wikipedia.org/wiki/MIT_License" class="external-link">MIT</a>
+                </li>
+                <li class="collection-item">
+                    ライブラリ: Windows API CodePack (by Microsoft)<br>
                     ライセンス: <a href="https://github.com/aybe/Windows-API-Code-Pack-1.1/blob/master/LICENCE" class="external-link">Windows API CodePackの独自ライセンス</a>
                 </li>
-                <li class="collection-item">アイコン: Bitsies! (by recep kütük)<br>
+                <li class="collection-item">
+                    アイコン: Bitsies! (by recep kütük)<br>
                     <a href="https://www.recepkutuk.com/bitsies/" class="external-link">https://www.recepkutuk.com/bitsies/</a><br />
                     ライセンス: <a href="https://creativecommons.org/licenses/by/4.0/deed.ja" class="external-link">クリエイティブ・コモンズ 表示</a>
                 </li>
-                <li class="collection-item">CSSフレームワーク: Materialize (by Materialize)<br />
+                <li class="collection-item">
+                    CSSフレームワーク: Materialize (by Materialize)<br />
                     <a href="http://materializecss.com/" class="external-link">http://materializecss.com/</a><br />
                     ライセンス: <a href="https://ja.wikipedia.org/wiki/MIT_License" class="external-link">MIT</a>
                 </li>
-                <li class="collection-item">JavaScriptライブラリ: JQuery (by jQuery Foundation)<br />
+                <li class="collection-item">
+                    JavaScriptライブラリ: JQuery (by jQuery Foundation)<br />
                     <a href="https://jquery.com/" class="external-link">https://jquery.com/</a><br />
                     ライセンス: <a href="https://ja.wikipedia.org/wiki/MIT_License" class="external-link">MIT</a>
                 </li>
-                <li class="collection-item">ページ内スクロールライブラリ: smoothScroll.js (by 西畑一馬)<br />
+                <li class="collection-item">
+                    ページ内スクロールライブラリ: smoothScroll.js (by 西畑一馬)<br />
                     <a href="https://blog.webcreativepark.net/2007/07/12-143406.html" class="external-link">https://blog.webcreativepark.net/2007/07/12-143406.html</a><br />
                     ライセンス: <a href="https://ja.wikipedia.org/wiki/MIT_License" class="external-link">MIT</a>
                 </li>
-                <li class="collection-item">ツールチップライブラリ: tooltipster (by Caleb Jacob and Louis Ameline)<br />
+                <li class="collection-item">
+                    ツールチップライブラリ: tooltipster (by Caleb Jacob and Louis Ameline)<br />
                     <a href="https://iamceege.github.io/tooltipster/" class="external-link">https://iamceege.github.io/tooltipster/</a><br />
                     ライセンス: <a href="https://ja.wikipedia.org/wiki/MIT_License" class="external-link">MIT</a>
                 </li>
-                <li class="collection-item">アイコン: Icomoon (by Keyamoon)<br>
+                <li class="collection-item">
+                    アイコン: Icomoon (by Keyamoon)<br>
                     <a href="https://icomoon.io/" class="external-link">https://icomoon.io/</a><br />
                     ライセンス: <a href="https://creativecommons.org/licenses/by/4.0/deed.ja" class="external-link">クリエイティブ・コモンズ 表示 4.0</a>
                 </li>
-                <li class="collection-item">アイコン: Fugue Icons (by yusukekamiyamane)<br>
+                <li class="collection-item">
+                    アイコン: Fugue Icons (by yusukekamiyamane)<br>
                     <a href="https://p.yusukekamiyamane.com/" class="external-link">https://p.yusukekamiyamane.com/</a><br />
                     ライセンス: <a href="https://creativecommons.org/licenses/by/3.0/deed.ja" class="external-link">クリエイティブ・コモンズ 表示 3.0</a>
                 </li>
-                <li class="collection-item">アイコン: Material Icons (by Google Inc.)<br>
+                <li class="collection-item">
+                    アイコン: Material Icons (by Google Inc.)<br>
                     <a href="https://material.io/resources/icons/" class="external-link">https://material.io/resources/icons/</a><br />
                     ライセンス: <a href="https://ja.wikipedia.org/wiki/Apache_License" class="external-link">Apache license version 2.0</a>
                 </li>
@@ -308,6 +337,11 @@ $(function () {
     // ポータブルモードならスタートアップ起動の設定は不可
     if (api.isPortableMode()) {
         $('#STARTUP-AREA').hide();
+    }
+
+    // 更新確認に失敗した場合は、メッセージを表示
+    if (api.isUpdateCheckFailed()) {
+        $('#UPDATE-CHECK-ERROR-MESSAGE').show();
     }
 
     $('body').on('change', '.folder-label-col input', function () {
