@@ -500,10 +500,10 @@ namespace InazumaSearch.Groonga
             {
                 foreach (var col in columns)
                 {
-                    opts[string.Format("columns[{0}].stage", col.Name)] = col.Stage;
-                    opts[string.Format("columns[{0}].type", col.Name)] = col.Type;
-                    opts[string.Format("columns[{0}].value", col.Name)] = FormatForParameter(col.Value);
-                    opts[string.Format("columns[{0}].flags", col.Name)] = (col.Flags == null ? null : FormatForParameter(string.Join(",", col.Flags)));
+                    opts[$"columns[{col.Name}].stage"] = col.Stage;
+                    opts[$"columns[{col.Name}].type"] = col.Type;
+                    opts[$"columns[{col.Name}].value"] = FormatForParameter(col.Value);
+                    opts[$"columns[{col.Name}].flags"] = (col.Flags == null ? null : FormatForParameter(string.Join(",", col.Flags)));
                 }
             }
 

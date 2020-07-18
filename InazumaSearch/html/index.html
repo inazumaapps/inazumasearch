@@ -191,7 +191,6 @@
                                     <span class="document-information-size">9,999KB</span> / 更新: <span class="document-information-file-updated">9999/99/99(日) 99:99</span>
                                     <span class="debug-mode-only">
                                         / スコア: <span class="document-information-score">9,999</span>
-                                        / <a href="#" class="display-highlight-link">本文のマッチ箇所を全表示</a>
                                     </span>
                                     <a href="#" class="ignore-dialog-link">無視設定</a>
                                 </div>
@@ -200,7 +199,7 @@
                                 <a class="file-path" href="#" data-file-path="/">[PATH]</a>
                                 <div class="right">
                                     <a href="#" class="after-tooltipped" title="フォルダを開く" data-folder-path=""><i class="tiny material-icons">folder</i></a>
-                                    <a class='submenu-link' href='#' data-target='dropdown1'><i class="tiny material-icons">more_horiz</i></a>
+                                    <a class='submenu-link' href='#' data-target='dropdown1' style="margin-right: 0.5rem;"><i class="tiny material-icons">more_horiz</i></a>
                                 </div>
                             </div>
 
@@ -265,7 +264,7 @@
 
     <!-- 検索結果サブメニュー（ドロップダウン） -->
     <ul id="dropdown1" class="dropdown-content">
-        <li><a href="#" class="display-all-body-link">マッチした箇所を全表示</a></li>
+        <li><a href="#" class="display-all-body-link">本文内でマッチした箇所を全表示</a></li>
         <!--<li class="divider" tabindex="-1"></li>
     <li><a href="#" class="ignore-dialog-link">無視設定</a></li>-->
     </ul>
@@ -273,9 +272,26 @@
     <!-- Modal Structure -->
     <div id="DISPLAY-HIGHLIGHT-MODAL" class="modal modal-fixed-footer" style="width: 96% !important; height: 96% !important;">
         <div class="modal-content">
-            <p>マッチした箇所（本文マッチ数: <span class="body-match-count"></span>）</p>
-            <!--<h4>本文</h4>-->
-            <pre class="display-highlight-body" style="font-size: small; overflow-y: auto;"></pre>
+            <div class="loading" style="display: none;">
+                <div style="margin: 32px auto 64px; width: 80px;">
+                    <div class="preloader-wrapper big active">
+                        <div class="spinner-layer spinner-blue-only">
+                            <div class="circle-clipper left">
+                                <div class="circle"></div>
+                            </div><div class="gap-patch">
+                                <div class="circle"></div>
+                            </div><div class="circle-clipper right">
+                                <div class="circle"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="result" style="display: none;">
+                <p>マッチした箇所（本文マッチ数: <span class="body-match-count"></span>）</p>
+                <!--<h4>本文</h4>-->
+                <pre class="display-highlight-body" style="font-size: small; overflow-y: auto;"></pre>
+            </div>
         </div>
         <div class="modal-footer">
             <a href="#!" class="modal-action modal-close waves-effect waves-green btn-flat">閉じる</a>

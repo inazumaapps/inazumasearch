@@ -390,20 +390,37 @@ $(function(){
         return false;
     });
 
+    // 無視設定ダイアログ表示
     $('body').on('click', '.ignore-dialog-link', function () {
         api.showIgnoreEditForm(lastClickedPath);
         return false;
     });
+
+    // マッチ箇所の全表示
     $('body').on('click', '.display-all-body-link', function () {
+        $('#DISPLAY-HIGHLIGHT-MODAL .loading').show();
+        $('#DISPLAY-HIGHLIGHT-MODAL .result').hide();
+        $('#DISPLAY-HIGHLIGHT-MODAL').modal('open');
+        $('#DISPLAY-HIGHLIGHT-MODAL .modal-content').scrollTop(0); // なぜかopenの後にスクロールを設定しないと、正常にスクロール位置が移動しない
+
+        // 1度実行してからモーダルを閉じ、その後1度目の処理が終了する前に別のマッチ箇所表示を実行すると
+        // 1度目の処理結果が誤ってセットされることがある
+        // これを防ぐために、実行ごとにワンタイムトークンを発行
+        let token = Math.ceil(Math.random() * 10000).toString();
+        $('#DISPLAY-HIGHLIGHT-MODAL').attr('data-token', token);
+
         asyncApi.getHighlightedBody(lastClickedKey, g_lastQueryObject.keyword, g_lastQueryObject.body).then(function (resJson) {
-            var res = JSON.parse(resJson);
-            if (res !== null) {
-                $('.display-highlight-body').html(res.body);
-                $('.body-match-count').text(res.hitCount);
-                $('#DISPLAY-HIGHLIGHT-MODAL').modal('open');
-                $('#DISPLAY-HIGHLIGHT-MODAL .modal-content').scrollTop(0); // なぜかopenの後にスクロールを設定しないと、正常にスクロール位置が移動しない
-            } else {
-                api.showErrorMessage("本文にマッチしていません。");
+            if ($('#DISPLAY-HIGHLIGHT-MODAL').attr('data-token') === token) {
+                var res = JSON.parse(resJson);
+                if (res !== null) {
+                    $('#DISPLAY-HIGHLIGHT-MODAL .loading').hide();
+                    $('#DISPLAY-HIGHLIGHT-MODAL .result').show();
+                    $('.display-highlight-body').html(res.body);
+                    $('.body-match-count').text(res.hitCount);
+                } else {
+                    api.showErrorMessage("本文にマッチしていません。");
+                    $('#DISPLAY-HIGHLIGHT-MODAL').modal('close');
+                }
             }
         });
         return false;
