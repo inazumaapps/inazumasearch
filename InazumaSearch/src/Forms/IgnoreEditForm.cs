@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
-using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Controls;
 using System.Windows.Forms;
+using Alphaleonis.Win32.Filesystem;
 using InazumaSearch.Core;
 using Microsoft.WindowsAPICodePack.Shell;
 
@@ -17,10 +17,12 @@ namespace InazumaSearch.Forms
     public partial class IgnoreEditForm : Form
     {
         private CancellationTokenSource currentCTokenSource = null;
-        private Task searchTask = null;
+        private Task<List<string>> searchTask = null;
 
         private readonly string baseDirPath;
         private readonly string defaultPattern;
+
+        private bool isShown = false;
 
         public IgnoreEditForm(string baseDirPath, string defaultPattern)
         {
@@ -48,21 +50,49 @@ namespace InazumaSearch.Forms
         /// <summary>
         /// キャンセルボタン押下
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
         private void BtnCancel_Click(object sender, EventArgs e)
         {
             Close();
         }
 
+        /// <summary>
+        /// ロード時処理
+        /// </summary>
         private void IgnoreEditForm_Load(object sender, EventArgs e)
         {
             TxtBaseDirPath.Text = baseDirPath;
             TxtSetting.Text = defaultPattern;
         }
 
+        /// <summary>
+        /// 表示後処理
+        /// </summary>
+        private void IgnoreEditForm_Shown(object sender, EventArgs e)
+        {
+            isShown = true;
+
+            this.Refresh();
+            this.Update();
+            this.Invalidate();
+
+            var t = Task.Factory.StartNew(() =>
+            {
+                // UIスレッド側で処理を実行
+                Invoke(new Action(() =>
+                {
+                    RefreshList();
+                }));
+            });
+        }
+
+        /// <summary>
+        /// 設定内容変更時処理
+        /// </summary>
         private void TxtSetting_TextChanged(object sender, EventArgs e)
         {
+            // 非表示時は処理しない
+            if (!isShown) return;
+
             // テキスト変更後、0.5秒経ったら画面をRefresh
             if (currentCTokenSource != null)
             {
@@ -88,15 +118,13 @@ namespace InazumaSearch.Forms
             }, cSource.Token);
         }
 
-        private void BtnRefreshPreview_Click(object sender, EventArgs e)
-        {
-            RefreshList();
-        }
-
-        protected virtual void RefreshList()
+        /// <summary>
+        /// プレビュー表示の更新
+        /// </summary>
+        protected virtual async void RefreshList()
         {
             LstPreview.Items.Clear();
-            ProgPreviewing.Show();
+            LblSearching.Show();
 
             if (currentCTokenSource != null)
             {
@@ -107,14 +135,9 @@ namespace InazumaSearch.Forms
                 searchTask.Wait();
             }
 
-            currentCTokenSource = new CancellationTokenSource();
-            searchTask = SearchIgnoredFiles(TxtBaseDirPath.Text, currentCTokenSource.Token);
-        }
+            var baseDirPath = TxtBaseDirPath.Text;
 
-        protected virtual async Task SearchIgnoredFiles(string baseDirPath, CancellationToken cToken)
-        {
-            var paths = new List<string>();
-
+            // 設定オブジェクトを作成
             var setting = new IgnoreSetting(baseDirPath);
             var lines = TxtSetting.Text.Replace("\r", "").Split('\n');
             foreach (var line in lines)
@@ -122,31 +145,46 @@ namespace InazumaSearch.Forms
                 setting.AddPattern(line);
             }
 
-            foreach (var path in Directory.GetFiles(TxtBaseDirPath.Text.ToLower(), "*", SearchOption.AllDirectories))
+            currentCTokenSource = new CancellationTokenSource();
+            searchTask = Task.Run<List<string>> (async () =>
+            {
+                return SearchIgnoredFiles(baseDirPath, setting, currentCTokenSource.Token);
+            });
+            
+            var paths = await searchTask;
+
+            // キャンセルされていなければ、画面上にパスを設定
+            if (paths != null) {
+                foreach (var path in paths)
+                {
+                    LstPreview.Items.Add(path);
+                }
+            }
+
+            // 進捗表示を隠す
+            LblSearching.Hide();
+        }
+
+        /// <summary>
+        /// 無視対象ファイルをリストアップして、プレビュー表示を更新
+        /// </summary>
+        protected virtual List<string> SearchIgnoredFiles(string baseDirPath, IgnoreSetting setting, CancellationToken cToken)
+        {
+            var paths = new List<string>();
+
+            foreach (var path in Directory.GetFiles(baseDirPath, "*", System.IO.SearchOption.AllDirectories))
             {
                 var fileAttrs = File.GetAttributes(path);
-                var isDirectory = fileAttrs.HasFlag(FileAttributes.Directory);
+                var isDirectory = fileAttrs.HasFlag(System.IO.FileAttributes.Directory);
                 if (setting.IsMatch(path, isDirectory))
                 {
                     paths.Add(path);
                 }
 
-                if (cToken.IsCancellationRequested) return;
+                if (cToken.IsCancellationRequested) return null;
             }
 
-            // UIを更新
-            Invoke(new Action(() =>
-            {
-                foreach (var path in paths)
-                {
-                    LstPreview.Items.Add(path);
-
-                    if (cToken.IsCancellationRequested) return;
-                }
-
-                ProgPreviewing.Hide();
-            }));
+            return paths;
         }
-
     }
 }

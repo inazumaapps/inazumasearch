@@ -32,11 +32,11 @@
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.TxtSetting = new System.Windows.Forms.TextBox();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
-            this.ProgPreviewing = new System.Windows.Forms.ProgressBar();
             this.LstPreview = new System.Windows.Forms.ListBox();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
             this.TxtBaseDirPath = new System.Windows.Forms.TextBox();
             this.BtnSave = new System.Windows.Forms.Button();
+            this.LblSearching = new System.Windows.Forms.Label();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -77,7 +77,7 @@
             // 
             // groupBox2
             // 
-            this.groupBox2.Controls.Add(this.ProgPreviewing);
+            this.groupBox2.Controls.Add(this.LblSearching);
             this.groupBox2.Controls.Add(this.LstPreview);
             this.groupBox2.Location = new System.Drawing.Point(15, 169);
             this.groupBox2.Name = "groupBox2";
@@ -85,16 +85,6 @@
             this.groupBox2.TabIndex = 6;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "プレビュー（実際に無視対象となるファイル）";
-            // 
-            // ProgPreviewing
-            // 
-            this.ProgPreviewing.Location = new System.Drawing.Point(265, 96);
-            this.ProgPreviewing.MarqueeAnimationSpeed = 10;
-            this.ProgPreviewing.Name = "ProgPreviewing";
-            this.ProgPreviewing.Size = new System.Drawing.Size(170, 23);
-            this.ProgPreviewing.Style = System.Windows.Forms.ProgressBarStyle.Marquee;
-            this.ProgPreviewing.TabIndex = 1;
-            this.ProgPreviewing.Visible = false;
             // 
             // LstPreview
             // 
@@ -138,6 +128,17 @@
             this.BtnSave.UseVisualStyleBackColor = true;
             this.BtnSave.Click += new System.EventHandler(this.BtnSave_Click);
             // 
+            // LblSearching
+            // 
+            this.LblSearching.AutoSize = true;
+            this.LblSearching.BackColor = System.Drawing.Color.White;
+            this.LblSearching.Location = new System.Drawing.Point(287, 97);
+            this.LblSearching.Name = "LblSearching";
+            this.LblSearching.Size = new System.Drawing.Size(110, 12);
+            this.LblSearching.TabIndex = 2;
+            this.LblSearching.Text = "ファイルを検索中です...";
+            this.LblSearching.Visible = false;
+            // 
             // IgnoreEditForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -151,9 +152,11 @@
             this.Name = "IgnoreEditForm";
             this.Text = "ファイル無視設定";
             this.Load += new System.EventHandler(this.IgnoreEditForm_Load);
+            this.Shown += new System.EventHandler(this.IgnoreEditForm_Shown);
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
             this.groupBox2.ResumeLayout(false);
+            this.groupBox2.PerformLayout();
             this.groupBox3.ResumeLayout(false);
             this.groupBox3.PerformLayout();
             this.ResumeLayout(false);
@@ -168,8 +171,8 @@
         private System.Windows.Forms.ListBox LstPreview;
         private System.Windows.Forms.GroupBox groupBox3;
         private System.Windows.Forms.TextBox TxtBaseDirPath;
-        private System.Windows.Forms.ProgressBar ProgPreviewing;
         private System.Windows.Forms.Button BtnSave;
+        private System.Windows.Forms.Label LblSearching;
     }
 }
 
