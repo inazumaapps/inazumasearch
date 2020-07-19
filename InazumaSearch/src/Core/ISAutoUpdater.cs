@@ -50,6 +50,9 @@ namespace InazumaSearch
                 AutoUpdater.ShowRemindLaterButton = false;
                 AutoUpdater.ShowSkipButton = false;
                 AutoUpdater.PersistenceProvider = new JsonFilePersistenceProvider("autoupdate-setting.json");
+#if PORTABLE
+                AutoUpdater.RunUpdateAsAdmin = false;
+#endif
                 IsInitialized = true;
             }
         }
