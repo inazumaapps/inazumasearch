@@ -198,7 +198,7 @@ function displayResultRows_NormalView(getJsonData, g_searchOffset){
         $new_row.find('.document-information-score').text(res.final_score);
 
         $new_row.attr('data-key', res.key);
-        $new_row.find('.submenu-link').dropdown({ constrainWidth: false, container: $('body').get(0) });
+        $new_row.find('.submenu-link').dropdown({ constrainWidth: false, container: $('#SEARCH-RESULT-BODY').get(0), alignment: 'right' });
 
         // $new_row.find('.display-similar-documents').attr('data-key', res.key);
 
