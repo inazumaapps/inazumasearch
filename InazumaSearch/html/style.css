@@ -104,6 +104,10 @@ html {
 .icon.file-type-html {
 	background-image: url(./fugue-icons/document-globe.png);
 }
+.row.file-type-htm .card:before,
+.row.file-type-html .card:before {
+	content: '\e909';
+}
 
 .icon.file-type-doc,
 .icon.file-type-docx,
@@ -113,12 +117,26 @@ html {
 .icon.file-type-dotm {
 	background-image: url(./fugue-icons/document-word.png);
 }
+.row.file-type-doc .card:before,
+.row.file-type-docx .card:before,
+.row.file-type-docm .card:before,
+.row.file-type-dot .card:before,
+.row.file-type-dotx .card:before,
+.row.file-type-dotm .card:before {
+	content: '\e90d';
+}
 
 .icon.file-type-xls,
 .icon.file-type-xlsx,
 .icon.file-type-xlsm,
 .icon.file-type-xlt {
 	background-image: url(./fugue-icons/document-excel.png);
+}
+.row.file-type-xls .card:before,
+.row.file-type-xlsx .card:before,
+.row.file-type-xlsm .card:before,
+.row.file-type-xlst .card:before {
+	content: '\e90e';
 }
 
 .icon.file-type-ppt,
@@ -130,10 +148,17 @@ html {
 .icon.file-type-pdf {
 	background-image: url(./fugue-icons/document-pdf.png);
 }
+.row.file-type-pdf .card:before {
+	content: '\e90b';
+}
 
 .icon.file-type-txt {
 	background-image: url(./fugue-icons/document-text.png);
 }
+.row.file-type-txt .card:before {
+	content: '\e901';
+}
+
 
 .background-icon i.material-icons{
 	position: absolute;
@@ -163,30 +188,6 @@ html {
 
 }
 
-.row.file-type-htm .card:before,
-.row.file-type-html .card:before {
-  content:'\e909';
-}
-
-
-.row.file-type-doc .card:before,
-.row.file-type-docx .card:before {
-  content:'\e90d';
-}
-
-.row.file-type-pdf .card:before {
-  content:'\e90b';
-}
-
-.row.file-type-xls .card:before,
-.row.file-type-xlsx .card:before,
-.row.file-type-xlst .card:before {
-  content:'\e90e';
-}
-
-.row.file-type-txt .card:before {
-  content:'\e901';
-}
 
 div {
 	webkit-transition: opacity 0.2s ease-out;
