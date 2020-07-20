@@ -136,6 +136,9 @@ namespace InazumaSearch.Forms
             var recs = DocumentRecords.Where(rec => selectedFolderPath == Path.GetDirectoryName(rec.GetTextValue(Column.Documents.FILE_PATH)));
             LstFile.Items.Clear();
 
+            // 0件の場合は中断
+            if (!recs.Any()) return;
+
             foreach (var rec in recs)
             {
                 var path = rec.GetTextValue(Column.Documents.FILE_PATH);
