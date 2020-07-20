@@ -97,12 +97,12 @@ html {
 	margin-right: 8px;
 	background-position: center center;
 	background-repeat: no-repeat;
-	background-image: url(../../fugue-icons/document.png);
+	background-image: url(./fugue-icons/document.png);
 }
 
 .icon.file-type-htm,
 .icon.file-type-html {
-	background-image: url(../../fugue-icons/document-globe.png);
+	background-image: url(./fugue-icons/document-globe.png);
 }
 
 .icon.file-type-doc,
@@ -111,28 +111,28 @@ html {
 .icon.file-type-dot,
 .icon.file-type-dotx,
 .icon.file-type-dotm {
-	background-image: url(../../fugue-icons/document-word.png);
+	background-image: url(./fugue-icons/document-word.png);
 }
 
 .icon.file-type-xls,
 .icon.file-type-xlsx,
 .icon.file-type-xlsm,
 .icon.file-type-xlt {
-	background-image: url(../../fugue-icons/document-excel.png);
+	background-image: url(./fugue-icons/document-excel.png);
 }
 
 .icon.file-type-ppt,
 .icon.file-type-pptx,
 .icon.file-type-pptm {
-	background-image: url(../../fugue-icons/document-powerpoint.png);
+	background-image: url(./fugue-icons/document-powerpoint.png);
 }
 
 .icon.file-type-pdf {
-	background-image: url(../../fugue-icons/document-pdf.png);
+	background-image: url(./fugue-icons/document-pdf.png);
 }
 
 .icon.file-type-txt {
-	background-image: url(../../fugue-icons/document-text.png);
+	background-image: url(./fugue-icons/document-text.png);
 }
 
 .background-icon i.material-icons{
