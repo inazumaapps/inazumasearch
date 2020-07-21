@@ -392,7 +392,7 @@ namespace InazumaSearch.Forms
                         var outLines = new List<string>();
                         foreach (var segment in segments)
                         {
-                            outLines.Add("<div style=\"border: 1px solid silver; margin: 0; padding: 1em; font-size: small;\">");
+                            outLines.Add("<div style=\"border: 1px solid silver; margin: 0; padding: 1em; font-size: small; overflow-y: auto;\">");
                             outLines.AddRange(lines.GetRange(segment.Item1, segment.Item2 - segment.Item1 + 1));
                             outLines.Add("</div>");
                         }
