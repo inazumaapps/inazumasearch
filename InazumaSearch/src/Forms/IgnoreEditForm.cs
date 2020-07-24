@@ -73,10 +73,6 @@ namespace InazumaSearch.Forms
         {
             isShown = true;
 
-            this.Refresh();
-            this.Update();
-            this.Invalidate();
-
             var t = Task.Factory.StartNew(() =>
             {
                 // UIスレッド側で処理を実行
@@ -148,15 +144,16 @@ namespace InazumaSearch.Forms
             }
 
             currentCTokenSource = new CancellationTokenSource();
-            searchTask = Task.Run<List<string>> (async () =>
-            {
-                return SearchIgnoredFiles(baseDirPath, setting, currentCTokenSource.Token);
-            });
-            
+            searchTask = Task.Run<List<string>>(async () =>
+           {
+               return SearchIgnoredFiles(baseDirPath, setting, currentCTokenSource.Token);
+           });
+
             var paths = await searchTask;
 
             // キャンセルされていなければ、画面上にパスを設定
-            if (paths != null) {
+            if (paths != null)
+            {
                 foreach (var path in paths)
                 {
                     LstPreview.Items.Add(path);
