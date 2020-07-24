@@ -159,6 +159,20 @@ namespace InazumaSearch.Core
         #endregion
 
         /// <summary>
+        /// 対応している拡張子のリストを取得 ("txt" 形式で取得する)
+        /// </summary>
+        /// <returns></returns>
+        public virtual List<string> GetExtractableExtNames()
+        {
+            var ret = new List<string>();
+            foreach (var format in Formats)
+            {
+                ret.AddRange(format.Extensions);
+            }
+            return ret;
+        }
+
+        /// <summary>
         /// 対応フォーマット一覧を更新
         /// </summary>
         public void RefreshFormats()

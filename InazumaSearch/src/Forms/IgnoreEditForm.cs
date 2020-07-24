@@ -21,14 +21,16 @@ namespace InazumaSearch.Forms
 
         private readonly string baseDirPath;
         private readonly string defaultPattern;
+        private readonly HashSet<string> extractableExtNames;
 
         private bool isShown = false;
 
-        public IgnoreEditForm(string baseDirPath, string defaultPattern)
+        public IgnoreEditForm(string baseDirPath, string defaultPattern, List<string> extractableExtNames)
         {
             InitializeComponent();
             this.baseDirPath = baseDirPath;
             this.defaultPattern = defaultPattern;
+            this.extractableExtNames = new HashSet<string>(extractableExtNames);
         }
 
         /// <summary>
@@ -176,7 +178,16 @@ namespace InazumaSearch.Forms
             {
                 var fileAttrs = File.GetAttributes(path);
                 var isDirectory = fileAttrs.HasFlag(System.IO.FileAttributes.Directory);
-                if (setting.IsMatch(path, isDirectory))
+
+                // ファイルの場合は、拡張子が検索対象のものかどうかをチェック (ファイルでなければ無視)
+                var extNameOk = true;
+                if (!isDirectory)
+                {
+                    var extName = Path.GetExtension(path).TrimStart('.').ToLower();
+                    extNameOk = extractableExtNames.Contains(extName);
+                }
+
+                if (extNameOk && setting.IsMatch(path, isDirectory))
                 {
                     paths.Add(path);
                 }

@@ -254,11 +254,7 @@ namespace InazumaSearch.Core
                 var textExtNames = _app.UserSettings.TextExtensions.Select(x => x.ExtName).ToList();
                 textExtNames.Add("txt");
 
-                var extractableExtNames = new List<string>();
-                foreach (var format in _app.Formats)
-                {
-                    extractableExtNames.AddRange(format.Extensions);
-                }
+                var extractableExtNames = _app.GetExtractableExtNames();
                 var cryptProvider = new SHA1CryptoServiceProvider();
 
                 var cur = 0;

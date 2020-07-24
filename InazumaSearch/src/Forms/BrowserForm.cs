@@ -184,7 +184,7 @@ namespace InazumaSearch.Forms
                     // 無視設定ダイアログを開く
                     var relPath = path.Substring(baseDirPath.Length + 1);
                     var defaultPattern = "/" + relPath.Replace('\\', '/');
-                    var dialog = new IgnoreEditForm(baseDirPath, defaultPattern);
+                    var dialog = new IgnoreEditForm(baseDirPath, defaultPattern, App.GetExtractableExtNames());
                     dialog.ShowDialog(form);
                 });
 
