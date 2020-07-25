@@ -163,9 +163,9 @@ namespace InazumaSearch.Forms
 
             currentCTokenSource = new CancellationTokenSource();
             searchTask = Task.Run<List<string>>(async () =>
-           {
-               return SearchIgnoredFiles(baseDirPath, setting, currentCTokenSource.Token);
-           });
+            {
+                return SearchIgnoredFiles(setting, currentCTokenSource.Token);
+            });
 
             var paths = await searchTask;
 
@@ -185,32 +185,9 @@ namespace InazumaSearch.Forms
         /// <summary>
         /// 無視対象ファイルをリストアップして、プレビュー表示を更新
         /// </summary>
-        protected virtual List<string> SearchIgnoredFiles(string baseDirPath, IgnoreSetting setting, CancellationToken cToken)
+        protected virtual List<string> SearchIgnoredFiles(IgnoreSetting setting, CancellationToken cToken)
         {
-            var paths = new List<string>();
-
-            foreach (var path in Directory.GetFiles(baseDirPath, "*", System.IO.SearchOption.AllDirectories))
-            {
-                var fileAttrs = File.GetAttributes(path);
-                var isDirectory = fileAttrs.HasFlag(System.IO.FileAttributes.Directory);
-
-                // ファイルの場合は、拡張子が検索対象のものかどうかをチェック (ファイルでなければ無視)
-                var extNameOk = true;
-                if (!isDirectory)
-                {
-                    var extName = Path.GetExtension(path).TrimStart('.').ToLower();
-                    extNameOk = extractableExtNames.Contains(extName);
-                }
-
-                if (extNameOk && setting.IsMatch(path, isDirectory))
-                {
-                    paths.Add(path);
-                }
-
-                if (cToken.IsCancellationRequested) return null;
-            }
-
-            return paths;
+            return _app.GetIgnoredDocumentRecords(setting);
         }
     }
 }

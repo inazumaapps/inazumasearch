@@ -455,7 +455,34 @@ namespace InazumaSearch.Core
             GM.Load(table: Table.Documents, values: values);
         }
 
+        /// <summary>
+        /// 無視対象のファイルパスを、クロール済みの文書データの中から一括取得
+        /// </summary>
+        public virtual List<string> GetIgnoredDocumentRecords(IgnoreSetting ignoreSetting)
+        {
+            // 無視対象となりうる文書データを全取得
+            var selectRes = GM.Select(
+                  Table.Documents
+                , outputColumns: new[] { Column.Documents.KEY, Column.Documents.FILE_PATH }
+                , limit: -1
+                , sortKeys: new[] { Column.Documents.KEY }
+                , filter: $"{Column.Documents.KEY} @^ {Groonga.Util.EscapeForScript(Util.MakeDocumentFileKey(ignoreSetting.DirPathLower))}" // ベースフォルダパスから始まるキーを検索
+            );
 
+            // 無視対象のファイルパスを抽出
+            var ignoredPaths = new List<string>();
+            foreach (var rec in selectRes.SearchResult.Records)
+            {
+                var path = (string)rec[Column.Documents.FILE_PATH];
+                if (ignoreSetting.IsMatch(path, isDirectory: false))
+                {
+                    ignoredPaths.Add(path);
+                }
+            };
+
+            // パスのリストを返す
+            return ignoredPaths;
+        }
 
         /// <summary>
         /// 無視対象のファイルを一括削除
@@ -468,6 +495,7 @@ namespace InazumaSearch.Core
                 , outputColumns: new[] { Column.Documents.KEY, Column.Documents.FILE_PATH }
                 , limit: -1
                 , sortKeys: new[] { Column.Documents.KEY }
+                , filter: $"{Column.Documents.KEY} @^ {Groonga.Util.EscapeForScript(Util.MakeDocumentFileKey(ignoreSetting.DirPathLower))}" // ベースフォルダパスから始まるキーを検索
             );
 
             // 削除対象のキーを抽出
