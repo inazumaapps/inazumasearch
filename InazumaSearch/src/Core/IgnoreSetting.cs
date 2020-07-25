@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 using Alphaleonis.Win32.Filesystem;
 using CefSharp;
 
-namespace InazumaSearch
+namespace InazumaSearch.Core
 {
     /// <summary>
     /// .inazumaignore で指定された無視設定

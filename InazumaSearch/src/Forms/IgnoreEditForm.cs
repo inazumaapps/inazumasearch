@@ -22,15 +22,20 @@ namespace InazumaSearch.Forms
         private readonly string baseDirPath;
         private readonly string defaultPattern;
         private readonly HashSet<string> extractableExtNames;
+        private readonly InazumaSearch.Core.Application _app;
 
         private bool isShown = false;
 
-        public IgnoreEditForm(string baseDirPath, string defaultPattern, List<string> extractableExtNames)
+        /// <summary>
+        /// コンストラクタ
+        /// </summary>
+        public IgnoreEditForm(string baseDirPath, string defaultPattern, InazumaSearch.Core.Application app)
         {
             InitializeComponent();
             this.baseDirPath = baseDirPath;
             this.defaultPattern = defaultPattern;
-            this.extractableExtNames = new HashSet<string>(extractableExtNames);
+            extractableExtNames = new HashSet<string>(app.GetExtractableExtNames());
+            _app = app;
         }
 
         /// <summary>
@@ -38,6 +43,7 @@ namespace InazumaSearch.Forms
         /// </summary>
         private void BtnSave_Click(object sender, EventArgs e)
         {
+            // 無視設定に対象のファイルを追加
             var ignorePath = Path.Combine(TxtBaseDirPath.Text, ".inazumaignore");
             List<string> origLines = null;
             if (File.Exists(ignorePath))
@@ -45,7 +51,19 @@ namespace InazumaSearch.Forms
                 origLines = File.ReadAllLines(ignorePath).ToList();
             }
             var inputLines = TxtSetting.Text.Replace("\r", "").Split('\n');
-            File.WriteAllLines(ignorePath, (origLines != null ? origLines.Concat(inputLines) : inputLines));
+            var newLines = (origLines != null ? origLines.Concat(inputLines) : inputLines);
+            File.WriteAllLines(ignorePath, newLines);
+
+            // DB内から無視パターンに一致するレコードを削除
+            var ignoreSetting = IgnoreSetting.Load(ignorePath);
+            var t = Task.Run(() =>
+            {
+                _app.DeleteIgnoredDocumentRecords(ignoreSetting);
+            });
+
+            var pf = new ProgressForm(t, "無視対象となる文書データを削除中...");
+            pf.ShowDialog(this);
+
             Close();
         }
 

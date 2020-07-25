@@ -455,6 +455,36 @@ namespace InazumaSearch.Core
             GM.Load(table: Table.Documents, values: values);
         }
 
+
+
+        /// <summary>
+        /// 無視対象のファイルを一括削除
+        /// </summary>
+        public virtual void DeleteIgnoredDocumentRecords(IgnoreSetting ignoreSetting)
+        {
+            // 無視対象となりうる文書データを全取得
+            var selectRes = GM.Select(
+                  Table.Documents
+                , outputColumns: new[] { Column.Documents.KEY, Column.Documents.FILE_PATH }
+                , limit: -1
+                , sortKeys: new[] { Column.Documents.KEY }
+            );
+
+            // 削除対象のキーを抽出
+            var deleteKeys = new List<string>();
+            foreach (var rec in selectRes.SearchResult.Records)
+            {
+                var path = (string)rec[Column.Documents.FILE_PATH];
+                if (ignoreSetting.IsMatch(path, isDirectory: false))
+                {
+                    deleteKeys.Add((string)rec.Key);
+
+                    // 削除
+                    GM.Delete(Table.Documents, (string)rec.Key);
+                }
+            };
+        }
+
         /// <summary>
         /// サムネイル画像をすべて削除
         /// </summary>
