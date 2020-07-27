@@ -189,5 +189,11 @@ namespace InazumaSearch.Forms
         {
             return _app.GetIgnoredDocumentRecords(setting);
         }
+
+        private void lnkPatternHelp_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            var dialog = new IgnorePatternHelpDialog();
+            dialog.ShowDialog(this);
+        }
     }
 }
