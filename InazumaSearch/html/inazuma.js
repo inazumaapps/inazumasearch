@@ -146,11 +146,12 @@ function displayResultRows(getJsonData, g_searchOffset = 0){
 
     // イベントやプラグインの登録
     $('[data-search-offset=' + g_searchOffset + '] .after-tooltipped').tooltipster();
-    $('[data-search-offset=' + g_searchOffset + '] a.file-path[data-file-path]').click(function(){
+    $('[data-search-offset=' + g_searchOffset + '] a[data-file-path]').click(function(){
         var path = $(this).attr('data-file-path');
         api.openFile(path);
         return false;
     });
+
     $('[data-search-offset=' + g_searchOffset + '] a[data-folder-path]').click(function(){
         var path = $(this).attr('data-folder-path');
         api.openFolder(path);
