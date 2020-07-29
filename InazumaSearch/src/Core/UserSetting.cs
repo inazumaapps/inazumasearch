@@ -24,6 +24,11 @@ namespace InazumaSearch.Core
             public virtual string Type { get; set; }
             public virtual string Path { get; set; }
             public virtual string Label { get; set; }
+
+            /// <summary>
+            /// そのフォルダに対する無視設定（行のコレクション）
+            /// </summary>
+            public virtual List<string> IgnoreSettingLines { get; set; } = new List<string>();
         }
 
         public class Extension
@@ -35,35 +40,30 @@ namespace InazumaSearch.Core
         public class PlainData
         {
             public virtual string UserUuid { get; set; }
-            public virtual int SettingVersion { get; set; }
-            public virtual List<TargetFolder> TargetFolders { get; set; }
-            public virtual DateTime? LastCrawlTime { get; set; }
-            public virtual bool AlwaysCrawlMode { get; set; }
-            public virtual bool StartUp { get; set; }
-            public virtual Dictionary<string, int> LastLoadedPluginVersionNumbers { get; set; }
-            public virtual List<Extension> TextExtensions { get; set; }
 
-            public PlainData()
-            {
-                SettingVersion = CurrentSettingVersion;
-                TargetFolders = new List<TargetFolder>();
-                LastCrawlTime = null;
-                AlwaysCrawlMode = false;
-                StartUp = false;
-                LastLoadedPluginVersionNumbers = new Dictionary<string, int>();
-                TextExtensions = new List<Extension>();
-            }
+            public virtual int SettingVersion { get; set; } = CurrentSettingVersion;
+
+            public virtual List<TargetFolder> TargetFolders { get; set; } = new List<TargetFolder>();
+
+            public virtual DateTime? LastCrawlTime { get; set; } = null;
+
+            public virtual bool AlwaysCrawlMode { get; set; } = false;
+
+            public virtual bool StartUp { get; set; } = false;
+
+            public virtual Dictionary<string, int> LastLoadedPluginVersionNumbers { get; set; } = new Dictionary<string, int>();
+
+            public virtual List<Extension> TextExtensions { get; set; } = new List<Extension>();
         }
 
         public class Store
         {
             public string SettingFilePath { get; protected set; }
-            public PlainData PlainData { get; protected set; }
+
+            public PlainData PlainData { get; protected set; } = new PlainData();
 
             public Store(string filePath)
             {
-                PlainData = new PlainData();
-
                 SettingFilePath = filePath;
             }
 
