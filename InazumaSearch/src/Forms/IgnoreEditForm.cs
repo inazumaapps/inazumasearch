@@ -44,18 +44,19 @@ namespace InazumaSearch.Forms
         private void BtnSave_Click(object sender, EventArgs e)
         {
             // 無視設定に対象のファイルを追加
-            var ignorePath = Path.Combine(TxtBaseDirPath.Text, ".inazumaignore");
+            var setting = _app.UserSettings.TargetFolders.OrderByDescending(f => f.Path.Length)
+                                                         .FirstOrDefault(f => f.Path.ToLower().StartsWith(baseDirPath.ToLower()));
             List<string> origLines = null;
-            if (File.Exists(ignorePath))
+            if (setting.IgnoreSettingLines != null)
             {
-                origLines = File.ReadAllLines(ignorePath).ToList();
+                origLines = setting.IgnoreSettingLines;
             }
             var inputLines = TxtSetting.Text.Replace("\r", "").Split('\n');
-            var newLines = (origLines != null ? origLines.Concat(inputLines) : inputLines);
-            File.WriteAllLines(ignorePath, newLines);
+            setting.IgnoreSettingLines = (origLines != null ? origLines.Concat(inputLines) : inputLines).ToList();
+            _app.UserSettings.Save();
 
             // DB内から無視パターンに一致するレコードを削除
-            var ignoreSetting = IgnoreSetting.Load(ignorePath);
+            var ignoreSetting = IgnoreSetting.Load(baseDirPath, setting.IgnoreSettingLines);
             var t = Task.Run(() =>
             {
                 _app.DeleteIgnoredDocumentRecords(ignoreSetting);
@@ -80,8 +81,18 @@ namespace InazumaSearch.Forms
         /// </summary>
         private void IgnoreEditForm_Load(object sender, EventArgs e)
         {
+            var setting = _app.UserSettings.TargetFolders.OrderByDescending(f => f.Path.Length)
+                                                         .FirstOrDefault(f => f.Path.ToLower().StartsWith(baseDirPath.ToLower()));
+            if (setting != null)
+            {
+                TxtSetting.Text = string.Join("\r\n", setting.IgnoreSettingLines.Concat(new[] { defaultPattern }));
+            }
+            else
+            {
+                TxtSetting.Text = defaultPattern;
+            }
+
             TxtBaseDirPath.Text = baseDirPath;
-            TxtSetting.Text = defaultPattern;
         }
 
         /// <summary>
@@ -90,6 +101,11 @@ namespace InazumaSearch.Forms
         private void IgnoreEditForm_Shown(object sender, EventArgs e)
         {
             isShown = true;
+
+            // スクロールを最下部に移動 (参考: <https://dobon.net/vb/dotnet/control/tbscrolltolast.html>)
+            TxtSetting.SelectionStart = TxtSetting.Text.Length;
+            TxtSetting.Focus();
+            TxtSetting.ScrollToCaret();
 
             var t = Task.Factory.StartNew(() =>
             {

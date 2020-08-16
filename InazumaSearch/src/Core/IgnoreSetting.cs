@@ -68,15 +68,36 @@ namespace InazumaSearch.Core
         }
 
         /// <summary>
+        /// 無視設定ファイルの内容を読み込んでインスタンスを生成
+        /// </summary>
+        /// <param name="path">.inazumaignore ファイルのパス</param>
+        public static IgnoreSetting Load(string baseDirPath, IEnumerable<string> lines)
+        {
+            var setting = new IgnoreSetting(baseDirPath);
+            setting.LoadInternal(lines);
+            return setting;
+        }
+
+        /// <summary>
         /// .inazumaignore ファイルの内容を読み込む
         /// </summary>
         /// <param name="path">.inazumaignore ファイルのパス</param>
         protected virtual void LoadInternal(string path)
         {
-            Patterns.Clear();
-
             // ファイルの内容を1行ずつ読み込む
             var lines = File.ReadAllLines(path, encoding: Encoding.UTF8);
+            LoadInternal(lines);
+        }
+
+        /// <summary>
+        /// 無視設定ファイルの内容を読み込む
+        /// </summary>
+        /// <param name="lines">行のコレクション</param>
+        protected virtual void LoadInternal(IEnumerable<string> lines)
+        {
+            Patterns.Clear();
+
+            // 内容を1行ずつ読み込む
             foreach (var line in lines)
             {
                 // 空行、コメント行はスキップ

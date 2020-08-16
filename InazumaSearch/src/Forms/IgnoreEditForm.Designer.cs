@@ -30,6 +30,7 @@
         {
             this.BtnCancel = new System.Windows.Forms.Button();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.lnkPatternHelp = new System.Windows.Forms.LinkLabel();
             this.TxtSetting = new System.Windows.Forms.TextBox();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.LblSearching = new System.Windows.Forms.Label();
@@ -37,7 +38,6 @@
             this.groupBox3 = new System.Windows.Forms.GroupBox();
             this.TxtBaseDirPath = new System.Windows.Forms.TextBox();
             this.BtnSave = new System.Windows.Forms.Button();
-            this.lnkPatternHelp = new System.Windows.Forms.LinkLabel();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -46,6 +46,7 @@
             // BtnCancel
             // 
             this.BtnCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.BtnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
             this.BtnCancel.Location = new System.Drawing.Point(577, 396);
             this.BtnCancel.Name = "BtnCancel";
             this.BtnCancel.Size = new System.Drawing.Size(135, 28);
@@ -65,6 +66,17 @@
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "無視パターン";
             // 
+            // lnkPatternHelp
+            // 
+            this.lnkPatternHelp.AutoSize = true;
+            this.lnkPatternHelp.Location = new System.Drawing.Point(574, 0);
+            this.lnkPatternHelp.Name = "lnkPatternHelp";
+            this.lnkPatternHelp.Size = new System.Drawing.Size(115, 12);
+            this.lnkPatternHelp.TabIndex = 9;
+            this.lnkPatternHelp.TabStop = true;
+            this.lnkPatternHelp.Text = "無視パターンの書き方...";
+            this.lnkPatternHelp.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.lnkPatternHelp_LinkClicked);
+            // 
             // TxtSetting
             // 
             this.TxtSetting.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
@@ -73,6 +85,7 @@
             this.TxtSetting.Location = new System.Drawing.Point(7, 19);
             this.TxtSetting.Multiline = true;
             this.TxtSetting.Name = "TxtSetting";
+            this.TxtSetting.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.TxtSetting.Size = new System.Drawing.Size(686, 75);
             this.TxtSetting.TabIndex = 0;
             this.TxtSetting.TextChanged += new System.EventHandler(this.TxtSetting_TextChanged);
@@ -141,20 +154,8 @@
             this.BtnSave.UseVisualStyleBackColor = true;
             this.BtnSave.Click += new System.EventHandler(this.BtnSave_Click);
             // 
-            // lnkPatternHelp
-            // 
-            this.lnkPatternHelp.AutoSize = true;
-            this.lnkPatternHelp.Location = new System.Drawing.Point(574, 0);
-            this.lnkPatternHelp.Name = "lnkPatternHelp";
-            this.lnkPatternHelp.Size = new System.Drawing.Size(115, 12);
-            this.lnkPatternHelp.TabIndex = 9;
-            this.lnkPatternHelp.TabStop = true;
-            this.lnkPatternHelp.Text = "無視パターンの書き方...";
-            this.lnkPatternHelp.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.lnkPatternHelp_LinkClicked);
-            // 
             // IgnoreEditForm
             // 
-            this.AcceptButton = this.BtnSave;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.BtnCancel;
