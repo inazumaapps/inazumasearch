@@ -361,10 +361,14 @@ $(function(){
                         , tfIdf: ''
                     }
 
-                    asyncApi.search(queryObject, false).then(function(resJson){
-                        var data = JSON.parse(resJson);
+                    asyncApi.search(queryObject, false, 0, null, null, true).then(function (resJson) {
+                        if (resJson) {
+                            var data = JSON.parse(resJson);
 
-                        $('#BACKGROUND-SEARCH-RESULT').text("条件に合致する文書数: " + data.nHits.toString());
+                            $('#BACKGROUND-SEARCH-RESULT').text("条件に合致する文書数: " + data.nHits.toString());
+                        } else {
+                            $('#BACKGROUND-SEARCH-RESULT').text("条件に合致する文書数: 不明");
+                        }
                     });
 
                 }, 500)

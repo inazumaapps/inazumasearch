@@ -436,6 +436,7 @@ namespace InazumaSearch.Forms
                 , int offset = 0
                 , string selectedFormat = null
                 , string selectedFolderLabel = null
+                , bool ignoreError = false
             )
             {
                 return App.ExecuteInExceptionCatcher<string>(() =>
@@ -489,9 +490,12 @@ namespace InazumaSearch.Forms
                     // 失敗した場合はエラーダイアログを表示して終了
                     if (!ret.success)
                     {
-                        OwnerForm.InvokeOnUIThread((f) => Util.ShowErrorMessage(f,
-                            "検索語の解析時にエラーが発生しました。\n単語をダブルクォート (\") で囲んで試してみてください。"
-                        ));
+                        if (!ignoreError)
+                        {
+                            OwnerForm.InvokeOnUIThread((f) => Util.ShowErrorMessage(f,
+                                "検索語の解析時にエラーが発生しました。\n単語をダブルクォート (\") で囲んで試してみてください。"
+                            ));
+                        }
 
                         return null;
                     }
