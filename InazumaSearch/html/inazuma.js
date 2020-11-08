@@ -83,7 +83,7 @@ function executeSearch(queryObject, selectedFormatName = null, selectedFolderLab
             var resHtml = "ファイル形式で絞り込む: ";
             for(var link of data.formatDrilldownLinks){
                 if(selectedFormatName === link.name){
-                    resHtml += '' + link.caption + '(' + link.nSubRecs + ') ';
+                    resHtml += '[' + link.caption + '] ';
                 } else if (!selectedFormatName) { // 絞り込みを行っていない場合のみ表示
                     resHtml += '<a href="#" class="drilldown-ext-link" data-value="' + link.name + '">' + link.caption + '(' + link.nSubRecs + ')</a> ';
                 }
@@ -115,7 +115,7 @@ function executeSearch(queryObject, selectedFormatName = null, selectedFolderLab
             var resHtmlFolderLabel = "フォルダラベルで絞り込む: ";
             for(var link of data.folderLabelDrilldownLinks){
                 if(selectedFolderLabel === link.folderLabel){
-                    resHtmlFolderLabel += '' + link.folderLabel + '(' + link.nSubRecs + ') ';
+                    resHtmlFolderLabel += '[' + link.folderLabel + '] ';
                 } else if (!selectedFolderLabel) { // 絞り込みを行っていない場合のみ表示
                     resHtmlFolderLabel += '<a href="#" class="drilldown-folder-label-link" data-value="' + link.folderLabel + '">' + link.folderLabel + '(' + link.nSubRecs + ')</a> ';
                 }
