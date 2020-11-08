@@ -7,6 +7,8 @@
 
 // persistent variables
 var g_lastQueryObject = null;
+var g_lastSelectedFormatName = null;
+var g_lastSelectedFolderLabel = null;
 var g_nextOffset = 0;
 var g_currentFormatName = null;
 var g_lastSearchOffset = 0;
@@ -31,7 +33,7 @@ function handleDrop(e) {
 }
 
 // 検索実行
-function executeSearch(queryObject, selectedFormatName = null, selectedFolderLabel = null){
+function executeSearch(queryObject, selectedFormatName = null, selectedFolderLabel = null) {
     var $header = $('#SEARCH-RESULT-HEADER');
 
     // 変数を初期化
@@ -49,6 +51,7 @@ function executeSearch(queryObject, selectedFormatName = null, selectedFolderLab
     //$('ul.tabs').tabs('select_tab', 'TAB-SEARCH-RESULT');
 
     $('#SEARCH-PROGRESS-BAR').css('opacity', '1');
+    //console.warn({ trigger: 'searchButton', queryObject, offset: 0, formatName: selectedFormatName, folderLabel: selectedFolderLabel });
     asyncApi.search(queryObject, true, 0, selectedFormatName, selectedFolderLabel).then(function(resJson){
         var data = JSON.parse(resJson);
 
@@ -66,8 +69,10 @@ function executeSearch(queryObject, selectedFormatName = null, selectedFolderLab
             g_searchFinished = true;
         }
 
-        // 現在のクエリと次のオフセットを記憶
+        // 現在のクエリ、選択されたファイル形式とフォルダラベル、次のオフセットを記憶
         g_lastQueryObject = queryObject;
+        g_lastSelectedFormatName = selectedFormatName;
+        g_lastSelectedFolderLabel = selectedFolderLabel;
         g_nextOffset = 10;
 
         // ドリルダウンに使用したフォーマット名を記憶
@@ -79,7 +84,7 @@ function executeSearch(queryObject, selectedFormatName = null, selectedFolderLab
             for(var link of data.formatDrilldownLinks){
                 if(selectedFormatName === link.name){
                     resHtml += '' + link.caption + '(' + link.nSubRecs + ') ';
-                } else {
+                } else if (!selectedFormatName) { // 絞り込みを行っていない場合のみ表示
                     resHtml += '<a href="#" class="drilldown-ext-link" data-value="' + link.name + '">' + link.caption + '(' + link.nSubRecs + ')</a> ';
                 }
             }
@@ -111,7 +116,7 @@ function executeSearch(queryObject, selectedFormatName = null, selectedFolderLab
             for(var link of data.folderLabelDrilldownLinks){
                 if(selectedFolderLabel === link.folderLabel){
                     resHtmlFolderLabel += '' + link.folderLabel + '(' + link.nSubRecs + ') ';
-                } else {
+                } else if (!selectedFolderLabel) { // 絞り込みを行っていない場合のみ表示
                     resHtmlFolderLabel += '<a href="#" class="drilldown-folder-label-link" data-value="' + link.folderLabel + '">' + link.folderLabel + '(' + link.nSubRecs + ')</a> ';
                 }
             }
@@ -168,7 +173,6 @@ function displayResultRows_NormalView(getJsonData, g_searchOffset){
     $('#SEARCH-RESULT-LIST-VIEW-BODY').hide();
 
     var $row_base = $('#RESULT-ROW-BASE');
-    console.log(getJsonData);
     for(var i = 0; i < getJsonData.records.length; i++){
         var res = getJsonData.records[i];
 
@@ -566,10 +570,10 @@ $(function(){
 
     // ドリルダウンクリック
     $('#SEARCH-RESULT-HEADER').on('click', '.drilldown-ext-link', function(){
-        var ext = $(this).attr('data-value');
-        if(ext === '') ext = null;
+        var formatName = $(this).attr('data-value');
+        if (formatName === '') formatName = null;
 
-        executeSearch(g_lastQueryObject, ext);
+        executeSearch(g_lastQueryObject, formatName, g_lastSelectedFolderLabel || null);
 
         return false;
     });
@@ -585,7 +589,7 @@ $(function(){
         var folderLabel = $(this).attr('data-value');
         if(folderLabel === '') folderLabel = null;
 
-        executeSearch(g_lastQueryObject, null, folderLabel);
+        executeSearch(g_lastQueryObject, g_lastSelectedFormatName || null, folderLabel);
 
         return false;
     });
@@ -624,7 +628,8 @@ $(function(){
             if(offset > g_lastSearchOffset && !g_searchFinished){
                 g_lastSearchOffset = offset;
 
-                asyncApi.search(g_lastQueryObject, false, offset).then(function(resJson){
+                //console.warn({ trigger: 'continue', queryObject: g_lastQueryObject, offset, formatName: g_lastSelectedFormatName, folderLabel: g_lastSelectedFolderLabel});
+                asyncApi.search(g_lastQueryObject, false, offset, g_lastSelectedFormatName, g_lastSelectedFolderLabel).then(function (resJson) {
                     var data = JSON.parse(resJson);
     
                     // // 検索中表示を消す
