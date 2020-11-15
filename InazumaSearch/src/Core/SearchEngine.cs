@@ -60,6 +60,11 @@ namespace InazumaSearch.Core
             /// </summary>
             public IList<FolderLabelDrilldownLink> folderLabelDrilldownLinks { get; set; }
 
+            /// <summary>
+            /// 更新時期のドリルダウン結果
+            /// </summary>
+            public IList<LastUpdatedDrilldownLink> lastUpdatedDrilldownLinks { get; set; }
+
             //public IList<YearDrilldownLink> yearDrilldownLinks { get; set; }
         }
         public class Record
@@ -87,9 +92,9 @@ namespace InazumaSearch.Core
             public string caption { get; set; }
             public long nSubRecs { get; set; }
         }
-        public class YearDrilldownLink
+        public class LastUpdatedDrilldownLink
         {
-            public int year { get; set; }
+            public string group { get; set; }
             public long nSubRecs { get; set; }
         }
         public class FolderLabelDrilldownLink
@@ -319,6 +324,57 @@ namespace InazumaSearch.Core
                 , string.Format("{0} * {1}", Groonga.VColumn.SCORE, rateExpr)
             ));
 
+            // 最終更新日が何日前か
+            columns.Add(new Groonga.DynamicColumn(
+                  "day_before_file_updated"
+                , Groonga.Stage.FILTERED
+                , Groonga.DataType.Time
+                , $"(time_classify_day(now()) - time_classify_day({Column.Documents.FILE_UPDATED_AT})) / (60 * 60 * 24)"
+            ));
+
+            // 最終更新週
+            columns.Add(new Groonga.DynamicColumn(
+                  "time_class_week"
+                , Groonga.Stage.FILTERED
+                , Groonga.DataType.Time
+                , $"time_classify_week(now())"
+            ));
+            // 最終更新月
+            columns.Add(new Groonga.DynamicColumn(
+                  "time_class_month"
+                , Groonga.Stage.FILTERED
+                , Groonga.DataType.Time
+                , $"time_classify_month(now())"
+            ));
+            // 最終更新年
+            columns.Add(new Groonga.DynamicColumn(
+                  "time_class_year"
+                , Groonga.Stage.FILTERED
+                , Groonga.DataType.Time
+                , $"time_classify_year(now())"
+            ));
+
+
+            // 最終更新日グループ
+            var elapsedGroupExpr = "'それ以前'";
+            elapsedGroupExpr = $"(day_before_file_updated <= 365*3 ? '約3年以内' : {elapsedGroupExpr})";
+            elapsedGroupExpr = $"(day_before_file_updated <= 365 ? '約1年以内' : {elapsedGroupExpr})";
+            elapsedGroupExpr = $"(day_before_file_updated <= 30*6 ? '約半年以内' : {elapsedGroupExpr})";
+            elapsedGroupExpr = $"(day_before_file_updated <= 30*2 ? '約2ヶ月以内' : {elapsedGroupExpr})";
+            elapsedGroupExpr = $"(day_before_file_updated <= 30 ? '約1ヶ月以内' : {elapsedGroupExpr})";
+            elapsedGroupExpr = $"(day_before_file_updated <= 7*2 ? '約2週間以内' : {elapsedGroupExpr})";
+            elapsedGroupExpr = $"(day_before_file_updated <= 7 ? '約1週間以内' : {elapsedGroupExpr})";
+            elapsedGroupExpr = $"(day_before_file_updated == 3 ? '3日前' : {elapsedGroupExpr})";
+            elapsedGroupExpr = $"(day_before_file_updated == 2 ? '2日前' : {elapsedGroupExpr})";
+            elapsedGroupExpr = $"(day_before_file_updated == 1 ? '昨日' : {elapsedGroupExpr})";
+            elapsedGroupExpr = $"(day_before_file_updated == 0 ? '今日' : {elapsedGroupExpr})";
+            columns.Add(new Groonga.DynamicColumn(
+                  "last_updated_group"
+                , Groonga.Stage.FILTERED
+                , Groonga.DataType.ShortText
+                , elapsedGroupExpr
+            ));
+
             // 並び順の設定。詳細検索で並び順が指定されていれば、その並び順を優先
             var sortKeys = new List<string>();
             switch (querySortBy)
@@ -356,7 +412,7 @@ namespace InazumaSearch.Core
                     , filter: joinedFilter
                     , offset: offset
                     //, drilldown: new[] { Column.Documents.EXT, Column.Documents.FILE_UPDATED_YEAR }
-                    , drilldown: new[] { Column.Documents.EXT, Column.Documents.FOLDER_LABELS }
+                    , drilldown: new[] { Column.Documents.EXT, Column.Documents.FOLDER_LABELS, "last_updated_group" }
                     , drilldownSortKeys: new[] { Column.Documents.KEY }
                     , sortKeys: sortKeys.ToArray()
                     , matchColumns: matchColumns
@@ -374,6 +430,7 @@ namespace InazumaSearch.Core
                             , "elapsed_hour_from_file_updated"
                             , "freshness_score_rate"
                             , "final_score"
+                            , "last_updated_group"
                     }
                     , columns: columns
                 );
@@ -542,7 +599,7 @@ namespace InazumaSearch.Core
             //    yearDrilldownLinks.Add(link);
             //}
 
-            // ドリルダウン結果(年ごとの件数)を元に、フォーマット絞り込み用のデータを作成
+            // ドリルダウン結果(フォーマットごとの件数)を元に、フォーマット絞り込み用のデータを作成
             var folderLabelDrilldownLinks = new List<FolderLabelDrilldownLink>();
             foreach (var rec in selectRes.DrilldownResults[1].Records)
             {
@@ -553,6 +610,19 @@ namespace InazumaSearch.Core
                     nSubRecs = rec.NSubRecs
                 };
                 folderLabelDrilldownLinks.Add(link);
+            }
+
+            // ドリルダウン結果(更新時期ごとの件数)を元に、更新時期絞り込み用のデータを作成
+            var lastUpdatedDrilldownLinks = new List<LastUpdatedDrilldownLink>();
+            foreach (var rec in selectRes.DrilldownResults[2].Records)
+            {
+                var link = new LastUpdatedDrilldownLink()
+                {
+                    group = (string)rec.Key
+                    ,
+                    nSubRecs = rec.NSubRecs
+                };
+                lastUpdatedDrilldownLinks.Add(link);
             }
 
 
@@ -593,9 +663,10 @@ namespace InazumaSearch.Core
                 searchResultSubMessage = searchResultSubMessage
                 ,
                 formatDrilldownLinks = formatDrilldownLinks.OrderByDescending(l => l.nSubRecs).ToList() // 件数の多い順で並べる
-                                                                                                        //, yearDrilldownLinks = yearDrilldownLinks.ToList() // 件数の多い順で並べる
                 ,
                 folderLabelDrilldownLinks = folderLabelDrilldownLinks.OrderByDescending(l => l.nSubRecs).ToList() // 件数の多い順で並べる
+                ,
+                lastUpdatedDrilldownLinks = lastUpdatedDrilldownLinks.OrderByDescending(l => l.nSubRecs).ToList() // 件数の多い順で並べる
             };
 
             return ret;

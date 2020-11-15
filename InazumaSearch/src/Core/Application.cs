@@ -280,6 +280,9 @@ namespace InazumaSearch.Core
             // プラグイン構成を保存
             UserSettings.SaveLastLoadedPluginVersionNumbers(new Dictionary<string, int>(loadedPluginVersionNumbers));
 
+            // Groongaの必要プラグインを登録
+            GM.PluginRegister("functions/time");
+
             // ログ出力
             Logger.Info("アプリケーションを起動しました");
 
