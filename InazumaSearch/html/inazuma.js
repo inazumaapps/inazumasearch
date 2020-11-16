@@ -33,7 +33,7 @@ function handleDrop(e) {
 }
 
 // 検索実行
-function executeSearch(queryObject, selectedFormatName = null, selectedFolderLabel = null) {
+function executeSearch(queryObject, selectedFormatName = null, selectedFolderLabel = null, selectedLastUpdatedGroup = -1) {
     var $header = $('#SEARCH-RESULT-HEADER');
 
     // 変数を初期化
@@ -52,7 +52,7 @@ function executeSearch(queryObject, selectedFormatName = null, selectedFolderLab
 
     $('#SEARCH-PROGRESS-BAR').css('opacity', '1');
     //console.warn({ trigger: 'searchButton', queryObject, offset: 0, formatName: selectedFormatName, folderLabel: selectedFolderLabel });
-    asyncApi.search(queryObject, true, 0, selectedFormatName, selectedFolderLabel).then(function(resJson){
+    asyncApi.search(queryObject, true, 0, selectedFormatName, selectedFolderLabel, selectedLastUpdatedGroup).then(function(resJson){
         var data = JSON.parse(resJson);
 
         // 検索中表示を消す
@@ -96,20 +96,6 @@ function executeSearch(queryObject, selectedFormatName = null, selectedFolderLab
             $('#DRILLDOWN-RESULT-EXT').html("");
         }
 
-        // if(data.yearDrilldownLinks.length >= 2){
-        //   var resHtmlYear = "更新年で絞り込む: ";
-        //   for(var link of data.yearDrilldownLinks){
-        //     if(selectedYear === link.year){
-        //       resHtmlYear += '' + link.caption + '(' + link.nSubRecs + ') ';
-        //     } else {
-        //       resHtmlYear += '<a href="#" class="drilldown-year-link" data-value="' + link.year + '">' + link.year + '年(' + link.nSubRecs + ')</a> ';
-        //     }
-        //   }
-        //   if(selectedYear !== null){
-        //     resHtmlYear += '<a href="#" class="drilldown-year-link" data-value="">解除</a> ';
-        //   }
-        //   $('#DRILLDOWN-RESULT-YEAR').html(resHtmlYear);
-        // }
 
         if(data.folderLabelDrilldownLinks.length >= 1){
             var resHtmlFolderLabel = "フォルダラベルで絞り込む: ";
@@ -126,6 +112,23 @@ function executeSearch(queryObject, selectedFormatName = null, selectedFolderLab
             $('#DRILLDOWN-RESULT-FOLDER-LABEL').html(resHtmlFolderLabel);
         } else {
             $('#DRILLDOWN-RESULT-FOLDER-LABEL').html("");
+        }
+
+        if (data.lastUpdatedDrilldownLinks.length >= 1) {
+            var resHtmlLastUpdated = "更新日で絞り込む: ";
+            for (var link of data.lastUpdatedDrilldownLinks) {
+                if (selectedLastUpdatedGroup === link.index) {
+                    resHtmlLastUpdated += '[' + link.caption + '] ';
+                } else if (!selectedFolderLabel) { // 絞り込みを行っていない場合のみ表示
+                    resHtmlLastUpdated += '<a href="#" class="drilldown-last-updated-link" data-value="' + link.group + '">' + link.caption + '(' + link.nSubRecs + ')</a> ';
+                }
+            }
+            if (selectedLastUpdatedGroup !== null) {
+                resHtmlLastUpdated += '<a href="#" class="drilldown-last-updated-link" data-value="">解除</a> ';
+            }
+            $('#DRILLDOWN-RESULT-LAST-UPDATED').html(resHtmlLastUpdated);
+        } else {
+            $('#DRILLDOWN-RESULT-LAST-UPDATED').html("");
         }
 
 
@@ -577,19 +580,21 @@ $(function(){
 
         return false;
     });
-    // $('#SEARCH-RESULT-HEADER').on('click', '.drilldown-year-link', function(){
-    //   var year = $(this).attr('data-value');
-    //   if(year === '') year = null;
 
-    //   executeSearch(g_lastQueryObject, null, year);
-
-    //   return false;
-    // });
     $('#SEARCH-RESULT-HEADER').on('click', '.drilldown-folder-label-link', function(){
         var folderLabel = $(this).attr('data-value');
         if(folderLabel === '') folderLabel = null;
 
         executeSearch(g_lastQueryObject, g_lastSelectedFormatName || null, folderLabel);
+
+        return false;
+    });
+
+    $('#SEARCH-RESULT-HEADER').on('click', '.drilldown-last-updated-link', function () {
+        console.warn({dataValue: $(this).attr('data-value')});
+        var lastUpdatedGroup = Number.parseInt($(this).attr('data-value'));
+
+        executeSearch(g_lastQueryObject, g_lastSelectedFormatName || null, g_lastSelectedFolderLabel || null, lastUpdatedGroup);
 
         return false;
     });

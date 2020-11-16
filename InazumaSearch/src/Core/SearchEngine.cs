@@ -94,7 +94,8 @@ namespace InazumaSearch.Core
         }
         public class LastUpdatedDrilldownLink
         {
-            public string group { get; set; }
+            public long group { get; set; }
+            public string caption { get; set; }
             public long nSubRecs { get; set; }
         }
         public class FolderLabelDrilldownLink
@@ -103,12 +104,43 @@ namespace InazumaSearch.Core
             public long nSubRecs { get; set; }
         }
 
+        /// <summary>
+        /// 経過日数グループ
+        /// </summary>
+        public class ElapsedGroup
+        {
+            /// <summary>
+            /// インデックス (小さいほど近い)
+            /// </summary>
+            public int Index { get; set; }
+
+            /// <summary>
+            /// 経過日数が何日以内か
+            /// </summary>
+            public long DayRange { get; set; }
+
+            /// <summary>
+            /// 表示名
+            /// </summary>
+            public string Caption { get; set; }
+        }
+
         #endregion
 
         #region プロパティ
 
         public NLog.Logger Logger { get; protected set; }
         public Core.Application App { get; set; }
+
+        /// <summary>
+        /// 経過日数グループデータ
+        /// </summary>
+        protected List<ElapsedGroup> ElapsedGroups { get; set; } = new List<ElapsedGroup>();
+
+        /// <summary>
+        /// 経過日数グループのマップ
+        /// </summary>
+        protected Dictionary<int, ElapsedGroup> ElapsedGroupMap { get; set; } = new Dictionary<int, ElapsedGroup>();
 
         #endregion
 
@@ -119,6 +151,24 @@ namespace InazumaSearch.Core
             Logger = NLog.LogManager.GetLogger(LoggerName.Crawler);
 
             App = app;
+
+            // 経過日数グループ情報の初期化
+            var elapsedGroupBaseData = new[]{
+                  Tuple.Create(0, "今日")
+                , Tuple.Create(1, "昨日")
+                , Tuple.Create(2, "2日前")
+                , Tuple.Create(3, "3日前")
+                , Tuple.Create(7, "約1週間以内")
+                , Tuple.Create(7*2, "約2週間以内")
+                , Tuple.Create(30, "約1ヶ月以内")
+                , Tuple.Create(30*2, "約2ヶ月以内")
+                , Tuple.Create(30*6, "約半年以内")
+                , Tuple.Create(365, "約1年以内")
+                , Tuple.Create(365*3, "約3年以内")
+            };
+            ElapsedGroups = elapsedGroupBaseData.Select((e, i) => new ElapsedGroup { Index = i, DayRange = e.Item1, Caption = e.Item2 })
+                                                .ToList();
+            ElapsedGroupMap = ElapsedGroups.ToDictionary(g => g.Index);
         }
 
         #endregion
@@ -140,6 +190,7 @@ namespace InazumaSearch.Core
             , int offset = 0
             , string selectedFormat = null
             , string selectedFolderLabel = null
+            , int? selectedLastUpdatedGroup = null
         )
         {
             var groongaQueries = new List<string>();
@@ -240,6 +291,20 @@ namespace InazumaSearch.Core
                 querySubMessages.Add(string.Format("フォルダラベル: {0}", selectedFolderLabel));
             }
 
+            // 最終更新日での絞り込みを追加
+            if (selectedLastUpdatedGroup != null)
+            {
+                if (selectedLastUpdatedGroup == 99)
+                {
+                }
+                else
+                {
+                    var grp = ElapsedGroupMap[selectedLastUpdatedGroup.Value];
+                    groongaFilters.Add($"last_updated_group == {grp.Index}");
+                    querySubMessages.Add(string.Format("最終更新日: {0}", grp.Caption));
+                }
+            }
+
             // 日付範囲の指定があれば、その範囲を追加する
             DateTime? updatedLeft = null;
             string updatedRangeCaption = null;
@@ -327,51 +392,21 @@ namespace InazumaSearch.Core
             // 最終更新日が何日前か
             columns.Add(new Groonga.DynamicColumn(
                   "day_before_file_updated"
-                , Groonga.Stage.FILTERED
+                , Groonga.Stage.INITIAL
                 , Groonga.DataType.Time
-                , $"(time_classify_day(now()) - time_classify_day({Column.Documents.FILE_UPDATED_AT})) / (60 * 60 * 24)"
+                , $"({Column.Documents.FILE_UPDATED_AT} >= 1 ? time_classify_day(now()) - time_classify_day({Column.Documents.FILE_UPDATED_AT}) : 10000) / (60 * 60 * 24)"
+                //, $"(time_classify_day(now()) - time_classify_day({Column.Documents.FILE_UPDATED_AT})) / (60 * 60 * 24)"
             ));
 
-            // 最終更新週
-            columns.Add(new Groonga.DynamicColumn(
-                  "time_class_week"
-                , Groonga.Stage.FILTERED
-                , Groonga.DataType.Time
-                , $"time_classify_week(now())"
-            ));
-            // 最終更新月
-            columns.Add(new Groonga.DynamicColumn(
-                  "time_class_month"
-                , Groonga.Stage.FILTERED
-                , Groonga.DataType.Time
-                , $"time_classify_month(now())"
-            ));
-            // 最終更新年
-            columns.Add(new Groonga.DynamicColumn(
-                  "time_class_year"
-                , Groonga.Stage.FILTERED
-                , Groonga.DataType.Time
-                , $"time_classify_year(now())"
-            ));
-
-
-            // 最終更新日グループ
-            var elapsedGroupExpr = "'それ以前'";
-            elapsedGroupExpr = $"(day_before_file_updated <= 365*3 ? '約3年以内' : {elapsedGroupExpr})";
-            elapsedGroupExpr = $"(day_before_file_updated <= 365 ? '約1年以内' : {elapsedGroupExpr})";
-            elapsedGroupExpr = $"(day_before_file_updated <= 30*6 ? '約半年以内' : {elapsedGroupExpr})";
-            elapsedGroupExpr = $"(day_before_file_updated <= 30*2 ? '約2ヶ月以内' : {elapsedGroupExpr})";
-            elapsedGroupExpr = $"(day_before_file_updated <= 30 ? '約1ヶ月以内' : {elapsedGroupExpr})";
-            elapsedGroupExpr = $"(day_before_file_updated <= 7*2 ? '約2週間以内' : {elapsedGroupExpr})";
-            elapsedGroupExpr = $"(day_before_file_updated <= 7 ? '約1週間以内' : {elapsedGroupExpr})";
-            elapsedGroupExpr = $"(day_before_file_updated == 3 ? '3日前' : {elapsedGroupExpr})";
-            elapsedGroupExpr = $"(day_before_file_updated == 2 ? '2日前' : {elapsedGroupExpr})";
-            elapsedGroupExpr = $"(day_before_file_updated == 1 ? '昨日' : {elapsedGroupExpr})";
-            elapsedGroupExpr = $"(day_before_file_updated == 0 ? '今日' : {elapsedGroupExpr})";
+            var elapsedGroupExpr = "99";
+            foreach (var item in ElapsedGroups.OrderByDescending(g => g.Index))
+            {
+                elapsedGroupExpr = $"(day_before_file_updated <= {item.DayRange} ? {item.Index} : {elapsedGroupExpr})";
+            }
             columns.Add(new Groonga.DynamicColumn(
                   "last_updated_group"
-                , Groonga.Stage.FILTERED
-                , Groonga.DataType.ShortText
+                , Groonga.Stage.INITIAL
+                , Groonga.DataType.UInt8
                 , elapsedGroupExpr
             ));
 
@@ -407,7 +442,7 @@ namespace InazumaSearch.Core
             try
             {
                 selectRes = App.GM.Select(
-                        Table.Documents
+                      Table.Documents
                     , query: joinedQuery
                     , filter: joinedFilter
                     , offset: offset
@@ -616,9 +651,12 @@ namespace InazumaSearch.Core
             var lastUpdatedDrilldownLinks = new List<LastUpdatedDrilldownLink>();
             foreach (var rec in selectRes.DrilldownResults[2].Records)
             {
+                var index = (long)rec.Key;
                 var link = new LastUpdatedDrilldownLink()
                 {
-                    group = (string)rec.Key
+                    group = index
+                    ,
+                    caption = (index == 99 ? "3年より前" : ElapsedGroupMap[(int)index].Caption)
                     ,
                     nSubRecs = rec.NSubRecs
                 };
@@ -666,7 +704,7 @@ namespace InazumaSearch.Core
                 ,
                 folderLabelDrilldownLinks = folderLabelDrilldownLinks.OrderByDescending(l => l.nSubRecs).ToList() // 件数の多い順で並べる
                 ,
-                lastUpdatedDrilldownLinks = lastUpdatedDrilldownLinks.OrderByDescending(l => l.nSubRecs).ToList() // 件数の多い順で並べる
+                lastUpdatedDrilldownLinks = lastUpdatedDrilldownLinks.OrderBy(l => l.group).ToList() // 更新日が近い順で並べる
             };
 
             return ret;
