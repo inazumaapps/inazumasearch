@@ -165,6 +165,7 @@ namespace InazumaSearch.Core
                 , Tuple.Create(30*6, "約半年以内")
                 , Tuple.Create(365, "約1年以内")
                 , Tuple.Create(365*3, "約3年以内")
+                , Tuple.Create(-1, "もっと前") // 上記全ての条件に当てはまらないときに使われる特殊グループ
             };
             ElapsedGroups = elapsedGroupBaseData.Select((e, i) => new ElapsedGroup { Index = i, DayRange = e.Item1, Caption = e.Item2 })
                                                 .ToList();
@@ -294,15 +295,9 @@ namespace InazumaSearch.Core
             // 最終更新日での絞り込みを追加
             if (selectedLastUpdatedGroup != null)
             {
-                if (selectedLastUpdatedGroup == 99)
-                {
-                }
-                else
-                {
-                    var grp = ElapsedGroupMap[selectedLastUpdatedGroup.Value];
-                    groongaFilters.Add($"last_updated_group == {grp.Index}");
-                    querySubMessages.Add(string.Format("最終更新日: {0}", grp.Caption));
-                }
+                var grp = ElapsedGroupMap[selectedLastUpdatedGroup.Value];
+                groongaFilters.Add($"last_updated_group == {grp.Index}");
+                querySubMessages.Add(string.Format("最終更新日: {0}", grp.Caption));
             }
 
             // 日付範囲の指定があれば、その範囲を追加する
@@ -395,11 +390,13 @@ namespace InazumaSearch.Core
                 , Groonga.Stage.INITIAL
                 , Groonga.DataType.Time
                 , $"({Column.Documents.FILE_UPDATED_AT} >= 1 ? time_classify_day(now()) - time_classify_day({Column.Documents.FILE_UPDATED_AT}) : 10000) / (60 * 60 * 24)"
-                //, $"(time_classify_day(now()) - time_classify_day({Column.Documents.FILE_UPDATED_AT})) / (60 * 60 * 24)"
+            //, $"(time_classify_day(now()) - time_classify_day({Column.Documents.FILE_UPDATED_AT})) / (60 * 60 * 24)"
             ));
 
-            var elapsedGroupExpr = "99";
-            foreach (var item in ElapsedGroups.OrderByDescending(g => g.Index))
+            // 最終更新日グループを判定するための条件式を構築
+            var elapsedGroupExpr = $"{ElapsedGroups.Last().Index}";
+            foreach (var item in ElapsedGroups.Where(g => g.DayRange >= 0)
+                                              .OrderByDescending(g => g.Index))
             {
                 elapsedGroupExpr = $"(day_before_file_updated <= {item.DayRange} ? {item.Index} : {elapsedGroupExpr})";
             }
@@ -656,7 +653,7 @@ namespace InazumaSearch.Core
                 {
                     group = index
                     ,
-                    caption = (index == 99 ? "3年より前" : ElapsedGroupMap[(int)index].Caption)
+                    caption = ElapsedGroupMap[(int)index].Caption
                     ,
                     nSubRecs = rec.NSubRecs
                 };

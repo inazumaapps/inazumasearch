@@ -9,6 +9,7 @@
 var g_lastQueryObject = null;
 var g_lastSelectedFormatName = null;
 var g_lastSelectedFolderLabel = null;
+var g_lastSelectedLastUpdatedGroup = null;
 var g_nextOffset = 0;
 var g_currentFormatName = null;
 var g_lastSearchOffset = 0;
@@ -33,7 +34,7 @@ function handleDrop(e) {
 }
 
 // 検索実行
-function executeSearch(queryObject, selectedFormatName = null, selectedFolderLabel = null, selectedLastUpdatedGroup = -1) {
+function executeSearch(queryObject, selectedFormatName = null, selectedFolderLabel = null, selectedLastUpdatedGroup = null) {
     var $header = $('#SEARCH-RESULT-HEADER');
 
     // 変数を初期化
@@ -73,6 +74,7 @@ function executeSearch(queryObject, selectedFormatName = null, selectedFolderLab
         g_lastQueryObject = queryObject;
         g_lastSelectedFormatName = selectedFormatName;
         g_lastSelectedFolderLabel = selectedFolderLabel;
+        g_lastSelectedLastUpdatedGroup = selectedLastUpdatedGroup;
         g_nextOffset = 10;
 
         // ドリルダウンに使用したフォーマット名を記憶
@@ -119,7 +121,7 @@ function executeSearch(queryObject, selectedFormatName = null, selectedFolderLab
             for (var link of data.lastUpdatedDrilldownLinks) {
                 if (selectedLastUpdatedGroup === link.index) {
                     resHtmlLastUpdated += '[' + link.caption + '] ';
-                } else if (!selectedFolderLabel) { // 絞り込みを行っていない場合のみ表示
+                } else if (!selectedLastUpdatedGroup) { // 絞り込みを行っていない場合のみ表示
                     resHtmlLastUpdated += '<a href="#" class="drilldown-last-updated-link" data-value="' + link.group + '">' + link.caption + '(' + link.nSubRecs + ')</a> ';
                 }
             }
@@ -574,25 +576,31 @@ $(function(){
     // ドリルダウンクリック
     $('#SEARCH-RESULT-HEADER').on('click', '.drilldown-ext-link', function(){
         var formatName = $(this).attr('data-value');
-        if (formatName === '') formatName = null;
+        if (formatName === '') formatName = null; // 解除
 
-        executeSearch(g_lastQueryObject, formatName, g_lastSelectedFolderLabel || null);
+        executeSearch(g_lastQueryObject, formatName, g_lastSelectedFolderLabel || null, g_lastSelectedLastUpdatedGroup || null);
 
         return false;
     });
 
     $('#SEARCH-RESULT-HEADER').on('click', '.drilldown-folder-label-link', function(){
         var folderLabel = $(this).attr('data-value');
-        if(folderLabel === '') folderLabel = null;
+        if (folderLabel === '') folderLabel = null; // 解除
 
-        executeSearch(g_lastQueryObject, g_lastSelectedFormatName || null, folderLabel);
+        executeSearch(g_lastQueryObject, g_lastSelectedFormatName || null, folderLabel, g_lastSelectedLastUpdatedGroup || null);
 
         return false;
     });
 
     $('#SEARCH-RESULT-HEADER').on('click', '.drilldown-last-updated-link', function () {
-        console.warn({dataValue: $(this).attr('data-value')});
-        var lastUpdatedGroup = Number.parseInt($(this).attr('data-value'));
+        var lastUpdatedGroupStr = $(this).attr('data-value');
+
+        var lastUpdatedGroup;
+        if (lastUpdatedGroupStr === '') {
+            lastUpdatedGroup = null; // 解除
+        } else {
+            lastUpdatedGroup = Number.parseInt(lastUpdatedGroupStr);
+        }
 
         executeSearch(g_lastQueryObject, g_lastSelectedFormatName || null, g_lastSelectedFolderLabel || null, lastUpdatedGroup);
 
@@ -634,7 +642,7 @@ $(function(){
                 g_lastSearchOffset = offset;
 
                 //console.warn({ trigger: 'continue', queryObject: g_lastQueryObject, offset, formatName: g_lastSelectedFormatName, folderLabel: g_lastSelectedFolderLabel});
-                asyncApi.search(g_lastQueryObject, false, offset, g_lastSelectedFormatName, g_lastSelectedFolderLabel).then(function (resJson) {
+                asyncApi.search(g_lastQueryObject, false, offset, g_lastSelectedFormatName, g_lastSelectedFolderLabel, g_lastSelectedLastUpdatedGroup).then(function (resJson) {
                     var data = JSON.parse(resJson);
     
                     // // 検索中表示を消す

@@ -436,7 +436,7 @@ namespace InazumaSearch.Forms
                 , int offset = 0
                 , string selectedFormat = null
                 , string selectedFolderLabel = null
-                , int selectedLastUpdatedGroup = -1
+                , int? selectedLastUpdatedGroup = null
                 , bool ignoreError = false
             )
             {
