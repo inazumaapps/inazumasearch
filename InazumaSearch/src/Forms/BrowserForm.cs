@@ -436,7 +436,7 @@ namespace InazumaSearch.Forms
                 , int offset = 0
                 , string selectedFormat = null
                 , string selectedFolderLabel = null
-                , int? selectedLastUpdatedGroup = null
+                , string selectedLastUpdatedGroup = null
                 , bool ignoreError = false
             )
             {
@@ -486,7 +486,7 @@ namespace InazumaSearch.Forms
                         , offset
                         , selectedFormat
                         , selectedFolderLabel
-                        , (selectedLastUpdatedGroup == -1 ? null : (int?)selectedLastUpdatedGroup)
+                        , (selectedLastUpdatedGroup != null ? (DateTime?)DateTime.Parse(selectedLastUpdatedGroup) : null)
                     );
 
                     // 失敗した場合はエラーダイアログを表示して終了

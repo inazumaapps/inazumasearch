@@ -122,7 +122,7 @@ function executeSearch(queryObject, selectedFormatName = null, selectedFolderLab
                 if (selectedLastUpdatedGroup === link.index) {
                     resHtmlLastUpdated += '[' + link.caption + '] ';
                 } else if (!selectedLastUpdatedGroup) { // 絞り込みを行っていない場合のみ表示
-                    resHtmlLastUpdated += '<a href="#" class="drilldown-last-updated-link" data-value="' + link.group + '">' + link.caption + '(' + link.nSubRecs + ')</a> ';
+                    resHtmlLastUpdated += '<a href="#" class="drilldown-last-updated-link" data-value="' + link.timeClass + '">' + link.caption + '(' + link.nSubRecs + ')</a> ';
                 }
             }
             if (selectedLastUpdatedGroup !== null) {
@@ -593,15 +593,8 @@ $(function(){
     });
 
     $('#SEARCH-RESULT-HEADER').on('click', '.drilldown-last-updated-link', function () {
-        var lastUpdatedGroupStr = $(this).attr('data-value');
-
-        var lastUpdatedGroup;
-        if (lastUpdatedGroupStr === '') {
-            lastUpdatedGroup = null; // 解除
-        } else {
-            lastUpdatedGroup = Number.parseInt(lastUpdatedGroupStr);
-        }
-
+        var lastUpdatedGroup = $(this).attr('data-value');
+        if (lastUpdatedGroup === '') lastUpdatedGroup = null; // 解除
         executeSearch(g_lastQueryObject, g_lastSelectedFormatName || null, g_lastSelectedFolderLabel || null, lastUpdatedGroup);
 
         return false;
