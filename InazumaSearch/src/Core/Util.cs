@@ -130,6 +130,10 @@ namespace InazumaSearch.Core
             {
                 return "今日";
             }
+            else if (now.Date.AddDays(-1) == timeClass.Date)
+            {
+                return "昨日";
+            }
             else if (now.Year == timeClass.Year && now.Month == timeClass.Month)
             {
                 return "今月";

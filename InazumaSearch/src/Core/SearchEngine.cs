@@ -330,6 +330,9 @@ namespace InazumaSearch.Core
                                    $"1 : " + // 更新日時が取得できなかった場合対策
                                    $"time_classify_day(now()) == time_classify_day({Column.Documents.FILE_UPDATED_AT}) ? " +
                                    $"time_classify_day({Column.Documents.FILE_UPDATED_AT}) : " + // 年月日が同じ場合、年月日で分類
+                                   $"time_classify_month(now()) == time_classify_month({Column.Documents.FILE_UPDATED_AT})" +
+                                   $"&& time_classify_day(now()) - time_classify_day({Column.Documents.FILE_UPDATED_AT}) == (60 * 60 * 24) ? " +
+                                   $"time_classify_day({Column.Documents.FILE_UPDATED_AT}) : " + // 最終更新が1日前で、かつ年月の切り替わりでない場合、年月日で分類
                                    $"time_classify_year(now()) == time_classify_year({Column.Documents.FILE_UPDATED_AT}) ? " +
                                    $"time_classify_month({Column.Documents.FILE_UPDATED_AT}) : " + // 年が同じ場合、月で分類
                                    $"(time_classify_year(now()) - time_classify_year({Column.Documents.FILE_UPDATED_AT})) < (60 * 60 * 24 * 365) * {SystemConst.GROUPING_YEAR_RANGE + 1} ? " +
