@@ -84,9 +84,9 @@ function executeSearch(queryObject, selectedFormatName = null, selectedFolderLab
         if(data.formatDrilldownLinks.length >= 1){
             var resHtml = "ファイル形式で絞り込む: ";
             for(var link of data.formatDrilldownLinks){
-                if(selectedFormatName === link.name){
+                if(selectedFormatName === link.name){ // 現在選択中の絞り込み
                     resHtml += '[' + link.caption + '] ';
-                } else if (!selectedFormatName) { // 絞り込みを行っていない場合のみ表示
+                } else if (!selectedFormatName) { // 絞り込みを行っていない場合のみ、選択肢を表示
                     resHtml += '<a href="#" class="drilldown-ext-link" data-value="' + link.name + '">' + link.caption + '(' + link.nSubRecs + ')</a> ';
                 }
             }
@@ -102,9 +102,9 @@ function executeSearch(queryObject, selectedFormatName = null, selectedFolderLab
         if(data.folderLabelDrilldownLinks.length >= 1){
             var resHtmlFolderLabel = "フォルダラベルで絞り込む: ";
             for(var link of data.folderLabelDrilldownLinks){
-                if(selectedFolderLabel === link.folderLabel){
+                if (selectedFolderLabel === link.folderLabel) { // 現在選択中の絞り込み
                     resHtmlFolderLabel += '[' + link.folderLabel + '] ';
-                } else if (!selectedFolderLabel) { // 絞り込みを行っていない場合のみ表示
+                } else if (!selectedFolderLabel) { // 絞り込みを行っていない場合のみ、選択肢を表示
                     resHtmlFolderLabel += '<a href="#" class="drilldown-folder-label-link" data-value="' + link.folderLabel + '">' + link.folderLabel + '(' + link.nSubRecs + ')</a> ';
                 }
             }
@@ -119,9 +119,9 @@ function executeSearch(queryObject, selectedFormatName = null, selectedFolderLab
         if (data.lastUpdatedDrilldownLinks.length >= 1) {
             var resHtmlLastUpdated = "更新日で絞り込む: ";
             for (var link of data.lastUpdatedDrilldownLinks) {
-                if (selectedLastUpdatedGroup === link.index) {
+                if (selectedLastUpdatedGroup === link.timeClass) { // 現在選択中の絞り込み
                     resHtmlLastUpdated += '[' + link.caption + '] ';
-                } else if (!selectedLastUpdatedGroup) { // 絞り込みを行っていない場合のみ表示
+                } else if (!selectedLastUpdatedGroup) { // 絞り込みを行っていない場合のみ、選択肢を表示
                     resHtmlLastUpdated += '<a href="#" class="drilldown-last-updated-link" data-value="' + link.timeClass + '">' + link.caption + '(' + link.nSubRecs + ')</a> ';
                 }
             }
