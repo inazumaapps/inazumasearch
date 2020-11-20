@@ -852,14 +852,14 @@ namespace InazumaSearch.Forms
 
         public void OpenFolder(string path)
         {
-            if (!Directory.Exists(path))
+            if (!File.Exists(path))
             {
                 Util.ShowErrorMessage(this,
-                    "フォルダが存在しません。\n前回のクロール後に、移動または削除された可能性があるため、再度クロールを実行してください。"
+                    "ファイルが存在しません。\n前回のクロール後に、移動または削除された可能性があるため、再度クロールを実行してください。"
                 );
                 return;
             }
-            Process.Start(path);
+            Process.Start("explorer.exe", $"/select,\"{path}\"");
         }
 
         public virtual void InvokeOnUIThread(Action<BrowserForm> act)

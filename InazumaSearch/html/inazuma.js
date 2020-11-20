@@ -163,14 +163,14 @@ function displayResultRows(getJsonData, g_searchOffset = 0){
 
     // イベントやプラグインの登録
     $('[data-search-offset=' + g_searchOffset + '] .after-tooltipped').tooltipster();
-    $('[data-search-offset=' + g_searchOffset + '] a[data-file-path]').click(function(){
+    $('[data-search-offset=' + g_searchOffset + '] a.file-path').click(function(){
         var path = $(this).attr('data-file-path');
         api.openFile(path);
         return false;
     });
 
-    $('[data-search-offset=' + g_searchOffset + '] a[data-folder-path]').click(function(){
-        var path = $(this).attr('data-folder-path');
+    $('[data-search-offset=' + g_searchOffset + '] a.folder-open-link').click(function(){
+        var path = $(this).attr('data-file-path');
         api.openFolder(path);
         return false;
     });
@@ -200,7 +200,7 @@ function displayResultRows_NormalView(getJsonData, g_searchOffset){
         var fileLinkHref = '#FILE:' + res.file_path ;
         $new_row.find('.card-title a').attr('href', fileLinkHref);
         $new_row.find('.card-action a.file-path').text(res.file_path).attr('href', fileLinkHref).attr('data-file-path', res.file_path);
-        $new_row.find('.card-action a[data-folder-path]').attr('data-folder-path', res.folder_path);
+        $new_row.find('.card-action a.folder-open-link').attr('data-file-path', res.file_path);
         if(res.body_snippets.length >= 1){
             res.body_snippets.forEach(function(snip){
                 $new_row.find('.body-snippets').append('<div style="border: 1px solid #f0f0f0; margin: 1em 0; padding: 1em; font-size: small;">' + snip + '</div>');
