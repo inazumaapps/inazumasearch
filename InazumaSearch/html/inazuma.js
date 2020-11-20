@@ -81,7 +81,10 @@ function executeSearch(queryObject, selectedFormatName = null, selectedFolderLab
         g_currentFormatName = selectedFormatName;
 
         // ドリルダウン結果を表示
-        if(data.formatDrilldownLinks.length >= 1){
+        // ただし、ドリルダウンの選択肢が1つだけで、かつ絞り込みしても文書数が変わらない場合は選択肢を表示しない
+        if (data.formatDrilldownLinks.length >= 2
+            || (data.formatDrilldownLinks.length === 1 && data.formatDrilldownLinks[0].nSubRecs < data.nHits)
+            || selectedFormatName) {
             var resHtml = "ファイル形式で絞り込む: ";
             for(var link of data.formatDrilldownLinks){
                 if(selectedFormatName === link.name){ // 現在選択中の絞り込み
@@ -99,7 +102,9 @@ function executeSearch(queryObject, selectedFormatName = null, selectedFolderLab
         }
 
 
-        if(data.folderLabelDrilldownLinks.length >= 1){
+        if (data.folderLabelDrilldownLinks.length >= 2
+            || (data.folderLabelDrilldownLinks.length === 1 && data.folderLabelDrilldownLinks[0].nSubRecs < data.nHits)
+            || selectedFolderLabel) {
             var resHtmlFolderLabel = "フォルダラベルで絞り込む: ";
             for(var link of data.folderLabelDrilldownLinks){
                 if (selectedFolderLabel === link.folderLabel) { // 現在選択中の絞り込み
@@ -116,7 +121,9 @@ function executeSearch(queryObject, selectedFormatName = null, selectedFolderLab
             $('#DRILLDOWN-RESULT-FOLDER-LABEL').html("");
         }
 
-        if (data.lastUpdatedDrilldownLinks.length >= 1) {
+        if (data.lastUpdatedDrilldownLinks.length >= 2
+            || (data.lastUpdatedDrilldownLinks.length === 1 && data.lastUpdatedDrilldownLinks[0].nSubRecs < data.nHits)
+            || selectedLastUpdatedGroup) {
             var resHtmlLastUpdated = "更新日で絞り込む: ";
             for (var link of data.lastUpdatedDrilldownLinks) {
                 if (selectedLastUpdatedGroup === link.timeClass) { // 現在選択中の絞り込み
