@@ -163,7 +163,7 @@ function displayResultRows(getJsonData, g_searchOffset = 0){
 
     // イベントやプラグインの登録
     $('[data-search-offset=' + g_searchOffset + '] .after-tooltipped').tooltipster();
-    $('[data-search-offset=' + g_searchOffset + '] a.file-path').click(function(){
+    $('[data-search-offset=' + g_searchOffset + '] a.file-open-link').click(function(){
         var path = $(this).attr('data-file-path');
         api.openFile(path);
         return false;
