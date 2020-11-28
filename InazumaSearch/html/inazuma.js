@@ -289,7 +289,7 @@ function displayResultRows_ListView(getJsonData, searchOffset){
         var fileLinkHref = '#FILE:' + res.file_path ;
         $new_row.find('.file-name-link').attr('href', fileLinkHref);
         $new_row.find('.file-path').text(res.file_path);
-        $new_row.find('a[data-folder-path]').attr('data-folder-path', res.folder_path);
+        $new_row.find('a.folder-open-link').attr('data-file-path', res.file_path);
 
         $new_row.find('.document-information-size').text(res.size_caption);
         $new_row.find('.document-information-file-updated').text(res.timestamp_updated_caption_for_list_view);
