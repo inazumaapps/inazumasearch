@@ -34,7 +34,7 @@ function handleDrop(e) {
 }
 
 // 検索実行
-function executeSearch(queryObject, selectedFormatName = null, selectedFolderLabel = null, selectedOrder = null) {
+function executeSearch(queryObject, hideSearchResult = true, selectedFormatName = null, selectedFolderLabel = null, selectedOrder = null) {
     var $header = $('#SEARCH-RESULT-HEADER');
 
     // 変数を初期化
@@ -47,8 +47,8 @@ function executeSearch(queryObject, selectedFormatName = null, selectedFolderLab
     // 既存の検索結果行を削除
     $('.generated-search-result-row').remove();
 
-    // 検索結果を表示
-    $header.css('opacity', '0');
+    // 検索結果部(見出)を隠す
+    if (hideSearchResult) $header.css('opacity', '0');
 
     $('#SEARCH-PROGRESS-BAR').css('opacity', '1');
     asyncApi.search(queryObject, true, 0, selectedFormatName, selectedFolderLabel, selectedOrder).then(function (resJson) {
@@ -58,7 +58,7 @@ function executeSearch(queryObject, selectedFormatName = null, selectedFolderLab
         $('#SEARCH-PROGRESS-BAR').css('opacity', '0');
 
         // 検索結果部(見出)を表示
-        $header.css('opacity', '1');
+        if (hideSearchResult) $header.css('opacity', '1');
 
         $('#SEARCH-RESULT-MESSAGE').text(data.searchResultMessage);
         $('#SEARCH-RESULT-SUB-MESSAGE').text(data.searchResultSubMessage);
@@ -541,26 +541,6 @@ $(function(){
         $('#BACKGROUND-SEARCH-RESULT').text("");
         if(backgroundSearchTimeoutHandle) clearTimeout(backgroundSearchTimeoutHandle);
 
-    
-        // $.get('http://localhost:17281/search', {'q': q}, function(data){
-        //   // 検索中表示を消す
-        //   $('#SEARCH-PROGRESS-BAR').css('opacity', '0');
-
-        //   // 検索結果部(見出)を表示
-        //   $header.css('opacity', '1');
-
-        //   var $summary = $('#SEARCH-RESULT-SUMMARY');
-        //   $summary.find('.query').text(data.query);
-        //   $summary.find('.n-records').text(data.nHits);
-        //   $summary.find('.start').text(data.start);
-        //   $summary.find('.end').text(data.end);
-
-        //   // 検索結果の各行を表示
-        //   displayResultRows(data);
-
-        // });
-
-
         return false;
 
     });
@@ -570,7 +550,8 @@ $(function(){
         var formatName = $(this).attr('data-value');
         if (formatName === '') formatName = null; // 解除
 
-        executeSearch(g_lastQueryObject, formatName, g_lastSelectedFolderLabel || null, g_lastSelectedOrder || null);
+        // 再検索
+        executeSearch(g_lastQueryObject, true, formatName, g_lastSelectedFolderLabel || null, g_lastSelectedOrder || null);
 
         return false;
     });
@@ -579,14 +560,16 @@ $(function(){
         var folderLabel = $(this).attr('data-value');
         if (folderLabel === '') folderLabel = null; // 解除
 
-        executeSearch(g_lastQueryObject, g_lastSelectedFormatName || null, folderLabel, g_lastSelectedOrder || null);
+        // 再検索
+        executeSearch(g_lastQueryObject, true, g_lastSelectedFormatName || null, folderLabel, g_lastSelectedOrder || null);
 
         return false;
     });
 
     $('#DRILLDOWN-ORDER').on('change', 'select', function () {
         var orderType = $(this).val();
-        executeSearch(g_lastQueryObject, g_lastSelectedFormatName || null, g_lastSelectedFolderLabel || null, orderType);
+        // 再検索 (検索結果見出部は非表示にしない)
+        executeSearch(g_lastQueryObject, false, g_lastSelectedFormatName || null, g_lastSelectedFolderLabel || null, orderType);
 
         return false;
     });
