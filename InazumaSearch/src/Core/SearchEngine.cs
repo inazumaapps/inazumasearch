@@ -169,7 +169,7 @@ namespace InazumaSearch.Core
             , int offset = 0
             , string selectedFormat = null
             , string selectedFolderLabel = null
-            , string orderType = null
+            , string selectedOrderType = null
         )
         {
             var groongaQueries = new List<string>();
@@ -357,7 +357,7 @@ namespace InazumaSearch.Core
 
             // 並び順の設定。並び順が指定されていれば、その並び順を優先
             var sortKeys = new List<string>();
-            switch (orderType)
+            switch (selectedOrderType)
             {
                 case OrderType.FILE_PATH:
                     sortKeys.Add(Column.Documents.FILE_PATH);
