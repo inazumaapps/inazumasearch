@@ -35,7 +35,14 @@ function handleDrop(e) {
 }
 
 // 検索実行
-function executeSearch(queryObject, hideSearchResult = true, selectedFormatName = null, selectedFolderLabel = null, selectedOrder = null, selectedView = null) {
+function executeSearch(
+    queryObject
+    , hideSearchResult = true
+    , selectedFormatName = null
+    , selectedFolderLabel = null
+    , selectedOrder = null
+    , selectedView = null
+) {
     var $header = $('#SEARCH-RESULT-HEADER');
 
     // 変数を初期化
