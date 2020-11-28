@@ -9,7 +9,8 @@
 var g_lastQueryObject = null;
 var g_lastSelectedFormatName = null;
 var g_lastSelectedFolderLabel = null;
-var g_lastSelectedLastUpdatedGroup = null;
+var g_lastSelectedOrder = null;
+var g_lastSelectedView = null;
 var g_nextOffset = 0;
 var g_currentFormatName = null;
 var g_lastSearchOffset = 0;
@@ -34,7 +35,7 @@ function handleDrop(e) {
 }
 
 // 検索実行
-function executeSearch(queryObject, selectedFormatName = null, selectedFolderLabel = null, selectedLastUpdatedGroup = null) {
+function executeSearch(queryObject, hideSearchResult = true, selectedFormatName = null, selectedFolderLabel = null, selectedOrder = null, selectedView = null) {
     var $header = $('#SEARCH-RESULT-HEADER');
 
     // 変数を初期化
@@ -47,20 +48,18 @@ function executeSearch(queryObject, selectedFormatName = null, selectedFolderLab
     // 既存の検索結果行を削除
     $('.generated-search-result-row').remove();
 
-    // 検索結果を表示
-    $header.css('opacity', '0');
-    //$('ul.tabs').tabs('select_tab', 'TAB-SEARCH-RESULT');
+    // 検索結果部(見出)を隠す
+    if (hideSearchResult) $header.css('opacity', '0');
 
     $('#SEARCH-PROGRESS-BAR').css('opacity', '1');
-    //console.warn({ trigger: 'searchButton', queryObject, offset: 0, formatName: selectedFormatName, folderLabel: selectedFolderLabel });
-    asyncApi.search(queryObject, true, 0, selectedFormatName, selectedFolderLabel, selectedLastUpdatedGroup).then(function(resJson){
+    asyncApi.search(queryObject, true, 0, selectedFormatName, selectedFolderLabel, selectedOrder).then(function (resJson) {
         var data = JSON.parse(resJson);
 
         // 検索中表示を消す
         $('#SEARCH-PROGRESS-BAR').css('opacity', '0');
 
         // 検索結果部(見出)を表示
-        $header.css('opacity', '1');
+        if (hideSearchResult) $header.css('opacity', '1');
 
         $('#SEARCH-RESULT-MESSAGE').text(data.searchResultMessage);
         $('#SEARCH-RESULT-SUB-MESSAGE').text(data.searchResultSubMessage);
@@ -74,7 +73,8 @@ function executeSearch(queryObject, selectedFormatName = null, selectedFolderLab
         g_lastQueryObject = queryObject;
         g_lastSelectedFormatName = selectedFormatName;
         g_lastSelectedFolderLabel = selectedFolderLabel;
-        g_lastSelectedLastUpdatedGroup = selectedLastUpdatedGroup;
+        g_lastSelectedOrder = selectedOrder;
+        g_lastSelectedView = selectedView;
         g_nextOffset = 10;
 
         // ドリルダウンに使用したフォーマット名を記憶
@@ -88,7 +88,7 @@ function executeSearch(queryObject, selectedFormatName = null, selectedFolderLab
             var resHtml = "ファイル形式で絞り込む: ";
             for(var link of data.formatDrilldownLinks){
                 if(selectedFormatName === link.name){ // 現在選択中の絞り込み
-                    resHtml += '[' + link.caption + '] ';
+                    resHtml += '<span class="selected-drilldown">[' + link.caption + ']</span> ';
                 } else if (!selectedFormatName) { // 絞り込みを行っていない場合のみ、選択肢を表示
                     resHtml += '<a href="#" class="drilldown-ext-link" data-value="' + link.name + '">' + link.caption + '(' + link.nSubRecs + ')</a> ';
                 }
@@ -108,7 +108,7 @@ function executeSearch(queryObject, selectedFormatName = null, selectedFolderLab
             var resHtmlFolderLabel = "フォルダラベルで絞り込む: ";
             for(var link of data.folderLabelDrilldownLinks){
                 if (selectedFolderLabel === link.folderLabel) { // 現在選択中の絞り込み
-                    resHtmlFolderLabel += '[' + link.folderLabel + '] ';
+                    resHtml += '<span class="selected-drilldown">[' + link.caption + ']</span> ';
                 } else if (!selectedFolderLabel) { // 絞り込みを行っていない場合のみ、選択肢を表示
                     resHtmlFolderLabel += '<a href="#" class="drilldown-folder-label-link" data-value="' + link.folderLabel + '">' + link.folderLabel + '(' + link.nSubRecs + ')</a> ';
                 }
@@ -121,37 +121,35 @@ function executeSearch(queryObject, selectedFormatName = null, selectedFolderLab
             $('#DRILLDOWN-RESULT-FOLDER-LABEL').html("");
         }
 
-        if (data.lastUpdatedDrilldownLinks.length >= 2
-            || (data.lastUpdatedDrilldownLinks.length === 1 && data.lastUpdatedDrilldownLinks[0].nSubRecs < data.nHits)
-            || selectedLastUpdatedGroup) {
-            var resHtmlLastUpdated = "更新日で絞り込む: ";
-            for (var link of data.lastUpdatedDrilldownLinks) {
-                if (selectedLastUpdatedGroup === link.timeClass) { // 現在選択中の絞り込み
-                    resHtmlLastUpdated += '[' + link.caption + '] ';
-                } else if (!selectedLastUpdatedGroup) { // 絞り込みを行っていない場合のみ、選択肢を表示
-                    resHtmlLastUpdated += '<a href="#" class="drilldown-last-updated-link" data-value="' + link.timeClass + '">' + link.caption + '(' + link.nSubRecs + ')</a> ';
-                }
+        // 並び順選択肢を表示
+        {
+            var resHtml = '<div class="input-field inline" style="margin-top: 0;">';
+            resHtml += '<select class="browser-default sort-select" style="height: 2rem; padding: 2px; border-color: silver; display: inline-block; margin-right: 0.3rem; width: auto;">';
+            for (var order of data.orderList) {
+                var selected = (selectedOrder === order.Type || (selectedOrder === null && order.Type === 'score'));
+                resHtml += '<option value="' + order.Type + '" ' + (selected ? 'selected' : '') + '>' + order.Caption + 'で</option> ';
             }
-            if (selectedLastUpdatedGroup !== null) {
-                resHtmlLastUpdated += '<a href="#" class="drilldown-last-updated-link" data-value="">解除</a> ';
-            }
-            $('#DRILLDOWN-RESULT-LAST-UPDATED').html(resHtmlLastUpdated);
-        } else {
-            $('#DRILLDOWN-RESULT-LAST-UPDATED').html("");
-        }
+            resHtml += "</select>"
 
+            resHtml += '<select class="browser-default view-select" style="height: 2rem; padding: 2px; border-color: silver; display: inline-block; width: auto;">';
+            resHtml += '<option value="normal" ' + (selectedView !== 'list' ? 'selected' : '') + '>通常表示</option> ';
+            resHtml += '<option value="list" ' + (selectedView === 'list' ? 'selected' : '') + '>一覧表示</option> ';
+            resHtml += "</select>";
+            resHtml += "</div > "
+            $('#DRILLDOWN-ORDER').html(resHtml);
+                }
 
         // 検索結果の各行を表示
-        displayResultRows(data);
+        displayResultRows(data, selectedView);
     });
 }
 
 // 結果リストを表示する
-function displayResultRows(getJsonData, g_searchOffset = 0){
-    if($('input[name=list_view]').is(':checked')){
-        displayResultRows_ListView(getJsonData, g_searchOffset);
+function displayResultRows(getJsonData, selectedView, searchOffset = 0){
+    if (selectedView === 'list'){
+        displayResultRows_ListView(getJsonData, searchOffset);
     } else {
-        displayResultRows_NormalView(getJsonData, g_searchOffset);
+        displayResultRows_NormalView(getJsonData, searchOffset);
     }
 
     // 残りの結果があるかどうかを判定し、ローディングアイコンを表示
@@ -162,14 +160,14 @@ function displayResultRows(getJsonData, g_searchOffset = 0){
     }
 
     // イベントやプラグインの登録
-    $('[data-search-offset=' + g_searchOffset + '] .after-tooltipped').tooltipster();
-    $('[data-search-offset=' + g_searchOffset + '] a.file-open-link').click(function(){
+    $('[data-search-offset=' + searchOffset + '] .after-tooltipped').tooltipster();
+    $('[data-search-offset=' + searchOffset + '] a.file-open-link').click(function(){
         var path = $(this).attr('data-file-path');
         api.openFile(path);
         return false;
     });
 
-    $('[data-search-offset=' + g_searchOffset + '] a.folder-open-link').click(function(){
+    $('[data-search-offset=' + searchOffset + '] a.folder-open-link').click(function(){
         var path = $(this).attr('data-file-path');
         api.openFolder(path);
         return false;
@@ -178,7 +176,7 @@ function displayResultRows(getJsonData, g_searchOffset = 0){
 }
 
 // 結果リストを表示する(通常モード)
-function displayResultRows_NormalView(getJsonData, g_searchOffset){
+function displayResultRows_NormalView(getJsonData, searchOffset){
     // 通常表示用の結果エリアを表示
     $('#SEARCH-RESULT-LIST-VIEW-BODY').show();
     // 一覧表示用の結果エリアを隠す
@@ -236,9 +234,9 @@ function displayResultRows_NormalView(getJsonData, g_searchOffset){
         $new_row.attr('data-file-path', res.file_path);
 
         $new_row.show();
-        $new_row.attr('id', 'RESULT-ROW-' + (g_searchOffset + i)).addClass('generated-search-result-row');
+        $new_row.attr('id', 'RESULT-ROW-' + (searchOffset + i)).addClass('generated-search-result-row');
         $('#SEARCH-RESULT-BODY').append($new_row);
-        $new_row.attr('data-search-offset', g_searchOffset);
+        $new_row.attr('data-search-offset', searchOffset);
         $new_row.css('position', 'relative').css('left', '200px');
     
     }
@@ -253,7 +251,7 @@ function displayResultRows_NormalView(getJsonData, g_searchOffset){
     }
 
     // アニメーション
-    var displayCardIndex = g_searchOffset;
+    var displayCardIndex = searchOffset;
     var cardDisplayCallback = function(){
         $('#RESULT-ROW-' + displayCardIndex).css('opacity', '1').css('left', '0');
         displayCardIndex++;
@@ -269,7 +267,7 @@ function displayResultRows_NormalView(getJsonData, g_searchOffset){
 
 
 // 結果リストを表示する (一覧表示モード)
-function displayResultRows_ListView(getJsonData, g_searchOffset){
+function displayResultRows_ListView(getJsonData, searchOffset){
     // 通常表示用の結果エリアを隠す
     $('#SEARCH-RESULT-LIST-VIEW-BODY').hide();
     // 一覧表示用の結果エリアを表示
@@ -301,9 +299,9 @@ function displayResultRows_ListView(getJsonData, g_searchOffset){
         $new_row.find('.icon').removeClass().addClass('icon').addClass('file-type-' + res.ext);
 
         $new_row.show();
-        $new_row.attr('id', 'RESULT-ROW-' + (g_searchOffset + i)).addClass('generated-search-result-row');
+        $new_row.attr('id', 'RESULT-ROW-' + (searchOffset + i)).addClass('generated-search-result-row');
         $('#SEARCH-RESULT-LIST-VIEW-BODY tbody').append($new_row);
-        $new_row.attr('data-search-offset', g_searchOffset);
+        $new_row.attr('data-search-offset', searchOffset);
     }
 
     // 一番下の要素と同じ縦位置に、スクロール補正用要素を移動
@@ -372,12 +370,11 @@ $(function(){
                         keyword: value
                         , fileName: ''
                         , body: ''
-                        , sortBy: ''
                         , updated: ''
                         , tfIdf: ''
                     }
 
-                    asyncApi.search(queryObject, false, 0, null, null, true).then(function (resJson) {
+                    asyncApi.search(queryObject, false, 0, null, null, null).then(function (resJson) {
                         if (resJson) {
                             var data = JSON.parse(resJson);
 
@@ -523,7 +520,6 @@ $(function(){
         var keyword = $('input[name=keyword]').val();
         var file_name = $('input[name=file_name]').val();
         var body = $('input[name=body]').val();
-        var sortBy = $('select[name=sort_by]').val();
         var updated = $('select[name=updated]').val();
 
         // 詳細検索OFFの場合はキーワード以外を反映しない
@@ -531,7 +527,6 @@ $(function(){
         if(!detailSearchFlag){
             file_name = '';
             body = '';
-            sortBy = '';
             updated = '';
         }
 
@@ -546,7 +541,6 @@ $(function(){
             keyword: keyword
             , fileName: file_name
             , body: body
-            , sortBy: sortBy
             , updated: updated
             , tfIdf: $('input:checkbox[name=tf_idf]').is(':checked')
         }
@@ -555,26 +549,6 @@ $(function(){
         // バックグラウンド検索の結果をクリアし、実行中のバックグラウンド検索があれば止める
         $('#BACKGROUND-SEARCH-RESULT').text("");
         if(backgroundSearchTimeoutHandle) clearTimeout(backgroundSearchTimeoutHandle);
-
-    
-        // $.get('http://localhost:17281/search', {'q': q}, function(data){
-        //   // 検索中表示を消す
-        //   $('#SEARCH-PROGRESS-BAR').css('opacity', '0');
-
-        //   // 検索結果部(見出)を表示
-        //   $header.css('opacity', '1');
-
-        //   var $summary = $('#SEARCH-RESULT-SUMMARY');
-        //   $summary.find('.query').text(data.query);
-        //   $summary.find('.n-records').text(data.nHits);
-        //   $summary.find('.start').text(data.start);
-        //   $summary.find('.end').text(data.end);
-
-        //   // 検索結果の各行を表示
-        //   displayResultRows(data);
-
-        // });
-
 
         return false;
 
@@ -585,7 +559,8 @@ $(function(){
         var formatName = $(this).attr('data-value');
         if (formatName === '') formatName = null; // 解除
 
-        executeSearch(g_lastQueryObject, formatName, g_lastSelectedFolderLabel || null, g_lastSelectedLastUpdatedGroup || null);
+        // 再検索
+        executeSearch(g_lastQueryObject, true, formatName, g_lastSelectedFolderLabel || null, g_lastSelectedOrder || null, g_lastSelectedView || null);
 
         return false;
     });
@@ -594,18 +569,28 @@ $(function(){
         var folderLabel = $(this).attr('data-value');
         if (folderLabel === '') folderLabel = null; // 解除
 
-        executeSearch(g_lastQueryObject, g_lastSelectedFormatName || null, folderLabel, g_lastSelectedLastUpdatedGroup || null);
+        // 再検索
+        executeSearch(g_lastQueryObject, true, g_lastSelectedFormatName || null, folderLabel, g_lastSelectedOrder || null, g_lastSelectedView || null);
 
         return false;
     });
 
-    $('#SEARCH-RESULT-HEADER').on('click', '.drilldown-last-updated-link', function () {
-        var lastUpdatedGroup = $(this).attr('data-value');
-        if (lastUpdatedGroup === '') lastUpdatedGroup = null; // 解除
-        executeSearch(g_lastQueryObject, g_lastSelectedFormatName || null, g_lastSelectedFolderLabel || null, lastUpdatedGroup);
+    $('#DRILLDOWN-ORDER').on('change', '.sort-select', function () {
+        var orderType = $(this).val();
+        // 再検索 (検索結果見出部は非表示にしない)
+        executeSearch(g_lastQueryObject, false, g_lastSelectedFormatName || null, g_lastSelectedFolderLabel || null, orderType, g_lastSelectedView || null);
 
         return false;
     });
+
+    $('#DRILLDOWN-ORDER').on('change', '.view-select', function () {
+        var viewType = $(this).val();
+        // 再検索 (検索結果見出部は非表示にしない)
+        executeSearch(g_lastQueryObject, false, g_lastSelectedFormatName || null, g_lastSelectedFolderLabel || null, g_lastSelectedOrder || null, viewType);
+
+        return false;
+    });
+
     $('#DEVTOOL').click(function(){
         api.showDevTool();
     });
@@ -641,13 +626,9 @@ $(function(){
             if(offset > g_lastSearchOffset && !g_searchFinished){
                 g_lastSearchOffset = offset;
 
-                //console.warn({ trigger: 'continue', queryObject: g_lastQueryObject, offset, formatName: g_lastSelectedFormatName, folderLabel: g_lastSelectedFolderLabel});
-                asyncApi.search(g_lastQueryObject, false, offset, g_lastSelectedFormatName, g_lastSelectedFolderLabel, g_lastSelectedLastUpdatedGroup).then(function (resJson) {
+                asyncApi.search(g_lastQueryObject, false, offset, g_lastSelectedFormatName, g_lastSelectedFolderLabel, g_lastSelectedOrder).then(function (resJson) {
                     var data = JSON.parse(resJson);
     
-                    // // 検索中表示を消す
-                    // $('#SEARCH-PROGRESS-BAR').css('opacity', '0');
-
                     // 全結果の表示が完了していれば、完了フラグを立てる
                     if(offset + 10 >= data.nHits){
                         g_searchFinished = true;
@@ -657,7 +638,7 @@ $(function(){
                     g_nextOffset += 10;
     
                     // 検索結果の各行を表示
-                    displayResultRows(data, offset);
+                    displayResultRows(data, g_lastSelectedView, offset);
                 });
             }
         }

@@ -113,40 +113,6 @@
                         <label>更新日付</label>
                     </div>
                 </div><!-- /.row -->
-                <div class="row">
-                    <div class="input-field col s4">
-                        <select name="sort_by">
-                            <option value="">標準 (関連度順)</option>
-                            <option value="path">ファイルパス順</option>
-                            <option value="updated_desc">更新日が新しい順</option>
-                            <option value="updated">更新日が古い順</option>
-                            <option value="size_desc">ファイルサイズが大きい順</option>
-                            <option value="size">ファイルサイズが小さい順</option>
-                        </select>
-                        <label>並び順</label>
-                    </div>
-                    <!-- <div class="input-field col s4">
-                  <select>
-                    <option value="">指定なし</option>
-                    <option value="updated">プロジェクト1</option>
-                    <option value="path">プロジェクト2</option>
-                  </select>
-                  <label>検索対象グループ</label>
-                </div> -->
-
-                    <div class="col s4">
-                        <label>一覧表示</label>
-                        <div class="switch">
-                            <label>
-                                Off<input type="checkbox" name="list_view">
-                                <span class="lever"></span>On
-                            </label>
-                        </div>
-                        <!-- <label>TF-IDF</label>
-                    <div class="switch"><label>Off<input type="checkbox" name="tf_idf">
-                        <span class="lever"></span>On</label></div>  -->
-                    </div><!-- /.col -->
-                </div><!-- /.row -->
             </form>
         </div><!-- /.section -->
         <div class="progress" id="SEARCH-PROGRESS-BAR" style="opacity: 0;">
@@ -154,16 +120,6 @@
         </div>
 
         <div class="section" id="SEARCH-RESULT">
-            <!-- <div class="row">
-     <div class="col s12">
-       <ul class="tabs">
-         <li class="tab col s3"><a href="#TAB-SEARCH-RESULT">検索結果</a></li>
-         <li class="tab col s3"><a href="#TAB-SETTING">設定</a></li>
-       </ul>
-     </div>
-     <div id="TAB-SEARCH-RESULT" class="col s12">
-    -->
-
 
             <div id="SEARCH-RESULT-HEADER">
                 <h3>検索結果</h3>
@@ -173,7 +129,7 @@
 
                 <p class="drilldown-result" id="DRILLDOWN-RESULT-EXT"></p>
                 <p class="drilldown-result" id="DRILLDOWN-RESULT-FOLDER-LABEL"></p>
-                <p class="drilldown-result" id="DRILLDOWN-RESULT-LAST-UPDATED"></p>
+                <p class="drilldown-result" id="DRILLDOWN-ORDER"></p>
                 <!-- <ul class="pagination">
     </ul> -->
             </div><!-- / #SEARCH-RESULT-HEADER -->
