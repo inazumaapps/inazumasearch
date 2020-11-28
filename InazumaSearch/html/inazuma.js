@@ -121,14 +121,12 @@ function executeSearch(queryObject, selectedFormatName = null, selectedFolderLab
 
         // 並び順選択肢を表示
         {
-            var resHtml = "並び: ";
+            var resHtml = '<div class="input-field inline" style="margin-top: 0;"><select class="browser-default" style="height: 2rem; padding: 2px; border-color: silver;">';
             for (var order of data.orderList) {
-                if (selectedOrder === order.Type || (selectedOrder === null && order.Type === 'score')) { // 現在選択中の並び順
-                    resHtml += '<span class="selected-drilldown">[' + order.Caption + ']</span> ';
-                } else {
-                    resHtml += '<a href="#" class="drilldown-order-link" data-value="' + order.Type + '">' + order.Caption + '</a> ';
-                }
+                var selected = (selectedOrder === order.Type || (selectedOrder === null && order.Type === 'score'));
+                resHtml += '<option value="' + order.Type + '" ' + (selected ? 'selected' : '') + '>' + order.Caption + '</option> ';
             }
+            resHtml += "</select></div>"
             $('#DRILLDOWN-ORDER').html(resHtml);
         }
 
@@ -586,8 +584,8 @@ $(function(){
         return false;
     });
 
-    $('#SEARCH-RESULT-HEADER').on('click', '.drilldown-order-link', function () {
-        var orderType = $(this).attr('data-value');
+    $('#DRILLDOWN-ORDER').on('change', 'select', function () {
+        var orderType = $(this).val();
         executeSearch(g_lastQueryObject, g_lastSelectedFormatName || null, g_lastSelectedFolderLabel || null, orderType);
 
         return false;
