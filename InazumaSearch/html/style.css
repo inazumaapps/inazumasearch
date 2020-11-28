@@ -41,6 +41,10 @@ html {
 	margin-bottom: 0.2em;
 }
 
+.selected-drilldown {
+	color: gray;
+}
+
 .help-link {
 	font-size: 12px !important;
 }

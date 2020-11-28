@@ -436,7 +436,7 @@ namespace InazumaSearch.Forms
                 , int offset = 0
                 , string selectedFormat = null
                 , string selectedFolderLabel = null
-                , string selectedLastUpdatedGroup = null
+                , string selectedOrder = null
                 , bool ignoreError = false
             )
             {
@@ -474,7 +474,6 @@ namespace InazumaSearch.Forms
                     var queryFileName = (string)queryObject["fileName"];
                     var queryBody = (string)queryObject["body"];
                     var queryUpdated = (string)queryObject["updated"];
-                    var querySortBy = (string)queryObject["sortBy"];
 
                     var searchEngine = new SearchEngine(App);
                     var ret = searchEngine.Search(
@@ -482,11 +481,10 @@ namespace InazumaSearch.Forms
                         , queryFileName
                         , queryBody
                         , queryUpdated
-                        , querySortBy
                         , offset
                         , selectedFormat
                         , selectedFolderLabel
-                        , (selectedLastUpdatedGroup != null ? (DateTime?)DateTime.Parse(selectedLastUpdatedGroup) : null)
+                        , selectedOrder
                     );
 
                     // 失敗した場合はエラーダイアログを表示して終了
