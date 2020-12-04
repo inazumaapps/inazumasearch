@@ -86,6 +86,7 @@
             this.LstFile.TabIndex = 18;
             this.LstFile.UseCompatibleStateImageBehavior = false;
             this.LstFile.View = System.Windows.Forms.View.Details;
+            this.LstFile.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.LstFile_MouseDoubleClick);
             // 
             // FileName
             // 

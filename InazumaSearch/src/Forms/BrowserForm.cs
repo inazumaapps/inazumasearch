@@ -624,6 +624,7 @@ namespace InazumaSearch.Forms
             public BrowserForm OwnerForm { get; set; }
             public Core.Application Application { get; set; }
             private const int ShowDevTools = 26501;
+            private const int ShowDBBrowser = 26505;
             private const int ShowDebugForm = 26502;
             private const int OpenFile = 26503;
             private const int OpenFolder = 26504;
@@ -661,6 +662,7 @@ namespace InazumaSearch.Forms
                     if (Application.DebugMode)
                     {
                         model.AddItem((CefMenuCommand)ShowDevTools, "開発ツール");
+                        model.AddItem((CefMenuCommand)ShowDBBrowser, "DBブラウザー(β版)");
                         model.AddItem((CefMenuCommand)ShowDebugForm, "デバッグウインドウを開く");
                         model.AddSeparator();
                         model.AddItem(CefMenuCommand.ReloadNoCache, "更新");
@@ -699,6 +701,15 @@ namespace InazumaSearch.Forms
                     if ((int)commandId == ShowDevTools)
                     {
                         browser.ShowDevTools();
+                    }
+
+                    if ((int)commandId == ShowDBBrowser)
+                    {
+                        OwnerForm.InvokeOnUIThread((f) =>
+                        {
+                            var f2 = new DBBrowserForm(Application);
+                            f2.Show(f);
+                        });
                     }
                     if ((int)commandId == ShowDebugForm)
                     {

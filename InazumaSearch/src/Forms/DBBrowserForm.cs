@@ -49,7 +49,7 @@ namespace InazumaSearch.Forms
             // 全文書のファイルパス一覧を取得
             var selectRes = Application.GM.Select(
                 table: Table.Documents
-                , outputColumns: new[] { Column.Documents.FILE_PATH, Column.Documents.FILE_UPDATED_AT, Column.Documents.SIZE }
+                , outputColumns: new[] { Column.Documents.KEY, Column.Documents.FILE_PATH, Column.Documents.FILE_UPDATED_AT, Column.Documents.SIZE }
                 , sortKeys: new[] { Column.Documents.FILE_PATH }
                 , limit: -1
             );
@@ -153,11 +153,40 @@ namespace InazumaSearch.Forms
                     item.ImageIndex = iconImageIndex;
                 };
 
+                item.Tag = rec.Key;
+
                 LstFile.Items.Add(item);
             }
 
             IconFetcher.SetImageListToListView(LstFile, systemImgListHandle);
 
+        }
+
+        /// <summary>
+        /// リストダブルクリック時
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void LstFile_MouseDoubleClick(object sender, MouseEventArgs e)
+        {
+            if (LstFile.SelectedItems.Count >= 1)
+            {
+                var item = LstFile.SelectedItems[0];
+                var documentKey = (string)item.Tag;
+
+                var res = Application.GM.Select(
+                      table: Table.Documents
+                    , outputColumns: new[] { Column.Documents.KEY, Column.Documents.BODY }
+                    , query: string.Format("{0}:{1}", Column.Documents.KEY, Groonga.Util.EscapeForQuery(documentKey))
+                );
+
+                var body = res.SearchResult.Records[0].GetTextValue(Column.Documents.BODY);
+                var f = new DBBrowserBodyViewDialog
+                {
+                    Body = body
+                };
+                f.ShowDialog(this);
+            }
         }
     }
 }
