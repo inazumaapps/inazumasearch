@@ -36,7 +36,7 @@
             // 
             this.BtnQuit.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.BtnQuit.DialogResult = System.Windows.Forms.DialogResult.OK;
-            this.BtnQuit.Location = new System.Drawing.Point(516, 293);
+            this.BtnQuit.Location = new System.Drawing.Point(711, 447);
             this.BtnQuit.Name = "BtnQuit";
             this.BtnQuit.Size = new System.Drawing.Size(82, 31);
             this.BtnQuit.TabIndex = 1;
@@ -55,7 +55,7 @@
             this.TxtBody.Name = "TxtBody";
             this.TxtBody.ReadOnly = true;
             this.TxtBody.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.TxtBody.Size = new System.Drawing.Size(585, 274);
+            this.TxtBody.Size = new System.Drawing.Size(780, 428);
             this.TxtBody.TabIndex = 2;
             this.TxtBody.WordWrap = false;
             // 
@@ -64,12 +64,12 @@
             this.AcceptButton = this.BtnQuit;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(610, 336);
+            this.ClientSize = new System.Drawing.Size(805, 490);
             this.Controls.Add(this.TxtBody);
             this.Controls.Add(this.BtnQuit);
             this.Name = "DBBrowserBodyViewDialog";
             this.ShowIcon = false;
-            this.Text = "本文";
+            this.Text = "ファイル本文";
             this.TopMost = true;
             this.Load += new System.EventHandler(this.DBBrowserBodyViewDialog_Load);
             this.ResumeLayout(false);
