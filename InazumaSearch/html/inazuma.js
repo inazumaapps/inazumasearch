@@ -15,6 +15,7 @@ var g_nextOffset = 0;
 var g_lastSearchOffset = 0;
 var g_searchFinished = false;
 
+
 // functions
 function handleDragOver(e){
     event.preventDefault(); 
@@ -318,6 +319,29 @@ function displayResultRows_ListView(getJsonData, searchOffset){
 
 }
 
+// クロール実行前モーダルにフォルダ表示を追加
+function addFolderToCrawlModal(path, label, file_count) {
+    var $newItem = $('.folder-item.cloning-base').clone().removeClass('cloning-base');
+    $newItem.find('.crawl-modal-folder-check').attr('data-path', path);
+    $newItem.find('.path').text(path);
+    $newItem.find('.file-count').text(file_count);
+
+    $('#CRAWL-FOLDER-LIST li.folder-item:last').after($newItem);
+    $newItem.show();
+}
+
+// クロール開始
+function startCrawl(targetFolders = null) {
+    // 警告エリアを非表示にする
+    $('#MESSAGE-AREA').fadeOut();
+    $('.search-button').removeClass('disabled');
+
+    // 最終クロール日時の表示を変更
+    $('#LAST-CRAWL-TIME-CAPTION').text("最終実行: たった今");
+
+    api.crawlStart(JSON.stringify(targetFolders));
+}
+
 cols = document.querySelectorAll('.droppable');
 [].forEach.call(cols, function(col) {
     console.log("event assigned." + col.toString());
@@ -398,7 +422,21 @@ $(function(){
     })
 
 
-    $('.modal').modal();
+    $('#DISPLAY-HIGHLIGHT-MODAL').modal();
+    $('#QUERY-GUIDE-MODAL').modal();
+    $('#CRAWL-MODAL').modal({
+        onCloseEnd: function () {
+            // クロール実行ボタンを押していればクロール処理
+            if ($('#CRAWL-MODAL').attr('data-decide-flag') === '1') {
+                // チェックしているフォルダのパスを取得
+                var targetFolders = [];
+                $('.crawl-modal-folder-check:checked[data-path]').each(function () {
+                    targetFolders.push($(this).attr('data-path'));
+                });
+                startCrawl(targetFolders);
+            }
+        }
+    });
 
     let lastClickedPath;
     let lastClickedKey;
@@ -469,35 +507,58 @@ $(function(){
 
     $('select').formSelect();
     $('.tooltipped').tooltipster();
-    // var scrollFireOptions = [
-    //   {
-    //       selector: 'next-result-show-line'
-    //     , offset: 100
-    //     , callback: function(elem) {
-    //         console.log('scrollfire.');
-    //       }
-    //   }
-    // ]
-    // Materialize.scrollFire(scrollFireOptions);
 
-    $('#CRAWL-START').click(function(){
-        //$('#PROGRESS-BAR').show();
-        //$('#PROGRESS-MESSAGE').text('クロールを開始しています...');
+    $('#CRAWL-START').click(function () {
+        // 検索対象フォルダが2件以上かどうかで処理を分岐
+        if (dbState.targetFolderCount >= 2) {
+            // 2件以上ならダイアログを開いて、クロールするフォルダを選択
+            $('#CRAWL-MODAL').removeAttr('data-decide-flag');
 
-        // 警告エリアを非表示にする
-        $('#MESSAGE-AREA').fadeOut();
-        $('.search-button').removeClass('disabled');
-
-        // 最終クロール日時の表示を変更
-        $('#LAST-CRAWL-TIME-CAPTION').text("最終実行: たった今");
-
-        api.crawlStart();
+            var modal = M.Modal.getInstance($('#CRAWL-MODAL')[0]);
+            modal.open();
+        } else {
+            // 1件ならそのままクロール実行
+            startCrawl();
+        }
     });
 
-    // $('ul.pagination a').click(function(){
-    //   $('.card').css('left', '-10000px');
-    //   return true;
-    // });
+    // クロール実行ボタンの表示更新
+    var refreshCrawlDecideButtonEnabled = function () {
+        // 1つ以上のフォルダを選択していればクロール実行可能
+        if ($('.crawl-modal-folder-check:visible:checked').length >= 1) {
+            $('#CRAWL-MODAL-DECIDE').removeClass('disabled');
+        } else {
+            $('#CRAWL-MODAL-DECIDE').addClass('disabled');
+        }
+    };
+
+    // クロールダイアログで「全選択」ボタンを押下
+    $('#CRAWL-MODAL-ALL-CHECK').click(function (e) {
+        if ($(this).prop('checked')) {
+            $('.crawl-modal-folder-check:visible').prop('checked', true);
+        } else {
+            $('.crawl-modal-folder-check:visible').prop('checked', false);
+        }
+
+        refreshCrawlDecideButtonEnabled(); // クロール実行ボタンの表示を更新
+    });
+    // クロールダイアログで、各フォルダのチェックボックスを変更
+    $('#CRAWL-MODAL').on('click', '.crawl-modal-folder-check', function (e) {
+        // 全てチェックONであれば、「全選択」のチェックをON
+        if ($('.crawl-modal-folder-check:visible').not(':checked').length === 0) {
+            $('#CRAWL-MODAL-ALL-CHECK').prop('checked', true);
+        } else {
+            $('#CRAWL-MODAL-ALL-CHECK').prop('checked', false);
+        }
+
+        refreshCrawlDecideButtonEnabled(); // クロール実行ボタンの表示を更新
+    });
+
+    // クロールダイアログで「クロール実行」ボタンを押下
+    $('#CRAWL-MODAL-DECIDE').click(function () {
+        $('#CRAWL-MODAL').attr('data-decide-flag', '1');
+        $('#CRAWL-MODAL').modal('close');
+    });
 
     $('#TEST-NOTIFY').click(function(){
         new Notification("通知起動");
@@ -647,5 +708,20 @@ $(function(){
             }
         }
     });
+
+    // 検索対象フォルダ数が2剣以上であれば、起動時、バックグラウンドで検索対象フォルダの一覧を読み込む
+    // （クロールボタン押下時の表示のため）
+    if (dbState.targetFolderCount >= 2) {
+        asyncApi.searchTargetDirectories().then(function (json) {
+            var data = JSON.parse(json);
+            if (data) {
+                for (dir of data.target_directories) {
+                    addFolderToCrawlModal(dir.Path, dir.Label, data.file_counts[dir.Path]);
+                }
+            }
+        });
+    }
+
+
 });
 

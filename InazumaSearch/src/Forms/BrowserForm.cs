@@ -113,8 +113,13 @@ namespace InazumaSearch.Forms
 
 
 
-            public void CrawlStart()
+            public void CrawlStart(string targetFoldersJSON = null)
             {
+                string[] targetFolders = null;
+                if (targetFoldersJSON != null)
+                {
+                    targetFolders = JsonConvert.DeserializeObject<string[]>(targetFoldersJSON);
+                }
                 OwnerForm.InvokeOnUIThread((f) => { f.CrawlStart(); });
             }
 

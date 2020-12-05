@@ -409,7 +409,6 @@ $(function () {
     // 最初のデータ読み込み
     asyncApi.searchTargetDirectories().then(function (json) {
         var data = JSON.parse(json);
-        console.log(data);
         if (data) {
             for(dir of data.target_directories) {
                 addFolder(dir.Path, dir.Label, data.file_counts[dir.Path]);

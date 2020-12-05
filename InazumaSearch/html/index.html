@@ -2,17 +2,17 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no"/>
-  <title>InazumaSearch</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no" />
+    <title>InazumaSearch</title>
 
-  <!-- CSS  -->
-  <link href="materialize/css/materialize.css" type="text/css" rel="stylesheet" media="screen,projection"/>
-  <link href="style.css" type="text/css" rel="stylesheet" media="screen,projection"/>
-  <link href="material-icons/material-icons.css" rel="stylesheet">
-  <link href="icomoon/style.css" type="text/css" rel="stylesheet" media="screen,projection"/>
-  <link rel="stylesheet" type="text/css" href="tooltipster/css/tooltipster.bundle.min.css" />
-  <!-- <link rel="stylesheet" type="text/css" href="tooltipster/css/plugins/tooltipster/sideTip/themes/tooltipster-sideTip-shadow.min.css" /> -->
+    <!-- CSS  -->
+    <link href="materialize/css/materialize.css" type="text/css" rel="stylesheet" media="screen,projection" />
+    <link href="style.css" type="text/css" rel="stylesheet" media="screen,projection" />
+    <link href="material-icons/material-icons.css" rel="stylesheet">
+    <link href="icomoon/style.css" type="text/css" rel="stylesheet" media="screen,projection" />
+    <link rel="stylesheet" type="text/css" href="tooltipster/css/tooltipster.bundle.min.css" />
+    <!-- <link rel="stylesheet" type="text/css" href="tooltipster/css/plugins/tooltipster/sideTip/themes/tooltipster-sideTip-shadow.min.css" /> -->
 </head>
 <body style="-webkit-app-region: drag">
     <nav class="light-blue lighten-1" role="navigation" id="PAGETOP">
@@ -41,10 +41,10 @@
                     <p>文書情報が収集されていません。「クロール」を実行して文書情報を収集してください。</p>
                 </div>
                 <!--
-              <div class="card-action">
-                <a href="setting.html"><i class="material-icons left">settings</i>設定画面を開く</a>
-              </div>
-            -->
+                  <div class="card-action">
+                    <a href="setting.html"><i class="material-icons left">settings</i>設定画面を開く</a>
+                  </div>
+                -->
             </div><!-- /#MESSAGE-AREA -->
 
             <div class="right-align">
@@ -53,7 +53,7 @@
                 </button>
                 <p class="subtext" id="LAST-CRAWL-TIME-CAPTION">&nbsp;</p>
                 <!-- <button class="btn waves-effect waves-light" id="DEVTOOL" draggable="true">開発ツール<i class="mdi-action-search right"></i>
-            </button> -->
+                </button> -->
                 <div class="progress" id="PROGRESS-BAR" style="display: none;">
                     <div class="indeterminate"></div>
                 </div>
@@ -131,7 +131,7 @@
                 <p class="drilldown-result" id="DRILLDOWN-RESULT-FOLDER-LABEL"></p>
                 <p class="drilldown-result" id="DRILLDOWN-ORDER"></p>
                 <!-- <ul class="pagination">
-    </ul> -->
+                </ul> -->
             </div><!-- / #SEARCH-RESULT-HEADER -->
 
             <div id="SEARCH-RESULT-BODY">
@@ -221,7 +221,7 @@
     <ul id="dropdown1" class="dropdown-content">
         <li><a href="#" class="display-all-body-link">本文内でマッチした箇所を全表示</a></li>
         <!--<li class="divider" tabindex="-1"></li>
-    <li><a href="#" class="ignore-dialog-link">無視設定</a></li>-->
+        <li><a href="#" class="ignore-dialog-link">無視設定</a></li>-->
     </ul>
 
     <!-- Modal Structure -->
@@ -289,6 +289,34 @@
         </div>
     </div>
 
+    <!-- Modal Structure -->
+    <div id="CRAWL-MODAL" class="modal modal-fixed-footer" style="width: 96% !important; height: 96% !important;">
+        <div class="modal-header" style="padding-left: 24px;">
+            <p>クロールを実行するフォルダを選択してください。</p>
+        </div>
+        <div class="modal-content">
+            <div>
+                <label>
+                    <input type="checkbox" class="filled-in" id="CRAWL-MODAL-ALL-CHECK" checked="checked" />
+                    <span class="title path" style="color: black; height: 20px; line-height: 20px;">全選択</span>
+                </label>
+            </div>
+            <ul class="collection" id="CRAWL-FOLDER-LIST">
+                <li class="collection-item folder-item cloning-base">
+                    <label>
+                        <input type="checkbox" class="filled-in crawl-modal-folder-check" checked="checked" />
+                        <span class="title" style="height: 20px; line-height: 20px; color: black;"><span class="path"></span></span>
+                    </label>
+                            
+                    <p style="font-size: smaller; color: gray">登録済み文書数: <span class="file-count">0</span></p>
+                </li>
+            </ul>
+        </div>
+        <div class="modal-footer">
+            <a href="#!" class="modal-action waves-effect btn" id="CRAWL-MODAL-DECIDE">クロール実行</a>
+            <a href="#!" class="modal-action modal-close waves-effect btn-flat">キャンセル</a>
+        </div>
+    </div>
     <!--  Scripts-->
     <script src="jquery/jquery-3.3.1.min.js"></script>
     <script type="text/javascript" src="tooltipster/js/tooltipster.bundle.min.js"></script>
