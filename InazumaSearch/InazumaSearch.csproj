@@ -348,6 +348,10 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
+    <Content Include="html\inazuma.js" />
+    <Content Include="html\index.html" />
+    <Content Include="html\setting.html" />
+    <Content Include="html\style.css" />
     <Content Include="icon\inazumasearch-icon.ico" />
     <Content Include="nlogconf\Debug.config">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
