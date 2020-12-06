@@ -613,21 +613,20 @@ namespace InazumaSearch.Core
                 public override void Execute(IProgress<CrawlState> progress, CancellationToken cToken, Result crawlResult)
                 {
                     Logger.Info("全体クロール開始");
+                    // ファイルのクロール処理を実行
+                    var dbRecordMap = DBDocumentRecordListUp(progress, cToken, targetDirPaths: TargetDirPaths); // DB内の全レコード一覧を取得
 
-                    // 対象フォルダパスリストを決定
+                    // 実際にファイルを検索する対象フォルダパスを決定
                     // プロパティで指定されていればそのパスリストを使用、指定されていなければ全ての検索対象フォルダ
-                    var targetDirPaths = TargetDirPaths;
-                    if (targetDirPaths == null)
+                    var fileSearchTargetDirPath = TargetDirPaths;
+                    if (fileSearchTargetDirPath == null)
                     {
-                        targetDirPaths = _app.UserSettings.TargetFolders.Where(f => f.Type == UserSetting.TargetFolderType.DocumentFile)
-                                                                        .Select(f => f.Path).OrderBy(f => f).ToList();
+                        fileSearchTargetDirPath = _app.UserSettings.TargetFolders.Where(f => f.Type == UserSetting.TargetFolderType.DocumentFile)
+                                                                                 .Select(f => f.Path).OrderBy(f => f).ToList();
                     }
 
-                    // ファイルのクロール処理を実行
-                    var dbRecordMap = DBDocumentRecordListUp(progress, cToken, targetDirPaths: targetDirPaths); // DB内の全レコード一覧を取得
-
                     List<IgnoreSetting> ignoreSettings;
-                    var targetSubDirs = DirectoryListUpTask(progress, cToken, targetDirPaths, out ignoreSettings); // 対象ディレクトリ一覧取得
+                    var targetSubDirs = DirectoryListUpTask(progress, cToken, fileSearchTargetDirPath, out ignoreSettings); // 対象ディレクトリ一覧取得
                     List<TargetFile> targets = null;
                     UpdateDocumentFileRecords(progress, cToken, crawlResult, targetSubDirs, dbRecordMap, ignoreSettings, out targets); // 文書データ登録
                     PurgeDocumentFileRecords(progress, cToken, crawlResult, dbRecordMap, ignoreSettings, targets); // 不要な文書データ削除
