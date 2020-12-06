@@ -71,7 +71,7 @@ namespace InazumaSearch.Core
             {
                 Directory.CreateDirectory(Path.GetDirectoryName(SettingFilePath));
                 File.WriteAllText(SettingFilePath, JsonConvert.SerializeObject(PlainData));
-                NLog.LogManager.GetCurrentClassLogger().Info("設定ファイル保存 - {0}", JsonConvert.SerializeObject(PlainData));
+                NLog.LogManager.GetCurrentClassLogger().Trace("設定ファイル保存 - {0}", JsonConvert.SerializeObject(PlainData));
             }
 
             public void Load()
@@ -116,7 +116,7 @@ namespace InazumaSearch.Core
             }
 
             /// <summary>
-            /// 文書データのキーを受け取り、その値を元に「その文書を含んでいるすべての対象フォルダ」を取得する
+            /// 文書データのキーを受け取り、その値を元に「その文書を含んでいるすべての対象フォルダ情報」を取得する
             /// </summary>
             /// <param name="key"></param>
             public virtual IEnumerable<TargetFolder> FindTargetFoldersFromDocumentKey(string key)

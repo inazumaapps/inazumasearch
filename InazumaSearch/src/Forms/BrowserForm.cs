@@ -120,7 +120,7 @@ namespace InazumaSearch.Forms
                 {
                     targetFolders = JsonConvert.DeserializeObject<string[]>(targetFoldersJSON);
                 }
-                OwnerForm.InvokeOnUIThread((f) => { f.CrawlStart(); });
+                OwnerForm.InvokeOnUIThread((f) => { f.CrawlStart(targetFolders); });
             }
 
             public string SelectDirectory()
@@ -753,7 +753,7 @@ namespace InazumaSearch.Forms
         }
 
 
-        protected virtual void CrawlStart()
+        protected virtual void CrawlStart(IEnumerable<string> targetDirPaths = null)
         {
             // 実行前にDBのサイズを取得
             var dbFileSize = App.GM.GetDBFileSizeTotal();
@@ -789,6 +789,7 @@ namespace InazumaSearch.Forms
             {
                 ChromeBrowser.EvaluateScriptAsync("$('#CRAWL-START').removeClass('disabled');");
             });
+            f.TargetDirPaths = targetDirPaths;
             f.Show(this);
         }
 

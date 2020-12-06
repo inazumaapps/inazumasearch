@@ -58,11 +58,6 @@ namespace InazumaSearch.Core
 
             public abstract void Execute(IProgress<CrawlState> progress, CancellationToken cToken, Result crawlResult);
 
-            public List<string> GetTargetDirectories(string targetFolderType)
-            {
-                return _app.UserSettings.TargetFolders.Where(f => f.Type == targetFolderType).Select(f => f.Path).OrderBy(f => f).ToList();
-            }
-
             /// <summary>
             /// 等価比較 (Objectメソッドのオーバーライド)
             /// </summary>
@@ -108,24 +103,25 @@ namespace InazumaSearch.Core
             /// <summary>
             /// Groonga内に登録された対象文書のキー, 更新日付, サイズを取得し、それをDictionaryに格納して返す
             /// </summary>
+            /// <param name="targetDirPaths">検索対象のフォルダ一覧（省略時やnull時は全検索対象フォルダを検索）</param>
             /// <returns>対象ファイルの一覧</returns>
             protected virtual IDictionary<string, Groonga.RecordSet.Record> DBDocumentRecordListUp(
                   IProgress<CrawlState> progress
                 , CancellationToken cToken
-                , string targetKey = null
-                , string targetKeyStartsWith = null
+                , IEnumerable<string> targetDirPaths = null
             )
             {
                 progress.Report(new CrawlState() { CurrentStep = CrawlState.Step.DBRecordListUpBegin, CurrentValue = 0 });
 
                 string query = null;
-                if (targetKeyStartsWith != null)
+
+                // 検索対象フォルダが指定されている場合、そのフォルダパスから始まる文書のみを検索対象とする
+                if (targetDirPaths != null)
                 {
-                    query = string.Format("{0}:^{1}", Column.Documents.KEY, Groonga.Util.EscapeForQuery(targetKeyStartsWith));
-                }
-                if (targetKey != null)
-                {
-                    query = string.Format("{0}:{1}", Column.Documents.KEY, Groonga.Util.EscapeForQuery(targetKey));
+                    // ※名前が部分一致する別のフォルダを誤って検索対象としないように、フォルダパスの最後に\を付ける
+                    var targetKeys = targetDirPaths.Select(dir => Util.MakeDocumentFileKey(dir + @"\")); 
+                    var exprs = targetKeys.Select(key => $"{Column.Documents.KEY}:^{Groonga.Util.EscapeForQuery(key)}");
+                    query = $"({string.Join(" OR ", exprs)})";
                 }
 
                 var alreadyRecords = _app.GM.Select(
@@ -155,7 +151,7 @@ namespace InazumaSearch.Core
             protected virtual List<string> DirectoryListUpTask(
                   IProgress<CrawlState> progress
                 , CancellationToken cToken
-                , List<string> dirPaths
+                , IEnumerable<string> dirPaths
                 , out List<IgnoreSetting> ignoreSettings
             )
             {
@@ -600,9 +596,18 @@ namespace InazumaSearch.Core
             /// </summary>
             public class FullCrawl : WorkBase
             {
-                public FullCrawl(Application app, bool alwaysCrawlMode) : base(app)
+                /// <summary>
+                /// クロール対象のフォルダパスリスト（nullの場合はすべての検索対象フォルダをクロールする）
+                /// </summary>
+                public virtual IEnumerable<string> TargetDirPaths { get; protected set; }
+
+                /// <summary>
+                /// コンストラクタ
+                /// </summary>
+                public FullCrawl(Application app, bool alwaysCrawlMode = false, IEnumerable<string> targetDirPaths = null) : base(app)
                 {
                     _alwaysCrawlMode = alwaysCrawlMode;
+                    TargetDirPaths = targetDirPaths;
                 }
 
                 /// <summary>
@@ -622,20 +627,27 @@ namespace InazumaSearch.Core
                     return GetType().GetHashCode();
                 }
 
-                public override string LogCaption { get { return "フルクロール"; } }
+                public override string LogCaption { get { return "全体クロール"; } }
 
 
                 public override void Execute(IProgress<CrawlState> progress, CancellationToken cToken, Result crawlResult)
                 {
-                    Logger.Info("フルクロール開始");
+                    Logger.Info("全体クロール開始");
 
+                    // 対象フォルダパスリストを決定
+                    // プロパティで指定されていればそのパスリストを使用、指定されていなければ全ての検索対象フォルダ
+                    var targetDirPaths = this.TargetDirPaths;
+                    if (targetDirPaths == null)
+                    {
+                        targetDirPaths = _app.UserSettings.TargetFolders.Where(f => f.Type == UserSetting.TargetFolderType.DocumentFile)
+                                                                        .Select(f => f.Path).OrderBy(f => f).ToList();
+                    }
 
                     // ファイルのクロール処理を実行
-                    var dbRecordMap = DBDocumentRecordListUp(progress, cToken); // DB内の全レコード一覧を取得
+                    var dbRecordMap = DBDocumentRecordListUp(progress, cToken, targetDirPaths: targetDirPaths); // DB内の全レコード一覧を取得
 
-                    var dirPaths = GetTargetDirectories(UserSetting.TargetFolderType.DocumentFile); // 対象ディレクトリ一覧を取得
                     List<IgnoreSetting> ignoreSettings;
-                    var targetSubDirs = DirectoryListUpTask(progress, cToken, dirPaths, out ignoreSettings); // 対象ディレクトリ一覧取得
+                    var targetSubDirs = DirectoryListUpTask(progress, cToken, targetDirPaths, out ignoreSettings); // 対象ディレクトリ一覧取得
                     List<TargetFile> targets = null;
                     UpdateDocumentFileRecords(progress, cToken, crawlResult, targetSubDirs, dbRecordMap, ignoreSettings, out targets); // 文書データ登録
                     PurgeDocumentFileRecords(progress, cToken, crawlResult, dbRecordMap, ignoreSettings, targets); // 不要な文書データ削除
@@ -648,7 +660,7 @@ namespace InazumaSearch.Core
 
                     crawlResult.Finished = true;
 
-                    Logger.Info("フルクロール完了 ({0})", JsonConvert.SerializeObject(crawlResult));
+                    Logger.Info("全体クロール完了 ({0})", JsonConvert.SerializeObject(crawlResult));
                 }
             }
 
@@ -688,7 +700,8 @@ namespace InazumaSearch.Core
                 public override void Execute(IProgress<CrawlState> progress, CancellationToken cToken, Result crawlResult)
                 {
                     // ディレクトリ配下のファイルをすべて削除する
-                    var expr = string.Format("{0} @^ {1}", Column.Documents.KEY, Groonga.Util.EscapeForQuery(Util.MakeDocumentFileKey(DirPath)));
+                    // ※名前が部分一致する別のフォルダを誤って検索対象としないように、フォルダパスの最後に\を付ける
+                    var expr = string.Format("{0} @^ {1}", Column.Documents.KEY, Groonga.Util.EscapeForQuery(Util.MakeDocumentFileKey(DirPath + @"\")));
                     DeleteDocumentFileRecords(progress, cToken, crawlResult, targetExpr: expr);
 
                     crawlResult.Finished = true;
@@ -730,11 +743,8 @@ namespace InazumaSearch.Core
 
                 public override void Execute(IProgress<CrawlState> progress, CancellationToken cToken, Result crawlResult)
                 {
-                    // 登録対象のディレクトリパスを、キー形式に変換
-                    var keyPrefix = Util.MakeDocumentFileKey(DirPath);
-
-                    // 上記ディレクトリ以下にある登録済み文書のデータを取得
-                    var dbRecordMap = DBDocumentRecordListUp(progress, cToken, targetKeyStartsWith: keyPrefix);
+                    // 登録対象のディレクトリパス以下にある、登録済み文書のデータを取得
+                    var dbRecordMap = DBDocumentRecordListUp(progress, cToken, targetDirPaths: new[] { DirPath });
 
                     // 上記ディレクトリ以下にある対象サブディレクトリ一覧取得
                     List<IgnoreSetting> ignoreSettings;

@@ -92,11 +92,12 @@ namespace InazumaSearch.Core
         }
 
         /// <summary>
-        /// 非同期にフルクロール処理の実行を開始する
+        /// 非同期に全体クロール処理の実行を開始する
         /// </summary>
-        /// <param name="progressChangedCallback"></param>
         /// <returns></returns>
-        public virtual async Task<Result> RunFullCrawlAsync(EventHandler<CrawlState> progressChangedCallback = null)
+        public virtual async Task<Result> RunFullCrawlAsync(
+            IEnumerable<string> targetDirPaths
+            , EventHandler<CrawlState> progressChangedCallback = null)
         {
             if (Running) throw new InvalidOperationException("Crawlerはすでに起動しています。");
 
@@ -110,8 +111,8 @@ namespace InazumaSearch.Core
 
             var res = new Result() { Finished = false };
 
-            // フルクロールを実行
-            var work = new Crawler.Work.FullCrawl(App, false);
+            // 全体クロールを実行
+            var work = new Crawler.Work.FullCrawl(App, targetDirPaths: targetDirPaths);
             await Task.Run(() =>
             {
                 try
