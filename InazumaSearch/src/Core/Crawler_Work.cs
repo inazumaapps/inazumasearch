@@ -118,9 +118,8 @@ namespace InazumaSearch.Core
                 // 検索対象フォルダが指定されている場合、そのフォルダパスから始まる文書のみを検索対象とする
                 if (targetDirPaths != null)
                 {
-                    // ※名前が部分一致する別のフォルダを誤って検索対象としないように、フォルダパスの最後に\を付ける
-                    var targetKeys = targetDirPaths.Select(dir => Util.MakeDocumentFileKey(dir + @"\"));
-                    var exprs = targetKeys.Select(key => $"{Column.Documents.KEY}:^{Groonga.Util.EscapeForQuery(key)}");
+                    var targetKeyPrefixes = targetDirPaths.Select(dir => Util.MakeDocumentDirKeyPrefix(dir));
+                    var exprs = targetKeyPrefixes.Select(key => $"{Column.Documents.KEY}:^{Groonga.Util.EscapeForQuery(key)}");
                     query = $"({string.Join(" OR ", exprs)})";
                 }
 
@@ -398,9 +397,10 @@ namespace InazumaSearch.Core
                                 }
                             }
 
+                            // 付与するべきフォルダラベル一覧を取得
                             var folderLabels = _app.UserSettings.FindTargetFoldersFromDocumentKey(target.Key).Select((f) => f.Label)
-                                                                                                      .Where((lbl) => !string.IsNullOrWhiteSpace(lbl))
-                                                                                                      .ToArray();
+                                                                                                             .Where((lbl) => !string.IsNullOrWhiteSpace(lbl))
+                                                                                                             .ToArray();
                             var obj = new Dictionary<string, object>
                             {
                                 { Column.Documents.KEY, target.Key },
@@ -700,8 +700,7 @@ namespace InazumaSearch.Core
                 public override void Execute(IProgress<CrawlState> progress, CancellationToken cToken, Result crawlResult)
                 {
                     // ディレクトリ配下のファイルをすべて削除する
-                    // ※名前が部分一致する別のフォルダを誤って検索対象としないように、フォルダパスの最後に\を付ける
-                    var expr = string.Format("{0} @^ {1}", Column.Documents.KEY, Groonga.Util.EscapeForQuery(Util.MakeDocumentFileKey(DirPath + @"\")));
+                    var expr = string.Format("{0} @^ {1}", Column.Documents.KEY, Groonga.Util.EscapeForQuery(Util.MakeDocumentDirKeyPrefix(DirPath)));
                     DeleteDocumentFileRecords(progress, cToken, crawlResult, targetExpr: expr);
 
                     crawlResult.Finished = true;

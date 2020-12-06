@@ -43,6 +43,16 @@ namespace InazumaSearch.Core
         }
 
         /// <summary>
+        /// フォルダのフルパスからDocumentsテーブルを検索するためのキー文字列プレフィックスを生成
+        /// このプレフィックスで前方一致検索を行うことで、「指定したフォルダ内の全文書ファイル」を取得可能
+        /// </summary>
+        public static string MakeDocumentDirKeyPrefix(string dirPath)
+        {
+            // ※名前が部分一致する別のフォルダを誤って検索対象としないように、フォルダパスの最後に\を付ける
+            return "f:" + dirPath.ToLower() + @"\";
+        }
+
+        /// <summary>
         /// 16進数の文字列形式でハッシュを算出。使用にはCryptProviderが必要
         /// </summary>
         /// <param name="source"></param>

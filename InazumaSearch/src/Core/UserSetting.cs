@@ -121,7 +121,7 @@ namespace InazumaSearch.Core
             /// <param name="key"></param>
             public virtual IEnumerable<TargetFolder> FindTargetFoldersFromDocumentKey(string key)
             {
-                var folders = TargetFolders.Where((f) => key.StartsWith(Util.MakeDocumentFileKey(f.Path)));
+                var folders = TargetFolders.Where((f) => key.StartsWith(Util.MakeDocumentDirKeyPrefix(f.Path)));
                 return folders;
             }
 
