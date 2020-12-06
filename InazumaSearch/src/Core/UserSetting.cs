@@ -35,24 +35,14 @@ namespace InazumaSearch.Core
         public class PlainData
         {
             public virtual string UserUuid { get; set; }
-            public virtual int SettingVersion { get; set; }
-            public virtual List<TargetFolder> TargetFolders { get; set; }
-            public virtual DateTime? LastCrawlTime { get; set; }
-            public virtual bool AlwaysCrawlMode { get; set; }
-            public virtual bool StartUp { get; set; }
-            public virtual Dictionary<string, int> LastLoadedPluginVersionNumbers { get; set; }
-            public virtual List<Extension> TextExtensions { get; set; }
-
-            public PlainData()
-            {
-                SettingVersion = CurrentSettingVersion;
-                TargetFolders = new List<TargetFolder>();
-                LastCrawlTime = null;
-                AlwaysCrawlMode = false;
-                StartUp = false;
-                LastLoadedPluginVersionNumbers = new Dictionary<string, int>();
-                TextExtensions = new List<Extension>();
-            }
+            public virtual int SettingVersion { get; set; } = CurrentSettingVersion;
+            public virtual List<TargetFolder> TargetFolders { get; set; } = new List<TargetFolder>();
+            public virtual DateTime? LastCrawlTime { get; set; } = null;
+            public virtual bool AlwaysCrawlMode { get; set; } = false;
+            public virtual bool StartUp { get; set; } = false;
+            public virtual Dictionary<string, int> LastLoadedPluginVersionNumbers { get; set; } = new Dictionary<string, int>();
+            public virtual List<Extension> TextExtensions { get; set; } = new List<Extension>();
+            public virtual List<string> LastExcludingDirPaths { get; set; } = null;
         }
 
         public class Store
@@ -149,15 +139,6 @@ namespace InazumaSearch.Core
 
 
             /// <summary>
-            /// 最終クロール日時の設定
-            /// </summary>
-            public void SaveLastCrawlTime(DateTime t)
-            {
-                PlainData.LastCrawlTime = t;
-                Save();
-            }
-
-            /// <summary>
             /// 常駐クロールモード
             /// </summary>
             public bool AlwaysCrawlMode { get { return PlainData.AlwaysCrawlMode; } }
@@ -218,6 +199,32 @@ namespace InazumaSearch.Core
             /// ユーザー識別用ID
             /// </summary>
             public string UserUuid { get { return PlainData.UserUuid; } }
+
+            /// <summary>
+            /// 最後にクロールした時、選択から除外した検索対象フォルダ一覧。指定なし時（設定された検索対象フォルダが1件しかない場合含む）はnull
+            /// </summary>
+            public List<string> LastExcludingDirPaths { get { return PlainData.LastExcludingDirPaths; } }
+
+            /// <summary>
+            /// クロール実行時の更新
+            /// </summary>
+            /// <param name="crawlTime">クロール日時</param>
+            /// <param name="selectedTargetDirPaths">検索対象として選択したフォルダパス一覧。指定なし時（設定された検索対象フォルダが1件しかない場合含む）はnull</param>
+            public void SaveOnCrawl(DateTime crawlTime, IEnumerable<string> selectedTargetDirPaths = null)
+            {
+                PlainData.LastCrawlTime = crawlTime;
+                if (selectedTargetDirPaths != null)
+                {
+                    // 「選択から除外されたフォルダパスの一覧」を記憶
+                    var settingDirPaths = TargetFolders.Select(f => f.Path);
+                    PlainData.LastExcludingDirPaths = settingDirPaths.Except(selectedTargetDirPaths).ToList();
+                }
+                else
+                {
+                    PlainData.LastExcludingDirPaths = null;
+                }
+                Save();
+            }
 
             #endregion
         }

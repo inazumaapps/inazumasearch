@@ -288,6 +288,7 @@ namespace InazumaSearch.Forms
                 {
                     var targetDirectories = new List<UserSetting.TargetFolder>();
                     var fileCounts = new Dictionary<string, long>();
+                    var excludingFlags = new Dictionary<string, bool>();
                     foreach (var folder in App.UserSettings.TargetFolders)
                     {
                         targetDirectories.Add(folder);
@@ -300,9 +301,10 @@ namespace InazumaSearch.Forms
                             // ※名前が部分一致する別のフォルダを誤って検索対象としないように、フォルダパスの最後に\を付ける
                             , query: string.Format("{0}:^{1}", Column.Documents.FILE_PATH, Groonga.Util.EscapeForQuery(folder.Path + @"\")));
                         fileCounts[folder.Path] = res.SearchResult.NHits;
+                        excludingFlags[folder.Path] = (App.UserSettings.LastExcludingDirPaths != null && App.UserSettings.LastExcludingDirPaths.Contains(folder.Path));
                     }
 
-                    return JsonConvert.SerializeObject(new { target_directories = targetDirectories, file_counts = fileCounts });
+                    return JsonConvert.SerializeObject(new { targetDirectories = targetDirectories, fileCounts = fileCounts, excludingFlags = excludingFlags });
                 });
             }
 

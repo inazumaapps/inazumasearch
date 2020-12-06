@@ -320,11 +320,11 @@ function displayResultRows_ListView(getJsonData, searchOffset){
 }
 
 // クロール実行前モーダルにフォルダ表示を追加
-function addFolderToCrawlModal(path, label, file_count) {
+function addFolderToCrawlModal(path, label, fileCount, checked) {
     var $newItem = $('.folder-item.cloning-base').clone().removeClass('cloning-base');
-    $newItem.find('.crawl-modal-folder-check').attr('data-path', path);
+    $newItem.find('.crawl-modal-folder-check').attr('data-path', path).prop('checked', checked);
     $newItem.find('.path').text(path);
-    $newItem.find('.file-count').text(file_count);
+    $newItem.find('.file-count').text(fileCount);
 
     $('#CRAWL-FOLDER-LIST li.folder-item:last').after($newItem);
     $newItem.show();
@@ -361,8 +361,8 @@ function updateFolderListOnCrawlModalAsync() {
     asyncApi.searchTargetDirectories().then(function (json) {
         var data = JSON.parse(json);
         if (data) {
-            for (dir of data.target_directories) {
-                addFolderToCrawlModal(dir.Path, dir.Label, data.file_counts[dir.Path]);
+            for (dir of data.targetDirectories) {
+                addFolderToCrawlModal(dir.Path, dir.Label, data.fileCounts[dir.Path], !data.excludingFlags[dir.Path]);
             }
         }
         $('#PROGRESS-BAR-IN-CRAWL-MODAL').hide();

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
+using System.Linq;
 using System.Windows.Forms;
 using InazumaSearch.Core;
 using Microsoft.WindowsAPICodePack.Taskbar;
@@ -46,9 +47,8 @@ namespace InazumaSearch.Forms
 
             try
             {
-                // 最終クロール日時を終了
-                App.UserSettings.SaveLastCrawlTime(DateTime.Now);
-
+                // 最終クロール情報を保存
+                App.UserSettings.SaveOnCrawl(DateTime.Now, TargetDirPaths);
 
                 // 常駐クロールモードであれば、いったん常駐クロールを停止
                 if (App.UserSettings.AlwaysCrawlMode)

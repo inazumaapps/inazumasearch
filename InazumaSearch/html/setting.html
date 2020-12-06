@@ -387,10 +387,10 @@ $(function () {
 
     // $('#SAVE-BUTTON').on('click', function(){
     //   data = {};
-    //   data.target_directories = [];
+    //   data.targetDirectories = [];
 
     //   $('li.folder-item:visible').each(function(){
-    //     data.target_directories.push($(this).find('.path').text());
+    //     data.targetDirectories.push($(this).find('.path').text());
     //   });
 
     //   console.log(data);
@@ -410,8 +410,8 @@ $(function () {
     asyncApi.searchTargetDirectories().then(function (json) {
         var data = JSON.parse(json);
         if (data) {
-            for(dir of data.target_directories) {
-                addFolder(dir.Path, dir.Label, data.file_counts[dir.Path]);
+            for(dir of data.targetDirectories) {
+                addFolder(dir.Path, dir.Label, data.fileCounts[dir.Path]);
             }
         }
 
