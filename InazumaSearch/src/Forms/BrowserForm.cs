@@ -297,7 +297,8 @@ namespace InazumaSearch.Forms
                             Table.Documents
                             , limit: 0
                             , outputColumns: new string[] { Groonga.VColumn.ID }
-                            , query: string.Format("{0}:^{1}", Column.Documents.FILE_PATH, Groonga.Util.EscapeForQuery(folder.Path)));
+                            // ※名前が部分一致する別のフォルダを誤って検索対象としないように、フォルダパスの最後に\を付ける
+                            , query: string.Format("{0}:^{1}", Column.Documents.FILE_PATH, Groonga.Util.EscapeForQuery(folder.Path + @"\")));
                         fileCounts[folder.Path] = res.SearchResult.NHits;
                     }
 
