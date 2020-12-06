@@ -119,7 +119,7 @@ namespace InazumaSearch.Core
                 if (targetDirPaths != null)
                 {
                     // ※名前が部分一致する別のフォルダを誤って検索対象としないように、フォルダパスの最後に\を付ける
-                    var targetKeys = targetDirPaths.Select(dir => Util.MakeDocumentFileKey(dir + @"\")); 
+                    var targetKeys = targetDirPaths.Select(dir => Util.MakeDocumentFileKey(dir + @"\"));
                     var exprs = targetKeys.Select(key => $"{Column.Documents.KEY}:^{Groonga.Util.EscapeForQuery(key)}");
                     query = $"({string.Join(" OR ", exprs)})";
                 }
@@ -636,7 +636,7 @@ namespace InazumaSearch.Core
 
                     // 対象フォルダパスリストを決定
                     // プロパティで指定されていればそのパスリストを使用、指定されていなければ全ての検索対象フォルダ
-                    var targetDirPaths = this.TargetDirPaths;
+                    var targetDirPaths = TargetDirPaths;
                     if (targetDirPaths == null)
                     {
                         targetDirPaths = _app.UserSettings.TargetFolders.Where(f => f.Type == UserSetting.TargetFolderType.DocumentFile)

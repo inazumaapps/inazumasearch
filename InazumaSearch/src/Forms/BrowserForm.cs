@@ -788,8 +788,10 @@ namespace InazumaSearch.Forms
             var f = new CrawlProgressForm(App, () =>
             {
                 ChromeBrowser.EvaluateScriptAsync("$('#CRAWL-START').removeClass('disabled');");
-            });
-            f.TargetDirPaths = targetDirPaths;
+            })
+            {
+                TargetDirPaths = targetDirPaths
+            };
             f.Show(this);
         }
 
