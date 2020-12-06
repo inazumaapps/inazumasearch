@@ -330,6 +330,21 @@ function addFolderToCrawlModal(path, label, file_count) {
     $newItem.show();
 }
 
+// クロール実行前モーダルの対象フォルダ一覧を更新 (非同期に処理を行う)
+function updateFolderListOnCrawlModalAsync() {
+    $('#PROGRESS-BAR-IN-CRAWL-MODAL').show();
+    $('.folder-item:not(.cloning-base)').remove();
+    asyncApi.searchTargetDirectories().then(function (json) {
+        var data = JSON.parse(json);
+        if (data) {
+            for (dir of data.target_directories) {
+                addFolderToCrawlModal(dir.Path, dir.Label, data.file_counts[dir.Path]);
+            }
+        }
+        $('#PROGRESS-BAR-IN-CRAWL-MODAL').hide();
+    });
+}
+
 // クロール開始
 function startCrawl(targetFolders = null) {
     // 警告エリアを非表示にする
@@ -354,8 +369,9 @@ cols = document.querySelectorAll('.droppable');
 
 
 $(function(){
-    if(api.isDebugMode()){
+    if (api.isDebugMode()) {
         $('.debug-mode-only').show();
+        $('.release-mode-only').hide();
     }
 
     // 入力情報のクリア
@@ -486,6 +502,12 @@ $(function(){
         return false;
     });
 
+    // ファイル本文の取得（デバッグ用）
+    $('body').on('click', '.get-body-link', function () {
+        asyncApi.getFileBody(lastClickedPath);
+        return false;
+    });
+
     $('#UPDATE-LINK').click(function () {
         api.showUpdateForm();
         return false;
@@ -512,8 +534,8 @@ $(function(){
         // 検索対象フォルダが2件以上かどうかで処理を分岐
         if (dbState.targetFolderCount >= 2) {
             // 2件以上ならダイアログを開いて、クロールするフォルダを選択
-            $('#CRAWL-MODAL').removeAttr('data-decide-flag');
-
+            updateFolderListOnCrawlModalAsync(); // フォルダリスト更新
+            $('#CRAWL-MODAL').removeAttr('data-decide-flag'); // 確定フラグ初期化
             var modal = M.Modal.getInstance($('#CRAWL-MODAL')[0]);
             modal.open();
         } else {
@@ -708,20 +730,5 @@ $(function(){
             }
         }
     });
-
-    // 検索対象フォルダ数が2剣以上であれば、起動時、バックグラウンドで検索対象フォルダの一覧を読み込む
-    // （クロールボタン押下時の表示のため）
-    if (dbState.targetFolderCount >= 2) {
-        asyncApi.searchTargetDirectories().then(function (json) {
-            var data = JSON.parse(json);
-            if (data) {
-                for (dir of data.target_directories) {
-                    addFolderToCrawlModal(dir.Path, dir.Label, data.file_counts[dir.Path]);
-                }
-            }
-        });
-    }
-
-
 });
 

@@ -154,7 +154,8 @@
                                 <a class="file-path file-open-link" href="#" data-file-path="/">[PATH]</a>
                                 <div class="right">
                                     <a href="#" class="after-tooltipped folder-open-link" title="フォルダを開く"><i class="tiny material-icons">folder</i></a>
-                                    <a class='submenu-link' href='#' data-target='dropdown1' style="margin-right: 0.5rem;"><i class="tiny material-icons">more_horiz</i></a>
+                                    <a class='submenu-link release-mode-only' href='#' data-target='SEARCH-RESULT-SUBMENU' style="margin-right: 0.5rem;"><i class="tiny material-icons">more_horiz</i></a>
+                                    <a class='submenu-link debug-mode-only' href='#' data-target='SEARCH-RESULT-SUBMENU-DEBUG' style="margin-right: 0.5rem;"><i class="tiny material-icons">more_horiz</i></a>
                                 </div>
                             </div>
 
@@ -218,10 +219,15 @@
     <div id="SCROLL-ADJUSTER" style="display: none; position: absolute; visibility: hidden">[SCROLL-ADJUSTER]</div>
 
     <!-- 検索結果サブメニュー（ドロップダウン） -->
-    <ul id="dropdown1" class="dropdown-content">
+    <ul id="SEARCH-RESULT-SUBMENU" class="dropdown-content">
         <li><a href="#" class="display-all-body-link">本文内でマッチした箇所を全表示</a></li>
-        <!--<li class="divider" tabindex="-1"></li>
-        <li><a href="#" class="ignore-dialog-link">無視設定</a></li>-->
+    </ul>
+
+    <!-- 検索結果サブメニュー（ドロップダウン） デバッグ用 -->
+    <ul id="SEARCH-RESULT-SUBMENU-DEBUG" class="dropdown-content">
+        <li><a href="#" class="display-all-body-link">本文内でマッチした箇所を全表示</a></li>
+        <li class="divider debug-mode-only" tabindex="-1"></li>
+        <li><a href="#" class="get-body-link debug-mode-only">[デバッグ用] ファイルの本文を取得</a></li>
     </ul>
 
     <!-- Modal Structure -->
@@ -301,13 +307,16 @@
                     <span class="title path" style="color: black; height: 20px; line-height: 20px;">全選択</span>
                 </label>
             </div>
+            <div class="progress" id="PROGRESS-BAR-IN-CRAWL-MODAL">
+                <div class="indeterminate"></div>
+            </div>
             <ul class="collection" id="CRAWL-FOLDER-LIST">
                 <li class="collection-item folder-item cloning-base">
                     <label>
                         <input type="checkbox" class="filled-in crawl-modal-folder-check" checked="checked" />
                         <span class="title" style="height: 20px; line-height: 20px; color: black;"><span class="path"></span></span>
                     </label>
-                            
+
                     <p style="font-size: smaller; color: gray">登録済み文書数: <span class="file-count">0</span></p>
                 </li>
             </ul>

@@ -15,15 +15,15 @@ using Microsoft.WindowsAPICodePack.Shell;
 
 namespace InazumaSearch.Forms
 {
-    public partial class DBBrowserBodyViewDialog : Form
+    public partial class FileBodyViewDialog : Form
     {
         public string Body { get; set; }
 
-        public DBBrowserBodyViewDialog()
+        public FileBodyViewDialog()
         {
             InitializeComponent();
         }
-        public DBBrowserBodyViewDialog(string body)
+        public FileBodyViewDialog(string body)
         {
             InitializeComponent();
             Body = body;

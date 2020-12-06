@@ -8,6 +8,7 @@ using System.Windows.Forms;
 using Alphaleonis.Win32.Filesystem;
 using CommandLine;
 using CommandLine.Text;
+using Hnx8.ReadJEnc;
 using InazumaSearch.Forms;
 
 namespace InazumaSearch.Core
@@ -294,7 +295,57 @@ namespace InazumaSearch.Core
 
             // 正常起動
             return true;
+        }
 
+        /// <summary>
+        /// テキストファイルとして扱うファイル拡張子の一覧を取得。結果にドット記号は含まない (例: "txt")
+        /// </summary>
+        public virtual List<string> GetTextExtNames()
+        {
+            var textExtNames = UserSettings.TextExtensions.Select(x => x.ExtName).ToList();
+            textExtNames.Add("txt");
+            return textExtNames;
+        }
+
+        /// <summary>
+        /// プラグインで扱うファイル拡張子の一覧を取得。結果にドット記号は含まない (例: "xdw")
+        /// </summary>
+        public virtual List<string> GetPluginExtNames()
+        {
+            return PluginManager.GetTextExtNameToLabelMap().Keys.ToList();
+        }
+
+        /// <summary>
+        /// 拡張子に応じて、指定した文書ファイルの本文テキストを抽出
+        /// </summary>
+        /// <param name="path">文書ファイルパス</param>
+        /// <returns>ファイル本文。何らかのエラー</returns>
+        public virtual string ExtractFileText(
+            string path
+            , IEnumerable<string> textExtNames
+            , IEnumerable<string> pluginExtNames
+        )
+        {
+            var ext = Path.GetExtension(path).TrimStart('.').ToLower();
+
+            if (pluginExtNames.Contains(ext))
+            {
+                // プラグインが対応している場合は、プラグインを使用してテキスト抽出
+                return PluginManager.ExtractText(path);
+            }
+            else if (textExtNames.Contains(ext))
+            {
+                // テキストの拡張子として登録されている場合は、テキストファイルとして読み込み
+                var body = "";
+                var bytes = File.ReadAllBytes(path);
+                var charCode = ReadJEnc.JP.GetEncoding(bytes, bytes.Length, out body);
+                return body;
+            }
+            else
+            {
+                // 上記以外の場合はXDoc2Txtを使用
+                return XDoc2TxtApi.Extract(path);
+            }
         }
 
         /// <summary>

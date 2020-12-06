@@ -1,6 +1,6 @@
 ﻿namespace InazumaSearch.Forms
 {
-    partial class DBBrowserBodyViewDialog
+    partial class FileBodyViewDialog
     {
         /// <summary>
         /// 必要なデザイナー変数です。
@@ -36,7 +36,7 @@
             // 
             this.BtnQuit.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.BtnQuit.DialogResult = System.Windows.Forms.DialogResult.OK;
-            this.BtnQuit.Location = new System.Drawing.Point(711, 447);
+            this.BtnQuit.Location = new System.Drawing.Point(690, 478);
             this.BtnQuit.Name = "BtnQuit";
             this.BtnQuit.Size = new System.Drawing.Size(82, 31);
             this.BtnQuit.TabIndex = 1;
@@ -55,19 +55,20 @@
             this.TxtBody.Name = "TxtBody";
             this.TxtBody.ReadOnly = true;
             this.TxtBody.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.TxtBody.Size = new System.Drawing.Size(780, 428);
+            this.TxtBody.Size = new System.Drawing.Size(759, 459);
             this.TxtBody.TabIndex = 2;
             this.TxtBody.WordWrap = false;
             // 
-            // DBBrowserBodyViewDialog
+            // FileBodyViewDialog
             // 
             this.AcceptButton = this.BtnQuit;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(805, 490);
+            this.ClientSize = new System.Drawing.Size(784, 521);
             this.Controls.Add(this.TxtBody);
             this.Controls.Add(this.BtnQuit);
-            this.Name = "DBBrowserBodyViewDialog";
+            this.MinimizeBox = false;
+            this.Name = "FileBodyViewDialog";
             this.ShowIcon = false;
             this.Text = "ファイル本文";
             this.TopMost = true;

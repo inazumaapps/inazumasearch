@@ -218,11 +218,11 @@
     <Compile Include="src\Forms\IgnoreEditForm.Designer.cs">
       <DependentUpon>IgnoreEditForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="src\Forms\DBBrowserBodyViewDialog.cs">
+    <Compile Include="src\Forms\FileBodyViewDialog.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="src\Forms\DBBrowserBodyViewDialog.Designer.cs">
-      <DependentUpon>DBBrowserBodyViewDialog.cs</DependentUpon>
+    <Compile Include="src\Forms\FileBodyViewDialog.Designer.cs">
+      <DependentUpon>FileBodyViewDialog.cs</DependentUpon>
     </Compile>
     <Compile Include="src\Forms\SystemErrorReportBodyDialog.cs">
       <SubType>Form</SubType>
@@ -308,8 +308,8 @@
     <EmbeddedResource Include="src\Forms\IgnoreEditForm.resx">
       <DependentUpon>IgnoreEditForm.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="src\Forms\DBBrowserBodyViewDialog.resx">
-      <DependentUpon>DBBrowserBodyViewDialog.cs</DependentUpon>
+    <EmbeddedResource Include="src\Forms\FileBodyViewDialog.resx">
+      <DependentUpon>FileBodyViewDialog.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="src\Forms\SystemErrorReportBodyDialog.resx">
       <DependentUpon>SystemErrorReportBodyDialog.cs</DependentUpon>

@@ -245,9 +245,8 @@ namespace InazumaSearch.Core
                 var lastCoolTimeEnd = DateTime.Now;
                 var thumbnailDirPath = _app.ThumbnailDirPath;
                 var externalDirPath = Directory.CreateDirectory(thumbnailDirPath);
-                var pluginExtNames = _app.PluginManager.GetTextExtNameToLabelMap().Keys.ToList();
-                var textExtNames = _app.UserSettings.TextExtensions.Select(x => x.ExtName).ToList();
-                textExtNames.Add("txt");
+                var textExtNames = _app.GetTextExtNames();
+                var pluginExtNames = _app.GetPluginExtNames();
 
                 var extractableExtNames = new List<string>();
                 foreach (var format in _app.Formats)
@@ -364,37 +363,18 @@ namespace InazumaSearch.Core
                         {
                             // データの登録
                             // 拡張子に応じてテキストを抽出する
-                            var ext = Path.GetExtension(target.Path).TrimStart('.').ToLower();
                             string body;
-                            if (pluginExtNames.Contains(ext))
+                            try
                             {
-                                // プラグインが対応している場合は、プラグインを使用してテキスト抽出
-                                body = _app.PluginManager.ExtractText(target.Path);
-
+                                body = _app.ExtractFileText(target.Path, textExtNames, pluginExtNames);
                             }
-                            else if (textExtNames.Contains(ext))
+                            catch (Exception ex)
                             {
-                                // テキストの拡張子として登録されている場合は、テキストファイルとして読み込み
-                                body = "";
-                                var bytes = File.ReadAllBytes(target.Path);
-                                var charCode = ReadJEnc.JP.GetEncoding(bytes, bytes.Length, out body);
-                            }
-                            else
-                            {
-
-                                // 上記以外の場合はXDoc2Txtを使用
-                                try
-                                {
-                                    body = XDoc2TxtApi.Extract(target.Path);
-                                }
-                                catch (Exception ex)
-                                {
-                                    crawlResult.Skipped++;
-                                    Logger.Warn("Crawl Extract Error - {0}", target.Path);
-                                    Logger.Warn(ex.ToString());
-                                    Thread.Sleep(1);
-                                    continue;
-                                }
+                                crawlResult.Skipped++;
+                                Logger.Warn("Crawl Extract Error - {0}", target.Path);
+                                Logger.Warn(ex.ToString());
+                                Thread.Sleep(1);
+                                continue;
                             }
 
                             // 付与するべきフォルダラベル一覧を取得
@@ -410,7 +390,7 @@ namespace InazumaSearch.Core
                                 { Column.Documents.FILE_UPDATED_AT, Groonga.Util.ToUnixTime(fileUpdated) },
                                 { Column.Documents.FILE_UPDATED_YEAR, fileUpdated.Year },
                                 { Column.Documents.SIZE, fileSize },
-                                { Column.Documents.EXT, ext },
+                                { Column.Documents.EXT, Path.GetExtension(target.Path).TrimStart('.').ToLower() },
                                 { Column.Documents.UPDATED_AT, Groonga.Util.ToUnixTime(DateTime.Now) },
                                 { Column.Documents.FOLDER_LABELS, folderLabels}
                             };

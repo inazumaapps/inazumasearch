@@ -414,6 +414,27 @@ namespace InazumaSearch.Forms
                 });
             }
 
+            public void GetFileBody(string filePath)
+            {
+                OwnerForm.InvokeOnUIThread((f) =>
+                {
+                    App.ExecuteInExceptionCatcher(() =>
+                    {
+                        // ファイル本文の抽出
+                        var textExtNames = App.GetTextExtNames();
+                        var pluginExtNames = App.GetPluginExtNames();
+                        var body = App.ExtractFileText(filePath, textExtNames, pluginExtNames);
+
+                        var dialog = new FileBodyViewDialog
+                        {
+                            Body = body
+                        };
+                        dialog.ShowDialog(f);
+                    });
+                });
+
+            }
+
             /// <summary>
             /// 学習のために入力ログを保持
             /// </summary>

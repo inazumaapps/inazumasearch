@@ -181,7 +181,7 @@ namespace InazumaSearch.Forms
                 );
 
                 var body = res.SearchResult.Records[0].GetTextValue(Column.Documents.BODY);
-                var f = new DBBrowserBodyViewDialog
+                var f = new FileBodyViewDialog
                 {
                     Body = body
                 };
