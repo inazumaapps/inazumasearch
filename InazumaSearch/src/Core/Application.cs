@@ -331,11 +331,13 @@ namespace InazumaSearch.Core
             if (pluginExtNames.Contains(ext))
             {
                 // プラグインが対応している場合は、プラグインを使用してテキスト抽出
+                Logger.Trace($"Extract by plugin - {path}");
                 return PluginManager.ExtractText(path);
             }
             else if (textExtNames.Contains(ext))
             {
                 // テキストの拡張子として登録されている場合は、テキストファイルとして読み込み
+                Logger.Trace($"Extract as text file - {path}");
                 var body = "";
                 var bytes = File.ReadAllBytes(path);
                 var charCode = ReadJEnc.JP.GetEncoding(bytes, bytes.Length, out body);
@@ -344,6 +346,7 @@ namespace InazumaSearch.Core
             else
             {
                 // 上記以外の場合はXDoc2Txtを使用
+                Logger.Trace($"Extract by xdoc2txt - {path}");
                 return XDoc2TxtApi.Extract(path);
             }
         }

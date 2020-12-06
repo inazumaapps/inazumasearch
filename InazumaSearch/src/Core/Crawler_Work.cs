@@ -259,11 +259,13 @@ namespace InazumaSearch.Core
                 var updatedDocumentCount = 0;
                 foreach (var targetSubDir in targetSubDirs)
                 {
+                    Logger.Trace($"Search folder: {targetSubDir}");
                     var currentSubDirTargets = new List<TargetFile>();
 
                     // 指定ディレクトリがすでに削除(もしくは移動)されている場合はスキップ
                     if (!Directory.Exists(targetSubDir))
                     {
+                        Logger.Trace($"Target file not found in subdir - {targetSubDir}");
                         cur += SubDirWeight;
                         continue;
                     }
@@ -324,6 +326,7 @@ namespace InazumaSearch.Core
                     // 指定ディレクトリ内に対象ファイルがなければスキップ
                     if (currentSubDirTargets.Count == 0)
                     {
+                        Logger.Trace($"No target file - {targetSubDir}");
                         cur += SubDirWeight;
                         continue;
                     }
@@ -395,9 +398,11 @@ namespace InazumaSearch.Core
                                 { Column.Documents.FOLDER_LABELS, folderLabels}
                             };
 
+                            Logger.Trace($"Store to groonga DB");
                             _app.GM.Load(new[] { obj }, Table.Documents);
 
                             // 同時に、可能であればサムネイルも保存
+                            Logger.Trace("Get thumbnail - {0}", target.Path);
                             try
                             {
                                 var sh = ShellObject.FromParsingName(target.Path);
