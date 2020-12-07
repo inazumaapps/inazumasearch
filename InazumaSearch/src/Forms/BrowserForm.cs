@@ -73,6 +73,10 @@ namespace InazumaSearch.Forms
                 return JsonConvert.SerializeObject(App.UserSettings.PlainData);
             }
 
+            public string GetVersionCaption()
+            {
+                return App.GetVersionCaption();
+            }
             public void ShowErrorMessage(string message)
             {
                 OwnerForm.InvokeOnUIThread((f) => Util.ShowErrorMessage(f,
@@ -253,15 +257,6 @@ namespace InazumaSearch.Forms
                 });
 
             }
-
-            /// <summary>
-            /// バージョンを取得
-            /// </summary>
-            public string GetVersion()
-            {
-                return Util.GetVersion().ToString();
-            }
-
         }
 
         /// <summary>

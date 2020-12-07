@@ -118,7 +118,7 @@
 <ul class="browser-default">
   <li><a href="https://twitter.com/inazumaapps" class="external-link">Twitter (@inazumaapps)</a></li>
   <li><a href="https://its.morphball.net/projects/inazumasearch/issues/new?issue[subject]=%EF%BC%88%E5%85%A5%E5%8A%9B%E4%B8%8D%E8%A6%81%EF%BC%89"
-      class="external-link">要望・バグ報告ポスト</a>　※ログイン不要</li>
+      class="external-link its-report-link">要望・バグ報告ポスト</a>　※ログイン不要</li>
 </ul>
             <h6 style="margin-top: 3rem;">ライセンス情報</h6>
             <ul class="collection">
@@ -304,8 +304,9 @@ $(function () {
     var userSettings = JSON.parse(api.getUserSettings());
     console.log(userSettings);
 
-    // 情報ダイアログにバージョンを設定
-    $('.application-version').text(api.getVersion());
+    // 情報ダイアログ、要望・バグ報告リンクにバージョンを設定
+    $('.application-version').text(api.getVersionCaption());
+    $('.its-report-link').attr('href', $('.its-report-link').attr('href') + '&issue[custom_field_values][4]=' + api.getVersionCaption());
 
     // モーダル設定
     $('.modal').modal();
@@ -383,28 +384,6 @@ $(function () {
         return false;
     });
 
-
-
-    // $('#SAVE-BUTTON').on('click', function(){
-    //   data = {};
-    //   data.targetDirectories = [];
-
-    //   $('li.folder-item:visible').each(function(){
-    //     data.targetDirectories.push($(this).find('.path').text());
-    //   });
-
-    //   console.log(data);
-
-    //   // プログレスバーを表示
-    //   $('#PROGRESS-BAR').show();
-
-    //   $.post('http://localhost:9500/setting', JSON.stringify(data), function(got_data){
-    //     console.log(got_data);
-    //     // プログレスバーを隠す
-    //     $('#PROGRESS-BAR').hide();
-
-    //   });
-    // });
 
     // 最初のデータ読み込み
     asyncApi.searchTargetDirectories().then(function (json) {
