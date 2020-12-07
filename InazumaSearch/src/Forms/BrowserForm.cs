@@ -795,7 +795,7 @@ namespace InazumaSearch.Forms
             {
                 if (!Directory.Exists(dirPath))
                 {
-                    Util.ShowErrorMessage(this, $"下記の検索対象フォルダが存在しません。\n{dirPath}\n\n検索対象フォルダの設定を変更してから、再度クロールを行ってください。");
+                    Util.ShowErrorMessage(this, $"下記の検索対象フォルダが見つかりませんでした。\n{dirPath}\n\n検索対象フォルダの設定を変更してから、再度クロールを行ってください。");
                     return;
                 }
             }
