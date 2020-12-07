@@ -558,20 +558,17 @@ $(function(){
     $('.tooltipped').tooltipster();
 
     $('#CRAWL-START').click(function () {
-        // 0.13.0時点では、いったん検索対象フォルダの指定機能を除外
-        startCrawl();
-
-        //// 検索対象フォルダが2件以上かどうかで処理を分岐
-        //if (dbState.targetFolderCount >= 2) {
-        //    // 2件以上ならダイアログを開いて、クロールするフォルダを選択
-        //    updateFolderListOnCrawlModalAsync(); // フォルダリスト更新
-        //    $('#CRAWL-MODAL').removeAttr('data-decide-flag'); // 確定フラグ初期化
-        //    var modal = M.Modal.getInstance($('#CRAWL-MODAL')[0]);
-        //    modal.open();
-        //} else {
-        //    // 1件ならそのままクロール実行
-        //    startCrawl();
-        //}
+        // 検索対象フォルダが2件以上かどうかで処理を分岐
+        if (dbState.targetFolderCount >= 2) {
+            // 2件以上ならダイアログを開いて、クロールするフォルダを選択
+            updateFolderListOnCrawlModalAsync(); // フォルダリスト更新
+            $('#CRAWL-MODAL').removeAttr('data-decide-flag'); // 確定フラグ初期化
+            var modal = M.Modal.getInstance($('#CRAWL-MODAL')[0]);
+            modal.open();
+        } else {
+            // 1件ならそのままクロール実行
+            startCrawl();
+        }
     });
 
     // クロールダイアログで「全選択」ボタンを押下
