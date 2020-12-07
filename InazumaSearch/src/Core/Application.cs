@@ -341,7 +341,7 @@ namespace InazumaSearch.Core
                 var body = "";
                 var bytes = File.ReadAllBytes(path);
                 var charCode = ReadJEnc.JP.GetEncoding(bytes, bytes.Length, out body);
-                return body;
+                return body ?? "";
             }
             else
             {

@@ -370,6 +370,7 @@ namespace InazumaSearch.Core
                             try
                             {
                                 body = _app.ExtractFileText(target.Path, textExtNames, pluginExtNames);
+                                Logger.Debug($"Extract OK - {target.Path} (length: {body.Length})");
                             }
                             catch (Exception ex)
                             {

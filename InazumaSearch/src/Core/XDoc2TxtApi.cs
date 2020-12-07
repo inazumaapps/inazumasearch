@@ -23,7 +23,7 @@ namespace InazumaSearch.Core
             p.StartInfo.RedirectStandardOutput = true;
             p.Start();
 
-            return p.StandardOutput.ReadToEnd();
+            return (p.StandardOutput.ReadToEnd() ?? "");
         }
     }
 
