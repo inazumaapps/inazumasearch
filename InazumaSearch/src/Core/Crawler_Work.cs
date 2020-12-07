@@ -517,28 +517,36 @@ namespace InazumaSearch.Core
             /// <remarks>https://stackoverflow.com/questions/172544/ignore-folders-files-when-directory-getfiles-is-denied-access</remarks>
             protected virtual void ApplyAllDirectories(string folder, Action<string> dirAction, ref bool aborting)
             {
-                foreach (var dir in Directory.GetDirectories(folder))
+                try
                 {
-                    try
+                    foreach (var dir in Directory.GetDirectories(folder))
                     {
-                        dirAction(dir);
+                        try
+                        {
+                            dirAction(dir);
+                        }
+                        catch (UnauthorizedAccessException ex)
+                        {
+                            Logger.Debug(ex.ToString());
+                        }
                     }
-                    catch (UnauthorizedAccessException ex)
+                    foreach (var subDir in Directory.GetDirectories(folder))
                     {
-                        Debug.WriteLine(ex.ToString());
+                        try
+                        {
+                            ApplyAllDirectories(subDir, dirAction, ref aborting);
+                            if (aborting) return;
+                        }
+                        catch (UnauthorizedAccessException ex)
+                        {
+                            Logger.Debug(ex.ToString());
+                        }
                     }
                 }
-                foreach (var subDir in Directory.GetDirectories(folder))
+                catch (System.IO.DirectoryNotFoundException ex)
                 {
-                    try
-                    {
-                        ApplyAllDirectories(subDir, dirAction, ref aborting);
-                        if (aborting) return;
-                    }
-                    catch (UnauthorizedAccessException ex)
-                    {
-                        Debug.WriteLine(ex.ToString());
-                    }
+                    Logger.Debug(ex.ToString());
+                    Logger.Debug($"Ignore dir - {folder}");
                 }
             }
 
@@ -549,28 +557,36 @@ namespace InazumaSearch.Core
             /// <remarks>https://stackoverflow.com/questions/172544/ignore-folders-files-when-directory-getfiles-is-denied-access</remarks>
             protected virtual void ApplyAllFiles(string folder, Action<string> fileAction, ref bool aborting)
             {
-                foreach (var file in Directory.GetFiles(folder))
+                try
                 {
-                    try
+                    foreach (var file in Directory.GetFiles(folder))
                     {
-                        fileAction(file);
+                        try
+                        {
+                            fileAction(file);
+                        }
+                        catch (UnauthorizedAccessException ex)
+                        {
+                            Debug.WriteLine(ex.ToString());
+                        }
                     }
-                    catch (UnauthorizedAccessException ex)
+                    foreach (var subDir in Directory.GetDirectories(folder))
                     {
-                        Debug.WriteLine(ex.ToString());
+                        try
+                        {
+                            ApplyAllFiles(subDir, fileAction, ref aborting);
+                            if (aborting) return;
+                        }
+                        catch (UnauthorizedAccessException ex)
+                        {
+                            Debug.WriteLine(ex.ToString());
+                        }
                     }
                 }
-                foreach (var subDir in Directory.GetDirectories(folder))
+                catch (System.IO.DirectoryNotFoundException ex)
                 {
-                    try
-                    {
-                        ApplyAllFiles(subDir, fileAction, ref aborting);
-                        if (aborting) return;
-                    }
-                    catch (UnauthorizedAccessException ex)
-                    {
-                        Debug.WriteLine(ex.ToString());
-                    }
+                    Logger.Debug(ex.ToString());
+                    Logger.Debug($"Ignore dir - {folder}");
                 }
             }
         }
