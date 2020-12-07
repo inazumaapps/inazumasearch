@@ -818,8 +818,7 @@ namespace InazumaSearch.Forms
                 {
                     var freeSpaceByGB = Math.Round(driveFreeSpaceSize / (decimal)(1024L * 1024L * 1024L), 2);
                     var freeSpaceCaption = freeSpaceByGB.ToString() + "GB";
-                    var msg = string.Format("{0}ドライブの空き容量が残り少なくなっているため\nクロールによってDBのサイズが拡大し、空き容量が無くなる可能性があります。\n(現在の空き容量: {1})\n\nクロールを実行してもよろしいですか？"
-                                            , driveLetter.ToUpper(), freeSpaceCaption);
+                    var msg = $"{driveLetter.ToUpper()}ドライブの空き容量が残り少なくなっているため\nクロールによってDBのサイズが拡大し、空き容量が無くなる可能性があります。\n(現在の空き容量: {freeSpaceCaption})\n\nクロールを実行してもよろしいですか？";
                     var res = MessageBox.Show(this, msg, "警告", MessageBoxButtons.YesNo, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button2);
                     if (res == DialogResult.No)
                     {

@@ -575,7 +575,7 @@ namespace InazumaSearch.Core
 
                 if (!Directory.Exists(opts.HtmlFullPath) || !File.Exists(Path.Combine(opts.HtmlFullPath, "index.html")))
                 {
-                    innerErrorMessage = string.Format("有効なhtmlフォルダが存在しません。(探索パス: {0})", opts.HtmlFullPath);
+                    innerErrorMessage = $"有効なhtmlフォルダが存在しません。(探索パス: {opts.HtmlFullPath})";
                 }
 
             }).WithNotParsed((errors) =>
