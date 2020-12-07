@@ -160,6 +160,15 @@ namespace InazumaSearch.Core
         #endregion
 
         /// <summary>
+        /// バージョン表記文字列を取得
+        /// </summary>
+        /// <returns></returns>
+        public virtual string GetVersionCaption()
+        {
+            return $"{Util.GetVersion()}" + (PortableMode ? " ポータブル版" : "") + (Util.GetPlatform() == "x86" ? " (32ビットバージョン)" : "");
+        }
+
+        /// <summary>
         /// 対応フォーマット一覧を更新
         /// </summary>
         public void RefreshFormats()

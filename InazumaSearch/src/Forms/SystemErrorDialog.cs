@@ -91,11 +91,11 @@ namespace InazumaSearch.Forms
                 body.AppendLine(new string('-', 80));
 
             }
-            body.AppendLine(string.Format("バージョン: Inazuma Search {0}", Util.GetVersion().ToString()));
-            body.AppendLine(string.Format("発生日時: {0}", RaisedTime.ToString("yyyy-MM-dd HH:mm:ss")));
+            body.AppendLine($"バージョン: Inazuma Search {Util.GetVersion().ToString()}" + (Util.GetPlatform() == "x86" ? " (32ビットバージョン)" : ""));
+            body.AppendLine($"発生日時: {RaisedTime.ToString("yyyy-MM-dd HH:mm:ss")}");
             if (UserSetting.LastLoadedUserUuid != null)
             {
-                body.AppendLine(string.Format("UUID: {0}", UserSetting.LastLoadedUserUuid));
+                body.AppendLine($"UUID: {UserSetting.LastLoadedUserUuid}");
             }
 
 

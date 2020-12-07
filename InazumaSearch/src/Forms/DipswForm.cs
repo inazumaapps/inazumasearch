@@ -103,7 +103,7 @@ namespace InazumaSearch.Forms
         private void DipswForm_Load(object sender, EventArgs e)
         {
             UpdateLabels();
-            lblVersion.Text = $"{Util.GetVersion()}" + (Application.PortableMode ? " ポータブル版" : "") + (Util.GetPlatform() == "x86" ? " (32ビットバージョン)" : "");
+            lblVersion.Text = Application.GetVersionCaption();
             tblDebug.Visible = Application.DebugMode;
             UpdateExtensionList();
         }
