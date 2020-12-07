@@ -790,6 +790,16 @@ namespace InazumaSearch.Forms
 
         protected virtual void CrawlStart(IEnumerable<string> targetDirPaths = null)
         {
+            // 検索対象フォルダが存在するかどうかをチェック
+            foreach (var dirPath in targetDirPaths ?? App.UserSettings.TargetFolders.Select(folder => folder.Path))
+            {
+                if (!Directory.Exists(dirPath))
+                {
+                    Util.ShowErrorMessage(this, $"下記の検索対象フォルダが存在しません。\n{dirPath}\n\n検索対象フォルダの設定を変更してから、再度クロールを行ってください。");
+                    return;
+                }
+            }
+
             // 実行前にDBのサイズを取得
             var dbFileSize = App.GM.GetDBFileSizeTotal();
 

@@ -624,15 +624,15 @@ namespace InazumaSearch.Core
 
                     // 実際にファイルを検索する対象フォルダパスを決定
                     // プロパティで指定されていればそのパスリストを使用、指定されていなければ全ての検索対象フォルダ
-                    var fileSearchTargetDirPath = TargetDirPaths;
-                    if (fileSearchTargetDirPath == null)
+                    var fileSearchTargetDirPaths = TargetDirPaths;
+                    if (fileSearchTargetDirPaths == null)
                     {
-                        fileSearchTargetDirPath = _app.UserSettings.TargetFolders.Where(f => f.Type == UserSetting.TargetFolderType.DocumentFile)
+                        fileSearchTargetDirPaths = _app.UserSettings.TargetFolders.Where(f => f.Type == UserSetting.TargetFolderType.DocumentFile)
                                                                                  .Select(f => f.Path).OrderBy(f => f).ToList();
                     }
 
                     List<IgnoreSetting> ignoreSettings;
-                    var targetSubDirs = DirectoryListUpTask(progress, cToken, fileSearchTargetDirPath, out ignoreSettings); // 対象ディレクトリ一覧取得
+                    var targetSubDirs = DirectoryListUpTask(progress, cToken, fileSearchTargetDirPaths, out ignoreSettings); // 対象ディレクトリ一覧取得
                     List<TargetFile> targets = null;
                     UpdateDocumentFileRecords(progress, cToken, crawlResult, targetSubDirs, dbRecordMap, ignoreSettings, out targets); // 文書データ登録
                     PurgeDocumentFileRecords(progress, cToken, crawlResult, dbRecordMap, ignoreSettings, targets); // 不要な文書データ削除
