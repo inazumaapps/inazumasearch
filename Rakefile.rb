@@ -167,7 +167,7 @@ def make_portable_zip(conf_type, platform, dest_zip_path)
 	    cd "InazumaSearch/bin/#{conf_type}/anycpu" do
 	    	# exe名リネーム
 	    	rm 'InazumaSearchPortable.exe' if File.exist?('InazumaSearchPortable.exe')
-	    	mv 'portableLaunch.exe', 'InazumaSearchPortable.exe'
+	    	cp 'portableLaunch.exe', 'InazumaSearchPortable.exe'
 	    end	    
 	    
 	    cd "InazumaSearch/bin/#{conf_type}/#{platform}" do
