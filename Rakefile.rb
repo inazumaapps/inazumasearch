@@ -1,4 +1,4 @@
-VERSION = '0.13.0'
+VERSION = '0.14.0'
 MSBUILD = 'C:\\Program Files (x86)\\MSBuild\\14.0\\Bin\\MSBuild.exe'
 
 PLATFORMS = ['x86', 'x64']
