@@ -1,5 +1,9 @@
 echo ---- Inazuma Search Build Batch Start ----
 
+REM externalsディレクトリを削除
+echo rmdir /S /Q "%TARGETDIR%externals"
+rmdir /S /Q "%TARGETDIR%externals"
+
 REM 必要な空ディレクトリの作成
 if not exist "%TARGETDIR%plugins" mkdir "%TARGETDIR%plugins"
 if not exist "%TARGETDIR%externals\%PLATFORMNAME%" mkdir "%TARGETDIR%externals\%PLATFORMNAME%"
