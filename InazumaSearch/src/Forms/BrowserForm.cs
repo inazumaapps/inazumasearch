@@ -277,14 +277,25 @@ namespace InazumaSearch.Forms
                 UserInputLogs = new List<Tuple<DateTime, string>>();
             }
 
-            public string SearchTargetDirectories()
+            public string SearchTargetDirectories(string order = null)
             {
                 return App.ExecuteInExceptionCatcher<string>(() =>
                 {
                     var targetDirectories = new List<UserSetting.TargetFolder>();
                     var fileCounts = new Dictionary<string, long>();
                     var excludingFlags = new Dictionary<string, bool>();
-                    foreach (var folder in App.UserSettings.TargetFolders)
+
+                    // フォルダ設定ごとにループ
+                    // 処理順は引数により変える
+                    IEnumerable<UserSetting.TargetFolder> folders;
+                    if (order == "crawlFolderSelect") {
+                        // クロール時のフォルダ選択である場合は、前回クロール時に除外しているフォルダを後ろに回す
+                        folders = App.UserSettings.TargetFolders.OrderBy(f => Tuple.Create((App.UserSettings.LastExcludingDirPaths.Contains(f.Path) ? 1 : 0), f.Path));
+                    } else {
+                        folders = App.UserSettings.TargetFolders.OrderBy(f => f.Path);
+                    }
+                    
+                    foreach (var folder in folders)
                     {
                         targetDirectories.Add(folder);
 

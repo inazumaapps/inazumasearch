@@ -358,7 +358,7 @@ function updateFolderListOnCrawlModalAsync() {
     refreshCrawlDecideButtonEnabled(); // クロール実行ボタンの表示を更新
 
     // 対象フォルダ一覧取得
-    asyncApi.searchTargetDirectories().then(function (json) {
+    asyncApi.searchTargetDirectories('crawlFolderSelect').then(function (json) {
         var data = JSON.parse(json);
         if (data) {
             for (dir of data.targetDirectories) {
