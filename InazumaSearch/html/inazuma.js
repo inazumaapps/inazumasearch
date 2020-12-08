@@ -126,8 +126,8 @@ function executeSearch(
             $('#DRILLDOWN-RESULT-FOLDER-LABEL').html("");
         }
 
-        // 並び順選択肢を表示
-        {
+        // 検索結果が1件以上であれば、並び順と表示形式の選択肢を表示
+        if (data.nHits >= 1){
             var resHtml = '<div class="input-field inline" style="margin-top: 0;">';
             resHtml += '<select class="browser-default sort-select" style="height: 2rem; padding: 2px; border-color: silver; display: inline-block; margin-right: 0.3rem; width: auto;">';
             for (var order of data.orderList) {
