@@ -543,7 +543,7 @@ namespace InazumaSearch.Core
                         }
                     }
                 }
-                catch (System.IO.DirectoryNotFoundException ex)
+                catch (Exception ex)
                 {
                     Logger.Debug(ex.ToString());
                     Logger.Debug($"Ignore dir - {folder}");
@@ -583,7 +583,7 @@ namespace InazumaSearch.Core
                         }
                     }
                 }
-                catch (System.IO.DirectoryNotFoundException ex)
+                catch (Exception ex)
                 {
                     Logger.Debug(ex.ToString());
                     Logger.Debug($"Ignore dir - {folder}");
