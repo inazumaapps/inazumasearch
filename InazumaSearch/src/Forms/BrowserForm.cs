@@ -897,7 +897,19 @@ namespace InazumaSearch.Forms
                 }
             }
 
-            Process.Start(path);
+            // ファイルを開く
+            // 例外発生時はエラーダイアログ表示
+            try
+            {
+                Process.Start(path);
+            }
+            catch (Exception ex)
+            {
+                App.Logger.Error(ex);
+                Util.ShowErrorMessage(this, $"下記のエラーにより、ファイルを開くことができませんでした。\n\n{ex.Message}");
+                return;
+            }
+
             var valueDict = new Dictionary<string, object>
             {
                 [Column.Documents.KEY] = Core.Util.MakeDocumentFileKey(path),
