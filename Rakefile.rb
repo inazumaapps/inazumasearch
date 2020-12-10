@@ -1,7 +1,15 @@
 VERSION = '0.14.0'
 MSBUILD = 'C:\\Program Files (x86)\\MSBuild\\14.0\\Bin\\MSBuild.exe'
+EXEPRESS = 'C:\\Program Files (x86)\\Web Technology\\EXEpress 6\\EXEpress.exe'
 
 PLATFORMS = ['x86', 'x64']
+
+DEST_EXES = {}
+DEST_EXES['x86'] = "out/InazumaSearch-#{VERSION}-x86.exe"
+DEST_EXES['x64'] = "out/InazumaSearch-#{VERSION}-x64.exe"
+EXEPRESS_INIS = {}
+EXEPRESS_INIS['x86'] = "out/IInazumaSearch_exepress_#{VERSION}_x86.ini"
+EXEPRESS_INIS['x64'] = "out/IInazumaSearch_exepress_#{VERSION}_x64.ini"
 
 DEST_ZIPS = {}
 DEST_ZIPS['x86'] = "out/InazumaSearch-#{VERSION}-x86.zip"
@@ -25,7 +33,10 @@ SRCS = FileList['InazumaSearch/**/*']
 SRCS.exclude('InazumaSearch/bin/**/*')
 SRCS.exclude('InazumaSearch/obj/**/*')
 
-task :default => ['cab:standard', 'zip:portable', "express:ini"]
+task :default => ['exe', 'zip:portable']
+
+desc "-"
+task 'exe' => DEST_EXES.values
 
 desc "-"
 task 'cab:standard' => DEST_CABS.values
@@ -39,9 +50,12 @@ task 'zip:portable' => DEST_ZIPS_PORTABLE.values
 desc "-"
 task :build => RELEASE_EXE.values + RELEASE_PORTABLE_EXE.values
 
-EXEPRESS_INI_LIST = FileList.new
-
 PLATFORMS.each do |platform|
+	file DEST_EXES[platform] => [EXEPRESS_INIS[platform], DEST_CABS[platform]] do |task|
+		# Exepressでexeを作成
+		sh %Q|"#{EXEPRESS}" "#{EXEPRESS_INIS[platform]}"|
+	end
+	
 	file DEST_CABS[platform] => [DEST_ZIPS[platform]] do |task|
 	    # cab形式で再圧縮
 	    cab_path = File.expand_path(task.name).gsub('/', '\\')
@@ -69,8 +83,7 @@ PLATFORMS.each do |platform|
 		end
 	end
 	
-	ini_path = "out/InazumaSearch_exepress_#{VERSION}_#{platform}.ini"
-	EXEPRESS_INI_LIST.include(ini_path)
+	ini_path = EXEPRESS_INIS[platform]
 	file ini_path => 'InazumaSearch_exepress_template.ini' do |task|
 	    # ExePress用のiniファイルを作成
 	    express_enc = 'UTF-16LE'
@@ -112,9 +125,6 @@ PLATFORMS.each do |platform|
 	end
 end
 
-desc "-"
-task "express:ini" => EXEPRESS_INI_LIST
-
 
 desc "-"
 task :clean do
@@ -137,7 +147,7 @@ task :clean do
     	rm_r "out/content"
     end
     
-    EXEPRESS_INI_LIST.each do |ini_path|
+    EXEPRESS_INIS.values.each do |ini_path|
     	rm ini_path if File.exist?(ini_path)
     end
 end
