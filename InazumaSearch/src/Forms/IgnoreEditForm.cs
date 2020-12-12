@@ -203,7 +203,7 @@ namespace InazumaSearch.Forms
         /// </summary>
         protected virtual List<string> SearchIgnoredFiles(IgnoreSetting setting, CancellationToken cToken)
         {
-            return _app.GetIgnoredDocumentRecords(setting);
+            return _app.GetIgnoredDocumentRecords(setting).Select(rec => rec.FilePath).ToList();
         }
 
         private void lnkPatternHelp_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
