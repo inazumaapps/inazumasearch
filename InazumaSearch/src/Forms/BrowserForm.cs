@@ -178,7 +178,7 @@ namespace InazumaSearch.Forms
             }
 
 
-            public void ShowIgnoreEditForm(string path)
+            public void ShowIgnoreEditFormFromSearchResult(string path)
             {
                 // 無視設定フォームを開く
                 OwnerForm.InvokeOnUIThread((form) =>
@@ -193,7 +193,19 @@ namespace InazumaSearch.Forms
                     // 無視設定ダイアログを開く
                     var relPath = path.Substring(baseDirPath.Length + 1);
                     var defaultPattern = "/" + relPath.Replace('\\', '/');
-                    var dialog = new IgnoreEditForm(baseDirPath, defaultPattern, App);
+                    var dialog = new IgnoreEditForm(IgnoreEditForm.EditMode.APPEND, baseDirPath, defaultPattern, App);
+                    dialog.ShowDialog(form);
+                });
+
+            }
+
+            public void ShowIgnoreEditFormFromSetting(string dirPath)
+            {
+                // 無視設定フォームを開く
+                OwnerForm.InvokeOnUIThread((form) =>
+                {
+                    // 無視設定ダイアログを開く
+                    var dialog = new IgnoreEditForm(IgnoreEditForm.EditMode.UPDATE, dirPath, "", App);
                     dialog.ShowDialog(form);
                 });
 
@@ -283,6 +295,7 @@ namespace InazumaSearch.Forms
                 {
                     var targetDirectories = new List<UserSetting.TargetFolder>();
                     var fileCounts = new Dictionary<string, long>();
+                    var ignoreSettingCounts = new Dictionary<string, long>();
                     var excludingFlags = new Dictionary<string, bool>();
 
                     // フォルダ設定ごとにループ
@@ -310,10 +323,11 @@ namespace InazumaSearch.Forms
                             // ※名前が部分一致する別のフォルダを誤って検索対象としないように、フォルダパスの最後に\を付ける
                             , query: string.Format("{0}:^{1}", Column.Documents.FILE_PATH, Groonga.Util.EscapeForQuery(folder.Path + @"\")));
                         fileCounts[folder.Path] = res.SearchResult.NHits;
+                        ignoreSettingCounts[folder.Path] = folder.IgnoreSettingLines.Count;
                         excludingFlags[folder.Path] = (App.UserSettings.LastExcludingDirPaths != null && App.UserSettings.LastExcludingDirPaths.Contains(folder.Path));
                     }
 
-                    return JsonConvert.SerializeObject(new { targetDirectories = targetDirectories, fileCounts = fileCounts, excludingFlags = excludingFlags });
+                    return JsonConvert.SerializeObject(new { targetDirectories, fileCounts, ignoreSettingCounts, excludingFlags });
                 });
             }
 

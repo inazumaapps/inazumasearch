@@ -166,6 +166,7 @@
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.BtnCancel);
             this.Name = "IgnoreEditForm";
+            this.ShowIcon = false;
             this.Text = "ファイル無視設定";
             this.Load += new System.EventHandler(this.IgnoreEditForm_Load);
             this.Shown += new System.EventHandler(this.IgnoreEditForm_Shown);

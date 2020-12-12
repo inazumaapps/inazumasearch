@@ -16,12 +16,24 @@ namespace InazumaSearch.Forms
 {
     public partial class IgnoreEditForm : Form
     {
+        public enum EditMode
+        {
+            /// <summary>
+            /// 設定の追加モード
+            /// </summary>
+            APPEND
+            ,
+            /// <summary>
+            /// 既存設定の編集モード
+            /// </summary>
+            UPDATE
+        }
         private CancellationTokenSource currentCTokenSource = null;
         private Task<List<string>> searchTask = null;
 
+        private readonly EditMode editMode;
         private readonly string baseDirPath;
         private readonly string defaultPattern;
-        private readonly HashSet<string> extractableExtNames;
         private readonly InazumaSearch.Core.Application _app;
 
         private bool isShown = false;
@@ -29,13 +41,35 @@ namespace InazumaSearch.Forms
         /// <summary>
         /// コンストラクタ
         /// </summary>
-        public IgnoreEditForm(string baseDirPath, string defaultPattern, InazumaSearch.Core.Application app)
+        public IgnoreEditForm(EditMode editMode, string baseDirPath, string defaultPattern, InazumaSearch.Core.Application app)
         {
             InitializeComponent();
+            this.editMode = editMode;
             this.baseDirPath = baseDirPath;
             this.defaultPattern = defaultPattern;
-            extractableExtNames = new HashSet<string>(app.GetExtractableExtNames());
             _app = app;
+        }
+
+        /// <summary>
+        /// ロード時処理
+        /// </summary>
+        private void IgnoreEditForm_Load(object sender, EventArgs e)
+        {
+            // 既存設定編集モードの場合は、初期値を設定
+            if (editMode == EditMode.UPDATE)
+            {
+                var setting = _app.UserSettings.TargetFolders.First(f => f.Path == baseDirPath);
+                if (setting != null)
+                {
+                    TxtSetting.Text = string.Join("\r\n", setting.IgnoreSettingLines.Concat(new[] { defaultPattern }));
+                }
+                else
+                {
+                    TxtSetting.Text = defaultPattern;
+                }
+            }
+
+            TxtBaseDirPath.Text = baseDirPath;
         }
 
         /// <summary>
@@ -45,8 +79,18 @@ namespace InazumaSearch.Forms
         {
             // 無視設定を更新
             var setting = _app.UserSettings.TargetFolders.First(f => f.Path == baseDirPath);
-            var inputLines = TxtSetting.Text.Replace("\r", "").Split('\n');
-            setting.IgnoreSettingLines = inputLines.ToList();
+            var inputLines = TxtSetting.Text.Replace("\r", "").Split('\n').Where(line => !string.IsNullOrWhiteSpace(line));
+
+            switch (editMode)
+            {
+                case EditMode.APPEND:
+                    setting.IgnoreSettingLines.AddRange(inputLines);
+                    break;
+
+                case EditMode.UPDATE:
+                    setting.IgnoreSettingLines = inputLines.ToList();
+                    break;
+            }
             _app.UserSettings.Save();
 
             // DB内から無視パターンに一致するレコードを削除
@@ -68,25 +112,6 @@ namespace InazumaSearch.Forms
         private void BtnCancel_Click(object sender, EventArgs e)
         {
             Close();
-        }
-
-        /// <summary>
-        /// ロード時処理
-        /// </summary>
-        private void IgnoreEditForm_Load(object sender, EventArgs e)
-        {
-            var setting = _app.UserSettings.TargetFolders.OrderByDescending(f => f.Path.Length)
-                                                         .FirstOrDefault(f => f.Path.ToLower().StartsWith(baseDirPath.ToLower()));
-            if (setting != null)
-            {
-                TxtSetting.Text = string.Join("\r\n", setting.IgnoreSettingLines.Concat(new[] { defaultPattern }));
-            }
-            else
-            {
-                TxtSetting.Text = defaultPattern;
-            }
-
-            TxtBaseDirPath.Text = baseDirPath;
         }
 
         /// <summary>
