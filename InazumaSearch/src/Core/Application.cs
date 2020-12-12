@@ -532,7 +532,7 @@ namespace InazumaSearch.Core
                 , outputColumns: new[] { Column.Documents.KEY, Column.Documents.FILE_PATH }
                 , limit: -1
                 , sortKeys: new[] { Column.Documents.KEY }
-                , filter: $"{Column.Documents.KEY} @^ {Groonga.Util.EscapeForScript(Util.MakeDocumentFileKey(ignoreSetting.DirPathLower))}" // ベースフォルダパスから始まるキーを検索
+                , filter: $"{Column.Documents.KEY} @^ {Groonga.Util.EscapeForScript(Util.MakeDocumentDirKeyPrefix(ignoreSetting.DirPathLower))}" // ベースフォルダパスから始まるキーを検索
             );
 
             // 無視対象のファイルパスを抽出
@@ -561,7 +561,7 @@ namespace InazumaSearch.Core
                 , outputColumns: new[] { Column.Documents.KEY, Column.Documents.FILE_PATH }
                 , limit: -1
                 , sortKeys: new[] { Column.Documents.KEY }
-                , filter: $"{Column.Documents.KEY} @^ {Groonga.Util.EscapeForScript(Util.MakeDocumentFileKey(ignoreSetting.DirPathLower))}" // ベースフォルダパスから始まるキーを検索
+                , filter: $"{Column.Documents.KEY} @^ {Groonga.Util.EscapeForScript(Util.MakeDocumentDirKeyPrefix(ignoreSetting.DirPathLower))}" // ベースフォルダパスから始まるキーを検索
             );
 
             // 削除対象のキーを抽出
