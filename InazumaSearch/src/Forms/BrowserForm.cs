@@ -288,13 +288,16 @@ namespace InazumaSearch.Forms
                     // フォルダ設定ごとにループ
                     // 処理順は引数により変える
                     IEnumerable<UserSetting.TargetFolder> folders;
-                    if (order == "crawlFolderSelect") {
+                    if (order == "crawlFolderSelect")
+                    {
                         // クロール時のフォルダ選択である場合は、前回クロール時に除外しているフォルダを後ろに回す
                         folders = App.UserSettings.TargetFolders.OrderBy(f => Tuple.Create((App.UserSettings.LastExcludingDirPaths.Contains(f.Path) ? 1 : 0), f.Path));
-                    } else {
+                    }
+                    else
+                    {
                         folders = App.UserSettings.TargetFolders.OrderBy(f => f.Path);
                     }
-                    
+
                     foreach (var folder in folders)
                     {
                         targetDirectories.Add(folder);
