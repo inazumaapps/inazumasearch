@@ -47,7 +47,7 @@ namespace InazumaSearch.Groonga
                     if (opts[optName] != null)
                     {
                         var strVal = opts[optName].ToString();
-                        tokens.Add(string.Format("--{0} {1}", optName, strVal));
+                        tokens.Add($"--{optName} {strVal}");
                     }
                 }
             }
@@ -68,15 +68,7 @@ namespace InazumaSearch.Groonga
 
                 if (input != null)
                 {
-                    if (input.Length > 100)
-                    {
-                        Logger.Debug(input.Substring(0, 100) + "..");
-                    }
-                    else
-                    {
-                        Logger.Debug(input.Replace("\\", ""));
-                    }
-                    //Proc.StandardInput.WriteLine(input.Replace("\\", ""));
+                    Logger.Debug(input);
                     var bytes = groongaEnc.GetBytes(input);
                     Proc.StandardInput.BaseStream.Write(bytes, 0, bytes.Length);
                     Proc.StandardInput.WriteLine();
@@ -147,7 +139,7 @@ namespace InazumaSearch.Groonga
                     var errorLocation = header[4];
                 }
                 // 失敗
-                throw new GroongaCommandError(string.Format("Groongaコマンドエラー : {0}", errorMessage), returnCode, errorMessage);
+                throw new GroongaCommandError($"Groongaコマンドエラー : {errorMessage}", returnCode, errorMessage);
             }
 
         }
@@ -407,7 +399,7 @@ namespace InazumaSearch.Groonga
                 ,
                 id = id
                 ,
-                filter = filter
+                filter = FormatForParameter(filter)
             };
             return (bool)ExecuteCommand("delete", opts);
         }
