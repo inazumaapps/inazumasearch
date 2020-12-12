@@ -43,6 +43,16 @@ namespace InazumaSearch.Core
         }
 
         /// <summary>
+        /// フォルダのフルパスからDocumentsテーブルを検索するためのキー文字列プレフィックスを生成
+        /// このプレフィックスで前方一致検索を行うことで、「指定したフォルダ内の全文書ファイル」を取得可能
+        /// </summary>
+        public static string MakeDocumentDirKeyPrefix(string dirPath)
+        {
+            // ※名前が部分一致する別のフォルダを誤って検索対象としないように、フォルダパスの最後に\を付ける
+            return "f:" + dirPath.ToLower() + @"\";
+        }
+
+        /// <summary>
         /// 16進数の文字列形式でハッシュを算出。使用にはCryptProviderが必要
         /// </summary>
         /// <param name="source"></param>
@@ -115,6 +125,37 @@ namespace InazumaSearch.Core
             var byGB = Math.Round(size / (decimal)1024 / 1024 / 1024, 2);
 
             return string.Format("{0:#,0.00} GB", byGB);
+        }
+
+        /// <summary>
+        /// 現在日を元に、指定した日付の分類名を取得（最終更新日の絞り込みなどで使用）
+        /// </summary>
+        public static string FormatTimeClass(DateTime timeClass, DateTime now)
+        {
+            if (Groonga.Util.ToUnixTime(timeClass) == 0)
+            {
+                return $"{now.Year - SystemConst.GROUPING_YEAR_RANGE - 1}年以前";
+            }
+            else if (now.Date == timeClass.Date)
+            {
+                return "今日";
+            }
+            else if (now.Date.AddDays(-1) == timeClass.Date)
+            {
+                return "昨日";
+            }
+            else if (now.Year == timeClass.Year && now.Month == timeClass.Month)
+            {
+                return "今月";
+            }
+            else if (now.Year == timeClass.Year)
+            {
+                return $"{timeClass.Month}月";
+            }
+            else
+            {
+                return $"{timeClass.Year}年";
+            }
         }
 
     }

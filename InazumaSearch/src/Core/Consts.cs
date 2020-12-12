@@ -114,5 +114,10 @@ namespace InazumaSearch.Core
         /// Windowsにおける通常の最大パス長 (このパスを超えると、他アプリケーションで正しく処理できない場合がある)
         /// </summary>
         public const int WindowsMaxPath = 260 - 1; // NULL文字
+
+        /// <summary>
+        /// 年単位で表示する年数の範囲（最終更新日がこの年数以内なら年ごとに分類。この年数よりも古い場合、「2016年以前」形式でまとめて表示）
+        /// </summary>
+        public const int GROUPING_YEAR_RANGE = 2;
     }
 }

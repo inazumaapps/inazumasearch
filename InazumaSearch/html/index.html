@@ -8,7 +8,7 @@
 
   <!-- CSS  -->
   <link href="materialize/css/materialize.css" type="text/css" rel="stylesheet" media="screen,projection"/>
-  <link href="materialize/css/style.css" type="text/css" rel="stylesheet" media="screen,projection"/>
+    <link href="style.css" type="text/css" rel="stylesheet" media="screen,projection" />
   <link href="material-icons/material-icons.css" rel="stylesheet">
   <link href="icomoon/style.css" type="text/css" rel="stylesheet" media="screen,projection"/>
   <link rel="stylesheet" type="text/css" href="tooltipster/css/tooltipster.bundle.min.css" />
@@ -41,10 +41,10 @@
                     <p>文書情報が収集されていません。「クロール」を実行して文書情報を収集してください。</p>
                 </div>
                 <!--
-                  <div class="card-action">
-                    <a href="setting.html"><i class="material-icons left">settings</i>設定画面を開く</a>
-                  </div>
-                -->
+              <div class="card-action">
+                <a href="setting.html"><i class="material-icons left">settings</i>設定画面を開く</a>
+              </div>
+            -->
             </div><!-- /#MESSAGE-AREA -->
 
             <div class="right-align">
@@ -53,7 +53,7 @@
                 </button>
                 <p class="subtext" id="LAST-CRAWL-TIME-CAPTION">&nbsp;</p>
                 <!-- <button class="btn waves-effect waves-light" id="DEVTOOL" draggable="true">開発ツール<i class="mdi-action-search right"></i>
-                </button> -->
+            </button> -->
                 <div class="progress" id="PROGRESS-BAR" style="display: none;">
                     <div class="indeterminate"></div>
                 </div>
@@ -113,40 +113,6 @@
                         <label>更新日付</label>
                     </div>
                 </div><!-- /.row -->
-                <div class="row">
-                    <div class="input-field col s4">
-                        <select name="sort_by">
-                            <option value="">標準 (関連度順)</option>
-                            <option value="path">ファイルパス順</option>
-                            <option value="updated_desc">更新日が新しい順</option>
-                            <option value="updated">更新日が古い順</option>
-                            <option value="size_desc">ファイルサイズが大きい順</option>
-                            <option value="size">ファイルサイズが小さい順</option>
-                        </select>
-                        <label>並び順</label>
-                    </div>
-                    <!-- <div class="input-field col s4">
-                      <select>
-                        <option value="">指定なし</option>
-                        <option value="updated">プロジェクト1</option>
-                        <option value="path">プロジェクト2</option>
-                      </select>
-                      <label>検索対象グループ</label>
-                    </div> -->
-
-                    <div class="col s4">
-                        <label>一覧表示</label>
-                        <div class="switch">
-                            <label>
-                                Off<input type="checkbox" name="list_view">
-                                <span class="lever"></span>On
-                            </label>
-                        </div>
-                        <!-- <label>TF-IDF</label>
-                        <div class="switch"><label>Off<input type="checkbox" name="tf_idf">
-                            <span class="lever"></span>On</label></div>  -->
-                    </div><!-- /.col -->
-                </div><!-- /.row -->
             </form>
         </div><!-- /.section -->
         <div class="progress" id="SEARCH-PROGRESS-BAR" style="opacity: 0;">
@@ -154,16 +120,6 @@
         </div>
 
         <div class="section" id="SEARCH-RESULT">
-            <!-- <div class="row">
-             <div class="col s12">
-               <ul class="tabs">
-                 <li class="tab col s3"><a href="#TAB-SEARCH-RESULT">検索結果</a></li>
-                 <li class="tab col s3"><a href="#TAB-SETTING">設定</a></li>
-               </ul>
-             </div>
-             <div id="TAB-SEARCH-RESULT" class="col s12">
-            -->
-
 
             <div id="SEARCH-RESULT-HEADER">
                 <h3>検索結果</h3>
@@ -172,10 +128,10 @@
                 <p class="subtext" id="SEARCH-RESULT-SUB-MESSAGE"></p>
 
                 <p class="drilldown-result" id="DRILLDOWN-RESULT-EXT"></p>
-                <p class="drilldown-result" id="DRILLDOWN-RESULT-YEAR"></p>
                 <p class="drilldown-result" id="DRILLDOWN-RESULT-FOLDER-LABEL"></p>
+                <p class="drilldown-result" id="DRILLDOWN-ORDER"></p>
                 <!-- <ul class="pagination">
-                </ul> -->
+        </ul> -->
             </div><!-- / #SEARCH-RESULT-HEADER -->
 
             <div id="SEARCH-RESULT-BODY">
@@ -183,7 +139,7 @@
                     <div class="col s12">
                         <div class="card z-depth-2">
                             <div class="card-content">
-                                <div class="card-title"><span class="icon"></span><a href="#" data-file-path="/" class="file-name-link">[TITLE]</a></div>
+                                <div class="card-title"><span class="icon"></span><a href="#" data-file-path="/" class="file-name-link file-open-link">[TITLE]</a></div>
                                 <img src="" class="thumbnail-image" />
                                 <div class="body-snippets">
                                 </div>
@@ -195,10 +151,11 @@
                                 </div>
                             </div><!-- / .card-content -->
                             <div class="card-action">
-                                <a class="file-path" href="#" data-file-path="/">[PATH]</a>
+                                <a class="file-path file-open-link" href="#" data-file-path="/">[PATH]</a>
                                 <div class="right">
-                                    <a href="#" class="after-tooltipped" title="フォルダを開く" data-folder-path=""><i class="tiny material-icons">folder</i></a>
-                                    <a class='submenu-link' href='#' data-target='dropdown1' style="margin-right: 0.5rem;"><i class="tiny material-icons">more_horiz</i></a>
+                                    <a href="#" class="after-tooltipped folder-open-link" title="フォルダを開く"><i class="tiny material-icons">folder</i></a>
+                                    <a class='submenu-link release-mode-only' href='#' data-target='SEARCH-RESULT-SUBMENU' style="margin-right: 0.5rem;"><i class="tiny material-icons">more_horiz</i></a>
+                                    <a class='submenu-link debug-mode-only' href='#' data-target='SEARCH-RESULT-SUBMENU-DEBUG' style="margin-right: 0.5rem;"><i class="tiny material-icons">more_horiz</i></a>
                                 </div>
                             </div>
 
@@ -219,10 +176,10 @@
                 </thead>
                 <tbody>
                     <tr id="RESULT-LIST-VIEW-ROW-BASE" style="display: none;">
-                        <td><span class="icon"></span><a href="#" data-file-path="/" class="file-name-link" style="font-size: small">[TITLE]</a></td>
-                        <td class="file-path">[PATH]</td>
+                        <td style="max-width: 15rem;"><span class="icon"></span><a href="#" data-file-path="/" class="file-name-link file-open-link" style="font-size: small">[TITLE]</a></td>
+                        <td class="file-path" style="max-width: 30rem;">[PATH]</td>
                         <td nowrap style="text-align: right;"><span class="document-information-file-updated">9999/99/99(日) 99:99</span><br><span class="document-information-size">9,999KB</span></td>
-                        <td><a href="#" class="after-tooltipped" title="フォルダを開く" data-folder-path=""><i class="tiny material-icons">folder</i></a></td>
+                        <td><a href="#" class="after-tooltipped folder-open-link" title="フォルダを開く"><i class="tiny material-icons">folder</i></a></td>
                     </tr>
                 </tbody>
             </table>
@@ -262,10 +219,18 @@
     <div id="SCROLL-ADJUSTER" style="display: none; position: absolute; visibility: hidden">[SCROLL-ADJUSTER]</div>
 
     <!-- 検索結果サブメニュー（ドロップダウン） -->
-    <ul id="dropdown1" class="dropdown-content">
+    <ul id="SEARCH-RESULT-SUBMENU" class="dropdown-content">
         <li><a href="#" class="display-all-body-link">本文内でマッチした箇所を全表示</a></li>
         <li class="divider" tabindex="-1"></li>
         <li><a href="#" class="ignore-dialog-link">無視設定</a></li>
+    </ul>
+
+    <!-- 検索結果サブメニュー（ドロップダウン） デバッグ用 -->
+    <ul id="SEARCH-RESULT-SUBMENU-DEBUG" class="dropdown-content">
+        <li><a href="#" class="display-all-body-link">本文内でマッチした箇所を全表示</a></li>
+        <li><a href="#" class="ignore-dialog-link">無視設定</a></li>
+        <li class="divider debug-mode-only" tabindex="-1"></li>
+        <li><a href="#" class="get-body-link debug-mode-only">[デバッグ用] ファイルの本文を取得</a></li>
     </ul>
 
     <!-- Modal Structure -->
@@ -289,7 +254,7 @@
             <div class="result" style="display: none;">
                 <p>マッチした箇所（本文マッチ数: <span class="body-match-count"></span>）</p>
                 <!--<h4>本文</h4>-->
-                <pre class="display-highlight-body" style="font-size: small; overflow-y: auto;"></pre>
+                <pre class="display-highlight-body" style="font-size: small;"></pre>
             </div>
         </div>
         <div class="modal-footer">
@@ -333,6 +298,37 @@
         </div>
     </div>
 
+    <!-- Modal Structure -->
+    <div id="CRAWL-MODAL" class="modal modal-fixed-footer" style="width: 96% !important; height: 96% !important;">
+        <div class="modal-header" style="padding-left: 24px;">
+            <p>クロールを実行するフォルダを選択してください。</p>
+        </div>
+        <div class="modal-content">
+            <div>
+                <label>
+                    <input type="checkbox" class="filled-in" id="CRAWL-MODAL-ALL-CHECK" checked="checked" />
+                    <span class="title path" style="color: black; height: 20px; line-height: 20px;">全選択</span>
+                </label>
+            </div>
+            <div class="progress" id="PROGRESS-BAR-IN-CRAWL-MODAL">
+                <div class="indeterminate"></div>
+            </div>
+            <ul class="collection" id="CRAWL-FOLDER-LIST">
+                <li class="collection-item folder-item cloning-base">
+                    <label>
+                        <input type="checkbox" class="filled-in crawl-modal-folder-check" checked="checked" />
+                        <span class="title" style="height: 20px; line-height: 20px; color: black;"><span class="path"></span></span>
+                    </label>
+
+                    <p style="font-size: smaller; color: gray">登録済み文書数: <span class="file-count">0</span></p>
+                </li>
+            </ul>
+        </div>
+        <div class="modal-footer">
+            <a href="#!" class="modal-action waves-effect btn" id="CRAWL-MODAL-DECIDE">クロール実行</a>
+            <a href="#!" class="modal-action modal-close waves-effect btn-flat">キャンセル</a>
+        </div>
+    </div>
     <!--  Scripts-->
     <script src="jquery/jquery-3.3.1.min.js"></script>
     <script type="text/javascript" src="tooltipster/js/tooltipster.bundle.min.js"></script>

@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
+using System.Linq;
 using System.Windows.Forms;
 using InazumaSearch.Core;
 using Microsoft.WindowsAPICodePack.Taskbar;
@@ -12,6 +14,11 @@ namespace InazumaSearch.Forms
         protected DateTime StartingTime { get; set; }
         public Core.Application App { get; set; }
         protected Action StoppedCallback { get; set; }
+
+        /// <summary>
+        /// クロール対象のフォルダパスリスト（nullの場合はすべての検索対象フォルダをクロールする）
+        /// </summary>
+        public virtual IEnumerable<string> TargetDirPaths { get; set; }
 
         public CrawlProgressForm()
         {
@@ -40,9 +47,8 @@ namespace InazumaSearch.Forms
 
             try
             {
-                // 最終クロール日時を終了
-                App.UserSettings.SaveLastCrawlTime(DateTime.Now);
-
+                // 最終クロール情報を保存
+                App.UserSettings.SaveOnCrawl(DateTime.Now, TargetDirPaths);
 
                 // 常駐クロールモードであれば、いったん常駐クロールを停止
                 if (App.UserSettings.AlwaysCrawlMode)
@@ -50,10 +56,10 @@ namespace InazumaSearch.Forms
                     App.Crawler.StopIfRunning();
                 }
 
-                // フルクロール開始
+                // 全体クロール開始
                 TaskbarManager.Instance.SetProgressState(TaskbarProgressBarState.Indeterminate, Handle);
 
-                var res = await App.Crawler.RunFullCrawlAsync((progSender, state) =>
+                var res = await App.Crawler.RunFullCrawlAsync(TargetDirPaths, (progSender, state) =>
                 {
                     if (IsDisposed) return;
 

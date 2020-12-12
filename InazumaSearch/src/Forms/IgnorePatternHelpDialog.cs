@@ -19,7 +19,7 @@ namespace InazumaSearch.Forms
 
         private void BtnOK_Click(object sender, EventArgs e)
         {
-            this.Close();
+            Close();
         }
     }
 }

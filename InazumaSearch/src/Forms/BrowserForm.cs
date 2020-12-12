@@ -73,6 +73,10 @@ namespace InazumaSearch.Forms
                 return JsonConvert.SerializeObject(App.UserSettings.PlainData);
             }
 
+            public string GetVersionCaption()
+            {
+                return App.GetVersionCaption();
+            }
             public void ShowErrorMessage(string message)
             {
                 OwnerForm.InvokeOnUIThread((f) => Util.ShowErrorMessage(f,
@@ -113,9 +117,14 @@ namespace InazumaSearch.Forms
 
 
 
-            public void CrawlStart()
+            public void CrawlStart(string targetFoldersJSON = null)
             {
-                OwnerForm.InvokeOnUIThread((f) => { f.CrawlStart(); });
+                string[] targetFolders = null;
+                if (targetFoldersJSON != null)
+                {
+                    targetFolders = JsonConvert.DeserializeObject<string[]>(targetFoldersJSON);
+                }
+                OwnerForm.InvokeOnUIThread((f) => { f.CrawlStart(targetFolders); });
             }
 
             public string SelectDirectory()
@@ -248,15 +257,6 @@ namespace InazumaSearch.Forms
                 });
 
             }
-
-            /// <summary>
-            /// バージョンを取得
-            /// </summary>
-            public string GetVersion()
-            {
-                return Util.GetVersion().ToString();
-            }
-
         }
 
         /// <summary>
@@ -277,13 +277,28 @@ namespace InazumaSearch.Forms
                 UserInputLogs = new List<Tuple<DateTime, string>>();
             }
 
-            public string SearchTargetDirectories()
+            public string SearchTargetDirectories(string order = null)
             {
                 return App.ExecuteInExceptionCatcher<string>(() =>
                 {
                     var targetDirectories = new List<UserSetting.TargetFolder>();
                     var fileCounts = new Dictionary<string, long>();
-                    foreach (var folder in App.UserSettings.TargetFolders)
+                    var excludingFlags = new Dictionary<string, bool>();
+
+                    // フォルダ設定ごとにループ
+                    // 処理順は引数により変える
+                    IEnumerable<UserSetting.TargetFolder> folders;
+                    if (order == "crawlFolderSelect")
+                    {
+                        // クロール時のフォルダ選択である場合は、前回クロール時に除外しているフォルダを後ろに回す
+                        folders = App.UserSettings.TargetFolders.OrderBy(f => Tuple.Create((App.UserSettings.LastExcludingDirPaths.Contains(f.Path) ? 1 : 0), f.Path));
+                    }
+                    else
+                    {
+                        folders = App.UserSettings.TargetFolders.OrderBy(f => f.Path);
+                    }
+
+                    foreach (var folder in folders)
                     {
                         targetDirectories.Add(folder);
 
@@ -292,11 +307,13 @@ namespace InazumaSearch.Forms
                             Table.Documents
                             , limit: 0
                             , outputColumns: new string[] { Groonga.VColumn.ID }
-                            , query: string.Format("{0}:^{1}", Column.Documents.FILE_PATH, Groonga.Util.EscapeForQuery(folder.Path)));
+                            // ※名前が部分一致する別のフォルダを誤って検索対象としないように、フォルダパスの最後に\を付ける
+                            , query: string.Format("{0}:^{1}", Column.Documents.FILE_PATH, Groonga.Util.EscapeForQuery(folder.Path + @"\")));
                         fileCounts[folder.Path] = res.SearchResult.NHits;
+                        excludingFlags[folder.Path] = (App.UserSettings.LastExcludingDirPaths != null && App.UserSettings.LastExcludingDirPaths.Contains(folder.Path));
                     }
 
-                    return JsonConvert.SerializeObject(new { target_directories = targetDirectories, file_counts = fileCounts });
+                    return JsonConvert.SerializeObject(new { targetDirectories = targetDirectories, fileCounts = fileCounts, excludingFlags = excludingFlags });
                 });
             }
 
@@ -392,7 +409,7 @@ namespace InazumaSearch.Forms
                         var outLines = new List<string>();
                         foreach (var segment in segments)
                         {
-                            outLines.Add("<div style=\"border: 1px solid silver; margin: 0; padding: 1em; font-size: small;\">");
+                            outLines.Add("<div style=\"border: 1px solid silver; margin: 0; padding: 1em; font-size: small; overflow-y: auto;\">");
                             outLines.AddRange(lines.GetRange(segment.Item1, segment.Item2 - segment.Item1 + 1));
                             outLines.Add("</div>");
                         }
@@ -406,6 +423,27 @@ namespace InazumaSearch.Forms
                         return JsonConvert.SerializeObject(null);
                     }
                 });
+            }
+
+            public void GetFileBody(string filePath)
+            {
+                OwnerForm.InvokeOnUIThread((f) =>
+                {
+                    App.ExecuteInExceptionCatcher(() =>
+                    {
+                        // ファイル本文の抽出
+                        var textExtNames = App.GetTextExtNames();
+                        var pluginExtNames = App.GetPluginExtNames();
+                        var body = App.ExtractFileText(filePath, textExtNames, pluginExtNames);
+
+                        var dialog = new FileBodyViewDialog
+                        {
+                            Body = body
+                        };
+                        dialog.ShowDialog(f);
+                    });
+                });
+
             }
 
             /// <summary>
@@ -436,6 +474,8 @@ namespace InazumaSearch.Forms
                 , int offset = 0
                 , string selectedFormat = null
                 , string selectedFolderLabel = null
+                , string selectedOrder = null
+                , bool ignoreError = false
             )
             {
                 return App.ExecuteInExceptionCatcher<string>(() =>
@@ -472,7 +512,6 @@ namespace InazumaSearch.Forms
                     var queryFileName = (string)queryObject["fileName"];
                     var queryBody = (string)queryObject["body"];
                     var queryUpdated = (string)queryObject["updated"];
-                    var querySortBy = (string)queryObject["sortBy"];
 
                     var searchEngine = new SearchEngine(App);
                     var ret = searchEngine.Search(
@@ -480,18 +519,21 @@ namespace InazumaSearch.Forms
                         , queryFileName
                         , queryBody
                         , queryUpdated
-                        , querySortBy
                         , offset
                         , selectedFormat
                         , selectedFolderLabel
+                        , selectedOrder
                     );
 
                     // 失敗した場合はエラーダイアログを表示して終了
                     if (!ret.success)
                     {
-                        OwnerForm.InvokeOnUIThread((f) => Util.ShowErrorMessage(f,
-                            "検索語の解析時にエラーが発生しました。\n単語をダブルクォート (\") で囲んで試してみてください。"
-                        ));
+                        if (!ignoreError)
+                        {
+                            OwnerForm.InvokeOnUIThread((f) => Util.ShowErrorMessage(f,
+                                "検索語の解析時にエラーが発生しました。\n単語をダブルクォート (\") で囲んで試してみてください。"
+                            ));
+                        }
 
                         return null;
                     }
@@ -620,6 +662,7 @@ namespace InazumaSearch.Forms
             public BrowserForm OwnerForm { get; set; }
             public Core.Application Application { get; set; }
             private const int ShowDevTools = 26501;
+            private const int ShowDBBrowser = 26505;
             private const int ShowDebugForm = 26502;
             private const int OpenFile = 26503;
             private const int OpenFolder = 26504;
@@ -657,6 +700,7 @@ namespace InazumaSearch.Forms
                     if (Application.DebugMode)
                     {
                         model.AddItem((CefMenuCommand)ShowDevTools, "開発ツール");
+                        model.AddItem((CefMenuCommand)ShowDBBrowser, "DBブラウザー(β版)");
                         model.AddItem((CefMenuCommand)ShowDebugForm, "デバッグウインドウを開く");
                         model.AddSeparator();
                         model.AddItem(CefMenuCommand.ReloadNoCache, "更新");
@@ -695,6 +739,15 @@ namespace InazumaSearch.Forms
                     if ((int)commandId == ShowDevTools)
                     {
                         browser.ShowDevTools();
+                    }
+
+                    if ((int)commandId == ShowDBBrowser)
+                    {
+                        OwnerForm.InvokeOnUIThread((f) =>
+                        {
+                            var f2 = new DBBrowserForm(Application);
+                            f2.Show(f);
+                        });
                     }
                     if ((int)commandId == ShowDebugForm)
                     {
@@ -744,8 +797,18 @@ namespace InazumaSearch.Forms
         }
 
 
-        protected virtual void CrawlStart()
+        protected virtual void CrawlStart(IEnumerable<string> targetDirPaths = null)
         {
+            // 検索対象フォルダが存在するかどうかをチェック
+            foreach (var dirPath in targetDirPaths ?? App.UserSettings.TargetFolders.Select(folder => folder.Path))
+            {
+                if (!Directory.Exists(dirPath))
+                {
+                    Util.ShowErrorMessage(this, $"下記の検索対象フォルダが見つかりませんでした。\n{dirPath}\n\n検索対象フォルダの設定を変更してから、再度クロールを行ってください。");
+                    return;
+                }
+            }
+
             // 実行前にDBのサイズを取得
             var dbFileSize = App.GM.GetDBFileSizeTotal();
 
@@ -764,8 +827,7 @@ namespace InazumaSearch.Forms
                 {
                     var freeSpaceByGB = Math.Round(driveFreeSpaceSize / (decimal)(1024L * 1024L * 1024L), 2);
                     var freeSpaceCaption = freeSpaceByGB.ToString() + "GB";
-                    var msg = string.Format("{0}ドライブの空き容量が残り少なくなっているため\nクロールによってDBのサイズが拡大し、空き容量が無くなる可能性があります。\n(現在の空き容量: {1})\n\nクロールを実行してもよろしいですか？"
-                                            , driveLetter.ToUpper(), freeSpaceCaption);
+                    var msg = $"{driveLetter.ToUpper()}ドライブの空き容量が残り少なくなっているため\nクロールによってDBのサイズが拡大し、空き容量が無くなる可能性があります。\n(現在の空き容量: {freeSpaceCaption})\n\nクロールを実行してもよろしいですか？";
                     var res = MessageBox.Show(this, msg, "警告", MessageBoxButtons.YesNo, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button2);
                     if (res == DialogResult.No)
                     {
@@ -779,7 +841,10 @@ namespace InazumaSearch.Forms
             var f = new CrawlProgressForm(App, () =>
             {
                 ChromeBrowser.EvaluateScriptAsync("$('#CRAWL-START').removeClass('disabled');");
-            });
+            })
+            {
+                TargetDirPaths = targetDirPaths
+            };
             f.Show(this);
         }
 
@@ -835,7 +900,19 @@ namespace InazumaSearch.Forms
                 }
             }
 
-            Process.Start(path);
+            // ファイルを開く
+            // 例外発生時はエラーダイアログ表示
+            try
+            {
+                Process.Start(path);
+            }
+            catch (Exception ex)
+            {
+                App.Logger.Error(ex);
+                Util.ShowErrorMessage(this, $"下記のエラーにより、ファイルを開くことができませんでした。\n\n{ex.Message}");
+                return;
+            }
+
             var valueDict = new Dictionary<string, object>
             {
                 [Column.Documents.KEY] = Core.Util.MakeDocumentFileKey(path),
@@ -846,14 +923,14 @@ namespace InazumaSearch.Forms
 
         public void OpenFolder(string path)
         {
-            if (!Directory.Exists(path))
+            if (!File.Exists(path))
             {
                 Util.ShowErrorMessage(this,
-                    "フォルダが存在しません。\n前回のクロール後に、移動または削除された可能性があるため、再度クロールを実行してください。"
+                    "ファイルが存在しません。\n前回のクロール後に、移動または削除された可能性があるため、再度クロールを実行してください。"
                 );
                 return;
             }
-            Process.Start(path);
+            Process.Start("explorer.exe", $"/select,\"{path}\"");
         }
 
         public virtual void InvokeOnUIThread(Action<BrowserForm> act)

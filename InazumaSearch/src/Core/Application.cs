@@ -8,6 +8,7 @@ using System.Windows.Forms;
 using Alphaleonis.Win32.Filesystem;
 using CommandLine;
 using CommandLine.Text;
+using Hnx8.ReadJEnc;
 using InazumaSearch.Forms;
 
 namespace InazumaSearch.Core
@@ -159,6 +160,15 @@ namespace InazumaSearch.Core
         #endregion
 
         /// <summary>
+        /// バージョン表記文字列を取得
+        /// </summary>
+        /// <returns></returns>
+        public virtual string GetVersionCaption()
+        {
+            return $"{Util.GetVersion()}" + (PortableMode ? " ポータブル版" : "") + (Util.GetPlatform() == "x86" ? " (32ビットバージョン)" : "");
+        }
+
+        /// <summary>
         /// 対応している拡張子のリストを取得 ("txt" 形式で取得する)
         /// </summary>
         /// <returns></returns>
@@ -294,6 +304,9 @@ namespace InazumaSearch.Core
             // プラグイン構成を保存
             UserSettings.SaveLastLoadedPluginVersionNumbers(new Dictionary<string, int>(loadedPluginVersionNumbers));
 
+            // Groongaの必要プラグインを登録
+            GM.PluginRegister("functions/time");
+
             // ログ出力
             Logger.Info("アプリケーションを起動しました");
 
@@ -305,7 +318,60 @@ namespace InazumaSearch.Core
 
             // 正常起動
             return true;
+        }
 
+        /// <summary>
+        /// テキストファイルとして扱うファイル拡張子の一覧を取得。結果にドット記号は含まない (例: "txt")
+        /// </summary>
+        public virtual List<string> GetTextExtNames()
+        {
+            var textExtNames = UserSettings.TextExtensions.Select(x => x.ExtName).ToList();
+            textExtNames.Add("txt");
+            return textExtNames;
+        }
+
+        /// <summary>
+        /// プラグインで扱うファイル拡張子の一覧を取得。結果にドット記号は含まない (例: "xdw")
+        /// </summary>
+        public virtual List<string> GetPluginExtNames()
+        {
+            return PluginManager.GetTextExtNameToLabelMap().Keys.ToList();
+        }
+
+        /// <summary>
+        /// 拡張子に応じて、指定した文書ファイルの本文テキストを抽出
+        /// </summary>
+        /// <param name="path">文書ファイルパス</param>
+        /// <returns>ファイル本文。何らかのエラー</returns>
+        public virtual string ExtractFileText(
+            string path
+            , IEnumerable<string> textExtNames
+            , IEnumerable<string> pluginExtNames
+        )
+        {
+            var ext = Path.GetExtension(path).TrimStart('.').ToLower();
+
+            if (pluginExtNames.Contains(ext))
+            {
+                // プラグインが対応している場合は、プラグインを使用してテキスト抽出
+                Logger.Trace($"Extract by plugin - {path}");
+                return PluginManager.ExtractText(path);
+            }
+            else if (textExtNames.Contains(ext))
+            {
+                // テキストの拡張子として登録されている場合は、テキストファイルとして読み込み
+                Logger.Trace($"Extract as text file - {path}");
+                var body = "";
+                var bytes = File.ReadAllBytes(path);
+                var charCode = ReadJEnc.JP.GetEncoding(bytes, bytes.Length, out body);
+                return body ?? "";
+            }
+            else
+            {
+                // 上記以外の場合はXDoc2Txtを使用
+                Logger.Trace($"Extract by xdoc2txt - {path}");
+                return XDoc2TxtApi.Extract(path);
+            }
         }
 
         /// <summary>
@@ -590,7 +656,7 @@ namespace InazumaSearch.Core
 
                 if (!Directory.Exists(opts.HtmlFullPath) || !File.Exists(Path.Combine(opts.HtmlFullPath, "index.html")))
                 {
-                    innerErrorMessage = string.Format("有効なhtmlフォルダが存在しません。(探索パス: {0})", opts.HtmlFullPath);
+                    innerErrorMessage = $"有効なhtmlフォルダが存在しません。(探索パス: {opts.HtmlFullPath})";
                 }
 
             }).WithNotParsed((errors) =>

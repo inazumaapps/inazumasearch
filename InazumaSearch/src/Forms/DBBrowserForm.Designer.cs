@@ -32,7 +32,6 @@
             this.BtnClose = new System.Windows.Forms.Button();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.TreeFolder = new System.Windows.Forms.TreeView();
-            this.TreeIconImageList = new System.Windows.Forms.ImageList(this.components);
             this.BtnRefresh = new System.Windows.Forms.Button();
             this.delayTimer = new System.Windows.Forms.Timer(this.components);
             this.LstFile = new System.Windows.Forms.ListView();
@@ -53,20 +52,11 @@
             // 
             // TreeFolder
             // 
-            this.TreeFolder.ImageIndex = 0;
-            this.TreeFolder.ImageList = this.TreeIconImageList;
             this.TreeFolder.Location = new System.Drawing.Point(22, 54);
             this.TreeFolder.Name = "TreeFolder";
-            this.TreeFolder.SelectedImageIndex = 0;
             this.TreeFolder.Size = new System.Drawing.Size(288, 295);
             this.TreeFolder.TabIndex = 16;
             this.TreeFolder.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.TreeFolder_AfterSelect);
-            // 
-            // TreeIconImageList
-            // 
-            this.TreeIconImageList.ColorDepth = System.Windows.Forms.ColorDepth.Depth32Bit;
-            this.TreeIconImageList.ImageSize = new System.Drawing.Size(16, 16);
-            this.TreeIconImageList.TransparentColor = System.Drawing.Color.Black;
             // 
             // BtnRefresh
             // 
@@ -89,12 +79,14 @@
             this.FileName,
             this.FileUpdated,
             this.FileSize});
+            this.LstFile.HideSelection = false;
             this.LstFile.Location = new System.Drawing.Point(316, 54);
             this.LstFile.Name = "LstFile";
             this.LstFile.Size = new System.Drawing.Size(588, 295);
             this.LstFile.TabIndex = 18;
             this.LstFile.UseCompatibleStateImageBehavior = false;
             this.LstFile.View = System.Windows.Forms.View.Details;
+            this.LstFile.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.LstFile_MouseDoubleClick);
             // 
             // FileName
             // 
@@ -132,7 +124,6 @@
         private System.Windows.Forms.Button BtnClose;
         private System.Windows.Forms.ToolTip toolTip1;
         private System.Windows.Forms.TreeView TreeFolder;
-        private System.Windows.Forms.ImageList TreeIconImageList;
         private System.Windows.Forms.Button BtnRefresh;
         private System.Windows.Forms.Timer delayTimer;
         private System.Windows.Forms.ListView LstFile;

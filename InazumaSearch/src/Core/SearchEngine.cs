@@ -60,7 +60,10 @@ namespace InazumaSearch.Core
             /// </summary>
             public IList<FolderLabelDrilldownLink> folderLabelDrilldownLinks { get; set; }
 
-            //public IList<YearDrilldownLink> yearDrilldownLinks { get; set; }
+            /// <summary>
+            /// 並び順の選択肢一覧
+            /// </summary>
+            public IList<OrderItem> orderList { get; set; }
         }
         public class Record
         {
@@ -87,15 +90,41 @@ namespace InazumaSearch.Core
             public string caption { get; set; }
             public long nSubRecs { get; set; }
         }
-        public class YearDrilldownLink
-        {
-            public int year { get; set; }
-            public long nSubRecs { get; set; }
-        }
         public class FolderLabelDrilldownLink
         {
             public string folderLabel { get; set; }
             public long nSubRecs { get; set; }
+        }
+
+        /// <summary>
+        /// 並び順項目
+        /// </summary>
+        public class OrderItem
+        {
+            public string Caption { get; set; }
+            public string Type { get; set; }
+            public string GroongaExpr { get; set; }
+        }
+
+        /// <summary>
+        /// 並び順タイプ
+        /// </summary>
+        public class OrderType
+        {
+            /// <summary>
+            /// 関連度順
+            /// </summary>
+            public const string SCORE = "score";
+
+            /// <summary>
+            /// ファイルの更新日が新しい順
+            /// </summary>
+            public const string FILE_UPDATED_DESC = "file_updated_desc";
+
+            /// <summary>
+            /// ファイルパス順
+            /// </summary>
+            public const string FILE_PATH = "file_path";
         }
 
         #endregion
@@ -104,6 +133,8 @@ namespace InazumaSearch.Core
 
         public NLog.Logger Logger { get; protected set; }
         public Core.Application App { get; set; }
+
+        public IList<OrderItem> OrderList { get; } = new List<OrderItem>();
 
         #endregion
 
@@ -114,6 +145,10 @@ namespace InazumaSearch.Core
             Logger = NLog.LogManager.GetLogger(LoggerName.Crawler);
 
             App = app;
+
+            OrderList.Add(new OrderItem { Type = OrderType.SCORE, Caption = "関連度順" });
+            OrderList.Add(new OrderItem { Type = OrderType.FILE_UPDATED_DESC, Caption = "更新日が新しい順" });
+            OrderList.Add(new OrderItem { Type = OrderType.FILE_PATH, Caption = "ファイルパス順" });
         }
 
         #endregion
@@ -131,10 +166,10 @@ namespace InazumaSearch.Core
             , string queryFileName = null
             , string queryBody = null
             , string queryUpdated = null
-            , string querySortBy = null
             , int offset = 0
             , string selectedFormat = null
             , string selectedFolderLabel = null
+            , string selectedOrderType = null
         )
         {
             var groongaQueries = new List<string>();
@@ -152,17 +187,6 @@ namespace InazumaSearch.Core
                                     .Replace("'", @"\'")
                                     .Replace(":", @"\:")
                                     .Replace("+", @"\+"));
-
-                //// 特殊記号をエスケープ
-                //// バックスラッシュ(\)、シングルクォート(')、一部パターンを除くコロン(:)、プラス(+)をエスケープする
-                //var escapeRegex = new Regex(@"\\|\'|(?<!fname)\:|\+", RegexOptions.IgnoreCase);
-                //var formattedQuery = escapeRegex.Replace(queryKeyword, (m) => { return @"\" + m.Value; });
-
-                //// "fname:" "filename:" 形式であれば、file_nameに置換
-                //var aliasRegex = new Regex(@"fname\:|filename\:", RegexOptions.IgnoreCase);
-                //formattedQuery = aliasRegex.Replace(formattedQuery, (m) => { return "file_name:@"; });
-
-                //groongaQueries.Add(formattedQuery);
             }
             if (!string.IsNullOrWhiteSpace(queryFileName))
             {
@@ -218,14 +242,6 @@ namespace InazumaSearch.Core
                 }
             }
 
-            //// 年での絞り込みを追加
-            //if (selectedYear != null)
-            //{
-            //    groongaQueries.Add(string.Format("{0}:{1}"
-            //                                   , Column.Documents.FILE_UPDATED_YEAR
-            //                                   , selectedYear)
-            //                       );
-            //}
             // フォルダラベルでの絞り込みを追加
             if (selectedFolderLabel != null)
             {
@@ -319,24 +335,35 @@ namespace InazumaSearch.Core
                 , string.Format("{0} * {1}", Groonga.VColumn.SCORE, rateExpr)
             ));
 
-            // 並び順の設定。詳細検索で並び順が指定されていれば、その並び順を優先
+            // 最終更新日グループを判定するための条件式を構築
+            var elapsedGroupExpr = $"{Column.Documents.FILE_UPDATED_AT} < 1 ? " +
+                                   $"1 : " + // 更新日時が取得できなかった場合対策
+                                   $"time_classify_day(now()) == time_classify_day({Column.Documents.FILE_UPDATED_AT}) ? " +
+                                   $"time_classify_day({Column.Documents.FILE_UPDATED_AT}) : " + // 年月日が同じ場合、年月日で分類
+                                   $"time_classify_month(now()) == time_classify_month({Column.Documents.FILE_UPDATED_AT})" +
+                                   $"&& time_classify_day(now()) - time_classify_day({Column.Documents.FILE_UPDATED_AT}) == (60 * 60 * 24) ? " +
+                                   $"time_classify_day({Column.Documents.FILE_UPDATED_AT}) : " + // 最終更新が1日前で、かつ年月の切り替わりでない場合、年月日で分類
+                                   $"time_classify_year(now()) == time_classify_year({Column.Documents.FILE_UPDATED_AT}) ? " +
+                                   $"time_classify_month({Column.Documents.FILE_UPDATED_AT}) : " + // 年が同じ場合、月で分類
+                                   $"(time_classify_year(now()) - time_classify_year({Column.Documents.FILE_UPDATED_AT})) < (60 * 60 * 24 * 365) * {SystemConst.GROUPING_YEAR_RANGE + 1} ? " +
+                                   $"time_classify_year({Column.Documents.FILE_UPDATED_AT}) : " + // 規定年数以内の場合、年で分類
+                                   $"0"; // 規定年数以上の差がある場合、すべて範囲外として分類（「2016年以前」のように表示）
+            columns.Add(new Groonga.DynamicColumn(
+                  "last_updated_class"
+                , Groonga.Stage.INITIAL
+                , Groonga.DataType.Time
+                , elapsedGroupExpr
+            ));
+
+            // 並び順の設定。並び順が指定されていれば、その並び順を優先
             var sortKeys = new List<string>();
-            switch (querySortBy)
+            switch (selectedOrderType)
             {
-                case "path":
+                case OrderType.FILE_PATH:
                     sortKeys.Add(Column.Documents.FILE_PATH);
                     break;
-                case "updated":
-                    sortKeys.Add(Column.Documents.FILE_UPDATED_AT);
-                    break;
-                case "updated_desc":
+                case OrderType.FILE_UPDATED_DESC:
                     sortKeys.Add("-" + Column.Documents.FILE_UPDATED_AT);
-                    break;
-                case "size":
-                    sortKeys.Add(Column.Documents.SIZE);
-                    break;
-                case "size_desc":
-                    sortKeys.Add("-" + Column.Documents.SIZE);
                     break;
             }
             // 標準では最終スコア(関連度+鮮度)が高い順に並べる
@@ -351,12 +378,12 @@ namespace InazumaSearch.Core
             try
             {
                 selectRes = App.GM.Select(
-                        Table.Documents
+                      Table.Documents
                     , query: joinedQuery
                     , filter: joinedFilter
                     , offset: offset
                     //, drilldown: new[] { Column.Documents.EXT, Column.Documents.FILE_UPDATED_YEAR }
-                    , drilldown: new[] { Column.Documents.EXT, Column.Documents.FOLDER_LABELS }
+                    , drilldown: new[] { Column.Documents.EXT, Column.Documents.FOLDER_LABELS, "last_updated_class" }
                     , drilldownSortKeys: new[] { Column.Documents.KEY }
                     , sortKeys: sortKeys.ToArray()
                     , matchColumns: matchColumns
@@ -529,20 +556,7 @@ namespace InazumaSearch.Core
                 formatDrilldownLinks.Add(link);
             }
 
-            //// ドリルダウン結果(年ごとの件数)を元に、フォーマット絞り込み用のデータを作成
-            //var yearDrilldownLinks = new List<YearDrilldownLink>();
-            //foreach (var yearRec in selectRes.DrilldownResults[1].Records)
-            //{
-            //    var link = new YearDrilldownLink()
-            //    {
-            //        year = (int)(long)yearRec.Key
-            //        ,
-            //        nSubRecs = yearRec.NSubRecs
-            //    };
-            //    yearDrilldownLinks.Add(link);
-            //}
-
-            // ドリルダウン結果(年ごとの件数)を元に、フォーマット絞り込み用のデータを作成
+            // ドリルダウン結果(フォーマットごとの件数)を元に、フォーマット絞り込み用のデータを作成
             var folderLabelDrilldownLinks = new List<FolderLabelDrilldownLink>();
             foreach (var rec in selectRes.DrilldownResults[1].Records)
             {
@@ -593,9 +607,10 @@ namespace InazumaSearch.Core
                 searchResultSubMessage = searchResultSubMessage
                 ,
                 formatDrilldownLinks = formatDrilldownLinks.OrderByDescending(l => l.nSubRecs).ToList() // 件数の多い順で並べる
-                                                                                                        //, yearDrilldownLinks = yearDrilldownLinks.ToList() // 件数の多い順で並べる
                 ,
                 folderLabelDrilldownLinks = folderLabelDrilldownLinks.OrderByDescending(l => l.nSubRecs).ToList() // 件数の多い順で並べる
+                ,
+                orderList = OrderList
             };
 
             return ret;

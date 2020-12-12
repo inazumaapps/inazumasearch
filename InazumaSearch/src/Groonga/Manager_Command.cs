@@ -317,6 +317,35 @@ namespace InazumaSearch.Groonga
         }
 
         /// <summary>
+        /// プラグインを登録する
+        /// </summary>
+        public bool PluginRegister(
+            string name
+            )
+        {
+            var opts = new
+            {
+                name = name
+            };
+            return (bool)ExecuteCommand("plugin_register", opts);
+        }
+
+
+        /// <summary>
+        /// プラグインの登録を解除する
+        /// </summary>
+        public bool PluginUnregister(
+            string name
+            )
+        {
+            var opts = new
+            {
+                name = name
+            };
+            return (bool)ExecuteCommand("plugin_unregister", opts);
+        }
+
+        /// <summary>
         /// レコードの登録/更新 (Dictionary指定形式)
         /// </summary>
         public int Load(
