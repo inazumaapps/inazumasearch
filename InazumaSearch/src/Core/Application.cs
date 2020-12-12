@@ -569,6 +569,12 @@ namespace InazumaSearch.Core
             // 無視対象のファイル情報を取得
             var recs = GetIgnoredDocumentRecords(ignoreSetting);
 
+            // ログ出力
+            foreach (var rec in recs)
+            {
+                Logger.Debug($"Purge - {rec.FilePath}");
+            }
+
             // 20件ずつまとめて削除
             var chunkSize = 20;
             var chunks = recs.Select((r, i) => Tuple.Create(r, i))
