@@ -43,16 +43,10 @@ namespace InazumaSearch.Forms
         /// </summary>
         private void BtnSave_Click(object sender, EventArgs e)
         {
-            // 無視設定に対象のファイルを追加
-            var setting = _app.UserSettings.TargetFolders.OrderByDescending(f => f.Path.Length)
-                                                         .FirstOrDefault(f => f.Path.ToLower().StartsWith(baseDirPath.ToLower()));
-            List<string> origLines = null;
-            if (setting.IgnoreSettingLines != null)
-            {
-                origLines = setting.IgnoreSettingLines;
-            }
+            // 無視設定を更新
+            var setting = _app.UserSettings.TargetFolders.First(f => f.Path == baseDirPath);
             var inputLines = TxtSetting.Text.Replace("\r", "").Split('\n');
-            setting.IgnoreSettingLines = (origLines != null ? origLines.Concat(inputLines) : inputLines).ToList();
+            setting.IgnoreSettingLines = inputLines.ToList();
             _app.UserSettings.Save();
 
             // DB内から無視パターンに一致するレコードを削除
