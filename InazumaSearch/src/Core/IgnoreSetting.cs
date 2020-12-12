@@ -31,12 +31,12 @@ namespace InazumaSearch.Core
             public virtual bool DirectoryOnly { get; set; }
 
             /// <summary>
-            /// ファイルマッチ用の正規表現。これは.NETとGroongaの両方で有効な正規表現でなくてはならない
+            /// ファイルマッチ用の正規表現
             /// </summary>
             public virtual Regex FileRegex { get; set; }
 
             /// <summary>
-            /// ディレクトリマッチ用の正規表現。これは.NETとGroongaの両方で有効な正規表現でなくてはならない
+            /// ディレクトリマッチ用の正規表現
             /// </summary>
             public virtual Regex DirRegex { get; set; }
 
@@ -58,7 +58,7 @@ namespace InazumaSearch.Core
                     patternStr = patternStr.TrimEnd('\\');
                 }
 
-                // パターンが末尾以外に "\" を含むならば、.inazumasetting 直下からの相対パスとして適用
+                // パターンが末尾以外に "\" を含むならば、基準フォルダ直下からの相対パスとして適用
                 // 含まないならば、 サブフォルダ内も含めた全ファイルに適用
                 if (patternStr.Contains("\\"))
                 {
@@ -131,8 +131,10 @@ namespace InazumaSearch.Core
             }
         }
 
+        #region プロパティ
+
         /// <summary>
-        /// .inazumaignore が存在するフォルダのパス。比較のために小文字に変換されている
+        /// 基準フォルダのパス。比較のために小文字に変換されている
         /// </summary>
         public virtual string DirPathLower { get; protected set; }
 
@@ -140,6 +142,8 @@ namespace InazumaSearch.Core
         /// 無視パターンのリスト
         /// </summary>
         protected virtual IList<Pattern> Patterns { get; set; } = new List<Pattern>();
+
+        #endregion
 
         /// <summary>
         /// コンストラクタ
@@ -194,10 +198,10 @@ namespace InazumaSearch.Core
         /// <summary>
         /// 無視設定パターンにマッチするかどうかチェック
         /// </summary>
-        public virtual bool IsMatch(string filePath, bool isDirectory)
+        public virtual bool IsMatch(string path, bool isDirectory)
         {
             // 小文字に変換してから比較
-            var pathLower = filePath.ToLower();
+            var pathLower = path.ToLower();
             if (pathLower.StartsWith(DirPathLower))
             {
                 // 長さが同じなら同フォルダとみなしてスキップ

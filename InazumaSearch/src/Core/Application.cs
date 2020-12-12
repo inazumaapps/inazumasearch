@@ -569,10 +569,16 @@ namespace InazumaSearch.Core
             // 無視対象のファイル情報を取得
             var recs = GetIgnoredDocumentRecords(ignoreSetting);
 
-            foreach (var rec in recs)
+            // 20件ずつまとめて削除
+            var chunkSize = 20;
+            var chunks = recs.Select((r, i) => Tuple.Create(r, i))
+                             .GroupBy(t => t.Item2 / chunkSize)
+                             .Select(g => g.Select(t => t.Item1));
+
+            foreach (var recsInChunk in chunks)
             {
-                // 削除
-                GM.Delete(Table.Documents, rec.Key);
+                var subExprs = recsInChunk.Select(r => $"{Column.Documents.KEY} == {Groonga.Util.EscapeForScript(r.Key)}");
+                GM.Delete(Table.Documents, filter: string.Join(" || ", subExprs));
             };
         }
 

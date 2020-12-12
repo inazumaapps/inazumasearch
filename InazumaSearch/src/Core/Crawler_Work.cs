@@ -697,7 +697,7 @@ namespace InazumaSearch.Core
                 public override void Execute(IProgress<CrawlState> progress, CancellationToken cToken, Result crawlResult)
                 {
                     // ディレクトリ配下のファイルをすべて削除する
-                    var expr = string.Format("{0} @^ {1}", Column.Documents.KEY, Groonga.Util.EscapeForQuery(Util.MakeDocumentDirKeyPrefix(DirPath)));
+                    var expr = $"{Column.Documents.KEY} @^ {Groonga.Util.EscapeForQuery(Util.MakeDocumentDirKeyPrefix(DirPath))}";
                     DeleteDocumentFileRecords(progress, cToken, crawlResult, targetExpr: expr);
 
                     crawlResult.Finished = true;
