@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using InazumaSearch;
+using InazumaSearch.Core;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace InazumaSearchUnitTest
