@@ -107,7 +107,7 @@ namespace InazumaSearch.Groonga
             }
 
             // Groongaプロセスを終了
-            ExecuteCommandAsString("quit");
+            ExecuteCommandAsStringByDict("quit");
             Proc.WaitForExit();
             Proc.Close();
             Proc.Dispose();

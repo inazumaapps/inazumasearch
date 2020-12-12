@@ -15,7 +15,7 @@ namespace InazumaSearch.Groonga
         protected object Locker = new object();
 
         /// <summary>
-        /// Groongaに対してコマンドを発行する (optsをobjectで指定)
+        /// Groongaに対してコマンドを発行し、結果を文字列で取得 (optsをobjectで指定)
         /// </summary>
         public string ExecuteCommandAsString(string commandName, object opts = null, string input = null)
         {
@@ -31,8 +31,9 @@ namespace InazumaSearch.Groonga
 
             return ExecuteCommandAsStringByDict(commandName, optDict, input);
         }
+
         /// <summary>
-        /// Groongaに対してコマンドを発行する
+        /// Groongaに対してコマンドを発行し、結果を文字列で取得
         /// </summary>
         public string ExecuteCommandAsStringByDict(string commandName, IDictionary<string, object> opts = null, string input = null)
         {
@@ -51,33 +52,11 @@ namespace InazumaSearch.Groonga
                     }
                 }
             }
-            var groongaEnc = Encoding.UTF8;
-
             Logger.Debug(string.Join(" ", tokens));
             var cmdStr = string.Join(" ", tokens);
-            var cmdBytes = groongaEnc.GetBytes(cmdStr);
 
-            // コマンドの発行は、プロセスの標準入出力を使用するため、クリティカルセクション内で実行
-            // (他スレッドからのアクセスを避ける)
 
-            string res = null;
-            lock (Locker)
-            {
-                Proc.StandardInput.BaseStream.Write(cmdBytes, 0, cmdBytes.Length);
-                Proc.StandardInput.WriteLine();
-
-                if (input != null)
-                {
-                    Logger.Debug(input);
-                    var bytes = groongaEnc.GetBytes(input);
-                    Proc.StandardInput.BaseStream.Write(bytes, 0, bytes.Length);
-                    Proc.StandardInput.WriteLine();
-                }
-
-                res = Proc.StandardOutput.ReadLine();
-            }
-
-            return res;
+            return ExecuteCommandLineAsString(cmdStr, input);
         }
 
         /// <summary>
@@ -143,6 +122,45 @@ namespace InazumaSearch.Groonga
             }
 
         }
+
+        /// <summary>
+        /// Groongaに対して文字列形式で渡したコマンドを発行し、結果を文字列で取得
+        /// </summary>
+        public string ExecuteCommandLineAsString(string commandLine, string input = null)
+        {
+            var groongaEnc = Encoding.UTF8;
+            var cmdBytes = groongaEnc.GetBytes(commandLine);
+
+            // コマンドの発行は、プロセスの標準入出力を使用するため、クリティカルセクション内で実行
+            // (他スレッドからのアクセスを避ける)
+
+            string res = null;
+            lock (Locker)
+            {
+                Proc.StandardInput.BaseStream.Write(cmdBytes, 0, cmdBytes.Length);
+                Proc.StandardInput.WriteLine();
+
+                if (input != null)
+                {
+                    if (input.Length > 500)
+                    {
+                        Logger.Debug(input.Substring(0, 500) + "..");
+                    }
+                    else
+                    {
+                        Logger.Debug(input.Replace("\\", ""));
+                    }
+                    var bytes = groongaEnc.GetBytes(input);
+                    Proc.StandardInput.BaseStream.Write(bytes, 0, bytes.Length);
+                    Proc.StandardInput.WriteLine();
+                }
+
+                res = Proc.StandardOutput.ReadLine();
+            }
+
+            return res;
+        }
+
 
         public bool TableCreate(
               string name

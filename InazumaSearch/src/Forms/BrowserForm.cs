@@ -663,6 +663,7 @@ namespace InazumaSearch.Forms
             public Core.Application Application { get; set; }
             private const int ShowDevTools = 26501;
             private const int ShowDBBrowser = 26505;
+            private const int GroongaDebug = 26506;
             private const int ShowDebugForm = 26502;
             private const int OpenFile = 26503;
             private const int OpenFolder = 26504;
@@ -701,6 +702,7 @@ namespace InazumaSearch.Forms
                     {
                         model.AddItem((CefMenuCommand)ShowDevTools, "開発ツール");
                         model.AddItem((CefMenuCommand)ShowDBBrowser, "DBブラウザー(β版)");
+                        model.AddItem((CefMenuCommand)GroongaDebug, "Groongaコマンド実行");
                         model.AddItem((CefMenuCommand)ShowDebugForm, "デバッグウインドウを開く");
                         model.AddSeparator();
                         model.AddItem(CefMenuCommand.ReloadNoCache, "更新");
@@ -749,6 +751,16 @@ namespace InazumaSearch.Forms
                             f2.Show(f);
                         });
                     }
+
+                    if ((int)commandId == GroongaDebug)
+                    {
+                        OwnerForm.InvokeOnUIThread((f) =>
+                        {
+                            var f2 = new GroongaDebugForm() { GM = Application.GM };
+                            f2.Show(f);
+                        });
+                    }
+
                     if ((int)commandId == ShowDebugForm)
                     {
                         OwnerForm.InvokeOnUIThread((f) =>
