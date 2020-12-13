@@ -373,8 +373,11 @@
                 var selectedPath = api.selectDirectory();
                 if (selectedPath != null) {
 
-                    if (api.addTargetDirectory(selectedPath)) {
-                        addFolder(selectedPath, "", 0);
+                    // 対象フォルダ追加
+                    var resultJson = api.addTargetDirectory(selectedPath);
+                    if (resultJson != null) {
+                        var result = JSON.parse(resultJson);
+                        addFolder(selectedPath, "", result.fileCount);
                     }
                 }
                 return false;
