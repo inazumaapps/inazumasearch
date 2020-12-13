@@ -137,7 +137,11 @@ namespace InazumaSearch.Forms
                 return path;
             }
 
-            public bool AddTargetDirectory(string path)
+            /// <summary>
+            /// 検索対象フォルダを追加する
+            /// </summary>
+            /// <returns>現在の文書数</returns>
+            public string AddTargetDirectory(string path)
             {
                 return App.ExecuteInExceptionCatcher(() =>
                 {
@@ -148,21 +152,22 @@ namespace InazumaSearch.Forms
                     if (folders.Any(f => f.Path == path))
                     {
                         ShowErrorMessage("すでに登録済みのフォルダです。");
-                        return false;
+                        return null;
                     }
 
-                    //// 同じフォルダパスではないが、重複する
-                    //if (folders.Any(f => f.Path.StartsWith(path)))
-                    //{
-                    //    ShowErrorMessage("登録済みのフォルダと重複しています。\n{0}\n{1}\n\n統合して1つのフォルダにしてよろしいですか？");
-                    //    return;
-                    //}
-
-                    // 同じパス設定が存在しなければ追加
+                    // 同じフォルダパスが存在しなければ追加
                     folders.Add(new UserSetting.TargetFolder() { Path = path, Type = UserSetting.TargetFolderType.DocumentFile });
                     App.UserSettings.SaveTargetFolders(folders);
 
-                    return true;
+
+                    // すでに登録されているファイル数をカウント
+                    var res = App.GM.Select(
+                        Table.Documents
+                        , limit: 0
+                        , outputColumns: new string[] { Groonga.VColumn.ID }
+                        , filter: $"{Column.Documents.KEY} @^ {Groonga.Util.EscapeForQuery(Util.MakeDocumentDirKeyPrefix(path))}"
+                    );
+                    return JsonConvert.SerializeObject(new { fileCount = res.SearchResult.NHits });
                 });
 
             }
@@ -320,8 +325,8 @@ namespace InazumaSearch.Forms
                             Table.Documents
                             , limit: 0
                             , outputColumns: new string[] { Groonga.VColumn.ID }
-                            // ※名前が部分一致する別のフォルダを誤って検索対象としないように、フォルダパスの最後に\を付ける
-                            , query: string.Format("{0}:^{1}", Column.Documents.FILE_PATH, Groonga.Util.EscapeForQuery(folder.Path + @"\")));
+                            , filter: $"{Column.Documents.KEY} @^ {Groonga.Util.EscapeForQuery(Util.MakeDocumentDirKeyPrefix(folder.Path))}"
+                        );
                         fileCounts[folder.Path] = res.SearchResult.NHits;
                         ignoreSettingCounts[folder.Path] = folder.IgnoreSettingLines.Count;
                         excludingFlags[folder.Path] = (App.UserSettings.LastExcludingDirPaths != null && App.UserSettings.LastExcludingDirPaths.Contains(folder.Path));
