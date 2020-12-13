@@ -12,6 +12,7 @@ namespace InazumaSearch.Core
 {
     public class IconFetcher
     {
+        protected static NLog.Logger Logger = NLog.LogManager.GetLogger("IconFetcher");
 
         /// <summary>
         /// Windows API SHGetFileInfo
@@ -146,9 +147,14 @@ namespace InazumaSearch.Core
         /// <remarks>from https://www.ipentec.com/document/document.aspx?page=csharp-create-system-imagelist</remarks>
         public static void SetImageListToListView(ListView targetListView, IntPtr imgListHandle)
         {
-            var hRes = SendMessage(targetListView.Handle, LVM_SETIMAGELIST, LVSIL_SMALL, imgListHandle);
-            if (hRes != 0)
-                Marshal.ThrowExceptionForHR(hRes);
+            try
+            {
+                var hRes = SendMessage(targetListView.Handle, LVM_SETIMAGELIST, LVSIL_SMALL, imgListHandle);
+            }
+            catch (Exception ex)
+            {
+                Logger.Warn(ex);
+            }
         }
 
         /// <summary>
@@ -157,9 +163,14 @@ namespace InazumaSearch.Core
         /// <param name="tvHandle">The window handle of the TreeView control</param>
         public static void SetImageListToTreeView(TreeView targetTreeView, IntPtr imgListHandle)
         {
-            var hRes = SendMessage(targetTreeView.Handle, TVM_SETIMAGELIST, TVSIL_NORMAL, imgListHandle);
-            if (hRes != 0)
-                Marshal.ThrowExceptionForHR(hRes);
+            try
+            {
+                var hRes = SendMessage(targetTreeView.Handle, TVM_SETIMAGELIST, TVSIL_NORMAL, imgListHandle);
+            }
+            catch (Exception ex)
+            {
+                Logger.Warn(ex);
+            }
         }
     }
 }
