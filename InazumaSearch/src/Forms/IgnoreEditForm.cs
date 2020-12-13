@@ -218,13 +218,26 @@ namespace InazumaSearch.Forms
         }
 
         /// <summary>
-        /// 無視対象ファイルをリストアップして、プレビュー表示を更新
+        /// 無視対象ファイルをリストアップする
         /// </summary>
         protected virtual List<string> SearchIgnoredFiles(IgnoreSetting setting, CancellationToken cToken)
         {
-            return _app.GetIgnoredDocumentRecords(setting).Select(rec => rec.FilePath).ToList();
-        }
+            var paths = new List<string>();
 
+            foreach (var path in Directory.GetFiles(TxtBaseDirPath.Text.ToLower(), "*", System.IO.SearchOption.AllDirectories))
+            {
+                var fileAttrs = File.GetAttributes(path);
+                var isDirectory = fileAttrs.HasFlag(System.IO.FileAttributes.Directory);
+                if (setting.IsMatch(path, isDirectory))
+                {
+                    paths.Add(path);
+                }
+
+                if (cToken.IsCancellationRequested) return null;
+            }
+
+            return paths;
+        }
         private void lnkPatternHelp_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
             var dialog = new IgnorePatternHelpDialog();
