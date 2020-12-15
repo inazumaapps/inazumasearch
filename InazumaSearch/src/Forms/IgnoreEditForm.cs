@@ -55,18 +55,20 @@ namespace InazumaSearch.Forms
         /// </summary>
         private void IgnoreEditForm_Load(object sender, EventArgs e)
         {
-            // 既存設定編集モードの場合は、初期値を設定
-            if (editMode == EditMode.UPDATE)
+            // モードに応じた初期値を設定
+            switch (editMode)
             {
-                var setting = _app.UserSettings.TargetFolders.First(f => f.Path == baseDirPath);
-                if (setting != null)
-                {
-                    TxtSetting.Text = string.Join("\r\n", setting.IgnoreSettingLines.Concat(new[] { defaultPattern }));
-                }
-                else
-                {
+                case EditMode.APPEND:
                     TxtSetting.Text = defaultPattern;
-                }
+                    break;
+
+                case EditMode.UPDATE:
+                    var setting = _app.UserSettings.TargetFolders.First(f => f.Path == baseDirPath);
+                    if (setting != null)
+                    {
+                        TxtSetting.Text = string.Join("\r\n", setting.IgnoreSettingLines.Concat(new[] { defaultPattern }));
+                    }
+                    break;
             }
 
             TxtBaseDirPath.Text = baseDirPath;
