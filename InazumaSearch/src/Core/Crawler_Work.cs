@@ -213,6 +213,16 @@ namespace InazumaSearch.Core
                     }, ref aborting);
                 }
 
+                // 取得した無視設定に、ユーザー設定で対象フォルダごとに追加されている無視設定も追加
+                foreach (var folderSetting in _app.UserSettings.TargetFolders)
+                {
+                    if (folderSetting.IgnoreSettingLines != null && folderSetting.IgnoreSettingLines.Count >= 1)
+                    {
+                        var newSetting = IgnoreSetting.Load(folderSetting.Path, folderSetting.IgnoreSettingLines);
+                        ignoreSettingsLocal.Add(newSetting);
+                    }
+                }
+
                 // 取得した無視設定一覧を返す
                 ignoreSettings = ignoreSettingsLocal;
 
@@ -248,11 +258,7 @@ namespace InazumaSearch.Core
                 var textExtNames = _app.GetTextExtNames();
                 var pluginExtNames = _app.GetPluginExtNames();
 
-                var extractableExtNames = new List<string>();
-                foreach (var format in _app.Formats)
-                {
-                    extractableExtNames.AddRange(format.Extensions);
-                }
+                var extractableExtNames = _app.GetExtractableExtNames();
                 var cryptProvider = new SHA1CryptoServiceProvider();
 
                 var cur = 0;
@@ -701,7 +707,7 @@ namespace InazumaSearch.Core
                 public override void Execute(IProgress<CrawlState> progress, CancellationToken cToken, Result crawlResult)
                 {
                     // ディレクトリ配下のファイルをすべて削除する
-                    var expr = string.Format("{0} @^ {1}", Column.Documents.KEY, Groonga.Util.EscapeForQuery(Util.MakeDocumentDirKeyPrefix(DirPath)));
+                    var expr = $"{Column.Documents.KEY} @^ {Groonga.Util.EscapeForQuery(Util.MakeDocumentDirKeyPrefix(DirPath))}";
                     DeleteDocumentFileRecords(progress, cToken, crawlResult, targetExpr: expr);
 
                     crawlResult.Finished = true;

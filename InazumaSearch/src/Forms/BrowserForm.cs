@@ -183,7 +183,7 @@ namespace InazumaSearch.Forms
             }
 
 
-            public void ShowIgnoreEditForm(string path)
+            public void ShowIgnoreEditFormFromSearchResult(string path)
             {
                 // 無視設定フォームを開く
                 OwnerForm.InvokeOnUIThread((form) =>
@@ -198,7 +198,19 @@ namespace InazumaSearch.Forms
                     // 無視設定ダイアログを開く
                     var relPath = path.Substring(baseDirPath.Length + 1);
                     var defaultPattern = "/" + relPath.Replace('\\', '/');
-                    var dialog = new IgnoreEditForm(baseDirPath, defaultPattern);
+                    var dialog = new IgnoreEditForm(IgnoreEditForm.EditMode.APPEND, baseDirPath, defaultPattern, App);
+                    dialog.ShowDialog(form);
+                });
+
+            }
+
+            public void ShowIgnoreEditFormFromSetting(string dirPath)
+            {
+                // 無視設定フォームを開く
+                OwnerForm.InvokeOnUIThread((form) =>
+                {
+                    // 無視設定ダイアログを開く
+                    var dialog = new IgnoreEditForm(IgnoreEditForm.EditMode.UPDATE, dirPath, "", App);
                     dialog.ShowDialog(form);
                 });
 
@@ -288,6 +300,7 @@ namespace InazumaSearch.Forms
                 {
                     var targetDirectories = new List<UserSetting.TargetFolder>();
                     var fileCounts = new Dictionary<string, long>();
+                    var ignoreSettingCounts = new Dictionary<string, long>();
                     var excludingFlags = new Dictionary<string, bool>();
 
                     // フォルダ設定ごとにループ
@@ -316,10 +329,11 @@ namespace InazumaSearch.Forms
                             , filter: $"{Column.Documents.KEY} @^ {Groonga.Util.EscapeForQuery(Util.MakeDocumentDirKeyPrefix(folder.Path))}"
                         );
                         fileCounts[folder.Path] = res.SearchResult.NHits;
+                        ignoreSettingCounts[folder.Path] = folder.IgnoreSettingLines.Count;
                         excludingFlags[folder.Path] = (App.UserSettings.LastExcludingDirPaths != null && App.UserSettings.LastExcludingDirPaths.Contains(folder.Path));
                     }
 
-                    return JsonConvert.SerializeObject(new { targetDirectories = targetDirectories, fileCounts = fileCounts, excludingFlags = excludingFlags });
+                    return JsonConvert.SerializeObject(new { targetDirectories, fileCounts, ignoreSettingCounts, excludingFlags });
                 });
             }
 
@@ -669,6 +683,7 @@ namespace InazumaSearch.Forms
             public Core.Application Application { get; set; }
             private const int ShowDevTools = 26501;
             private const int ShowDBBrowser = 26505;
+            private const int GroongaDebug = 26506;
             private const int ShowDebugForm = 26502;
             private const int OpenFile = 26503;
             private const int OpenFolder = 26504;
@@ -707,6 +722,7 @@ namespace InazumaSearch.Forms
                     {
                         model.AddItem((CefMenuCommand)ShowDevTools, "開発ツール");
                         model.AddItem((CefMenuCommand)ShowDBBrowser, "DBブラウザー(β版)");
+                        model.AddItem((CefMenuCommand)GroongaDebug, "Groongaコマンド実行");
                         model.AddItem((CefMenuCommand)ShowDebugForm, "デバッグウインドウを開く");
                         model.AddSeparator();
                         model.AddItem(CefMenuCommand.ReloadNoCache, "更新");
@@ -755,6 +771,16 @@ namespace InazumaSearch.Forms
                             f2.Show(f);
                         });
                     }
+
+                    if ((int)commandId == GroongaDebug)
+                    {
+                        OwnerForm.InvokeOnUIThread((f) =>
+                        {
+                            var f2 = new GroongaDebugForm() { GM = Application.GM };
+                            f2.Show(f);
+                        });
+                    }
+
                     if ((int)commandId == ShowDebugForm)
                     {
                         OwnerForm.InvokeOnUIThread((f) =>

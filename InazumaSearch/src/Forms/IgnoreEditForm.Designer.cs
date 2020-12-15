@@ -30,9 +30,10 @@
         {
             this.BtnCancel = new System.Windows.Forms.Button();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.lnkPatternHelp = new System.Windows.Forms.LinkLabel();
             this.TxtSetting = new System.Windows.Forms.TextBox();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
-            this.ProgPreviewing = new System.Windows.Forms.ProgressBar();
+            this.LblSearching = new System.Windows.Forms.Label();
             this.LstPreview = new System.Windows.Forms.ListBox();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
             this.TxtBaseDirPath = new System.Windows.Forms.TextBox();
@@ -45,6 +46,7 @@
             // BtnCancel
             // 
             this.BtnCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.BtnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
             this.BtnCancel.Location = new System.Drawing.Point(577, 396);
             this.BtnCancel.Name = "BtnCancel";
             this.BtnCancel.Size = new System.Drawing.Size(135, 28);
@@ -55,13 +57,25 @@
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.lnkPatternHelp);
             this.groupBox1.Controls.Add(this.TxtSetting);
             this.groupBox1.Location = new System.Drawing.Point(15, 63);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Size = new System.Drawing.Size(699, 100);
             this.groupBox1.TabIndex = 5;
             this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "追記する無視設定の内容";
+            this.groupBox1.Text = "無視パターン";
+            // 
+            // lnkPatternHelp
+            // 
+            this.lnkPatternHelp.AutoSize = true;
+            this.lnkPatternHelp.Location = new System.Drawing.Point(574, 0);
+            this.lnkPatternHelp.Name = "lnkPatternHelp";
+            this.lnkPatternHelp.Size = new System.Drawing.Size(115, 12);
+            this.lnkPatternHelp.TabIndex = 9;
+            this.lnkPatternHelp.TabStop = true;
+            this.lnkPatternHelp.Text = "無視パターンの書き方...";
+            this.lnkPatternHelp.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.lnkPatternHelp_LinkClicked);
             // 
             // TxtSetting
             // 
@@ -71,13 +85,14 @@
             this.TxtSetting.Location = new System.Drawing.Point(7, 19);
             this.TxtSetting.Multiline = true;
             this.TxtSetting.Name = "TxtSetting";
+            this.TxtSetting.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.TxtSetting.Size = new System.Drawing.Size(686, 75);
             this.TxtSetting.TabIndex = 0;
             this.TxtSetting.TextChanged += new System.EventHandler(this.TxtSetting_TextChanged);
             // 
             // groupBox2
             // 
-            this.groupBox2.Controls.Add(this.ProgPreviewing);
+            this.groupBox2.Controls.Add(this.LblSearching);
             this.groupBox2.Controls.Add(this.LstPreview);
             this.groupBox2.Location = new System.Drawing.Point(15, 169);
             this.groupBox2.Name = "groupBox2";
@@ -86,15 +101,16 @@
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "プレビュー（実際に無視対象となるファイル）";
             // 
-            // ProgPreviewing
+            // LblSearching
             // 
-            this.ProgPreviewing.Location = new System.Drawing.Point(265, 96);
-            this.ProgPreviewing.MarqueeAnimationSpeed = 10;
-            this.ProgPreviewing.Name = "ProgPreviewing";
-            this.ProgPreviewing.Size = new System.Drawing.Size(170, 23);
-            this.ProgPreviewing.Style = System.Windows.Forms.ProgressBarStyle.Marquee;
-            this.ProgPreviewing.TabIndex = 1;
-            this.ProgPreviewing.Visible = false;
+            this.LblSearching.AutoSize = true;
+            this.LblSearching.BackColor = System.Drawing.Color.White;
+            this.LblSearching.Location = new System.Drawing.Point(287, 97);
+            this.LblSearching.Name = "LblSearching";
+            this.LblSearching.Size = new System.Drawing.Size(110, 12);
+            this.LblSearching.TabIndex = 2;
+            this.LblSearching.Text = "ファイルを検索中です...";
+            this.LblSearching.Visible = false;
             // 
             // LstPreview
             // 
@@ -117,7 +133,7 @@
             this.groupBox3.Size = new System.Drawing.Size(699, 51);
             this.groupBox3.TabIndex = 6;
             this.groupBox3.TabStop = false;
-            this.groupBox3.Text = "無視設定の起点となるフォルダ";
+            this.groupBox3.Text = "無視設定の起点フォルダ";
             // 
             // TxtBaseDirPath
             // 
@@ -130,7 +146,7 @@
             // BtnSave
             // 
             this.BtnSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.BtnSave.Location = new System.Drawing.Point(401, 396);
+            this.BtnSave.Location = new System.Drawing.Point(415, 396);
             this.BtnSave.Name = "BtnSave";
             this.BtnSave.Size = new System.Drawing.Size(135, 28);
             this.BtnSave.TabIndex = 8;
@@ -142,6 +158,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.CancelButton = this.BtnCancel;
             this.ClientSize = new System.Drawing.Size(742, 444);
             this.Controls.Add(this.BtnSave);
             this.Controls.Add(this.groupBox3);
@@ -149,11 +166,14 @@
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.BtnCancel);
             this.Name = "IgnoreEditForm";
+            this.ShowIcon = false;
             this.Text = "ファイル無視設定";
             this.Load += new System.EventHandler(this.IgnoreEditForm_Load);
+            this.Shown += new System.EventHandler(this.IgnoreEditForm_Shown);
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
             this.groupBox2.ResumeLayout(false);
+            this.groupBox2.PerformLayout();
             this.groupBox3.ResumeLayout(false);
             this.groupBox3.PerformLayout();
             this.ResumeLayout(false);
@@ -168,8 +188,9 @@
         private System.Windows.Forms.ListBox LstPreview;
         private System.Windows.Forms.GroupBox groupBox3;
         private System.Windows.Forms.TextBox TxtBaseDirPath;
-        private System.Windows.Forms.ProgressBar ProgPreviewing;
         private System.Windows.Forms.Button BtnSave;
+        private System.Windows.Forms.Label LblSearching;
+        private System.Windows.Forms.LinkLabel lnkPatternHelp;
     }
 }
 

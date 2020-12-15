@@ -35,7 +35,10 @@
                         <div class="col s8">
                             <i class="material-icons circle yellow darken-3">folder</i>
                             <span class="title path"></span>
-                            <p style="font-size: smaller; color: gray">登録済み文書数: <span class="file-count">0</span></p>
+                            <p style="font-size: smaller; color: gray">
+                                登録済み文書数: <span class="file-count">0</span>
+                                <span style="margin-left: 2rem">無視設定: <span class="ignore-setting-count">0</span><a href="#" class="ignore-setting-edit-link" style="margin-left: 1rem">編集</a></span>
+                            </p>
 
 
                         </div>
@@ -272,7 +275,7 @@
             for (var i = 0, f; f = files[i]; i++) {
                 console.log(f);
                 console.log(f.path);
-                addFolder(f.path, "", 0);
+                addFolder(f.path, "", 0, 0);
             }
 
             $(this).removeClass('dropping');
@@ -280,10 +283,11 @@
             return false;
         }
 
-        function addFolder(path, label, file_count) {
+        function addFolder(path, label, file_count, ignore_setting_count) {
             var $newItem = $('.folder-item.cloning-base').clone().removeClass('cloning-base');
             $newItem.find('.path').text(path);
             $newItem.find('.file-count').text(file_count);
+            $newItem.find('.ignore-setting-count').text(ignore_setting_count);
             var id = "FOLDER-ITEM-INPUT-" + idNumber.toString();
             $newItem.find('.folder-label-col input').val(label).attr('id', id);
             $newItem.find('.folder-label-col label').attr('for', id);
@@ -369,6 +373,12 @@
                 return false;
             });
 
+            $('ul.collection').on('click', 'a.ignore-setting-edit-link', function () {
+                var $li = $(this).closest('li');
+                api.showIgnoreEditFormFromSetting($li.find('.path').text());
+                return false;
+            });
+
             $('a.add-folder-select').on('click', function () {
                 var selectedPath = api.selectDirectory();
                 if (selectedPath != null) {
@@ -377,7 +387,7 @@
                     var resultJson = api.addTargetDirectory(selectedPath);
                     if (resultJson != null) {
                         var result = JSON.parse(resultJson);
-                        addFolder(selectedPath, "", result.fileCount);
+                        addFolder(selectedPath, "", result.fileCount, 0);
                     }
                 }
                 return false;
@@ -389,7 +399,7 @@
                 var data = JSON.parse(json);
                 if (data) {
                     for (dir of data.targetDirectories) {
-                        addFolder(dir.Path, dir.Label, data.fileCounts[dir.Path]);
+                        addFolder(dir.Path, dir.Label, data.fileCounts[dir.Path], data.ignoreSettingCounts[dir.Path]);
                     }
                 }
 

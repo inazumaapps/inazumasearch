@@ -169,6 +169,20 @@ namespace InazumaSearch.Core
         }
 
         /// <summary>
+        /// 対応している拡張子のリストを取得 ("txt" 形式で取得する)
+        /// </summary>
+        /// <returns></returns>
+        public virtual List<string> GetExtractableExtNames()
+        {
+            var ret = new List<string>();
+            foreach (var format in Formats)
+            {
+                ret.AddRange(format.Extensions);
+            }
+            return ret;
+        }
+
+        /// <summary>
         /// 対応フォーマット一覧を更新
         /// </summary>
         public void RefreshFormats()
@@ -505,6 +519,73 @@ namespace InazumaSearch.Core
             }
 
             GM.Load(table: Table.Documents, values: values);
+        }
+
+        /// <summary>
+        /// 無視対象のファイル情報 (GetIgnoredDocumentRecordsで取得)
+        /// </summary>
+        public class IgnoredDocumentRecord
+        {
+            public string Key { get; set; }
+            public string FilePath { get; set; }
+        }
+
+        /// <summary>
+        /// 無視対象のファイル情報を、クロール済みの文書データの中から一括取得
+        /// </summary>
+        public virtual List<IgnoredDocumentRecord> GetIgnoredDocumentRecords(IgnoreSetting ignoreSetting)
+        {
+            var ret = new List<IgnoredDocumentRecord>();
+
+            // 無視対象となりうる文書データを全取得
+            var selectRes = GM.Select(
+                  Table.Documents
+                , outputColumns: new[] { Column.Documents.KEY, Column.Documents.FILE_PATH }
+                , limit: -1
+                , sortKeys: new[] { Column.Documents.KEY }
+                , filter: $"{Column.Documents.KEY} @^ {Groonga.Util.EscapeForScript(Util.MakeDocumentDirKeyPrefix(ignoreSetting.DirPathLower))}" // ベースフォルダパスから始まるキーを検索
+            );
+
+            // 無視対象の文書データをリストに格納して返す
+            var ignoredPaths = new List<string>();
+            foreach (var rec in selectRes.SearchResult.Records)
+            {
+                var key = (string)rec.Key;
+                var path = (string)rec[Column.Documents.FILE_PATH];
+
+                if (ignoreSetting.IsMatch(path, isDirectory: false))
+                {
+                    ret.Add(new IgnoredDocumentRecord { Key = key, FilePath = path });
+                }
+            };
+            return ret;
+        }
+
+        /// <summary>
+        /// 無視対象のファイルを一括削除
+        /// </summary>
+        public virtual void DeleteIgnoredDocumentRecords(IgnoreSetting ignoreSetting)
+        {
+            // 無視対象のファイル情報を取得
+            var recs = GetIgnoredDocumentRecords(ignoreSetting);
+
+            // ログ出力
+            foreach (var rec in recs)
+            {
+                Logger.Debug($"Purge - {rec.FilePath}");
+            }
+
+            // 20件ずつまとめて削除
+            var chunkSize = 20;
+            var chunks = recs.Select((r, i) => Tuple.Create(r, i))
+                             .GroupBy(t => t.Item2 / chunkSize)
+                             .Select(g => g.Select(t => t.Item1));
+
+            foreach (var recsInChunk in chunks)
+            {
+                var subExprs = recsInChunk.Select(r => $"{Column.Documents.KEY} == {Groonga.Util.EscapeForScript(r.Key)}");
+                GM.Delete(Table.Documents, filter: string.Join(" || ", subExprs));
+            };
         }
 
         /// <summary>

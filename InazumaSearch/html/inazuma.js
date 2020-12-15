@@ -495,7 +495,7 @@ $(function(){
 
     // 無視設定ダイアログ表示
     $('body').on('click', '.ignore-dialog-link', function () {
-        api.showIgnoreEditForm(lastClickedPath);
+        api.showIgnoreEditFormFromSearchResult(lastClickedPath);
         return false;
     });
 

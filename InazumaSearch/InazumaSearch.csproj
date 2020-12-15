@@ -212,11 +212,23 @@
       <DependentUpon>HiddenableTabControl.cs</DependentUpon>
     </Compile>
     <Compile Include="src\Core\ExcelTextExtractor.cs" />
+    <Compile Include="src\Forms\GroongaDebugForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="src\Forms\GroongaDebugForm.Designer.cs">
+      <DependentUpon>GroongaDebugForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="src\Forms\IgnoreEditForm.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="src\Forms\IgnoreEditForm.Designer.cs">
       <DependentUpon>IgnoreEditForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="src\Forms\IgnorePatternHelpDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="src\Forms\IgnorePatternHelpDialog.Designer.cs">
+      <DependentUpon>IgnorePatternHelpDialog.cs</DependentUpon>
     </Compile>
     <Compile Include="src\Forms\FileBodyViewDialog.cs">
       <SubType>Form</SubType>
@@ -305,8 +317,14 @@
     <EmbeddedResource Include="src\Controls\HiddenableTabControl.resx">
       <DependentUpon>HiddenableTabControl.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="src\Forms\GroongaDebugForm.resx">
+      <DependentUpon>GroongaDebugForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="src\Forms\IgnoreEditForm.resx">
       <DependentUpon>IgnoreEditForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="src\Forms\IgnorePatternHelpDialog.resx">
+      <DependentUpon>IgnorePatternHelpDialog.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="src\Forms\FileBodyViewDialog.resx">
       <DependentUpon>FileBodyViewDialog.cs</DependentUpon>

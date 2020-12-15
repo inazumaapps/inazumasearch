@@ -24,6 +24,11 @@ namespace InazumaSearch.Core
             public virtual string Type { get; set; }
             public virtual string Path { get; set; }
             public virtual string Label { get; set; }
+
+            /// <summary>
+            /// そのフォルダに対する無視設定（行のコレクション）
+            /// </summary>
+            public virtual List<string> IgnoreSettingLines { get; set; } = new List<string>();
         }
 
         public class Extension
@@ -48,12 +53,11 @@ namespace InazumaSearch.Core
         public class Store
         {
             public string SettingFilePath { get; protected set; }
-            public PlainData PlainData { get; protected set; }
+
+            public PlainData PlainData { get; protected set; } = new PlainData();
 
             public Store(string filePath)
             {
-                PlainData = new PlainData();
-
                 SettingFilePath = filePath;
             }
 
