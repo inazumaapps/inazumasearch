@@ -335,26 +335,6 @@ namespace InazumaSearch.Core
                 , string.Format("{0} * {1}", Groonga.VColumn.SCORE, rateExpr)
             ));
 
-            // 最終更新日グループを判定するための条件式を構築
-            var elapsedGroupExpr = $"{Column.Documents.FILE_UPDATED_AT} < 1 ? " +
-                                   $"1 : " + // 更新日時が取得できなかった場合対策
-                                   $"time_classify_day(now()) == time_classify_day({Column.Documents.FILE_UPDATED_AT}) ? " +
-                                   $"time_classify_day({Column.Documents.FILE_UPDATED_AT}) : " + // 年月日が同じ場合、年月日で分類
-                                   $"time_classify_month(now()) == time_classify_month({Column.Documents.FILE_UPDATED_AT})" +
-                                   $"&& time_classify_day(now()) - time_classify_day({Column.Documents.FILE_UPDATED_AT}) == (60 * 60 * 24) ? " +
-                                   $"time_classify_day({Column.Documents.FILE_UPDATED_AT}) : " + // 最終更新が1日前で、かつ年月の切り替わりでない場合、年月日で分類
-                                   $"time_classify_year(now()) == time_classify_year({Column.Documents.FILE_UPDATED_AT}) ? " +
-                                   $"time_classify_month({Column.Documents.FILE_UPDATED_AT}) : " + // 年が同じ場合、月で分類
-                                   $"(time_classify_year(now()) - time_classify_year({Column.Documents.FILE_UPDATED_AT})) < (60 * 60 * 24 * 365) * {SystemConst.GROUPING_YEAR_RANGE + 1} ? " +
-                                   $"time_classify_year({Column.Documents.FILE_UPDATED_AT}) : " + // 規定年数以内の場合、年で分類
-                                   $"0"; // 規定年数以上の差がある場合、すべて範囲外として分類（「2016年以前」のように表示）
-            columns.Add(new Groonga.DynamicColumn(
-                  "last_updated_class"
-                , Groonga.Stage.INITIAL
-                , Groonga.DataType.Time
-                , elapsedGroupExpr
-            ));
-
             // 並び順の設定。並び順が指定されていれば、その並び順を優先
             var sortKeys = new List<string>();
             switch (selectedOrderType)
@@ -383,7 +363,7 @@ namespace InazumaSearch.Core
                     , filter: joinedFilter
                     , offset: offset
                     //, drilldown: new[] { Column.Documents.EXT, Column.Documents.FILE_UPDATED_YEAR }
-                    , drilldown: new[] { Column.Documents.EXT, Column.Documents.FOLDER_LABELS, "last_updated_class" }
+                    , drilldown: new[] { Column.Documents.EXT, Column.Documents.FOLDER_LABELS }
                     , drilldownSortKeys: new[] { Column.Documents.KEY }
                     , sortKeys: sortKeys.ToArray()
                     , matchColumns: matchColumns

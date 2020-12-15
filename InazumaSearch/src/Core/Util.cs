@@ -139,37 +139,5 @@ namespace InazumaSearch.Core
 
             return string.Format("{0:#,0.00} GB", byGB);
         }
-
-        /// <summary>
-        /// 現在日を元に、指定した日付の分類名を取得（最終更新日の絞り込みなどで使用）
-        /// </summary>
-        public static string FormatTimeClass(DateTime timeClass, DateTime now)
-        {
-            if (Groonga.Util.ToUnixTime(timeClass) == 0)
-            {
-                return $"{now.Year - SystemConst.GROUPING_YEAR_RANGE - 1}年以前";
-            }
-            else if (now.Date == timeClass.Date)
-            {
-                return "今日";
-            }
-            else if (now.Date.AddDays(-1) == timeClass.Date)
-            {
-                return "昨日";
-            }
-            else if (now.Year == timeClass.Year && now.Month == timeClass.Month)
-            {
-                return "今月";
-            }
-            else if (now.Year == timeClass.Year)
-            {
-                return $"{timeClass.Month}月";
-            }
-            else
-            {
-                return $"{timeClass.Year}年";
-            }
-        }
-
     }
 }
