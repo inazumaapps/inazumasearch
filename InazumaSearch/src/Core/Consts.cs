@@ -114,5 +114,10 @@ namespace InazumaSearch.Core
         /// Windowsにおける通常の最大パス長 (このパスを超えると、他アプリケーションで正しく処理できない場合がある)
         /// </summary>
         public const int WindowsMaxPath = 260 - 1; // NULL文字
+
+        /// <summary>
+        /// プレリリースバージョン（通常リリースの場合はnull）
+        /// </summary>
+        public const string PreReleaseVersion = null;
     }
 }

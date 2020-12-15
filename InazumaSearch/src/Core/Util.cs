@@ -22,7 +22,7 @@ namespace InazumaSearch.Core
             var asmVer = asm.GetName().Version;
 
             // アセンブリバージョンをSemVer形式とする
-            return new SemVersion(asmVer.Major, asmVer.Minor, asmVer.Build);
+            return new SemVersion(asmVer.Major, asmVer.Minor, asmVer.Build, SystemConst.PreReleaseVersion);
         }
 
         /// <summary>
