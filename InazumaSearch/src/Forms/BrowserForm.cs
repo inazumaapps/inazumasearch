@@ -1002,14 +1002,10 @@ namespace InazumaSearch.Forms
 
         private void BrowserForm_Load(object sender, EventArgs e)
         {
-
             if (App.DebugMode)
             {
-                Text = $"Inazuma Search {Util.GetVersion().ToString()} {Util.GetPlatform()} (Debug Mode)";
+                Text = $"Inazuma Search {App.GetVersionCaption()} [Debug Mode]";
             }
-
-            Debug.Print(Thread.CurrentThread.ManagedThreadId.ToString());
-
         }
     }
 }
