@@ -16,7 +16,6 @@ namespace InazumaSearch
               string htmlDirPath
             , bool showBrowser = true
             , bool appDebugMode = false
-            , bool appPortableMode = false
         ) : base()
         {
             // 例外ハンドラ登録
@@ -30,9 +29,6 @@ namespace InazumaSearch
                 DebugMode = appDebugMode,
                 HtmlDirPath = htmlDirPath
             };
-#if PORTABLE
-            app.PortableMode = true;
-#endif
 
             // ロガー用にログディレクトリパスを設定
             NLog.GlobalDiagnosticsContext.Set("LogDirPath", app.LogDirPath);

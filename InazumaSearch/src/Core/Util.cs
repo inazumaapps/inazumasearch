@@ -26,6 +26,19 @@ namespace InazumaSearch.Core
         }
 
         /// <summary>
+        /// ポータブル版かどうかを判定
+        /// </summary>
+        /// <returns></returns>
+        public static bool IsPortableMode()
+        {
+#if PORTABLE
+            return true;
+#else
+            return false;
+#endif
+        }
+
+        /// <summary>
         /// プラットフォーム文字列を取得 "x86" or "x64"
         /// </summary>
         /// <returns></returns>

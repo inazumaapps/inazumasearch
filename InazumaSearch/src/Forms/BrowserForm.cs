@@ -60,7 +60,7 @@ namespace InazumaSearch.Forms
 
             public bool IsPortableMode()
             {
-                return App.PortableMode;
+                return Util.IsPortableMode();
             }
 
             public bool IsUpdateCheckFailed()
@@ -656,7 +656,7 @@ namespace InazumaSearch.Forms
                 }
 
                 // 更新の有無をチェック
-                ISAutoUpdater.Check(App.PortableMode, (args) =>
+                ISAutoUpdater.Check(Util.IsPortableMode(), (args) =>
                 {
                     var msg = $"新しいバージョン ({args.CurrentVersion.TrimEnd('0').TrimEnd('.')}) に更新可能です";
                     ChromeBrowser.EvaluateScriptAsync($"$('#UPDATE-LINK .message').text('{msg}'); $('#UPDATE-LINK').show();");

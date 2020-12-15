@@ -19,14 +19,9 @@ namespace InazumaSearch.Core
     public partial class Application
     {
         /// <summary>
-        /// デバッグモード。
+        /// デバッグモード
         /// </summary>
-        public bool DebugMode { get; set; }
-
-        /// <summary>
-        /// Portableモード
-        /// </summary>
-        public bool PortableMode { get; set; }
+        public bool DebugMode { get; set; } = false;
 
         /// <summary>
         /// HTMLフォルダのパス
@@ -56,7 +51,7 @@ namespace InazumaSearch.Core
         /// <summary>
         /// 対応しているすべてのフォーマットリスト
         /// </summary>
-        public IList<Format> Formats { get; protected set; }
+        public IList<Format> Formats { get; protected set; } = new List<Format>();
 
         /// <summary>
         /// クローラ
@@ -68,13 +63,6 @@ namespace InazumaSearch.Core
         /// </summary>
         public static NotifyIcon NotifyIcon { get; set; }
 
-        public Application()
-        {
-            DebugMode = false;
-            PortableMode = false;
-            Formats = new List<Format>();
-        }
-
         #region 特殊パスの取得
 
         /// <summary>
@@ -84,7 +72,7 @@ namespace InazumaSearch.Core
         {
             get
             {
-                if (PortableMode)
+                if (Util.IsPortableMode())
                 {
                     return Path.Combine(System.Windows.Forms.Application.StartupPath, @"..\data\db");
                 }
@@ -101,7 +89,7 @@ namespace InazumaSearch.Core
         {
             get
             {
-                if (PortableMode)
+                if (Util.IsPortableMode())
                 {
                     return Path.Combine(System.Windows.Forms.Application.StartupPath, @"..\data\thumbnail");
                 }
@@ -118,7 +106,7 @@ namespace InazumaSearch.Core
         {
             get
             {
-                if (PortableMode)
+                if (Util.IsPortableMode())
                 {
                     return Path.Combine(System.Windows.Forms.Application.StartupPath, @"..\data\log");
                 }
@@ -136,7 +124,7 @@ namespace InazumaSearch.Core
         {
             get
             {
-                if (PortableMode)
+                if (Util.IsPortableMode())
                 {
                     return Path.Combine(System.Windows.Forms.Application.StartupPath, @"..\data");
                 }
@@ -165,7 +153,7 @@ namespace InazumaSearch.Core
         /// <returns></returns>
         public virtual string GetVersionCaption()
         {
-            return $"{Util.GetVersion()}" + (PortableMode ? " ポータブル版" : "") + (Util.GetPlatform() == "x86" ? " (32ビットバージョン)" : "");
+            return $"{Util.GetVersion()}" + (Util.IsPortableMode() ? " ポータブル版" : "") + (Util.GetPlatform() == "x86" ? " (32ビットバージョン)" : "");
         }
 
         /// <summary>
