@@ -114,7 +114,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.LblSearching.AutoSize = true;
             this.LblSearching.BackColor = System.Drawing.Color.White;
-            this.LblSearching.Location = new System.Drawing.Point(283, 125);
+            this.LblSearching.Location = new System.Drawing.Point(294, 125);
             this.LblSearching.Name = "LblSearching";
             this.LblSearching.Size = new System.Drawing.Size(110, 12);
             this.LblSearching.TabIndex = 2;

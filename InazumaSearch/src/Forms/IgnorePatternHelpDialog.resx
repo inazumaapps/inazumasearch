@@ -118,7 +118,7 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="label1.Text" xml:space="preserve">
-    <value>例) 無視設定の起点フォルダが C:\document の場合
+    <value>例) 無視設定の基準フォルダが C:\document の場合
 
 folder1\folder2\file1.doc
 ⇒ "C:\document\folder1\folder2\file1.doc" のみが無視されます。
@@ -130,7 +130,6 @@ folder1\folder2
 folder1\folder2\
 ⇒ "C:\document\folder1\folder2" 以下にある全ファイルが無視されます。
 
-.\file1.doc
 \file1.doc
 ⇒ "C:\document\file1.doc" のみが無視されます。
 
