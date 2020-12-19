@@ -59,10 +59,12 @@ namespace InazumaSearch.Forms
             switch (editMode)
             {
                 case EditMode.APPEND:
+                    this.Text = "無視設定の追加";
                     TxtSetting.Text = defaultPattern;
                     break;
 
                 case EditMode.UPDATE:
+                    this.Text = "無視設定の編集";
                     var setting = _app.UserSettings.TargetFolders.First(f => f.Path == baseDirPath);
                     if (setting != null)
                     {

@@ -47,7 +47,7 @@
             // 
             this.BtnCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.BtnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.BtnCancel.Location = new System.Drawing.Point(577, 396);
+            this.BtnCancel.Location = new System.Drawing.Point(579, 448);
             this.BtnCancel.Name = "BtnCancel";
             this.BtnCancel.Size = new System.Drawing.Size(135, 28);
             this.BtnCancel.TabIndex = 4;
@@ -57,6 +57,8 @@
             // 
             // groupBox1
             // 
+            this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.groupBox1.Controls.Add(this.lnkPatternHelp);
             this.groupBox1.Controls.Add(this.TxtSetting);
             this.groupBox1.Location = new System.Drawing.Point(15, 63);
@@ -68,6 +70,7 @@
             // 
             // lnkPatternHelp
             // 
+            this.lnkPatternHelp.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.lnkPatternHelp.AutoSize = true;
             this.lnkPatternHelp.Location = new System.Drawing.Point(574, 0);
             this.lnkPatternHelp.Name = "lnkPatternHelp";
@@ -92,20 +95,26 @@
             // 
             // groupBox2
             // 
+            this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.groupBox2.Controls.Add(this.LblSearching);
             this.groupBox2.Controls.Add(this.LstPreview);
             this.groupBox2.Location = new System.Drawing.Point(15, 169);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(699, 211);
+            this.groupBox2.Size = new System.Drawing.Size(699, 265);
             this.groupBox2.TabIndex = 6;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "プレビュー（実際に無視対象となるファイル）";
             // 
             // LblSearching
             // 
+            this.LblSearching.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.LblSearching.AutoSize = true;
             this.LblSearching.BackColor = System.Drawing.Color.White;
-            this.LblSearching.Location = new System.Drawing.Point(287, 97);
+            this.LblSearching.Location = new System.Drawing.Point(283, 125);
             this.LblSearching.Name = "LblSearching";
             this.LblSearching.Size = new System.Drawing.Size(110, 12);
             this.LblSearching.TabIndex = 2;
@@ -122,21 +131,25 @@
             this.LstPreview.Location = new System.Drawing.Point(7, 18);
             this.LstPreview.Name = "LstPreview";
             this.LstPreview.ScrollAlwaysVisible = true;
-            this.LstPreview.Size = new System.Drawing.Size(686, 184);
+            this.LstPreview.Size = new System.Drawing.Size(686, 232);
             this.LstPreview.TabIndex = 0;
             // 
             // groupBox3
             // 
+            this.groupBox3.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.groupBox3.Controls.Add(this.TxtBaseDirPath);
             this.groupBox3.Location = new System.Drawing.Point(15, 6);
             this.groupBox3.Name = "groupBox3";
             this.groupBox3.Size = new System.Drawing.Size(699, 51);
             this.groupBox3.TabIndex = 6;
             this.groupBox3.TabStop = false;
-            this.groupBox3.Text = "無視設定の起点フォルダ";
+            this.groupBox3.Text = "起点フォルダ";
             // 
             // TxtBaseDirPath
             // 
+            this.TxtBaseDirPath.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.TxtBaseDirPath.Enabled = false;
             this.TxtBaseDirPath.Location = new System.Drawing.Point(7, 19);
             this.TxtBaseDirPath.Name = "TxtBaseDirPath";
@@ -146,7 +159,7 @@
             // BtnSave
             // 
             this.BtnSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.BtnSave.Location = new System.Drawing.Point(415, 396);
+            this.BtnSave.Location = new System.Drawing.Point(417, 448);
             this.BtnSave.Name = "BtnSave";
             this.BtnSave.Size = new System.Drawing.Size(135, 28);
             this.BtnSave.TabIndex = 8;
@@ -159,15 +172,17 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.BtnCancel;
-            this.ClientSize = new System.Drawing.Size(742, 444);
+            this.ClientSize = new System.Drawing.Size(732, 488);
             this.Controls.Add(this.BtnSave);
             this.Controls.Add(this.groupBox3);
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.BtnCancel);
+            this.MaximizeBox = false;
+            this.MinimizeBox = false;
             this.Name = "IgnoreEditForm";
             this.ShowIcon = false;
-            this.Text = "ファイル無視設定";
+            this.Text = "(画面名)";
             this.Load += new System.EventHandler(this.IgnoreEditForm_Load);
             this.Shown += new System.EventHandler(this.IgnoreEditForm_Shown);
             this.groupBox1.ResumeLayout(false);
