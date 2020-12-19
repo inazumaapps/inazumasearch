@@ -121,18 +121,18 @@
     <value>例) 無視設定の起点フォルダが C:\document の場合
 
 folder1\folder2\file1.doc
-⇒ "C:\documents\folder1\folder2\file1.doc" のみが無視されます。
+⇒ "C:\document\folder1\folder2\file1.doc" のみが無視されます。
 
 folder1\folder2\*.doc
-⇒ "C:\documents\folder1\folder2" フォルダ以下にある、拡張子が .doc の全ファイルが無視されます。
+⇒ "C:\document\folder1\folder2" フォルダの直下にある、拡張子が .doc の全ファイルが無視されます。
 
 folder1\folder2
 folder1\folder2\
-⇒ "C:\documents\folder1\folder2" 以下にある全ファイルが無視されます。
+⇒ "C:\document\folder1\folder2" 以下にある全ファイルが無視されます。
 
 .\file1.doc
 \file1.doc
-⇒ "C:\documents\file1.doc" のみが無視されます。
+⇒ "C:\document\file1.doc" のみが無視されます。
 
 file1.doc
 ⇒ C:\document フォルダ以下にある、すべての "file1.doc" というファイルが無視されます。
