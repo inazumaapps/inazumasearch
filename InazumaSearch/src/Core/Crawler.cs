@@ -237,14 +237,24 @@ namespace InazumaSearch.Core
                                         // 処理対象外イベントならスキップ
                                         if (work == null) continue;
 
-                                        // 既存ワークと重複していなければ、処理対象とする
-                                        if (!WorkQueueSet.Contains(work))
+                                        // キューに登録
+                                        if (WorkQueueSet.Contains(work))
                                         {
+                                            // 既存ワークと重複していれば、いったん削除してから再登録し、後で実行されるようにする
+                                            WorkQueue.Remove(work);
+                                            WorkQueueSet.Remove(work);
+                                            WorkQueue.Add(work);
+                                            WorkQueueSet.Add(work);
+                                            Logger.Debug("Work Queue Re-added: {0}", work.LogCaption);
+                                        }
+                                        else
+                                        {
+                                            // 既存ワークと重複していなければ、そのまま登録する
                                             WorkQueue.Add(work);
                                             WorkQueueSet.Add(work);
                                             Logger.Debug("Work Queue Added: {0}", work.LogCaption);
-                                            Logger.Debug("Work Queue ({0}): [{1}]", WorkQueue.Count, string.Join(", ", WorkQueue.Select(w => w.LogCaption)));
                                         }
+                                        Logger.Debug("Work Queue ({0}): [{1}]", WorkQueue.Count, string.Join(", ", WorkQueue.Select(w => w.LogCaption)));
                                     }
                                 }
                             }

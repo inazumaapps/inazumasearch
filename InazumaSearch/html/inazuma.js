@@ -445,7 +445,7 @@ $(function(){
                         , tfIdf: ''
                     }
 
-                    asyncApi.search(queryObject, false, 0, null, null, null).then(function (resJson) {
+                    asyncApi.search(queryObject, false, 0, null, null, null, true).then(function (resJson) {
                         if (resJson) {
                             var data = JSON.parse(resJson);
 
