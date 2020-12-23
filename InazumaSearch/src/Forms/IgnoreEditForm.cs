@@ -228,7 +228,7 @@ namespace InazumaSearch.Forms
         {
             var paths = new List<string>();
 
-            foreach (var path in Directory.GetFiles(TxtBaseDirPath.Text.ToLower(), "*", System.IO.SearchOption.AllDirectories))
+            foreach (var path in Directory.GetFiles(TxtBaseDirPath.Text, "*", System.IO.SearchOption.AllDirectories))
             {
                 var fileAttrs = File.GetAttributes(path);
                 var isDirectory = fileAttrs.HasFlag(System.IO.FileAttributes.Directory);
