@@ -105,6 +105,7 @@ namespace InazumaSearch.Forms
             UpdateLabels();
             lblVersion.Text = Application.GetVersionCaption();
             tblDebug.Visible = Application.DebugMode;
+            lnkOpenDataFolder.Visible = Application.DebugMode;
             UpdateExtensionList();
         }
 
@@ -177,6 +178,11 @@ namespace InazumaSearch.Forms
 
             // リストボックスの表示を更新
             UpdateExtensionList();
+        }
+
+        private void lnkOpenDataFolder_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            Process.Start("explorer.exe", $"\"{Application.UserSettingDirPath}\"");
         }
     }
 }

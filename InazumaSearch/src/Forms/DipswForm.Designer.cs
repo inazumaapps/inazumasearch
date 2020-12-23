@@ -33,12 +33,6 @@
             this.BtnClose = new System.Windows.Forms.Button();
             this.BtnClearAllData = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
-            this.BarCrawlPower = new System.Windows.Forms.TrackBar();
-            this.label2 = new System.Windows.Forms.Label();
-            this.label3 = new System.Windows.Forms.Label();
-            this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.label5 = new System.Windows.Forms.Label();
-            this.label4 = new System.Windows.Forms.Label();
             this.tblDebug = new System.Windows.Forms.TableLayoutPanel();
             this.lblDocumentDBSize = new System.Windows.Forms.Label();
             this.label6 = new System.Windows.Forms.Label();
@@ -56,8 +50,7 @@
             this.label7 = new System.Windows.Forms.Label();
             this.BtnDeleteTextExt = new System.Windows.Forms.Button();
             this.BtnAddTextExt = new System.Windows.Forms.Button();
-            ((System.ComponentModel.ISupportInitialize)(this.BarCrawlPower)).BeginInit();
-            this.groupBox1.SuspendLayout();
+            this.lnkOpenDataFolder = new System.Windows.Forms.LinkLabel();
             this.tblDebug.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.tableLayoutPanel2.SuspendLayout();
@@ -103,68 +96,6 @@
             this.label1.Size = new System.Drawing.Size(348, 12);
             this.label1.TabIndex = 17;
             this.label1.Text = "※クロールした文書データと、ユーザーの設定情報をすべて初期化します。";
-            // 
-            // BarCrawlPower
-            // 
-            this.BarCrawlPower.Location = new System.Drawing.Point(19, 18);
-            this.BarCrawlPower.Maximum = 3;
-            this.BarCrawlPower.Minimum = -3;
-            this.BarCrawlPower.Name = "BarCrawlPower";
-            this.BarCrawlPower.Size = new System.Drawing.Size(257, 45);
-            this.BarCrawlPower.TabIndex = 18;
-            this.toolTip1.SetToolTip(this.BarCrawlPower, "高く設定するほど、PCのパワーを全力で使用するため、クロールが早く完了しますが\r\nクロール中に他のプログラムの動作が遅くなる場合があります。");
-            this.BarCrawlPower.Scroll += new System.EventHandler(this.trackBar1_Scroll);
-            // 
-            // label2
-            // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(17, 51);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(41, 12);
-            this.label2.TabIndex = 19;
-            this.label2.Text = "低負荷";
-            // 
-            // label3
-            // 
-            this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(234, 51);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(41, 12);
-            this.label3.TabIndex = 20;
-            this.label3.Text = "高負荷";
-            // 
-            // groupBox1
-            // 
-            this.groupBox1.Controls.Add(this.label5);
-            this.groupBox1.Controls.Add(this.label4);
-            this.groupBox1.Controls.Add(this.label3);
-            this.groupBox1.Controls.Add(this.label2);
-            this.groupBox1.Controls.Add(this.BarCrawlPower);
-            this.groupBox1.Location = new System.Drawing.Point(346, 243);
-            this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(125, 44);
-            this.groupBox1.TabIndex = 21;
-            this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "クロールに使用するCPUパワー";
-            this.groupBox1.Visible = false;
-            // 
-            // label5
-            // 
-            this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(17, 66);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(105, 12);
-            this.label5.TabIndex = 23;
-            this.label5.Text = "余力を残してクロール";
-            // 
-            // label4
-            // 
-            this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(200, 66);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(76, 12);
-            this.label4.TabIndex = 22;
-            this.label4.Text = "全力でクロール";
             // 
             // tblDebug
             // 
@@ -331,11 +262,23 @@
             this.BtnAddTextExt.UseVisualStyleBackColor = true;
             this.BtnAddTextExt.Click += new System.EventHandler(this.BtnAddTextExt_Click);
             // 
+            // lnkOpenDataFolder
+            // 
+            this.lnkOpenDataFolder.AutoSize = true;
+            this.lnkOpenDataFolder.Location = new System.Drawing.Point(317, 225);
+            this.lnkOpenDataFolder.Name = "lnkOpenDataFolder";
+            this.lnkOpenDataFolder.Size = new System.Drawing.Size(95, 12);
+            this.lnkOpenDataFolder.TabIndex = 24;
+            this.lnkOpenDataFolder.TabStop = true;
+            this.lnkOpenDataFolder.Text = "データフォルダを開く";
+            this.lnkOpenDataFolder.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.lnkOpenDataFolder_LinkClicked);
+            // 
             // DipswForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(742, 314);
+            this.Controls.Add(this.lnkOpenDataFolder);
             this.Controls.Add(this.BtnClose);
             this.Controls.Add(this.groupBox3);
             this.Controls.Add(this.tableLayoutPanel2);
@@ -344,13 +287,10 @@
             this.Controls.Add(this.label1);
             this.Controls.Add(this.BtnClearAllData);
             this.Controls.Add(this.BtnClearDocumentDB);
-            this.Controls.Add(this.groupBox1);
             this.Name = "DipswForm";
+            this.ShowIcon = false;
             this.Text = "DIPSW";
             this.Load += new System.EventHandler(this.DipswForm_Load);
-            ((System.ComponentModel.ISupportInitialize)(this.BarCrawlPower)).EndInit();
-            this.groupBox1.ResumeLayout(false);
-            this.groupBox1.PerformLayout();
             this.tblDebug.ResumeLayout(false);
             this.tblDebug.PerformLayout();
             this.groupBox2.ResumeLayout(false);
@@ -369,12 +309,6 @@
         private System.Windows.Forms.Button BtnClose;
         private System.Windows.Forms.Button BtnClearAllData;
         private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.TrackBar BarCrawlPower;
-        private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.GroupBox groupBox1;
-        private System.Windows.Forms.Label label5;
-        private System.Windows.Forms.Label label4;
         private System.Windows.Forms.TableLayoutPanel tblDebug;
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.Label lblDocumentDBSize;
@@ -392,6 +326,7 @@
         private System.Windows.Forms.ListView lsvTextExtensions;
         private System.Windows.Forms.ColumnHeader columnHeader1;
         private System.Windows.Forms.ColumnHeader columnHeader2;
+        private System.Windows.Forms.LinkLabel lnkOpenDataFolder;
     }
 }
 
