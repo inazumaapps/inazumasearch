@@ -69,30 +69,40 @@ namespace InazumaSearch.Forms
                             statusText.Text = string.Format("登録済み文書の一覧を取得しています...");
                             break;
 
-                        case CrawlState.Step.TargetListUp:
-                            statusText.Text = string.Format("検索対象ファイルを探索しています... ({0})", state.CurrentValue);
-                            break;
-
-                        case CrawlState.Step.RecordAddBegin:
-                            ProgressBar.Style = ProgressBarStyle.Continuous;
-                            ProgressBar.Maximum = state.TotalValue;
-                            TaskbarManager.Instance.SetProgressState(TaskbarProgressBarState.Normal, Handle);
-                            TaskbarManager.Instance.SetProgressValue(ProgressBar.Value, ProgressBar.Maximum, Handle);
+                        case CrawlState.Step.RecordUpdateBegin:
+                            ProgressBar.Style = ProgressBarStyle.Marquee;
+                            TaskbarManager.Instance.SetProgressState(TaskbarProgressBarState.Indeterminate, Handle);
                             statusText.Text = string.Format("インデックス登録中...");
-                            statusText.GetCurrentParent().Refresh();
-                            statusText.GetCurrentParent().Update();
                             break;
 
-                        case CrawlState.Step.RecordAdding:
-                            // プログレスバーが徐々に伸びていくアニメーションを無効化し、バーに即時反映されるようにするため
-                            // まず 現在値+1 の値を設定してから、現在値まで減算する
-                            // 参考: https://dobon.net/vb/dotnet/control/pbdisableanimation.html
-                            //if (state.CurrentValue + 1 <= ProgressBar.Maximum) {
-                            //    ProgressBar.Value = state.CurrentValue + 1;
-                            //}
-                            ProgressBar.Value = state.CurrentValue;
-                            TaskbarManager.Instance.SetProgressValue(ProgressBar.Value, ProgressBar.Maximum, Handle);
-                            statusText.Text = string.Format("インデックス登録中... ({0})", state.UpdatedDocumentCount);
+                        case CrawlState.Step.RecordUpdating:
+                            // 計測が完了している場合、最大値を設定
+                            if (state.TotalValue != null)
+                            {
+                                if (state.CurrentValue > state.TotalValue.Value)
+                                {
+                                    // 計測が完了していても、現在値が最大値を超えている場合は、残り時間不定
+                                    // （クロール実施中にファイルが新しく追加されると発生する場合がある）
+                                    ProgressBar.Style = ProgressBarStyle.Marquee;
+                                    TaskbarManager.Instance.SetProgressState(TaskbarProgressBarState.Indeterminate, Handle);
+                                }
+                                else
+                                {
+                                    ProgressBar.Style = ProgressBarStyle.Continuous;
+                                    ProgressBar.Maximum = state.TotalValue.Value;
+                                    ProgressBar.Value = state.CurrentValue;
+                                    TaskbarManager.Instance.SetProgressState(TaskbarProgressBarState.Normal, Handle);
+                                    TaskbarManager.Instance.SetProgressValue(ProgressBar.Value, ProgressBar.Maximum, Handle);
+                                }
+                            }
+                            if (state.TotalValue != null)
+                            {
+                                statusText.Text = $"インデックス登録中... ({state.CurrentValue} / {state.TotalValue})";
+                            }
+                            else
+                            {
+                                statusText.Text = $"インデックス登録中... ({state.CurrentValue})";
+                            }
                             break;
 
                         case CrawlState.Step.PurgeBegin:

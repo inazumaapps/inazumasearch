@@ -66,11 +66,11 @@ namespace InazumaSearch.Core
         }
 
         /// <summary>
-        /// 16進数の文字列形式でハッシュを算出。使用にはCryptProviderが必要
+        /// 16進数の文字列形式でハッシュを算出
         /// </summary>
         /// <param name="source"></param>
         /// <returns></returns>
-        public static string HexDigest(SHA1CryptoServiceProvider cryptProvider, string source)
+        public static string HexDigest(HashAlgorithm cryptProvider, string source)
         {
             var digest = cryptProvider.ComputeHash(Encoding.UTF8.GetBytes(source));
             return BitConverter.ToString(digest).ToLower().Replace("-", "");

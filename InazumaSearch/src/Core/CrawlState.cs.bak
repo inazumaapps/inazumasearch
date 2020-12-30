@@ -19,7 +19,6 @@ namespace InazumaSearch.Core
 
         public Step CurrentStep { get; set; } = Step.DBRecordListUpBegin;
         public int CurrentValue { get; set; } = 0;
-        public int? TotalValue { get; set; } = null;
 
         /// <summary>
         /// クロール時に見つかった、対象のファイルパスセット（スキップされたファイルも含む）

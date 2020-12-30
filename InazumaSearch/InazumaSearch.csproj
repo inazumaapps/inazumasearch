@@ -191,9 +191,20 @@
   <ItemGroup>
     <Compile Include="src\ApplicationContext.cs" />
     <Compile Include="src\Core\Application.cs" />
+    <Compile Include="src\Core\Crawl\IWork.cs" />
+    <Compile Include="src\Core\Crawl\Result.cs" />
+    <Compile Include="src\Core\Crawl\WorkBase.cs" />
+    <Compile Include="src\Core\Crawl\Work\BackgroundFileCrawl.cs" />
+    <Compile Include="src\Core\Crawl\Work\DBDirectoryDelete.cs" />
+    <Compile Include="src\Core\Crawl\Work\DBDocumentDelete.cs" />
+    <Compile Include="src\Core\Crawl\Work\Sub\DBPurge.cs" />
+    <Compile Include="src\Core\Crawl\Work\Sub\DocumentFileUpdate.cs" />
+    <Compile Include="src\Core\Crawl\Work\Sub\DirectoryCrawl.cs" />
+    <Compile Include="src\Core\Crawl\Work\BackgroundDirectoryCrawl.cs" />
+    <Compile Include="src\Core\Crawl\Work\TargetFileCount.cs" />
+    <Compile Include="src\Core\Crawl\Work\ManualCrawl.cs" />
     <Compile Include="src\Core\ISAutoUpdater.cs" />
     <Compile Include="src\Core\CommandLineOptions.cs" />
-    <Compile Include="src\Core\Crawler_Work.cs" />
     <Compile Include="src\Core\ExcelManipulator.cs" />
     <Compile Include="src\Core\IconFetcher.cs" />
     <Compile Include="src\Core\IgnoreSetting.cs" />
@@ -270,7 +281,7 @@
       <DependentUpon>ProgressForm.cs</DependentUpon>
     </Compile>
     <Compile Include="src\Core\CrawlState.cs" />
-    <Compile Include="src\Core\Crawler.cs" />
+    <Compile Include="src\Core\Crawl\Crawler.cs" />
     <Compile Include="src\Forms\CrawlProgressForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -422,6 +433,7 @@
       <Name>restart</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>set TARGETDIR=$(TargetDir)

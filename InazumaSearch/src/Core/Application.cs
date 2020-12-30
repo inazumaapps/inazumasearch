@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -9,6 +10,7 @@ using Alphaleonis.Win32.Filesystem;
 using CommandLine;
 using CommandLine.Text;
 using Hnx8.ReadJEnc;
+using InazumaSearch.Core.Crawl;
 using InazumaSearch.Forms;
 
 namespace InazumaSearch.Core
@@ -56,7 +58,12 @@ namespace InazumaSearch.Core
         /// <summary>
         /// クローラ
         /// </summary>
-        public Crawler Crawler { get; protected set; }
+        public Core.Crawl.Crawler Crawler { get; protected set; }
+
+        /// <summary>
+        /// ハッシュ生成を行うオブジェクト。サムネイル画像パスの生成に使用
+        /// </summary>
+        public HashAlgorithm HashProvider { get; set; } = new SHA1CryptoServiceProvider();
 
         /// <summary>
         /// 通知アイコン。画面の初期化完了時に設定される。システム全体で必ず1つしか存在しない (static)
@@ -229,7 +236,7 @@ namespace InazumaSearch.Core
             RefreshFormats();
 
             // クローラの初期化
-            Crawler = new Core.Crawler(this);
+            Crawler = new Crawler(this);
 
             // 現在DBのスキーマバージョンを取得 (DBが存在しない場合は0)
             var schemaVer = GM.GetSchemaVersion();
@@ -294,6 +301,9 @@ namespace InazumaSearch.Core
 
             // Groongaの必要プラグインを登録
             GM.PluginRegister("functions/time");
+
+            // サムネイルフォルダが存在しなければ作成
+            Directory.CreateDirectory(ThumbnailDirPath);
 
             // ログ出力
             Logger.Info("アプリケーションを起動しました");
@@ -360,6 +370,24 @@ namespace InazumaSearch.Core
                 Logger.Trace($"Extract by xdoc2txt - {path}");
                 return XDoc2TxtApi.Extract(path);
             }
+        }
+
+        /// <summary>
+        /// ユーザー設定から無視設定一覧を取得
+        /// </summary>
+        public virtual List<IgnoreSetting> GetIgnoreSettings()
+        {
+            var settings = new List<IgnoreSetting>();
+            foreach (var folderSetting in UserSettings.TargetFolders)
+            {
+                if (folderSetting.IgnoreSettingLines != null && folderSetting.IgnoreSettingLines.Count >= 1)
+                {
+                    var newSetting = IgnoreSetting.Load(folderSetting.Path, folderSetting.IgnoreSettingLines);
+                    settings.Add(newSetting);
+                }
+            }
+
+            return settings;
         }
 
         /// <summary>
