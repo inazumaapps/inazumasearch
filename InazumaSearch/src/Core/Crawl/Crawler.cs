@@ -304,8 +304,6 @@ namespace InazumaSearch.Core.Crawl
             {
                 return;
             }
-
-            Logger.Info("クロール完了");
         }
 
         private void Watcher_Deleted(object sender, System.IO.FileSystemEventArgs e)
