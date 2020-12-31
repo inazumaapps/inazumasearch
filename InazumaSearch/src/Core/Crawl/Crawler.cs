@@ -38,7 +38,6 @@ namespace InazumaSearch.Core.Crawl
         public NLog.Logger Logger { get; protected set; }
 
         public Core.Application App { get; set; }
-        protected IProgress<CrawlState> Progress;
         protected CancellationTokenSource CancellationTokenSource;
         public bool Running { get; set; }
 
