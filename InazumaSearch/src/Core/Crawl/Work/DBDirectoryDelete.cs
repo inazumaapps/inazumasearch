@@ -70,6 +70,13 @@ namespace InazumaSearch.Core.Crawl.Work
             {
                 Logger.Info("フォルダ内の文書ファイルデータ全削除 - {0}", DirPath);
 
+                // 進捗を報告
+                ReportProgressLimitedFrequency(
+                    progress,
+                    new CrawlState() { CurrentStep = CrawlState.Step.AlwaysCrawlDBDirectoryDeleteBegin, Path = DirPath },
+                    crawlResult
+                );
+
                 // 文書データを全削除
                 var filter = $"{Column.Documents.KEY} @^ {Groonga.Util.EscapeForScript(Util.MakeDocumentDirKeyPrefix(DirPath))}";
                 _app.GM.Delete(Table.Documents, filter: filter);

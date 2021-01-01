@@ -75,14 +75,14 @@ namespace InazumaSearch.Core.Crawl.Work
                         _app.GM.Delete(Table.Documents, key: key);
                         crawlResult.Deleted++;
                         Logger.Trace("Purge - {0}", key);
+
+                        // 常駐クロールの場合はクールタイムを挟む (処理の経過時間×3, 最低0.05秒)
+                        InsertCoolTime(50);
                     }
 
                     Thread.Sleep(0); // 他のスレッドに処理を渡す
                     cToken.ThrowIfCancellationRequested(); // キャンセル受付
                 }
-
-                // 常駐クロールの場合はクールタイムを挟む (処理の経過時間×3, 最低0.05秒)
-                InsertCoolTime(50);
             }
         }
     }

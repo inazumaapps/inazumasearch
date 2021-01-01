@@ -51,8 +51,8 @@ namespace InazumaSearch.Forms
                 // 最終クロール情報を保存
                 App.UserSettings.SaveOnCrawl(DateTime.Now, TargetDirPaths);
 
-                // 常駐クロールモードであれば、いったん常駐クロールを停止
-                if (App.UserSettings.AlwaysCrawlMode)
+                // 常駐クロール中であれば、いったん常駐クロールを停止
+                if (App.Crawler.RunningState == Crawler.RunningStateValue.ALWAYS_CRAWLING)
                 {
                     App.Crawler.StopIfRunning();
                 }

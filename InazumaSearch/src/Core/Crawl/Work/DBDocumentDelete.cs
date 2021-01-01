@@ -70,6 +70,13 @@ namespace InazumaSearch.Core.Crawl.Work
             {
                 Logger.Info("文書ファイルデータ削除 - {0}", FilePath);
 
+                // 進捗を報告
+                ReportProgressLimitedFrequency(
+                    progress,
+                    new CrawlState() { CurrentStep = CrawlState.Step.AlwaysCrawlDBDocumentDeleteBegin, Path = FilePath },
+                    crawlResult
+                );
+
                 // DBから対象の文書データを削除
                 _app.GM.Delete(Table.Documents, key: Util.MakeDocumentFileKey(FilePath));
 

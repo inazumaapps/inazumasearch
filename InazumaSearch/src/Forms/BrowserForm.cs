@@ -18,6 +18,7 @@ using Alphaleonis.Win32.Filesystem;
 using CefSharp;
 using CefSharp.WinForms;
 using InazumaSearch.Core;
+using InazumaSearch.Core.Crawl;
 using InazumaSearch.Groonga.Exceptions;
 using Microsoft.WindowsAPICodePack.Dialogs;
 using Microsoft.WindowsAPICodePack.Shell;
@@ -1005,6 +1006,39 @@ namespace InazumaSearch.Forms
             if (App.DebugMode)
             {
                 Text = $"Inazuma Search {App.GetVersionCaption()} [Debug Mode]";
+                App.Crawler.AlwaysCrawlProgress.ProgressChanged += AlwaysCrawlProgress_ProgressChanged;
+            }
+        }
+
+        private void AlwaysCrawlProgress_ProgressChanged(object sender, CrawlState state)
+        {
+            switch (state.CurrentStep)
+            {
+                case CrawlState.Step.AlwaysCrawlBegin:
+                    StlBackgroundCrawl.Text = "常駐クロール: ";
+                    break;
+
+                case CrawlState.Step.RecordUpdating:
+                    StlBackgroundCrawl.Text = $"常駐クロール: 文書データ登録中... ({state.Path})";
+                    break;
+
+                case CrawlState.Step.PurgeBegin:
+                    StlBackgroundCrawl.Text = $"常駐クロール: 存在しない文書データを削除中...";
+                    break;
+
+                case CrawlState.Step.AlwaysCrawlDBDocumentDeleteBegin:
+                case CrawlState.Step.AlwaysCrawlDBDirectoryDeleteBegin:
+                    StlBackgroundCrawl.Text = $"常駐クロール: 文書データを削除中... ({state.Path})";
+                    break;
+
+                case CrawlState.Step.Finish:
+                    StlBackgroundCrawl.Text = $"常駐クロール: 待機状態";
+                    break;
+
+                case CrawlState.Step.AlwaysCrawlEnd:
+                    StlBackgroundCrawl.Text = "";
+                    break;
+
             }
         }
     }

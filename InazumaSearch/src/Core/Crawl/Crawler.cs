@@ -31,6 +31,18 @@ namespace InazumaSearch.Core.Crawl
             , FOLDER
         }
 
+        public enum RunningStateValue
+        {
+            /// <summary>クロール停止中</summary>
+            STOPPED
+            ,
+            /// <summary>手動クロール実行中</summary>
+            MANUAL_CRAWLING
+            ,
+            /// <summary>常駐クロール実行中</summary>
+            ALWAYS_CRAWLING
+        }
+
 
         /// <summary>
         /// ログ出力用オブジェクト
@@ -39,12 +51,21 @@ namespace InazumaSearch.Core.Crawl
 
         public Core.Application App { get; set; }
         protected CancellationTokenSource CancellationTokenSource;
-        public bool Running { get; set; }
+
+        /// <summary>
+        /// クロールの実行状態
+        /// </summary>
+        public virtual RunningStateValue RunningState { get; set; } = RunningStateValue.STOPPED;
 
         /// <summary>
         /// ファイルシステムの変更イベントキュー
         /// </summary>
-        protected virtual IList<FileSystemEvent> FileSystemEventQueue { get; set; }
+        protected virtual IList<FileSystemEvent> FileSystemEventQueue { get; set; } = new List<FileSystemEvent>();
+
+        /// <summary>
+        /// 常駐クロール時の進捗報告用オブジェクト
+        /// </summary>
+        public virtual Progress<CrawlState> AlwaysCrawlProgress { get; set; } = new Progress<CrawlState>();
 
         /// <summary>
         /// コンストラクタ
@@ -54,8 +75,6 @@ namespace InazumaSearch.Core.Crawl
             Logger = NLog.LogManager.GetLogger(LoggerName.Crawler);
 
             App = app;
-            Running = false;
-            FileSystemEventQueue = new List<FileSystemEvent>();
         }
 
         /// <summary>
@@ -66,14 +85,14 @@ namespace InazumaSearch.Core.Crawl
             IEnumerable<string> targetDirPaths
             , EventHandler<CrawlState> progressChangedCallback = null)
         {
-            if (Running) throw new InvalidOperationException("Crawlerはすでに起動しています。");
+            if (RunningState != RunningStateValue.STOPPED) throw new InvalidOperationException("Crawlerはすでに起動しています。");
 
             // 進捗報告用オブジェクトの作成
             var progress = new Progress<CrawlState>();
             if (progressChangedCallback != null) progress.ProgressChanged += progressChangedCallback;
 
-            // 実行中フラグオン
-            Running = true;
+            // 実行中状態セット
+            RunningState = RunningStateValue.MANUAL_CRAWLING;
 
             // 処理取り消しを可能とするためにCancellationTokenSourceを生成
             var ctSource = new CancellationTokenSource();
@@ -134,8 +153,8 @@ namespace InazumaSearch.Core.Crawl
                 ((IProgress<CrawlState>)progress).Report(new CrawlState() { CurrentStep = CrawlState.Step.Finish });
                 res.Finished = true;
 
-                // 起動フラグオフ
-                Running = false;
+                // 起動状態を更新
+                RunningState = RunningStateValue.STOPPED;
 
             }, ctSource.Token);
 
@@ -149,9 +168,10 @@ namespace InazumaSearch.Core.Crawl
         /// <returns></returns>
         public virtual async Task RunAlwaysModeAsync()
         {
-            if (Running) throw new InvalidOperationException("Crawlerはすでに起動しています。");
+            if (RunningState != RunningStateValue.STOPPED) throw new InvalidOperationException("Crawlerはすでに起動しています。");
 
-            Running = true;
+            // 実行状態セット
+            RunningState = RunningStateValue.ALWAYS_CRAWLING;
 
             var ctSource = new CancellationTokenSource();
             CancellationTokenSource = ctSource;
@@ -163,6 +183,9 @@ namespace InazumaSearch.Core.Crawl
                 await Task.Factory.StartNew(() =>
                 {
                     Logger.Info("常駐クロール開始");
+
+                    // 開始を報告
+                    ((IProgress<CrawlState>)AlwaysCrawlProgress).Report(new CrawlState() { CurrentStep = CrawlState.Step.AlwaysCrawlBegin });
 
                     // ファイル監視オブジェクトを生成
                     var watchers = new List<System.IO.FileSystemWatcher>();
@@ -260,22 +283,16 @@ namespace InazumaSearch.Core.Crawl
                             }
 
                             // ワークキューにワークがあれば、1つ取得して実行
-                            IWork nextWork = null;
                             if (workStack.Count >= 1)
                             {
-                                nextWork = workStack.Pop();
-
-                                //if (Logger.IsTraceEnabled)
-                                //{
-                                //    Logger.Trace("Poped the next work: {0}", nextWork.TraceLogCaption);
-                                //    Logger.Trace("Work Stack ({0}): [{1}]", workStack.Count, string.Join(", ", workStack.Select(w => w.TraceLogCaption)));
-                                //}
-                                nextWork.Execute(workStack, res, ctSource.Token);
+                                var nextWork = workStack.Pop();
+                                nextWork.Execute(workStack, res, ctSource.Token, AlwaysCrawlProgress);
                             }
                             else
                             {
-                                // ワークが1つも無い状態であれば、10秒待つ
-                                Thread.Sleep(10000);
+                                // ワークが1つも無い状態であれば、5秒待つ
+                                ((IProgress<CrawlState>)AlwaysCrawlProgress).Report(new CrawlState() { CurrentStep = CrawlState.Step.Finish });
+                                Thread.Sleep(5000);
                             }
 
                             // キャンセルされたら中断
@@ -290,6 +307,10 @@ namespace InazumaSearch.Core.Crawl
                             watcher.Dispose();
                         }
                         Logger.Info("常駐クロール終了");
+
+                        // 終了を報告
+                        ((IProgress<CrawlState>)AlwaysCrawlProgress).Report(new CrawlState() { CurrentStep = CrawlState.Step.AlwaysCrawlEnd });
+
                         return;
                     }
                     catch (Exception ex)
@@ -336,14 +357,11 @@ namespace InazumaSearch.Core.Crawl
 
         public void StopIfRunning()
         {
-            //if (!Running) throw new InvalidOperationException("Crawlerが起動していない状態で停止しようとしました。");
-
-            if (Running)
+            if (RunningState != RunningStateValue.STOPPED)
             {
                 CancellationTokenSource.Cancel();
-                Debug.WriteLine("Canceled.");
-                //Worker.CancelAsync();
-                Running = false;
+                Logger.Debug("Stopped");
+                RunningState = RunningStateValue.STOPPED;
             }
         }
 

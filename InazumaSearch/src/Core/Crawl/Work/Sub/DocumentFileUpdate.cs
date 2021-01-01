@@ -100,7 +100,7 @@ namespace InazumaSearch.Core.Crawl.Work
             // 進捗を報告
             ReportProgressLimitedFrequency(
                 progress,
-                new CrawlState() { CurrentStep = CrawlState.Step.RecordUpdating, CurrentValue = crawlResult.Updated + crawlResult.Skipped, TotalValue = crawlResult.TotalTargetCount },
+                new CrawlState() { CurrentStep = CrawlState.Step.RecordUpdating, CurrentValue = crawlResult.Updated + crawlResult.Skipped, TotalValue = crawlResult.TotalTargetCount, Path = FilePath },
                 crawlResult
             );
         }
