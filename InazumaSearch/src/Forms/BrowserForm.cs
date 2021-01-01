@@ -1006,8 +1006,8 @@ namespace InazumaSearch.Forms
             if (App.DebugMode)
             {
                 Text = $"Inazuma Search {App.GetVersionCaption()} [Debug Mode]";
-                App.Crawler.AlwaysCrawlProgress.ProgressChanged += AlwaysCrawlProgress_ProgressChanged;
             }
+            App.Crawler.AlwaysCrawlProgress.ProgressChanged += AlwaysCrawlProgress_ProgressChanged;
         }
 
         private void AlwaysCrawlProgress_ProgressChanged(object sender, CrawlState state)
