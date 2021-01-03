@@ -61,8 +61,11 @@ namespace InazumaSearch.Core
         /// </summary>
         public static string MakeDocumentDirKeyPrefix(string dirPath)
         {
-            // ※名前が部分一致する別のフォルダを誤って検索対象としないように、フォルダパスの最後に\を付ける
-            return "f:" + dirPath.ToLower() + @"\";
+            // 名前が部分一致する別のフォルダを誤って検索対象としないように、フォルダパスの最後に\を付ける
+            // （ただし、ドライブ直下の場合はすでに「C:\」のようなパスとなっているため、それも考慮）
+            var lowerPath = dirPath.ToLower();
+            if (!lowerPath.EndsWith(@"\")) lowerPath = lowerPath + @"\";
+            return "f:" + lowerPath;
         }
 
         /// <summary>
