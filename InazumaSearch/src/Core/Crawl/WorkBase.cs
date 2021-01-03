@@ -176,159 +176,37 @@ namespace InazumaSearch.Core.Crawl
         /// <summary>
         /// フォルダ内直下のファイルすべてに対して処理 (ファイル一覧の取得時や、ファイルへの処理時に例外が発生した場合は無視)
         /// </summary>
-        protected virtual void ApplyFiles(string folder, Action<string> fileAction)
+        /// <exception cref="OperationCanceledException">処理中にユーザーによって操作がキャンセルされた場合に発生（この例外のみ無視せず、外部にthrowする）</exception>
+        protected virtual void ApplyFiles(string dirPath, Action<string> fileAction)
         {
-            try
-            {
-                foreach (var path in Directory.GetFiles(folder))
-                {
-                    try
-                    {
-                        fileAction(path);
-                    }
-                    catch (OperationCanceledException ex)
-                    {
-                        // キャンセル操作の場合は外に投げる
-                        throw (ex);
-                    }
-                    catch (Exception ex)
-                    {
-                        Logger.Debug(ex.ToString());
-                        Logger.Debug($"Skip file action - {path}");
-                    }
-                }
-            }
-            catch (OperationCanceledException ex)
-            {
-                // キャンセル操作の場合は外に投げる
-                throw (ex);
-            }
-            catch (Exception ex)
-            {
-                Logger.Debug(ex.ToString());
-                Logger.Debug($"Ignore dir - {folder}");
-            }
+            Util.ApplyFiles(Logger, dirPath, fileAction);
         }
 
         /// <summary>
         /// 直下の子ディレクトリすべてに対して処理 (フォルダ一覧の取得時や、フォルダへの処理時に例外が発生した場合は無視)
         /// </summary>
-        protected virtual void ApplySubDirectories(string folder, Action<string> dirAction)
+        /// <exception cref="OperationCanceledException">処理中にユーザーによって操作がキャンセルされた場合に発生（この例外のみ無視せず、外部にthrowする）</exception>
+        protected virtual void ApplySubDirectories(string dirPath, Action<string> dirAction)
         {
-            try
-            {
-                foreach (var dir in Directory.GetDirectories(folder))
-                {
-                    try
-                    {
-                        dirAction(dir);
-                    }
-                    catch (OperationCanceledException ex)
-                    {
-                        // キャンセル操作の場合は外に投げる
-                        throw (ex);
-                    }
-                    catch (Exception ex)
-                    {
-                        Logger.Debug(ex.ToString());
-                        Logger.Debug($"Skip dir action - {dir}");
-                    }
-                }
-            }
-            catch (OperationCanceledException ex)
-            {
-                // キャンセル操作の場合は外に投げる
-                throw (ex);
-            }
-            catch (Exception ex)
-            {
-                Logger.Debug(ex.ToString());
-                Logger.Debug($"Ignore dir - {folder}");
-            }
+            Util.ApplySubDirectories(Logger, dirPath, dirAction);
         }
 
         /// <summary>
         /// 子ディレクトリすべてに対して処理 (サブディレクトリを再帰的に検索し、例外が発生したファイルは無視する)
         /// </summary>
-        /// <remarks>https://stackoverflow.com/questions/172544/ignore-folders-files-when-directory-getfiles-is-denied-access</remarks>
-        protected virtual void ApplyAllDirectories(string folder, Action<string> dirAction)
+        /// <exception cref="OperationCanceledException">処理中にユーザーによって操作がキャンセルされた場合に発生（この例外のみ無視せず、外部にthrowする）</exception>
+        protected virtual void ApplyAllDirectories(string dirPath, Action<string> dirAction)
         {
-            try
-            {
-                foreach (var dirPath in Directory.GetDirectories(folder))
-                {
-                    try
-                    {
-                        dirAction(dirPath);
-                    }
-                    catch (OperationCanceledException ex)
-                    {
-                        // キャンセル操作の場合は外に投げる
-                        throw (ex);
-                    }
-                    catch (Exception ex)
-                    {
-                        Logger.Debug(ex.ToString());
-                        Logger.Debug($"Skip dir action - {dirPath}");
-                    }
-                }
-                foreach (var dirPath in Directory.GetDirectories(folder))
-                {
-                    ApplyAllDirectories(dirPath, dirAction);
-                }
-            }
-            catch (OperationCanceledException ex)
-            {
-                // キャンセル操作の場合は外に投げる
-                throw (ex);
-            }
-            catch (Exception ex)
-            {
-                Logger.Debug(ex.ToString());
-                Logger.Debug($"Ignore dir - {folder}");
-            }
+            Util.ApplyAllDirectories(Logger, dirPath, dirAction);
         }
 
         /// <summary>
         /// 子ファイルすべてに対して処理 (サブディレクトリを再帰的に検索し、例外が発生したファイルは無視する)
         /// </summary>
-        /// <remarks>https://stackoverflow.com/questions/172544/ignore-folders-files-when-directory-getfiles-is-denied-access</remarks>
+        /// <exception cref="OperationCanceledException">処理中にユーザーによって操作がキャンセルされた場合に発生（この例外のみ無視せず、外部にthrowする）</exception>
         protected virtual void ApplyAllFiles(string dirPath, Action<string> fileAction)
         {
-            try
-            {
-                foreach (var filePath in Directory.GetFiles(dirPath))
-                {
-                    try
-                    {
-                        fileAction(filePath);
-                    }
-                    catch (OperationCanceledException ex)
-                    {
-                        // キャンセル操作の場合は外に投げる
-                        throw (ex);
-                    }
-                    catch (Exception ex)
-                    {
-                        Logger.Debug(ex.ToString());
-                        Logger.Debug($"Skip file action - {filePath}");
-                    }
-                }
-                foreach (var subDir in Directory.GetDirectories(dirPath))
-                {
-                    ApplyAllFiles(subDir, fileAction);
-                }
-            }
-            catch (OperationCanceledException ex)
-            {
-                // キャンセル操作の場合は外に投げる
-                throw (ex);
-            }
-            catch (Exception ex)
-            {
-                Logger.Debug(ex.ToString());
-                Logger.Debug($"Ignore dir - {dirPath}");
-            }
+            Util.ApplyAllFiles(Logger, dirPath, fileAction);
         }
     }
 }

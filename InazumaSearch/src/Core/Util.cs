@@ -6,6 +6,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Alphaleonis.Win32.Filesystem;
 using Semver;
 
 namespace InazumaSearch.Core
@@ -79,6 +80,8 @@ namespace InazumaSearch.Core
             return BitConverter.ToString(digest).ToLower().Replace("-", "");
         }
 
+        #region ダイアログボックス表示
+
         public static void ShowInformationMessage(IWin32Window owner, string message)
         {
             MessageBox.Show(owner, message, "情報", MessageBoxButtons.OK, MessageBoxIcon.Information);
@@ -104,8 +107,6 @@ namespace InazumaSearch.Core
             return (res == DialogResult.Yes);
         }
 
-
-
         public static bool Confirm(IWin32Window owner, string message, bool defaultNo = false)
         {
             var res = MessageBox.Show(owner
@@ -118,6 +119,9 @@ namespace InazumaSearch.Core
             return (res == DialogResult.Yes);
         }
 
+        #endregion
+
+        #region 文字列フォーマット
 
         public static string FormatFileSizeByKB(long size)
         {
@@ -142,5 +146,174 @@ namespace InazumaSearch.Core
 
             return string.Format("{0:#,0.00} GB", byGB);
         }
+
+        #endregion
+
+        #region ファイル・フォルダに対する一括操作
+
+        /// <summary>
+        /// フォルダ内直下のファイルすべてに対して処理 (ファイル一覧の取得時や、ファイルへの処理時に例外が発生した場合は無視)
+        /// </summary>
+        /// <exception cref="OperationCanceledException">処理中にユーザーによって操作がキャンセルされた場合に発生（この例外のみ無視せず、外部にthrowする）</exception>
+        public static void ApplyFiles(NLog.Logger logger, string folder, Action<string> fileAction)
+        {
+            try
+            {
+                foreach (var path in Directory.GetFiles(folder))
+                {
+                    try
+                    {
+                        fileAction(path);
+                    }
+                    catch (OperationCanceledException ex)
+                    {
+                        // キャンセル操作の場合は外に投げる
+                        throw (ex);
+                    }
+                    catch (Exception ex)
+                    {
+                        logger.Debug(ex.ToString());
+                        logger.Debug($"Skip file action - {path}");
+                    }
+                }
+            }
+            catch (OperationCanceledException ex)
+            {
+                // キャンセル操作の場合は外に投げる
+                throw (ex);
+            }
+            catch (Exception ex)
+            {
+                logger.Debug(ex.ToString());
+                logger.Debug($"Ignore dir - {folder}");
+            }
+        }
+
+        /// <summary>
+        /// 直下の子ディレクトリすべてに対して処理 (フォルダ一覧の取得時や、フォルダへの処理時に例外が発生した場合は無視)
+        /// </summary>
+        /// <exception cref="OperationCanceledException">処理中にユーザーによって操作がキャンセルされた場合に発生（この例外のみ無視せず、外部にthrowする）</exception>
+        public static void ApplySubDirectories(NLog.Logger logger, string folder, Action<string> dirAction)
+        {
+            try
+            {
+                foreach (var dir in Directory.GetDirectories(folder))
+                {
+                    try
+                    {
+                        dirAction(dir);
+                    }
+                    catch (OperationCanceledException ex)
+                    {
+                        // キャンセル操作の場合は外に投げる
+                        throw (ex);
+                    }
+                    catch (Exception ex)
+                    {
+                        logger.Debug(ex.ToString());
+                        logger.Debug($"Skip dir action - {dir}");
+                    }
+                }
+            }
+            catch (OperationCanceledException ex)
+            {
+                // キャンセル操作の場合は外に投げる
+                throw (ex);
+            }
+            catch (Exception ex)
+            {
+                logger.Debug(ex.ToString());
+                logger.Debug($"Ignore dir - {folder}");
+            }
+        }
+
+        /// <summary>
+        /// 子ディレクトリすべてに対して処理 (サブディレクトリを再帰的に検索し、例外が発生したファイルは無視する)
+        /// </summary>
+        /// <exception cref="OperationCanceledException">処理中にユーザーによって操作がキャンセルされた場合に発生（この例外のみ無視せず、外部にthrowする）</exception>
+        /// <remarks>https://stackoverflow.com/questions/172544/ignore-folders-files-when-directory-getfiles-is-denied-access</remarks>
+        public static void ApplyAllDirectories(NLog.Logger logger, string folder, Action<string> dirAction)
+        {
+            try
+            {
+                foreach (var dirPath in Directory.GetDirectories(folder))
+                {
+                    try
+                    {
+                        dirAction(dirPath);
+                    }
+                    catch (OperationCanceledException ex)
+                    {
+                        // キャンセル操作の場合は外に投げる
+                        throw (ex);
+                    }
+                    catch (Exception ex)
+                    {
+                        logger.Debug(ex.ToString());
+                        logger.Debug($"Skip dir action - {dirPath}");
+                    }
+                }
+                foreach (var dirPath in Directory.GetDirectories(folder))
+                {
+                    ApplyAllDirectories(logger, dirPath, dirAction);
+                }
+            }
+            catch (OperationCanceledException ex)
+            {
+                // キャンセル操作の場合は外に投げる
+                throw (ex);
+            }
+            catch (Exception ex)
+            {
+                logger.Debug(ex.ToString());
+                logger.Debug($"Ignore dir - {folder}");
+            }
+        }
+
+        /// <summary>
+        /// 子ファイルすべてに対して処理 (サブディレクトリを再帰的に検索し、例外が発生したファイルは無視する)
+        /// </summary>
+        /// <exception cref="OperationCanceledException">処理中にユーザーによって操作がキャンセルされた場合に発生（この例外のみ無視せず、外部にthrowする）</exception>
+        /// <remarks>https://stackoverflow.com/questions/172544/ignore-folders-files-when-directory-getfiles-is-denied-access</remarks>
+        public static void ApplyAllFiles(NLog.Logger logger, string dirPath, Action<string> fileAction)
+        {
+            try
+            {
+                foreach (var filePath in Directory.GetFiles(dirPath))
+                {
+                    try
+                    {
+                        fileAction(filePath);
+                    }
+                    catch (OperationCanceledException ex)
+                    {
+                        // キャンセル操作の場合は外に投げる
+                        throw (ex);
+                    }
+                    catch (Exception ex)
+                    {
+                        logger.Debug(ex.ToString());
+                        logger.Debug($"Skip file action - {filePath}");
+                    }
+                }
+                foreach (var subDir in Directory.GetDirectories(dirPath))
+                {
+                    ApplyAllFiles(logger, subDir, fileAction);
+                }
+            }
+            catch (OperationCanceledException ex)
+            {
+                // キャンセル操作の場合は外に投げる
+                throw (ex);
+            }
+            catch (Exception ex)
+            {
+                logger.Debug(ex.ToString());
+                logger.Debug($"Ignore dir - {dirPath}");
+            }
+        }
+
+        #endregion
+
     }
 }

@@ -222,22 +222,28 @@ namespace InazumaSearch.Forms
         }
 
         /// <summary>
-        /// 無視対象ファイルをリストアップする
+        /// 無視対象ファイルをリストアップする。途中で処理がキャンセルされた場合はnullを返す
         /// </summary>
         protected virtual List<string> SearchIgnoredFiles(IgnoreSetting setting, CancellationToken cToken)
         {
             var paths = new List<string>();
-
-            foreach (var path in Directory.GetFiles(TxtBaseDirPath.Text, "*", System.IO.SearchOption.AllDirectories))
+            try
             {
-                var fileAttrs = File.GetAttributes(path);
-                var isDirectory = fileAttrs.HasFlag(System.IO.FileAttributes.Directory);
-                if (setting.IsMatch(path, isDirectory))
+                Util.ApplyAllFiles(_app.Logger, TxtBaseDirPath.Text, (path) =>
                 {
-                    paths.Add(path);
-                }
+                    var fileAttrs = File.GetAttributes(path);
+                    var isDirectory = fileAttrs.HasFlag(System.IO.FileAttributes.Directory);
+                    if (setting.IsMatch(path, isDirectory))
+                    {
+                        paths.Add(path);
+                    }
 
-                if (cToken.IsCancellationRequested) return null;
+                    cToken.ThrowIfCancellationRequested();
+                });
+            }
+            catch (OperationCanceledException)
+            {
+                return null;
             }
 
             return paths;
