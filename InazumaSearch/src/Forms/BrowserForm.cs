@@ -166,7 +166,7 @@ namespace InazumaSearch.Forms
                         Table.Documents
                         , limit: 0
                         , outputColumns: new string[] { Groonga.VColumn.ID }
-                        , filter: $"{Column.Documents.KEY} @^ {Groonga.Util.EscapeForQuery(Util.MakeDocumentDirKeyPrefix(path))}"
+                        , filter: $"{Column.Documents.KEY} @^ {Groonga.Util.EscapeForScript(Util.MakeDocumentDirKeyPrefix(path))}"
                     );
                     return JsonConvert.SerializeObject(new { fileCount = res.SearchResult.NHits });
                 });
@@ -327,7 +327,7 @@ namespace InazumaSearch.Forms
                             Table.Documents
                             , limit: 0
                             , outputColumns: new string[] { Groonga.VColumn.ID }
-                            , filter: $"{Column.Documents.KEY} @^ {Groonga.Util.EscapeForQuery(Util.MakeDocumentDirKeyPrefix(folder.Path))}"
+                            , filter: $"{Column.Documents.KEY} @^ {Groonga.Util.EscapeForScript(Util.MakeDocumentDirKeyPrefix(folder.Path))}"
                         );
                         fileCounts[folder.Path] = res.SearchResult.NHits;
                         ignoreSettingCounts[folder.Path] = folder.IgnoreSettingLines.Count;
@@ -365,7 +365,7 @@ namespace InazumaSearch.Forms
                                                        , Column.Documents.BODY
                                                        , Groonga.Util.EscapeForQuery(queryBody)));
                     }
-                    groongaFilters.Add(string.Format("{0} == {1}", Column.Documents.KEY, Groonga.Util.EscapeForQuery(key)));
+                    groongaFilters.Add(string.Format("{0} == {1}", Column.Documents.KEY, Groonga.Util.EscapeForScript(key)));
 
                     // SELECT実行
                     var joinedQuery = string.Join(" ", groongaQueries.Select(q => "(" + q + ")"));
