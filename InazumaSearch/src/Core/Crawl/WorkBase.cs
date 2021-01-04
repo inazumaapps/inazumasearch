@@ -87,6 +87,16 @@ namespace InazumaSearch.Core.Crawl
         public abstract bool Equals(IWork other);
 
         /// <summary>
+        /// ハッシュ値算出
+        /// </summary>
+        /// <remarks>重複チェックのために必要です。</remarks>
+        public override int GetHashCode()
+        {
+            // デフォルトではObject.GetHashCode() と同じ動作
+            return base.GetHashCode();
+        }
+
+        /// <summary>
         /// トレースログ出力時の表記
         /// </summary>
         public virtual string TraceLogCaption { get { return GetType().Name; } }
