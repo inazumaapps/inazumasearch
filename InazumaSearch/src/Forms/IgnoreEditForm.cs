@@ -107,6 +107,7 @@ namespace InazumaSearch.Forms
             var pf = new ProgressForm(t, "無視対象となる文書データを削除中...");
             pf.ShowDialog(this);
 
+            DialogResult = DialogResult.OK;
             Close();
         }
 
@@ -115,6 +116,7 @@ namespace InazumaSearch.Forms
         /// </summary>
         private void BtnCancel_Click(object sender, EventArgs e)
         {
+            DialogResult = DialogResult.Cancel;
             Close();
         }
 

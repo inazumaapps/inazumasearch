@@ -360,10 +360,10 @@
 
             $('#ALWAYS-CRAWL-MODE').on('change', function () {
                 updateStartUpEnabled();
-                api.changeAlwaysCrawlMode($(this).is(':checked'));
+                asyncApi.changeAlwaysCrawlMode($(this).is(':checked'));
             });
             $('#STARTUP').on('change', function () {
-                api.changeStartUp($(this).is(':checked'));
+                asyncApi.changeStartUp($(this).is(':checked'));
             });
 
             $('ul.collection').on('click', 'a.delete-link', function () {

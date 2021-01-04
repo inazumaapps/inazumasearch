@@ -162,8 +162,8 @@ namespace InazumaSearch.Forms
                     folders.Add(new UserSetting.TargetFolder() { Path = path, Type = UserSetting.TargetFolderType.DocumentFile });
                     App.UserSettings.SaveTargetFolders(folders);
 
-                    // 検索対象フォルダ変更後の共通処理を実行
-                    OnTargetDirectoryChanged();
+                    // 検索対象設定変更後の共通処理を実行
+                    OnSearchTargetChanged();
 
                     // すでに登録されているファイル数をカウント
                     var res = App.GM.Select(
@@ -189,15 +189,15 @@ namespace InazumaSearch.Forms
                     folders.Remove(folders.First(f => f.Path == path));
                     App.UserSettings.SaveTargetFolders(folders);
 
-                    // 検索対象フォルダ変更後の共通処理を実行
-                    OnTargetDirectoryChanged();
+                    // 検索対象設定変更後の共通処理を実行
+                    OnSearchTargetChanged();
                 });
             }
 
             /// <summary>
-            /// 検索対象フォルダの設定変更時共通処理を行う
+            /// 検索対象設定変更後の共通処理を行う
             /// </summary>
-            protected void OnTargetDirectoryChanged()
+            protected void OnSearchTargetChanged()
             {
                 // 常駐クロール実行中の場合、一度常駐クロールを止めて、最初から常駐クロールを再開する
                 if (App.Crawler.AlwaysCrawlIsRunning)
@@ -231,7 +231,12 @@ namespace InazumaSearch.Forms
                     var relPath = path.Substring(baseDirPath.Length + 1);
                     var defaultPattern = (relPath.Contains(@"\") ? relPath : $@"\{relPath}");
                     var dialog = new IgnoreEditForm(IgnoreEditForm.EditMode.APPEND, baseDirPath, defaultPattern, App);
-                    dialog.ShowDialog(form);
+                    var res = dialog.ShowDialog(form);
+                    if (res == DialogResult.OK)
+                    {
+                        // 無視設定を更新した場合、検索対象設定変更後の共通処理を実行
+                        OnSearchTargetChanged();
+                    }
                 });
 
             }
@@ -243,7 +248,12 @@ namespace InazumaSearch.Forms
                 {
                     // 無視設定ダイアログを開く
                     var dialog = new IgnoreEditForm(IgnoreEditForm.EditMode.UPDATE, dirPath, "", App);
-                    dialog.ShowDialog(form);
+                    var res = dialog.ShowDialog(form);
+                    if (res == DialogResult.OK)
+                    {
+                        // 無視設定を更新した場合、検索対象設定変更後の共通処理を実行
+                        OnSearchTargetChanged();
+                    }
                 });
             }
 
@@ -275,30 +285,6 @@ namespace InazumaSearch.Forms
                 });
             }
 
-            public void ChangeAlwaysCrawlMode(bool @checked)
-            {
-                OwnerForm.InvokeOnUIThread((f) =>
-                {
-                    App.ChangeAlwaysCrawlMode(f, @checked);
-                    if (@checked)
-                    {
-                        Util.ShowInformationMessage(f, "常駐クロールを開始しました。\nウインドウを閉じた後も、クロール処理を継続します。\n\nInazuma Searchを完全に終了したい場合は\nタスクバー内通知エリアのアイコンを右クリックして\n「終了」を選択してください。");
-                    }
-                });
-
-            }
-
-            /// <summary>
-            /// 「Windowsログイン時に自動で起動」設定の変更
-            /// </summary>
-            /// <param name="checked"></param>
-            public void ChangeStartUp(bool @checked)
-            {
-                OwnerForm.InvokeOnUIThread((f) =>
-                {
-                    App.ChangeStartUp(f, @checked);
-                });
-            }
 
             /// <summary>
             /// 指定処理の実行。
@@ -636,6 +622,35 @@ namespace InazumaSearch.Forms
 
                     return JsonConvert.SerializeObject(res);
 
+                });
+            }
+
+            /// <summary>
+            /// 常駐クロール設定の変更
+            /// </summary>
+            /// <param name="checked"></param>
+            public void ChangeAlwaysCrawlMode(bool @checked)
+            {
+                OwnerForm.InvokeOnUIThread((f) =>
+                {
+                    App.ChangeAlwaysCrawlMode(f, @checked);
+                    if (@checked)
+                    {
+                        Util.ShowInformationMessage(f, "常駐クロールを開始しました。\nウインドウを閉じた後も、クロール処理を継続します。\n\nInazuma Searchを完全に終了したい場合は\nタスクバー内通知エリアのアイコンを右クリックして\n「終了」を選択してください。");
+                    }
+                });
+
+            }
+
+            /// <summary>
+            /// 「Windowsログイン時に自動で起動」設定の変更
+            /// </summary>
+            /// <param name="checked"></param>
+            public void ChangeStartUp(bool @checked)
+            {
+                OwnerForm.InvokeOnUIThread((f) =>
+                {
+                    App.ChangeStartUp(f, @checked);
                 });
             }
 
