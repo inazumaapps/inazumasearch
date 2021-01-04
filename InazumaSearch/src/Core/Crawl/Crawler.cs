@@ -287,16 +287,18 @@ namespace InazumaSearch.Core.Crawl
                             {
                                 var nextWork = workStack.Pop();
                                 nextWork.Execute(workStack, res, ctSource.Token, AlwaysCrawlProgress);
+                                ctSource.Token.ThrowIfCancellationRequested(); // キャンセル受付
                             }
                             else
                             {
-                                // ワークが1つも無い状態であれば、5秒待つ
+                                // ワークが1つも無い状態であれば、進捗を報告した上で、5秒待つ (1秒ごとにキャンセル受け付け)
                                 ((IProgress<CrawlState>)AlwaysCrawlProgress).Report(new CrawlState() { CurrentStep = CrawlState.Step.Finish });
-                                Thread.Sleep(5000);
+                                for (var i = 0; i < 5; i++)
+                                {
+                                    Thread.Sleep(1000);
+                                    ctSource.Token.ThrowIfCancellationRequested(); // キャンセル受付
+                                }
                             }
-
-                            // キャンセルされたら中断
-                            ctSource.Token.ThrowIfCancellationRequested();
                         }
                     }
                     catch (OperationCanceledException)

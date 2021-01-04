@@ -34,6 +34,9 @@ namespace InazumaSearch.Forms
         public CefApi Api { get; set; }
         public CefAsyncApi AsyncApi { get; set; }
 
+        protected int AlwaysCrawlProgressTick { get; set; } = 0;
+        protected const int AlwaysCrawlProgressTickEnd = 30;
+
         public class DBStateApi
         {
             public long DocumentCount { get; set; }
@@ -146,7 +149,6 @@ namespace InazumaSearch.Forms
             {
                 return App.ExecuteInExceptionCatcher(() =>
                 {
-
                     var folders = App.UserSettings.TargetFolders;
 
                     // 同じフォルダパスが登録されていればエラー
@@ -1042,37 +1044,78 @@ namespace InazumaSearch.Forms
 
         private void AlwaysCrawlProgress_ProgressChanged(object sender, CrawlState state)
         {
+            AlwaysCrawlProgressTick++;
+            if (AlwaysCrawlProgressTick >= AlwaysCrawlProgressTickEnd) AlwaysCrawlProgressTick = 0;
+
+            // デバッグモードかどうかにかかわらず共通の表示
             switch (state.CurrentStep)
             {
                 case CrawlState.Step.AlwaysCrawlBegin:
-                    break;
-
-                case CrawlState.Step.RecordUpdateCheckBegin:
-                    StlBackgroundCrawl.Text = $"常駐クロール: 文書ファイルを検索中... ({Path.GetDirectoryName(state.Path)})";
-                    break;
-
-                case CrawlState.Step.RecordUpdateBegin:
-                    StlBackgroundCrawl.Text = $"常駐クロール: 文書データ登録中... ({state.Path})";
-                    break;
-
-                case CrawlState.Step.PurgeBegin:
-                    StlBackgroundCrawl.Text = $"常駐クロール: 存在しない文書データを削除中...";
-                    break;
-
-                case CrawlState.Step.AlwaysCrawlDBDocumentDeleteBegin:
-                case CrawlState.Step.AlwaysCrawlDBDirectoryDeleteBegin:
-                    StlBackgroundCrawl.Text = $"常駐クロール: 文書データを削除中... ({state.Path})";
-                    break;
+                    StlBackgroundCrawl.Text = "";
+                    return;
 
                 case CrawlState.Step.Finish:
-                    StlBackgroundCrawl.Text = $"常駐クロール: 待機状態";
-                    break;
+                    StlBackgroundCrawl.Text = $"常駐クロール: 更新済";
+                    return;
 
                 case CrawlState.Step.AlwaysCrawlEnd:
                     StlBackgroundCrawl.Text = "";
-                    break;
-
+                    return;
             }
+
+            string suffix;
+            if (AlwaysCrawlProgressTick < AlwaysCrawlProgressTickEnd / 3)
+            {
+                suffix = ".";
+            }
+            else if (AlwaysCrawlProgressTick < AlwaysCrawlProgressTickEnd / 3 * 2)
+            {
+                suffix = "..";
+            }
+            else
+            {
+                suffix = "...";
+            }
+
+            if (App.DebugMode)
+            {
+                // デバッグモード時のみの表示
+                switch (state.CurrentStep)
+                {
+                    case CrawlState.Step.RecordUpdateCheckBegin:
+                        StlBackgroundCrawl.Text = $"常駐クロール: 文書ファイルを検索中 ({Path.GetDirectoryName(state.Path)})";
+                        break;
+
+                    case CrawlState.Step.RecordUpdateBegin:
+                        StlBackgroundCrawl.Text = $"常駐クロール: 文書データ登録中 ({state.Path})";
+                        break;
+
+                    case CrawlState.Step.PurgeBegin:
+                        StlBackgroundCrawl.Text = $"常駐クロール: 存在しない文書データを削除中";
+                        break;
+
+                    case CrawlState.Step.AlwaysCrawlDBDocumentDeleteBegin:
+                    case CrawlState.Step.AlwaysCrawlDBDirectoryDeleteBegin:
+                        StlBackgroundCrawl.Text = $"常駐クロール: 文書データを削除中 ({state.Path})";
+                        break;
+                }
+            }
+            else
+            {
+                // 通常モード時のみの表示
+                switch (state.CurrentStep)
+                {
+                    case CrawlState.Step.RecordUpdateCheckBegin:
+                    case CrawlState.Step.RecordUpdateBegin:
+                    case CrawlState.Step.PurgeBegin:
+                    case CrawlState.Step.AlwaysCrawlDBDocumentDeleteBegin:
+                    case CrawlState.Step.AlwaysCrawlDBDirectoryDeleteBegin:
+                        StlBackgroundCrawl.Text = $"常駐クロール: 文書ファイルの情報を更新中";
+                        break;
+                }
+            }
+
+            StlBackgroundCrawl.Text += suffix;
         }
     }
 }
