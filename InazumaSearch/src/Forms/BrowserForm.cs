@@ -160,6 +160,8 @@ namespace InazumaSearch.Forms
                     folders.Add(new UserSetting.TargetFolder() { Path = path, Type = UserSetting.TargetFolderType.DocumentFile });
                     App.UserSettings.SaveTargetFolders(folders);
 
+                    // 検索対象フォルダ変更後の共通処理を実行
+                    OnTargetDirectoryChanged();
 
                     // すでに登録されているファイル数をカウント
                     var res = App.GM.Select(
@@ -172,6 +174,10 @@ namespace InazumaSearch.Forms
                 });
 
             }
+
+            /// <summary>
+            /// 検索対象フォルダを削除する
+            /// </summary>
             public void DeleteTargetDirectory(string path)
             {
                 App.ExecuteInExceptionCatcher(() =>
@@ -180,9 +186,36 @@ namespace InazumaSearch.Forms
                     var folders = App.UserSettings.TargetFolders;
                     folders.Remove(folders.First(f => f.Path == path));
                     App.UserSettings.SaveTargetFolders(folders);
+
+                    // 検索対象フォルダ変更後の共通処理を実行
+                    OnTargetDirectoryChanged();
                 });
             }
 
+            /// <summary>
+            /// 検索対象フォルダの設定変更時共通処理を行う
+            /// </summary>
+            protected void OnTargetDirectoryChanged()
+            {
+                // 常駐クロール実行中の場合、一度常駐クロールを止めて、最初から常駐クロールを再開する
+                if (App.Crawler.RunningState == Crawler.RunningStateValue.ALWAYS_CRAWLING)
+                {
+                    OwnerForm.InvokeOnUIThread((f) =>
+                    {
+                        var t = Task.Run(() =>
+                        {
+                            // 実行中のクロールを停止
+                            App.Crawler.StopIfRunning();
+
+                            // 常駐クロール再開
+                            var t2 = App.Crawler.RunAlwaysModeAsync();
+                        });
+
+                        var pf = new ProgressForm(t, "常駐クロールを再起動中...");
+                        pf.ShowDialog(f);
+                    });
+                }
+            }
 
             public void ShowIgnoreEditFormFromSearchResult(string path)
             {
