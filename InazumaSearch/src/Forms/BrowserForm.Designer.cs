@@ -31,6 +31,7 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(BrowserForm));
             this.StatusBar = new System.Windows.Forms.StatusStrip();
             this.StlBackgroundCrawl = new System.Windows.Forms.ToolStripStatusLabel();
+            this.BrowserPanel = new System.Windows.Forms.Panel();
             this.StatusBar.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -46,15 +47,24 @@
             // StlBackgroundCrawl
             // 
             this.StlBackgroundCrawl.Name = "StlBackgroundCrawl";
-            this.StlBackgroundCrawl.Size = new System.Drawing.Size(1136, 17);
+            this.StlBackgroundCrawl.Size = new System.Drawing.Size(1167, 17);
             this.StlBackgroundCrawl.Spring = true;
             this.StlBackgroundCrawl.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // BrowserPanel
+            // 
+            this.BrowserPanel.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.BrowserPanel.Location = new System.Drawing.Point(0, 0);
+            this.BrowserPanel.Name = "BrowserPanel";
+            this.BrowserPanel.Size = new System.Drawing.Size(1182, 620);
+            this.BrowserPanel.TabIndex = 1;
             // 
             // BrowserForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1182, 642);
+            this.Controls.Add(this.BrowserPanel);
             this.Controls.Add(this.StatusBar);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "BrowserForm";
@@ -75,5 +85,6 @@
 
         private System.Windows.Forms.StatusStrip StatusBar;
         private System.Windows.Forms.ToolStripStatusLabel StlBackgroundCrawl;
+        private System.Windows.Forms.Panel BrowserPanel;
     }
 }

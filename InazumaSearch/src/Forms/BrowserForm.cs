@@ -610,10 +610,7 @@ namespace InazumaSearch.Forms
             ChromeBrowser = new ChromiumWebBrowser(Path.Combine(htmlDirPath, "index.html"));
             ChromeBrowser.BrowserSettings.AcceptLanguageList = "ja-JP";
             ChromeBrowser.BrowserSettings.WebSecurity = CefState.Disabled;
-
-            // Add it to the form and fill it to the form window.
-            Controls.Add(ChromeBrowser);
-            ChromeBrowser.Dock = DockStyle.Fill;
+            BrowserPanel.Controls.Add(ChromeBrowser);
 
             Api = new CefApi();
             ChromeBrowser.JavascriptObjectRepository.Register("api", Api, isAsync: false);
