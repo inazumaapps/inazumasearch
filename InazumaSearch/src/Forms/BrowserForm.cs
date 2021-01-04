@@ -1012,10 +1012,13 @@ namespace InazumaSearch.Forms
             switch (state.CurrentStep)
             {
                 case CrawlState.Step.AlwaysCrawlBegin:
-                    StlBackgroundCrawl.Text = "常駐クロール: ";
                     break;
 
-                case CrawlState.Step.RecordUpdating:
+                case CrawlState.Step.RecordUpdateCheckBegin:
+                    StlBackgroundCrawl.Text = $"常駐クロール: 文書ファイルを検索中... ({Path.GetDirectoryName(state.Path)})";
+                    break;
+
+                case CrawlState.Step.RecordUpdateBegin:
                     StlBackgroundCrawl.Text = $"常駐クロール: 文書データ登録中... ({state.Path})";
                     break;
 

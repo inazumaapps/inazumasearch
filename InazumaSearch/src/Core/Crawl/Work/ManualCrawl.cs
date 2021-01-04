@@ -70,7 +70,7 @@ namespace InazumaSearch.Core.Crawl.Work
             }
 
             // クロール開始を報告
-            progress?.Report(new CrawlState() { CurrentStep = CrawlState.Step.RecordUpdateBegin });
+            progress?.Report(new CrawlState() { CurrentStep = CrawlState.Step.RecordUpdateProcessBegin });
 
             // DBの不要な文書削除処理をワークスタックに追加（下記処理が全て終わった後に呼び出される）
             workStack.Push(new DBPurge(_app, IsBackgroundCrawl, dbRecordMap));

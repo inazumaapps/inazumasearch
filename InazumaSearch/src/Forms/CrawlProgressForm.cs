@@ -70,13 +70,13 @@ namespace InazumaSearch.Forms
                             statusText.Text = string.Format("登録済み文書の一覧を取得しています...");
                             break;
 
-                        case CrawlState.Step.RecordUpdateBegin:
+                        case CrawlState.Step.RecordUpdateProcessBegin:
                             ProgressBar.Style = ProgressBarStyle.Marquee;
                             TaskbarManager.Instance.SetProgressState(TaskbarProgressBarState.Indeterminate, Handle);
                             statusText.Text = string.Format("文書データ登録中...");
                             break;
 
-                        case CrawlState.Step.RecordUpdating:
+                        case CrawlState.Step.RecordUpdateCheckBegin:
                             // 計測が完了している場合、最大値を設定
                             if (state.TotalValue != null)
                             {
@@ -106,7 +106,7 @@ namespace InazumaSearch.Forms
                             }
                             break;
 
-                        case CrawlState.Step.PurgeBegin:
+                        case CrawlState.Step.PurgeProcessBegin:
                             ProgressBar.Style = ProgressBarStyle.Marquee;
                             TaskbarManager.Instance.SetProgressState(TaskbarProgressBarState.Indeterminate, Handle);
                             statusText.Text = string.Format("存在しない文書データを削除中...");

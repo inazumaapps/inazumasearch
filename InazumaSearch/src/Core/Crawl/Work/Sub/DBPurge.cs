@@ -54,7 +54,7 @@ namespace InazumaSearch.Core.Crawl.Work
             var lastCoolTimeEnd = DateTime.Now;
 
             // 進捗を報告
-            progress?.Report(new CrawlState() { CurrentStep = CrawlState.Step.PurgeBegin });
+            progress?.Report(new CrawlState() { CurrentStep = CrawlState.Step.PurgeProcessBegin });
 
             // 見つかった登録対象ファイルパスのセットを、Groonga用キーとファイルパスを格納したDictionaryに変換
             var targetKeyToPathMap = new Dictionary<string, string>();
@@ -73,6 +73,13 @@ namespace InazumaSearch.Core.Crawl.Work
                     // 削除直前に、ファイルが存在しないことを再確認 (対象ファイルパスの特定から削除の実行までに時間差があるため)
                     if (!File.Exists(path))
                     {
+                        // 進捗を報告
+                        ReportProgressLimitedFrequency(
+                            progress
+                            , new CrawlState() { CurrentStep = CrawlState.Step.PurgeBegin, Path = path }
+                            , crawlResult
+                        );
+
                         // DBから対象の文書データを削除
                         _app.GM.Delete(Table.Documents, key: key);
                         crawlResult.Deleted++;

@@ -14,12 +14,18 @@ namespace InazumaSearch.Core.Crawl
             DBRecordListUpBegin
             ,
             /// <summary>文書データ登録開始（クロール開始時に一度のみ実行）</summary>
+            RecordUpdateProcessBegin
+            ,
+            /// <summary>文書データを登録するかどうかの判定開始（ファイルごとに実行）</summary>
+            RecordUpdateCheckBegin
+            ,
+            /// <summary>文書データの実登録開始（新しいファイル／変更されたファイル1件ごとに実行）</summary>
             RecordUpdateBegin
             ,
-            /// <summary>文書データ登録中（クロール中定期的に実行）</summary>
-            RecordUpdating
+            /// <summary>DB内の不要データ削除開始（削除処理全体で一度のみ実行）</summary>
+            PurgeProcessBegin
             ,
-            /// <summary>DB内の不要データ削除開始</summary>
+            /// <summary>DB内の不要データ実削除開始（削除対象のデータごとに実行）</summary>
             PurgeBegin
             ,
             /// <summary>常駐クロールでの文書ファイル削除開始</summary>

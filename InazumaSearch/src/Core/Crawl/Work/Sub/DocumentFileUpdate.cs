@@ -74,7 +74,7 @@ namespace InazumaSearch.Core.Crawl.Work
         )
         {
             // 登録メイン処理を実行
-            var success = UpdateMain(crawlResult);
+            var success = UpdateMain(crawlResult, progress);
 
             // 結果をカウント
             if (success)
@@ -96,22 +96,23 @@ namespace InazumaSearch.Core.Crawl.Work
 
             // 常駐クロールの場合はクールタイムを挟む (処理の経過時間×3, 最低0.05秒)
             InsertCoolTime(50);
-
-            // 進捗を報告
-            ReportProgressLimitedFrequency(
-                progress,
-                new CrawlState() { CurrentStep = CrawlState.Step.RecordUpdating, CurrentValue = crawlResult.Updated + crawlResult.Skipped, TotalValue = crawlResult.TotalTargetCount, Path = FilePath },
-                crawlResult
-            );
         }
 
         /// <summary>
         /// 登録メイン処理
         /// </summary>
         protected virtual bool UpdateMain(
-            Result crawlResult
+            Result crawlResult,
+            IProgress<CrawlState> progress = null
         )
         {
+            // 進捗を報告
+            ReportProgressLimitedFrequency(
+                progress,
+                new CrawlState() { CurrentStep = CrawlState.Step.RecordUpdateCheckBegin, CurrentValue = crawlResult.Updated + crawlResult.Skipped, TotalValue = crawlResult.TotalTargetCount, Path = FilePath },
+                crawlResult
+            );
+
             // 展開対象の拡張子一覧を取得
             var textExtNames = _app.GetTextExtNames();
             var pluginExtNames = _app.GetPluginExtNames();
@@ -147,6 +148,9 @@ namespace InazumaSearch.Core.Crawl.Work
                     return false;
                 }
             }
+
+            // 進捗を報告
+            progress?.Report(new CrawlState() { CurrentStep = CrawlState.Step.RecordUpdateBegin, CurrentValue = crawlResult.Updated + crawlResult.Skipped, TotalValue = crawlResult.TotalTargetCount, Path = FilePath });
 
             // データの登録
             // 拡張子に応じてテキストを抽出する
