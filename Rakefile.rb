@@ -47,6 +47,14 @@ task 'zip:standard' => DEST_ZIPS.values
 desc "-"
 task 'zip:portable' => DEST_ZIPS_PORTABLE.values
 
+PLATFORMS.each do |platform|
+	desc "-"
+	task "zip:standard:#{platform}" => DEST_ZIPS[platform]
+
+	desc "-"
+	task "zip:portable:#{platform}" => DEST_ZIPS_PORTABLE[platform]
+end
+
 desc "-"
 task :build => RELEASE_EXE.values + RELEASE_PORTABLE_EXE.values
 
