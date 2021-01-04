@@ -1,4 +1,4 @@
-VERSION = '0.16.0'
+VERSION = '0.17.0'
 MSBUILD = 'C:\\Program Files (x86)\\MSBuild\\14.0\\Bin\\MSBuild.exe'
 EXEPRESS = 'C:\\Program Files (x86)\\Web Technology\\EXEpress 6\\EXEpress.exe'
 
