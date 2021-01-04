@@ -141,6 +141,7 @@ namespace InazumaSearch.Core.Crawl
                           Column.Documents.KEY
                         , Column.Documents.FILE_UPDATED_AT
                         , Column.Documents.SIZE
+                        , Column.Documents.FILE_PATH
                 }
                 , limit: -1 // 全件
                 , filter: filter

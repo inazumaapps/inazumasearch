@@ -56,7 +56,7 @@ namespace InazumaSearch.Core.Crawl.Work
             // 進捗を報告
             progress?.Report(new CrawlState() { CurrentStep = CrawlState.Step.PurgeBegin });
 
-            // 対象ファイルパスのセットを、Groonga用キーとファイルパスを格納したDictionaryに変換
+            // 見つかった登録対象ファイルパスのセットを、Groonga用キーとファイルパスを格納したDictionaryに変換
             var targetKeyToPathMap = new Dictionary<string, string>();
             foreach (var path in crawlResult.FoundTargetFilePathSet)
             {
@@ -65,9 +65,11 @@ namespace InazumaSearch.Core.Crawl.Work
 
             foreach (var key in AlreadyDBRecordMap.Keys.Where(k => k.StartsWith("f:")))
             {
-                if (targetKeyToPathMap.ContainsKey(key))
+                if (!targetKeyToPathMap.ContainsKey(key))
                 {
-                    var path = targetKeyToPathMap[key];
+                    var rec = AlreadyDBRecordMap[key];
+                    var path = (string)rec[Column.Documents.FILE_PATH];
+
                     // 削除直前に、ファイルが存在しないことを再確認 (対象ファイルパスの特定から削除の実行までに時間差があるため)
                     if (!File.Exists(path))
                     {
