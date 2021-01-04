@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 using Alphaleonis.Win32.Filesystem;
 using InazumaSearch.Core.Crawl;
 
@@ -63,15 +64,24 @@ namespace InazumaSearch.Core.Crawl.Work
                 targetKeyToPathMap[Util.MakeDocumentFileKey(path)] = path;
             }
 
+            // ユーザー設定で登録されている検索対象フォルダを、キー文字列プレフィックスのリストに変換
+            var targetFolderKeyPrefixes = _app.UserSettings.TargetFolders.Select(folder => Util.MakeDocumentDirKeyPrefix(folder.Path))
+                                                                         .ToList();
+
+            // DB内の文書データ1件ごとに処理
             foreach (var key in AlreadyDBRecordMap.Keys.Where(k => k.StartsWith("f:")))
             {
+                // DBに存在しているが、登録対象ファイルパスのセットに含まれていない場合、削除対象とする
                 if (!targetKeyToPathMap.ContainsKey(key))
                 {
                     var rec = AlreadyDBRecordMap[key];
                     var path = (string)rec[Column.Documents.FILE_PATH];
 
                     // 削除直前に、ファイルが存在しないことを再確認 (対象ファイルパスの特定から削除の実行までに時間差があるため)
-                    if (!File.Exists(path))
+                    // ただし、ユーザー設定で登録されているどの検索対象フォルダとも一致しないパスの場合は
+                    // 「設定から削除された検索対象フォルダ内に含まれているファイル」とみなし、ファイルが存在していても削除
+                    if (!File.Exists(path)
+                        || !targetFolderKeyPrefixes.Any(keyPrefix => key.StartsWith(keyPrefix)))
                     {
                         // 進捗を報告
                         ReportProgressLimitedFrequency(
