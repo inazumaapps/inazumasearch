@@ -73,7 +73,7 @@ namespace InazumaSearch.Forms
                         case CrawlState.Step.RecordUpdateBegin:
                             ProgressBar.Style = ProgressBarStyle.Marquee;
                             TaskbarManager.Instance.SetProgressState(TaskbarProgressBarState.Indeterminate, Handle);
-                            statusText.Text = string.Format("インデックス登録中...");
+                            statusText.Text = string.Format("文書データ登録中...");
                             break;
 
                         case CrawlState.Step.RecordUpdating:
@@ -98,11 +98,11 @@ namespace InazumaSearch.Forms
                             }
                             if (state.TotalValue != null)
                             {
-                                statusText.Text = $"インデックス登録中... ({state.CurrentValue} / {state.TotalValue})";
+                                statusText.Text = $"文書データ登録中... ({state.CurrentValue} / {state.TotalValue})";
                             }
                             else
                             {
-                                statusText.Text = $"インデックス登録中... ({state.CurrentValue})";
+                                statusText.Text = $"文書データ登録中... ({state.CurrentValue})";
                             }
                             break;
 
