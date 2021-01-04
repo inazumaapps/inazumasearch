@@ -200,21 +200,17 @@ namespace InazumaSearch.Forms
             protected void OnTargetDirectoryChanged()
             {
                 // 常駐クロール実行中の場合、一度常駐クロールを止めて、最初から常駐クロールを再開する
-                if (App.Crawler.RunningState == Crawler.RunningStateValue.ALWAYS_CRAWLING)
+                if (App.Crawler.AlwaysCrawlIsRunning)
                 {
                     OwnerForm.InvokeOnUIThread((f) =>
                     {
-                        var t = Task.Run(() =>
-                        {
-                            // 実行中のクロールを停止
-                            App.Crawler.StopIfRunning();
-
-                            // 常駐クロール再開
-                            var t2 = App.Crawler.RunAlwaysModeAsync();
-                        });
-
-                        var pf = new ProgressForm(t, "常駐クロールを再起動中...");
+                        // 実行中の常駐クロール処理を中止
+                        var stoppingTask = App.Crawler.StopAlwaysCrawlIfRunningAsync();
+                        var pf = new ProgressForm(stoppingTask, "常駐クロールを再起動中...");
                         pf.ShowDialog(f);
+
+                        // 常駐クロール再開
+                        App.Crawler.StartAlwaysCrawl();
                     });
                 }
             }
@@ -249,7 +245,6 @@ namespace InazumaSearch.Forms
                     var dialog = new IgnoreEditForm(IgnoreEditForm.EditMode.UPDATE, dirPath, "", App);
                     dialog.ShowDialog(form);
                 });
-
             }
 
             public void ShowUpdateForm()
@@ -264,25 +259,20 @@ namespace InazumaSearch.Forms
 
             public void UpdateFolderLabel(string path, string label)
             {
-
                 // 既存データのラベル値を更新
-                OwnerForm.InvokeOnUIThread((f) =>
+                OwnerForm.InvokeOnUIThread(async (f) =>
                 {
-                    var folders = App.UserSettings.TargetFolders;
-                    var folder = folders.First(f2 => f2.Path == path);
-                    folder.Label = label;
-
-                    App.UserSettings.Save();
-
-                    var t = Task.Run(() =>
+                    // クロール中の場合は停止してから処理
+                    InvokeAfterSuspendingCrawl(f, "DBのラベル情報を更新中...", () =>
                     {
+                        var folders = App.UserSettings.TargetFolders;
+                        var folder = folders.First(f2 => f2.Path == path);
+                        folder.Label = label;
+
+                        App.UserSettings.Save();
                         App.UpdateDocumentFolderLabels();
                     });
-
-                    var pf = new ProgressForm(t, "DBのラベル情報を更新中...");
-                    pf.ShowDialog(f);
                 });
-
             }
 
             public void ChangeAlwaysCrawlMode(bool @checked)
@@ -308,7 +298,34 @@ namespace InazumaSearch.Forms
                 {
                     App.ChangeStartUp(f, @checked);
                 });
+            }
 
+            /// <summary>
+            /// 指定処理の実行。
+            /// 現在実行中のクロール処理がある場合、そのクロールを停止したうえで指定処理を実行し、完了後に必要に応じて常駐クロールを再開する
+            /// （DB全体に影響を与える更新操作などの実行時に使用）
+            /// </summary>
+            protected void InvokeAfterSuspendingCrawl(IWin32Window ownerForm, string caption, Action mainProc)
+            {
+                // 進捗状況ダイアログを開いた上で実行する処理
+                var mainTask = Task.Run(async () =>
+                {
+                    // 常駐クロール実行中の場合、停止
+                    await App.Crawler.StopAlwaysCrawlIfRunningAsync();
+
+                    // メイン処理実行
+                    mainProc.Invoke();
+                });
+
+                // 進捗状況ダイアログを開き、上記処理を実行
+                var pf = new ProgressForm(mainTask, caption);
+                pf.ShowDialog(ownerForm);
+
+                // ユーザー設定で常駐クロールがONの場合、メイン処理完了後に常駐クロールを再開
+                if (App.UserSettings.AlwaysCrawlMode)
+                {
+                    App.Crawler.StartAlwaysCrawl();
+                }
             }
         }
 
@@ -901,11 +918,11 @@ namespace InazumaSearch.Forms
                 }
             }
 
-            ChromeBrowser.EvaluateScriptAsync("$('#CRAWL-START').addClass('disabled');");
+            ChromeBrowser.EvaluateScriptAsync("$('#CRAWL-START').addClass('disabled'); $('#SETTING-LINK').addClass('disabled');");
 
             var f = new CrawlProgressForm(App, () =>
             {
-                ChromeBrowser.EvaluateScriptAsync("$('#CRAWL-START').removeClass('disabled');");
+                ChromeBrowser.EvaluateScriptAsync("$('#CRAWL-START').removeClass('disabled'); $('#SETTING-LINK').removeClass('disabled');");
             })
             {
                 TargetDirPaths = targetDirPaths
@@ -1042,7 +1059,7 @@ namespace InazumaSearch.Forms
             App.Crawler.AlwaysCrawlProgress.ProgressChanged += AlwaysCrawlProgress_ProgressChanged;
         }
 
-        private void AlwaysCrawlProgress_ProgressChanged(object sender, CrawlState state)
+        private void AlwaysCrawlProgress_ProgressChanged(object sender, ProgressState state)
         {
             AlwaysCrawlProgressTick++;
             if (AlwaysCrawlProgressTick >= AlwaysCrawlProgressTickEnd) AlwaysCrawlProgressTick = 0;
@@ -1050,15 +1067,15 @@ namespace InazumaSearch.Forms
             // デバッグモードかどうかにかかわらず共通の表示
             switch (state.CurrentStep)
             {
-                case CrawlState.Step.AlwaysCrawlBegin:
+                case ProgressState.Step.AlwaysCrawlBegin:
                     StlBackgroundCrawl.Text = "";
                     return;
 
-                case CrawlState.Step.Finish:
+                case ProgressState.Step.Finish:
                     StlBackgroundCrawl.Text = $"常駐クロール: 更新済";
                     return;
 
-                case CrawlState.Step.AlwaysCrawlEnd:
+                case ProgressState.Step.AlwaysCrawlEnd:
                     StlBackgroundCrawl.Text = "";
                     return;
             }
@@ -1082,20 +1099,20 @@ namespace InazumaSearch.Forms
                 // デバッグモード時のみの表示
                 switch (state.CurrentStep)
                 {
-                    case CrawlState.Step.RecordUpdateCheckBegin:
+                    case ProgressState.Step.RecordUpdateCheckBegin:
                         StlBackgroundCrawl.Text = $"常駐クロール: 文書ファイルを検索中 ({Path.GetDirectoryName(state.Path)})";
                         break;
 
-                    case CrawlState.Step.RecordUpdateBegin:
+                    case ProgressState.Step.RecordUpdateBegin:
                         StlBackgroundCrawl.Text = $"常駐クロール: 文書データ登録中 ({state.Path})";
                         break;
 
-                    case CrawlState.Step.PurgeBegin:
+                    case ProgressState.Step.PurgeBegin:
                         StlBackgroundCrawl.Text = $"常駐クロール: 存在しない文書データを削除中";
                         break;
 
-                    case CrawlState.Step.AlwaysCrawlDBDocumentDeleteBegin:
-                    case CrawlState.Step.AlwaysCrawlDBDirectoryDeleteBegin:
+                    case ProgressState.Step.AlwaysCrawlDBDocumentDeleteBegin:
+                    case ProgressState.Step.AlwaysCrawlDBDirectoryDeleteBegin:
                         StlBackgroundCrawl.Text = $"常駐クロール: 文書データを削除中 ({state.Path})";
                         break;
                 }
@@ -1105,11 +1122,11 @@ namespace InazumaSearch.Forms
                 // 通常モード時のみの表示
                 switch (state.CurrentStep)
                 {
-                    case CrawlState.Step.RecordUpdateCheckBegin:
-                    case CrawlState.Step.RecordUpdateBegin:
-                    case CrawlState.Step.PurgeBegin:
-                    case CrawlState.Step.AlwaysCrawlDBDocumentDeleteBegin:
-                    case CrawlState.Step.AlwaysCrawlDBDirectoryDeleteBegin:
+                    case ProgressState.Step.RecordUpdateCheckBegin:
+                    case ProgressState.Step.RecordUpdateBegin:
+                    case ProgressState.Step.PurgeBegin:
+                    case ProgressState.Step.AlwaysCrawlDBDocumentDeleteBegin:
+                    case ProgressState.Step.AlwaysCrawlDBDirectoryDeleteBegin:
                         StlBackgroundCrawl.Text = $"常駐クロール: 文書ファイルの情報を更新中";
                         break;
                 }

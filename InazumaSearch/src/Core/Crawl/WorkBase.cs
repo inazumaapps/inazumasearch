@@ -48,7 +48,7 @@ namespace InazumaSearch.Core.Crawl
             Stack<IWork> workStack,
             Result crawlResult,
             CancellationToken cToken,
-            IProgress<CrawlState> progress = null
+            IProgress<ProgressState> progress = null
         )
         {
             ExecutionStart = DateTime.Now;
@@ -63,7 +63,7 @@ namespace InazumaSearch.Core.Crawl
             Stack<IWork> workStack,
             Result crawlResult,
             CancellationToken cToken,
-            IProgress<CrawlState> progress = null
+            IProgress<ProgressState> progress = null
         );
 
         /// <summary>
@@ -172,7 +172,7 @@ namespace InazumaSearch.Core.Crawl
         /// <summary>
         /// 進捗状況を報告。ただし一定の頻度以上で報告しないようにする
         /// </summary>
-        protected virtual void ReportProgressLimitedFrequency(IProgress<CrawlState> progress, CrawlState reportingState, Result result)
+        protected virtual void ReportProgressLimitedFrequency(IProgress<ProgressState> progress, ProgressState reportingState, Result result)
         {
             if (progress == null) return;
 

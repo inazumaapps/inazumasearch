@@ -76,7 +76,7 @@ namespace InazumaSearch.Core.Crawl.Work
             Stack<IWork> workStack,
             Result crawlResult,
             CancellationToken cToken,
-            IProgress<CrawlState> progress = null
+            IProgress<ProgressState> progress = null
         )
         {
             // 展開対象の拡張子一覧を取得

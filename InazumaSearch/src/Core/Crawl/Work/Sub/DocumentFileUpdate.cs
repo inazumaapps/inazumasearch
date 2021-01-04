@@ -70,7 +70,7 @@ namespace InazumaSearch.Core.Crawl.Work
             Stack<IWork> workStack,
             Result crawlResult,
             CancellationToken cToken,
-            IProgress<CrawlState> progress = null
+            IProgress<ProgressState> progress = null
         )
         {
             // 登録メイン処理を実行
@@ -103,13 +103,13 @@ namespace InazumaSearch.Core.Crawl.Work
         /// </summary>
         protected virtual bool UpdateMain(
             Result crawlResult,
-            IProgress<CrawlState> progress = null
+            IProgress<ProgressState> progress = null
         )
         {
             // 進捗を報告
             ReportProgressLimitedFrequency(
                 progress,
-                new CrawlState() { CurrentStep = CrawlState.Step.RecordUpdateCheckBegin, CurrentValue = crawlResult.Updated + crawlResult.Skipped, TotalValue = crawlResult.TotalTargetCount, Path = FilePath },
+                new ProgressState() { CurrentStep = ProgressState.Step.RecordUpdateCheckBegin, CurrentValue = crawlResult.Updated + crawlResult.Skipped, TotalValue = crawlResult.TotalTargetCount, Path = FilePath },
                 crawlResult
             );
 
@@ -150,7 +150,7 @@ namespace InazumaSearch.Core.Crawl.Work
             }
 
             // 進捗を報告
-            progress?.Report(new CrawlState() { CurrentStep = CrawlState.Step.RecordUpdateBegin, CurrentValue = crawlResult.Updated + crawlResult.Skipped, TotalValue = crawlResult.TotalTargetCount, Path = FilePath });
+            progress?.Report(new ProgressState() { CurrentStep = ProgressState.Step.RecordUpdateBegin, CurrentValue = crawlResult.Updated + crawlResult.Skipped, TotalValue = crawlResult.TotalTargetCount, Path = FilePath });
 
             // データの登録
             // 拡張子に応じてテキストを抽出する

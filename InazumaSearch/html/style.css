@@ -226,6 +226,10 @@ pre .keyword {
     font-family: monospace !important;
 }
 
+#SETTING-LINK.disabled {
+	pointer-events: none;
+	color: silver !important;
+}
 
 
 /*

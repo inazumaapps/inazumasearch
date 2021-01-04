@@ -273,7 +273,7 @@
     <Compile Include="src\Forms\ProgressForm.Designer.cs">
       <DependentUpon>ProgressForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="src\Core\Crawl\CrawlState.cs" />
+    <Compile Include="src\Core\Crawl\ProgressState.cs" />
     <Compile Include="src\Core\Crawl\Crawler.cs" />
     <Compile Include="src\Forms\CrawlProgressForm.cs">
       <SubType>Form</SubType>

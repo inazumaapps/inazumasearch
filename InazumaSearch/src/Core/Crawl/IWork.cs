@@ -19,7 +19,7 @@ namespace InazumaSearch.Core.Crawl
             Stack<IWork> workStack,
             Result crawlResult,
             CancellationToken cToken,
-            IProgress<CrawlState> progress = null
+            IProgress<ProgressState> progress = null
         );
 
         /// <summary>

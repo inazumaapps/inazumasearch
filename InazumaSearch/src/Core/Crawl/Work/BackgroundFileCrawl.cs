@@ -68,7 +68,7 @@ namespace InazumaSearch.Core.Crawl.Work
             Stack<IWork> workStack,
             Result crawlResult,
             CancellationToken cToken,
-            IProgress<CrawlState> progress = null
+            IProgress<ProgressState> progress = null
         )
         {
             Logger.Debug("ファイル変更時クロール - {0}", FilePath);

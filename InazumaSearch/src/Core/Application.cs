@@ -319,7 +319,7 @@ namespace InazumaSearch.Core
             // 常駐クロールモードがONであれば、クロールを開始する
             if (UserSettings.AlwaysCrawlMode)
             {
-                var t = Crawler.RunAlwaysModeAsync();
+                Crawler.StartAlwaysCrawl();
             }
 
             // 正常起動
@@ -410,13 +410,8 @@ namespace InazumaSearch.Core
             // 常駐クロールを起動or停止
             if (flag)
             {
-                var mainTask = Task.Run(() =>
-                {
-                    var t = Crawler.RunAlwaysModeAsync();
-                });
-
-                var f = new ProgressForm(mainTask, "常駐クロールを開始しています...");
-                f.ShowDialog(ownerForm);
+                // 常駐クロール開始
+                Crawler.StartAlwaysCrawl();
 
                 // 通知アイコンを表示する
                 if (Core.Application.NotifyIcon != null)
@@ -426,9 +421,10 @@ namespace InazumaSearch.Core
             }
             else
             {
-                var mainTask = Task.Run(() =>
+                var mainTask = Task.Run(async () =>
                 {
-                    Crawler.StopIfRunning();
+                    // 常駐クロール停止
+                    await Crawler.StopAlwaysCrawlIfRunningAsync(); // 停止完了まで待機
 
                     // 合わせてスタートアップ起動もオフ
                     UserSettings.SaveStartUp(false);

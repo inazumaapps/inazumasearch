@@ -42,7 +42,7 @@ namespace InazumaSearch.Core.Crawl.Work
             Stack<IWork> workStack,
             Result crawlResult,
             CancellationToken cToken,
-            IProgress<CrawlState> progress = null
+            IProgress<ProgressState> progress = null
         )
         {
             // 無視設定一覧の取得

@@ -51,7 +51,7 @@ namespace InazumaSearch.Core.Crawl.Work
             Stack<IWork> workStack,
             Result crawlResult,
             CancellationToken cToken,
-            IProgress<CrawlState> progress = null
+            IProgress<ProgressState> progress = null
         )
         {
             // 無視設定一覧の取得
@@ -70,7 +70,7 @@ namespace InazumaSearch.Core.Crawl.Work
             }
 
             // クロール開始を報告
-            progress?.Report(new CrawlState() { CurrentStep = CrawlState.Step.RecordUpdateProcessBegin });
+            progress?.Report(new ProgressState() { CurrentStep = ProgressState.Step.RecordUpdateProcessBegin });
 
             // DBの不要な文書削除処理をワークスタックに追加（下記処理が全て終わった後に呼び出される）
             workStack.Push(new DBPurge(_app, IsBackgroundCrawl, dbRecordMap));

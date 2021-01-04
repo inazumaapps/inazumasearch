@@ -48,14 +48,14 @@ namespace InazumaSearch.Core.Crawl.Work
             Stack<IWork> workStack,
             Result crawlResult,
             CancellationToken cToken,
-            IProgress<CrawlState> progress = null
+            IProgress<ProgressState> progress = null
         )
         {
             Logger.Info("DB内の不要な文書データを一括削除");
             var lastCoolTimeEnd = DateTime.Now;
 
             // 進捗を報告
-            progress?.Report(new CrawlState() { CurrentStep = CrawlState.Step.PurgeProcessBegin });
+            progress?.Report(new ProgressState() { CurrentStep = ProgressState.Step.PurgeProcessBegin });
 
             // 見つかった登録対象ファイルパスのセットを、Groonga用キーとファイルパスを格納したDictionaryに変換
             var targetKeyToPathMap = new Dictionary<string, string>();
@@ -86,7 +86,7 @@ namespace InazumaSearch.Core.Crawl.Work
                         // 進捗を報告
                         ReportProgressLimitedFrequency(
                             progress
-                            , new CrawlState() { CurrentStep = CrawlState.Step.PurgeBegin, Path = path }
+                            , new ProgressState() { CurrentStep = ProgressState.Step.PurgeBegin, Path = path }
                             , crawlResult
                         );
 

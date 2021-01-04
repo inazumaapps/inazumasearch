@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace InazumaSearch.Core.Crawl
 {
-    public class CrawlState
+    public class ProgressState
     {
         public enum Step
         {

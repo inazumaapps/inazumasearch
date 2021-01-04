@@ -62,7 +62,7 @@ namespace InazumaSearch.Core.Crawl.Work
             Stack<IWork> workStack,
             Result crawlResult,
             CancellationToken cToken,
-            IProgress<CrawlState> progress = null
+            IProgress<ProgressState> progress = null
         )
         {
             // 削除直前に、ファイルが存在しないことを再確認 (対象ファイルパスの特定から削除の実行までに時間差があるため)
@@ -73,7 +73,7 @@ namespace InazumaSearch.Core.Crawl.Work
                 // 進捗を報告
                 ReportProgressLimitedFrequency(
                     progress,
-                    new CrawlState() { CurrentStep = CrawlState.Step.AlwaysCrawlDBDocumentDeleteBegin, Path = FilePath },
+                    new ProgressState() { CurrentStep = ProgressState.Step.AlwaysCrawlDBDocumentDeleteBegin, Path = FilePath },
                     crawlResult
                 );
 
