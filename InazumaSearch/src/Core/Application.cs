@@ -502,20 +502,16 @@ namespace InazumaSearch.Core
         /// <summary>
         /// 文書データのラベル情報を一括更新
         /// </summary>
-        /// <param name="documentKeys">更新対象のキーのコレクション。省略した場合はすべてのデータを更新</param>
-        public virtual void UpdateDocumentFolderLabels(IEnumerable<string> documentKeys = null)
+        public virtual void UpdateDocumentFolderLabels()
         {
-            if (documentKeys == null)
-            {
-                var selectRes = GM.Select(
-                      Table.Documents
-                    , outputColumns: new[] { Column.Documents.KEY, Column.Documents.FILE_PATH }
-                    , limit: -1
-                    , sortKeys: new[] { Column.Documents.KEY }
-                );
+            var selectRes = GM.Select(
+                  Table.Documents
+                , outputColumns: new[] { Column.Documents.KEY, Column.Documents.FILE_PATH }
+                , limit: -1
+                , sortKeys: new[] { Column.Documents.KEY }
+            );
 
-                documentKeys = selectRes.SearchResult.Records.Select((r) => (string)r.Key);
-            }
+            var documentKeys = selectRes.SearchResult.Records.Select((r) => (string)r.Key);
             var values = new List<IDictionary<string, object>>();
             foreach (var key in documentKeys)
             {

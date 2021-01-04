@@ -256,5 +256,16 @@ namespace InazumaSearch.Forms
 
 
         }
+
+        private void BtnUpdateDocumentFolderLabels_Click(object sender, EventArgs e)
+        {
+            var t = Task.Run(() =>
+            {
+                Application.UpdateDocumentFolderLabels();
+            });
+
+            var pf = new ProgressForm(t, "DBのラベル情報を更新中...");
+            pf.ShowDialog(this);
+        }
     }
 }
