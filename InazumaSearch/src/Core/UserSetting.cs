@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Alphaleonis.Win32.Filesystem;
 using Newtonsoft.Json;
+using Semver;
 
 namespace InazumaSearch.Core
 {
@@ -45,6 +46,7 @@ namespace InazumaSearch.Core
             public virtual DateTime? LastCrawlTime { get; set; } = null;
             public virtual bool AlwaysCrawlMode { get; set; } = false;
             public virtual bool StartUp { get; set; } = false;
+            public virtual string LastBootVersion { get; set; } = null;
             public virtual Dictionary<string, int> LastLoadedPluginVersionNumbers { get; set; } = new Dictionary<string, int>();
             public virtual List<Extension> TextExtensions { get; set; } = new List<Extension>();
             public virtual List<string> LastExcludingDirPaths { get; set; } = null;
@@ -123,6 +125,11 @@ namespace InazumaSearch.Core
             #region 個別のユーザー設定値プロパティ
 
             /// <summary>
+            /// 前回起動した最終バージョン。0.17.0以降での起動時のみセットされている（それより前のバージョンではnull）
+            /// </summary>
+            public SemVersion LastBootVersion { get { return (PlainData.LastBootVersion == null ? null : SemVersion.Parse(PlainData.LastBootVersion)); } }
+
+            /// <summary>
             /// 検索対象フォルダリスト
             /// </summary>
             public List<TargetFolder> TargetFolders { get { return PlainData.TargetFolders; } }
@@ -175,14 +182,6 @@ namespace InazumaSearch.Core
             /// </summary>
             public Dictionary<string, int> LastLoadedPluginVersionNumbers { get { return PlainData.LastLoadedPluginVersionNumbers; } }
 
-            /// <summary>
-            /// 最後にロードしたプラグインのバージョン番号の設定
-            /// </summary>
-            public void SaveLastLoadedPluginVersionNumbers(Dictionary<string, int> value)
-            {
-                PlainData.LastLoadedPluginVersionNumbers = value;
-                Save();
-            }
 
             /// <summary>
             /// テキストファイルとして登録する拡張子
@@ -208,6 +207,20 @@ namespace InazumaSearch.Core
             /// 最後にクロールした時、選択から除外した検索対象フォルダ一覧。指定なし時（設定された検索対象フォルダが1件しかない場合含む）はnull
             /// </summary>
             public List<string> LastExcludingDirPaths { get { return PlainData.LastExcludingDirPaths; } }
+
+            #endregion
+
+            #region 一括更新処理
+
+            /// <summary>
+            /// 起動完了時の更新処理（最終起動バージョン、最後にロードしたプラグインのバージョン番号を更新する）
+            /// </summary>
+            public void SaveOnAfterBoot(Dictionary<string, int> lastLoadedPluginVersionNumbers)
+            {
+                PlainData.LastBootVersion = Util.GetVersion().ToString();
+                PlainData.LastLoadedPluginVersionNumbers = lastLoadedPluginVersionNumbers;
+                Save();
+            }
 
             /// <summary>
             /// クロール実行時の更新

@@ -296,14 +296,22 @@ namespace InazumaSearch.Core
                 }
             }
 
-            // プラグイン構成を保存
-            UserSettings.SaveLastLoadedPluginVersionNumbers(new Dictionary<string, int>(loadedPluginVersionNumbers));
-
-            // Groongaの必要プラグインを登録
-            GM.PluginRegister("functions/time");
+            // 前回の最終起動バージョンが0.17.0よりも前であれば、フォルダラベルの更新を実行
+            if (UserSettings.LastBootVersion == null)
+            {
+                var t = Task.Run(() =>
+                {
+                    UpdateDocumentFolderLabels();
+                });
+                var f = new ProgressForm(t, "データベースを更新しています。しばらくお待ちください...");
+                f.ShowDialog();
+            }
 
             // サムネイルフォルダが存在しなければ作成
             Directory.CreateDirectory(ThumbnailDirPath);
+
+            // 起動完了時の更新処理（最終起動バージョンの更新、プラグイン構成の保存）
+            UserSettings.SaveOnAfterBoot(new Dictionary<string, int>(loadedPluginVersionNumbers));
 
             // ログ出力
             Logger.Info("アプリケーションを起動しました");
