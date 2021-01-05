@@ -1109,26 +1109,27 @@ namespace InazumaSearch.Forms
                 suffix = "...";
             }
 
+            var newCaption = "";
             if (App.DebugMode)
             {
                 // デバッグモード時のみの表示
                 switch (state.CurrentStep)
                 {
                     case ProgressState.Step.RecordUpdateCheckBegin:
-                        StlBackgroundCrawl.Text = $"常駐クロール: 文書ファイルを検索中 ({Path.GetDirectoryName(state.Path)})";
+                        newCaption = $"常駐クロール: 文書ファイルを検索中 ({Path.GetDirectoryName(state.Path)})";
                         break;
 
                     case ProgressState.Step.RecordUpdateBegin:
-                        StlBackgroundCrawl.Text = $"常駐クロール: 文書データ登録中 ({state.Path})";
+                        newCaption = $"常駐クロール: 文書データ登録中 ({state.Path})";
                         break;
 
                     case ProgressState.Step.PurgeBegin:
-                        StlBackgroundCrawl.Text = $"常駐クロール: 存在しない文書データを削除中";
+                        newCaption = $"常駐クロール: 存在しない文書データを削除中";
                         break;
 
                     case ProgressState.Step.AlwaysCrawlDBDocumentDeleteBegin:
                     case ProgressState.Step.AlwaysCrawlDBDirectoryDeleteBegin:
-                        StlBackgroundCrawl.Text = $"常駐クロール: 文書データを削除中 ({state.Path})";
+                        newCaption = $"常駐クロール: 文書データを削除中 ({state.Path})";
                         break;
                 }
             }
@@ -1142,12 +1143,13 @@ namespace InazumaSearch.Forms
                     case ProgressState.Step.PurgeBegin:
                     case ProgressState.Step.AlwaysCrawlDBDocumentDeleteBegin:
                     case ProgressState.Step.AlwaysCrawlDBDirectoryDeleteBegin:
-                        StlBackgroundCrawl.Text = $"常駐クロール: 文書ファイルの情報を更新中";
+                        newCaption = $"常駐クロール: 文書ファイルの情報を更新中";
                         break;
                 }
             }
 
-            StlBackgroundCrawl.Text += suffix;
+            newCaption += suffix;
+            StlBackgroundCrawl.Text = newCaption;
         }
     }
 }
