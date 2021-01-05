@@ -203,7 +203,7 @@ namespace InazumaSearch.Forms
             }
 
             currentCTokenSource = new CancellationTokenSource();
-            searchTask = Task.Run<List<string>>(async () =>
+            searchTask = Task.Run<List<string>>(() =>
             {
                 return SearchIgnoredFiles(setting, currentCTokenSource.Token);
             });

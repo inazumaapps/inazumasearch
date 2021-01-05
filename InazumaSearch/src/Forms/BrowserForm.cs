@@ -270,7 +270,7 @@ namespace InazumaSearch.Forms
             public void UpdateFolderLabel(string path, string label)
             {
                 // 既存データのラベル値を更新
-                OwnerForm.InvokeOnUIThread(async (f) =>
+                OwnerForm.InvokeOnUIThread((f) =>
                 {
                     // クロール中の場合は停止してから処理
                     InvokeAfterSuspendingCrawl(f, "DBのラベル情報を更新中...", () =>
