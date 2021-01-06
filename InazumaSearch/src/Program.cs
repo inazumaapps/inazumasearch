@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Linq;
+using System.Runtime.Remoting.Channels;
+using System.Runtime.Remoting.Channels.Ipc;
 using System.Threading;
 using System.Windows;
 using Alphaleonis.Win32.Filesystem;
@@ -25,9 +27,13 @@ namespace InazumaSearch
             //ミューテックスの初期所有権が付与されたか調べる
             if (!createdNew)
             {
-                //されなかった場合は、すでに起動していると判断して終了
-                Util.ShowErrorMessage("二重起動は行えません。");
-                mutex.Close();
+                // 初期所有権が付与されなかった場合は二重起動とみなし
+                // すでに起動中のプロセスに対して、プロセス間通信で接続し、新しいウインドウを開かせてそのまま終了
+                var client = new IpcClientChannel();
+                ChannelServices.RegisterChannel(client, true);
+                var ipcReceiver = (IPCReceiver)Activator.GetObject(typeof(IPCReceiver), $"ipc://{IPCReceiver.IPCPortName}/{IPCReceiver.UriName}");
+                ipcReceiver.OnDoubleBoot();
+
                 return;
             }
 

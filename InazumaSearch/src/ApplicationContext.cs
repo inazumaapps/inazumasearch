@@ -1,9 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Runtime.Remoting;
+using System.Runtime.Remoting.Channels;
+using System.Runtime.Remoting.Channels.Ipc;
 using Alphaleonis.Win32.Filesystem;
 using InazumaSearch.Core;
 using InazumaSearch.Forms;
@@ -12,6 +11,9 @@ namespace InazumaSearch
 {
     public class ApplicationContext : System.Windows.Forms.ApplicationContext
     {
+        /// <summary>
+        /// コンストラクタ
+        /// </summary>
         public ApplicationContext(
               string htmlDirPath
             , bool showBrowser = true
@@ -56,12 +58,17 @@ namespace InazumaSearch
                 Core.Application.NotifyIcon.Visible = true;
             }
 
+            // IPCサーバーを起動（二重起動時に他プロセスからの操作を受けるために使用）
+            var ipcChannel = new IpcServerChannel(IPCReceiver.IPCPortName);
+            ChannelServices.RegisterChannel(ipcChannel, true);
+            var ipcReceiver = new IPCReceiver(comp);
+            RemotingServices.Marshal(ipcReceiver, IPCReceiver.UriName, typeof(IPCReceiver));
+
             // ブラウザの立ち上げ
             if (showBrowser)
             {
                 comp.StartBrowser();
             }
-
         }
 
         private static void Application_ThreadException(object sender, System.Threading.ThreadExceptionEventArgs e)

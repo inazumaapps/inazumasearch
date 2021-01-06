@@ -42,11 +42,13 @@ namespace InazumaSearch
         {
             try
             {
-                var f = new BrowserForm(App.HtmlDirPath)
+                var form = new BrowserForm(App.HtmlDirPath)
                 {
                     App = App
                 };
-                f.Show();
+                Core.Application.BootingBrowserForms.Add(form);
+                form.Show();
+                form.Activate();
             }
             catch (System.IO.FileNotFoundException ex)
             {

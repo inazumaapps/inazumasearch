@@ -1058,8 +1058,11 @@ namespace InazumaSearch.Forms
 
         private void BrowserForm_FormClosed(object sender, FormClosedEventArgs e)
         {
-            // 常駐クロールモードでない場合は、フォームを閉じたタイミングで終了
-            if (!App.UserSettings.AlwaysCrawlMode)
+            // 起動中のフォーム一覧から削除
+            Core.Application.BootingBrowserForms.Remove(this);
+
+            // 常駐クロールモードでない場合は、全フォームを閉じたタイミングで終了
+            if (!App.UserSettings.AlwaysCrawlMode && Core.Application.BootingBrowserForms.Count == 0)
             {
                 System.Windows.Forms.Application.Exit();
             }

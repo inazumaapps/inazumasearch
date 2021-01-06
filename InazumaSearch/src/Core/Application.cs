@@ -20,6 +20,15 @@ namespace InazumaSearch.Core
     /// </summary>
     public partial class Application
     {
+        #region staticプロパティ
+
+        /// <summary>
+        /// 起動中のブラウザ一覧
+        /// </summary>
+        public static List<BrowserForm> BootingBrowserForms { get; set; } = new List<BrowserForm>();
+
+        #endregion
+
         /// <summary>
         /// デバッグモード
         /// </summary>
