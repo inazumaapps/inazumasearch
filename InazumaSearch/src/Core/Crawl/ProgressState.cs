@@ -22,11 +22,17 @@ namespace InazumaSearch.Core.Crawl
             /// <summary>文書データの実登録開始（新しいファイル／変更されたファイル1件ごとに実行）</summary>
             RecordUpdateBegin
             ,
-            /// <summary>DB内の不要データ削除開始（削除処理全体で一度のみ実行）</summary>
+            /// <summary>文書データの実登録完了（新しいファイル／変更されたファイル1件ごとに実行）</summary>
+            RecordUpdateEnd
+            ,
+            /// <summary>DB内の不要データ削除処理開始（削除処理全体で一度のみ実行）</summary>
             PurgeProcessBegin
             ,
             /// <summary>DB内の不要データ実削除開始（削除対象のデータごとに実行）</summary>
             PurgeBegin
+            ,
+            /// <summary>DB内の不要データ削除処理完了（削除処理全体で一度のみ実行）</summary>
+            PurgeProcessEnd
             ,
             /// <summary>常駐クロールでの文書ファイル削除開始</summary>
             AlwaysCrawlDBDocumentDeleteBegin

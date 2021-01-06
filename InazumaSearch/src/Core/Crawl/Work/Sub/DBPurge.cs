@@ -103,6 +103,9 @@ namespace InazumaSearch.Core.Crawl.Work
                     cToken.ThrowIfCancellationRequested(); // キャンセル受付
                 }
             }
+
+            // 進捗を報告
+            progress?.Report(new ProgressState() { CurrentStep = ProgressState.Step.PurgeProcessEnd });
         }
     }
 }

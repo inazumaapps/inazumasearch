@@ -81,6 +81,9 @@ namespace InazumaSearch.Core.Crawl.Work
             {
                 crawlResult.Updated++;
 
+                // 進捗を報告
+                progress?.Report(new ProgressState() { CurrentStep = ProgressState.Step.RecordUpdateEnd, CurrentValue = crawlResult.Updated + crawlResult.Skipped, TotalValue = crawlResult.TotalTargetCount, Path = FilePath });
+
                 // 登録件数が200件を超えるごとにGroongaを再起動
                 // (Groongaプロセスを立ち上げてパイプを接続したまま大量データを登録すると、システムエラーが発生する場合があるため)
                 if (crawlResult.Updated % 200 == 0)

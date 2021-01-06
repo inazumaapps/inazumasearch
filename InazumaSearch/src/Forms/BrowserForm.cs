@@ -36,6 +36,7 @@ namespace InazumaSearch.Forms
 
         protected int AlwaysCrawlProgressTick { get; set; } = 0;
         protected const int AlwaysCrawlProgressTickEnd = 30;
+        protected DateTime? LastUpdatedCountDataInSettingPage { get; set; } = null;
 
         public class DBStateApi
         {
@@ -1086,6 +1087,24 @@ namespace InazumaSearch.Forms
             AlwaysCrawlProgressTick++;
             if (AlwaysCrawlProgressTick >= AlwaysCrawlProgressTickEnd) AlwaysCrawlProgressTick = 0;
 
+            // 設定画面を表示中の場合、一部ステップ時にカウント表示を更新
+            if (ChromeBrowser.Address.EndsWith("setting.html"))
+            {
+                switch (state.CurrentStep)
+                {
+                    case ProgressState.Step.RecordUpdateEnd:
+                    case ProgressState.Step.PurgeProcessEnd:
+                    case ProgressState.Step.AlwaysCrawlDBDocumentDeleteBegin:
+                        // 前回から1秒以上経っている場合のみ更新
+                        if (LastUpdatedCountDataInSettingPage == null || (DateTime.Now - LastUpdatedCountDataInSettingPage.Value).TotalMilliseconds >= 1000)
+                        {
+                            ChromeBrowser.EvaluateScriptAsync("updateCountsAsync();");
+                            LastUpdatedCountDataInSettingPage = DateTime.Now;
+                        }
+                        break;
+                }
+            }
+
             // デバッグモードかどうかにかかわらず共通の表示
             switch (state.CurrentStep)
             {
@@ -1099,6 +1118,11 @@ namespace InazumaSearch.Forms
 
                 case ProgressState.Step.AlwaysCrawlEnd:
                     StlBackgroundCrawl.Text = "";
+                    return;
+
+                case ProgressState.Step.RecordUpdateEnd:
+                case ProgressState.Step.PurgeProcessEnd:
+                    // スキップ
                     return;
             }
 
