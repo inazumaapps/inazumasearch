@@ -41,7 +41,6 @@ namespace InazumaSearch.Forms
         {
             public long DocumentCount { get; set; }
             public long TargetFolderCount { get; set; }
-            public string LastCrawlTimeCaption { get; set; }
             public bool AlwaysCrawlMode { get; set; }
         }
 
@@ -81,6 +80,30 @@ namespace InazumaSearch.Forms
             {
                 return App.GetVersionCaption();
             }
+
+            /// <summary>
+            /// 最終クロール日時を表す文字列を取得
+            /// </summary>
+            /// <returns></returns>
+            public string GetLastCrawlTimeCaption()
+            {
+                if (App.UserSettings.AlwaysCrawlMode)
+                {
+                    return "常駐クロール実行中";
+
+                }
+                else
+                {
+                    var lastCrawlTime = App.UserSettings.LastCrawlTime;
+                    if (lastCrawlTime != null)
+                    {
+                        return "最終実行: " + lastCrawlTime.Value.ToString("yyyy/MM/dd HH:mm");
+                    }
+                }
+
+                return "";
+            }
+
             public void ShowErrorMessage(string message)
             {
                 OwnerForm.InvokeOnUIThread((f) => Util.ShowErrorMessage(f,
@@ -702,20 +725,6 @@ namespace InazumaSearch.Forms
                 DBState.DocumentCount = selectRes1.SearchResult.NHits;
                 DBState.TargetFolderCount = App.UserSettings.TargetFolders.Count;
                 DBState.AlwaysCrawlMode = App.UserSettings.AlwaysCrawlMode;
-
-                if (App.UserSettings.AlwaysCrawlMode)
-                {
-                    DBState.LastCrawlTimeCaption = "常駐クロール実行中";
-
-                }
-                else
-                {
-                    var lastCrawlTime = App.UserSettings.LastCrawlTime;
-                    if (lastCrawlTime != null)
-                    {
-                        DBState.LastCrawlTimeCaption = "最終実行: " + lastCrawlTime.Value.ToString("yyyy/MM/dd HH:mm");
-                    }
-                }
 
                 // 更新の有無をチェック
                 ISAutoUpdater.Check(Util.IsPortableMode(), (args) =>

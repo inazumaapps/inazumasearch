@@ -378,10 +378,20 @@ function startCrawl(targetFolders = null) {
     $('#MESSAGE-AREA').fadeOut();
     $('.search-button').removeClass('disabled');
 
-    // 最終クロール日時の表示を変更
-    $('#LAST-CRAWL-TIME-CAPTION').text("最終実行: たった今");
-
     api.crawlStart(JSON.stringify(targetFolders));
+
+    // 0.5秒後、1秒後、1.5秒後、2秒後にそれぞれ最終クロール日時の表示を更新
+    // （最終クロール日時の更新は別スレッドで実行されるため、いつ完了するかが分からない）
+    for (var delay = 500; delay <= 2000; delay += 500) {
+        setTimeout(function () {
+            refreshLastCrawlTimeCaption();
+        }, delay);
+    }
+}
+
+// 最終クロール日時の表示を更新
+function refreshLastCrawlTimeCaption() {
+    $('#LAST-CRAWL-TIME-CAPTION').text(api.getLastCrawlTimeCaption());
 }
 
 cols = document.querySelectorAll('.droppable');
@@ -711,8 +721,9 @@ $(function(){
             // 検索可能
         }
     }
-    $('#LAST-CRAWL-TIME-CAPTION').text(dbState.lastCrawlTimeCaption);
 
+    // 最終クロール日時の表示を更新
+    refreshLastCrawlTimeCaption();
 
     // Each time the user scrolls
     var win = $(window);
