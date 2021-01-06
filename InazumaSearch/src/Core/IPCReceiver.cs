@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Windows.Forms;
 
 namespace InazumaSearch.Core
@@ -10,11 +11,6 @@ namespace InazumaSearch.Core
     public class IPCReceiver : MarshalByRefObject
     {
         protected MainComponent mainComponent;
-
-        /// <summary>
-        /// IPCポート名
-        /// </summary>
-        public const string IPCPortName = "inazumasearch.inazumaapps.info";
 
         /// <summary>
         /// URI上のオブジェクト名
@@ -40,6 +36,19 @@ namespace InazumaSearch.Core
                 // 新しいブラウザ画面を起動
                 mainComponent.StartBrowser();
             });
+        }
+
+        /// <summary>
+        /// IPCポート名を取得 (ログイン中のWindowsユーザーによって異なるポート名となる)
+        /// </summary>
+        public static string GetIPCPortName()
+        {
+            // ドメイン名とユーザー名から、一意なハッシュを生成し、左側から8桁を取得
+            var hashProvider = new SHA1CryptoServiceProvider();
+            var userHash8 = Util.HexDigest(hashProvider, $@"{Environment.UserDomainName}\{Environment.UserName}").Substring(0, 8);
+
+            // ポート名を生成して返す
+            return $"{userHash8}.inazumasearch.inazumaapps.info";
         }
     }
 }

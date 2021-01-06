@@ -59,7 +59,7 @@ namespace InazumaSearch
             }
 
             // IPCサーバーを起動（二重起動時に他プロセスからの操作を受けるために使用）
-            var ipcChannel = new IpcServerChannel(IPCReceiver.IPCPortName);
+            var ipcChannel = new IpcServerChannel(IPCReceiver.GetIPCPortName());
             ChannelServices.RegisterChannel(ipcChannel, true);
             var ipcReceiver = new IPCReceiver(comp);
             RemotingServices.Marshal(ipcReceiver, IPCReceiver.UriName, typeof(IPCReceiver));

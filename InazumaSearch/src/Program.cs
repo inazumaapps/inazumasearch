@@ -31,7 +31,7 @@ namespace InazumaSearch
                 // すでに起動中のプロセスに対して、プロセス間通信で接続し、新しいウインドウを開かせてそのまま終了
                 var client = new IpcClientChannel();
                 ChannelServices.RegisterChannel(client, true);
-                var ipcReceiver = (IPCReceiver)Activator.GetObject(typeof(IPCReceiver), $"ipc://{IPCReceiver.IPCPortName}/{IPCReceiver.UriName}");
+                var ipcReceiver = (IPCReceiver)Activator.GetObject(typeof(IPCReceiver), $"ipc://{IPCReceiver.GetIPCPortName()}/{IPCReceiver.UriName}");
                 ipcReceiver.OnDoubleBoot();
 
                 return;
