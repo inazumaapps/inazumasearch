@@ -48,7 +48,6 @@ namespace InazumaSearch
                 };
                 Core.Application.BootingBrowserForms.Add(form);
                 form.Show();
-                form.Activate();
             }
             catch (System.IO.FileNotFoundException ex)
             {

@@ -69,11 +69,10 @@
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "BrowserForm";
             this.Text = "Inazuma Search";
-            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Browser_FormClosing);
+            this.TopMost = true;
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.BrowserForm_FormClosed);
             this.Load += new System.EventHandler(this.BrowserForm_Load);
-            this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.BrowserForm_KeyDown);
-            this.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.BrowserForm_KeyPress);
+            this.Shown += new System.EventHandler(this.BrowserForm_Shown);
             this.StatusBar.ResumeLayout(false);
             this.StatusBar.PerformLayout();
             this.ResumeLayout(false);

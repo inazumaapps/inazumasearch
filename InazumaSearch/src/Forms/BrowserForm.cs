@@ -688,9 +688,6 @@ namespace InazumaSearch.Forms
 
             ChromeBrowser.IsBrowserInitializedChanged += ChromeBrowser_IsBrowserInitializedChanged;
             ChromeBrowser.FrameLoadStart += ChromeBrowser_FrameLoadStart;
-
-            ChromeBrowser.KeyDown += BrowserForm_KeyDown;
-
         }
 
         private void ChromeBrowser_FrameLoadStart(object sender, FrameLoadStartEventArgs e)
@@ -888,11 +885,6 @@ namespace InazumaSearch.Forms
             InitializeChromium(htmlDirPath);
         }
 
-        private void Browser_FormClosing(object sender, FormClosingEventArgs e)
-        {
-            //Cef.Shutdown();
-        }
-
 
         protected virtual void CrawlStart(IEnumerable<string> targetDirPaths = null)
         {
@@ -1043,17 +1035,25 @@ namespace InazumaSearch.Forms
             });
         }
 
+        #region フォームイベント
 
-        private void BrowserForm_KeyDown(object sender, KeyEventArgs e)
+        private void BrowserForm_Load(object sender, EventArgs e)
         {
-            if (e.KeyCode == Keys.F12)
+            if (App.DebugMode)
             {
-                //ShowDevTool();
+                Text = $"Inazuma Search {App.GetVersionCaption()} [Debug Mode]";
             }
+            App.Crawler.AlwaysCrawlProgress.ProgressChanged += AlwaysCrawlProgress_ProgressChanged;
         }
 
-        private void BrowserForm_KeyPress(object sender, KeyPressEventArgs e)
+        private void BrowserForm_Shown(object sender, EventArgs e)
         {
+            // 表示時にアクティブにする
+            Activate();
+
+            // 最前面への表示固定をオフ
+            // ※初期状態では最前面固定としておくことで、必ずフォアグラウンドに表示されるようにする
+            TopMost = false;
         }
 
         private void BrowserForm_FormClosed(object sender, FormClosedEventArgs e)
@@ -1068,14 +1068,7 @@ namespace InazumaSearch.Forms
             }
         }
 
-        private void BrowserForm_Load(object sender, EventArgs e)
-        {
-            if (App.DebugMode)
-            {
-                Text = $"Inazuma Search {App.GetVersionCaption()} [Debug Mode]";
-            }
-            App.Crawler.AlwaysCrawlProgress.ProgressChanged += AlwaysCrawlProgress_ProgressChanged;
-        }
+        #endregion
 
         private void AlwaysCrawlProgress_ProgressChanged(object sender, ProgressState state)
         {
