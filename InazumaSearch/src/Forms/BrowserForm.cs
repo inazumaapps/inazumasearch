@@ -361,6 +361,7 @@ namespace InazumaSearch.Forms
                 return App.ExecuteInExceptionCatcher<string>(() =>
                 {
                     var targetDirectories = new List<UserSetting.TargetFolder>();
+                    var pathHashes = new Dictionary<string, string>();
                     var fileCounts = new Dictionary<string, long>();
                     var ignoreSettingCounts = new Dictionary<string, long>();
                     var excludingFlags = new Dictionary<string, bool>();
@@ -390,12 +391,13 @@ namespace InazumaSearch.Forms
                             , outputColumns: new string[] { Groonga.VColumn.ID }
                             , filter: $"{Column.Documents.KEY} @^ {Groonga.Util.EscapeForScript(Util.MakeDocumentDirKeyPrefix(folder.Path))}"
                         );
+                        pathHashes[folder.Path] = Util.HexDigest(App.HashProvider, folder.Path);
                         fileCounts[folder.Path] = res.SearchResult.NHits;
                         ignoreSettingCounts[folder.Path] = folder.IgnoreSettingLines.Count;
                         excludingFlags[folder.Path] = (App.UserSettings.LastExcludingDirPaths != null && App.UserSettings.LastExcludingDirPaths.Contains(folder.Path));
                     }
 
-                    return JsonConvert.SerializeObject(new { targetDirectories, fileCounts, ignoreSettingCounts, excludingFlags });
+                    return JsonConvert.SerializeObject(new { targetDirectories, pathHashes, fileCounts, ignoreSettingCounts, excludingFlags });
                 });
             }
 
