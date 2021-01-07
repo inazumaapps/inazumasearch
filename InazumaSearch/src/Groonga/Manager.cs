@@ -121,8 +121,12 @@ namespace InazumaSearch.Groonga
         /// </summary>
         public void Reboot()
         {
-            Shutdown();
-            Boot();
+            // コマンド実行時の入出力と同時に実行されないようにロック
+            lock (Locker)
+            {
+                Shutdown();
+                Boot();
+            }
         }
 
         private void Proc_ErrorDataReceived(object sender, DataReceivedEventArgs e)
