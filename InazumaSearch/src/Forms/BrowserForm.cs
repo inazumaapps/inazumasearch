@@ -1098,7 +1098,10 @@ namespace InazumaSearch.Forms
                         // 前回から1秒以上経っている場合のみ更新
                         if (LastUpdatedCountDataInSettingPage == null || (DateTime.Now - LastUpdatedCountDataInSettingPage.Value).TotalMilliseconds >= 1000)
                         {
-                            ChromeBrowser.EvaluateScriptAsync("updateCountsAsync();");
+                            if (ChromeBrowser.CanExecuteJavascriptInMainFrame)
+                            {
+                                ChromeBrowser.EvaluateScriptAsync("updateCountsAsync();");
+                            }
                             LastUpdatedCountDataInSettingPage = DateTime.Now;
                         }
                         break;
