@@ -6,6 +6,7 @@ using System.Runtime.Remoting.Channels.Ipc;
 using Alphaleonis.Win32.Filesystem;
 using InazumaSearch.Core;
 using InazumaSearch.Forms;
+using InazumaSearch.src.Forms;
 
 namespace InazumaSearch
 {
@@ -53,10 +54,15 @@ namespace InazumaSearch
                 Core.Application.NotifyIcon.Visible = true;
             }
 
+            // メインフォームの生成（画面には表示しない）
+            var mainForm = new BackgroundMainForm();
+            mainForm.Show();
+            mainForm.Hide();
+
             // IPCサーバーを起動（二重起動時に他プロセスからの操作を受けるために使用）
             var ipcChannel = new IpcServerChannel(IPCReceiver.GetIPCPortName());
             ChannelServices.RegisterChannel(ipcChannel, true);
-            var ipcReceiver = new IPCReceiver(comp);
+            var ipcReceiver = new IPCReceiver(comp, mainForm);
             RemotingServices.Marshal(ipcReceiver, IPCReceiver.UriName, typeof(IPCReceiver));
 
             // ブラウザの立ち上げ

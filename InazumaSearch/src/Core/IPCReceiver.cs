@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Security.Cryptography;
 using System.Windows.Forms;
+using InazumaSearch.src.Forms;
 
 namespace InazumaSearch.Core
 {
@@ -11,6 +12,7 @@ namespace InazumaSearch.Core
     public class IPCReceiver : MarshalByRefObject
     {
         protected MainComponent mainComponent;
+        protected BackgroundMainForm mainForm;
 
         /// <summary>
         /// URI上のオブジェクト名
@@ -20,9 +22,10 @@ namespace InazumaSearch.Core
         /// <summary>
         /// コンストラクタ
         /// </summary>
-        public IPCReceiver(MainComponent mainComponent)
+        public IPCReceiver(MainComponent mainComponent, BackgroundMainForm mainForm)
         {
             this.mainComponent = mainComponent;
+            this.mainForm = mainForm;
         }
 
         /// <summary>
@@ -31,7 +34,7 @@ namespace InazumaSearch.Core
         public void OnDoubleBoot()
         {
             // UI側スレッドで処理実行（IPCでリモートからメソッドを呼び出した場合、別スレッドで処理が立ち上がるため）
-            Application.BootingBrowserForms.First().Invoke((MethodInvoker)delegate
+            mainForm.Invoke((MethodInvoker)delegate
             {
                 // 新しいブラウザ画面を起動
                 mainComponent.StartBrowser();
