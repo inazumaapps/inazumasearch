@@ -20,11 +20,6 @@ namespace InazumaSearch
             , bool appDebugMode = false
         ) : base()
         {
-            // 例外ハンドラ登録
-            System.Windows.Forms.Application.ThreadException += Application_ThreadException;
-            System.Windows.Forms.Application.SetUnhandledExceptionMode(System.Windows.Forms.UnhandledExceptionMode.CatchException);
-            System.AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
-
             // アプリケーション生成
             var app = new Core.Application
             {
@@ -70,29 +65,5 @@ namespace InazumaSearch
                 comp.StartBrowser();
             }
         }
-
-        private static void Application_ThreadException(object sender, System.Threading.ThreadExceptionEventArgs e)
-        {
-            // システムエラーダイアログ表示
-            Debug.Print("<Application_ThreadException>");
-            Debug.Print(e.Exception.ToString());
-            var f = new SystemErrorDialog(e.Exception);
-            f.ShowDialog();
-            System.Windows.Forms.Application.Exit();
-        }
-
-        private static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
-        {
-            var ex = (Exception)e.ExceptionObject;
-
-            // システムエラーダイアログ表示
-            Debug.Print("<CurrentDomain_UnhandledException>");
-            Debug.Print(ex.ToString());
-            var f = new SystemErrorDialog(ex);
-            f.ShowDialog();
-            System.Windows.Forms.Application.Exit();
-        }
-
     }
-
 }

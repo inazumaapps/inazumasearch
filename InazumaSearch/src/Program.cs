@@ -6,6 +6,7 @@ using System.Threading;
 using System.Windows;
 using Alphaleonis.Win32.Filesystem;
 using InazumaSearch.Core;
+using InazumaSearch.Forms;
 
 namespace InazumaSearch
 {
@@ -17,6 +18,11 @@ namespace InazumaSearch
         [STAThread]
         private static void Main(string[] args)
         {
+            // 例外ハンドラ登録
+            System.Windows.Forms.Application.ThreadException += Application_ThreadException;
+            System.Windows.Forms.Application.SetUnhandledExceptionMode(System.Windows.Forms.UnhandledExceptionMode.CatchException);
+            System.AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
+
             // Mutex名
             const string mutexName = "inazumaapps.info/InazumaSearch";
 
@@ -79,6 +85,23 @@ namespace InazumaSearch
             }
 
         }
-    }
 
+        private static void Application_ThreadException(object sender, System.Threading.ThreadExceptionEventArgs e)
+        {
+            // システムエラーダイアログ表示
+            var f = new SystemErrorDialog(e.Exception);
+            f.ShowDialog();
+            System.Windows.Forms.Application.Exit();
+        }
+
+        private static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
+        {
+            var ex = (Exception)e.ExceptionObject;
+
+            // システムエラーダイアログ表示
+            var f = new SystemErrorDialog(ex);
+            f.ShowDialog();
+            System.Windows.Forms.Application.Exit();
+        }
+    }
 }
