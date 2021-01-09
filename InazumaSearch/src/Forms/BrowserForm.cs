@@ -1,17 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Diagnostics;
-using System.Drawing;
-using System.Drawing.Imaging;
 using System.Linq;
-using System.Net;
-using System.Reflection;
-using System.Security.Cryptography;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Alphaleonis.Win32.Filesystem;
@@ -19,9 +11,7 @@ using CefSharp;
 using CefSharp.WinForms;
 using InazumaSearch.Core;
 using InazumaSearch.Core.Crawl;
-using InazumaSearch.Groonga.Exceptions;
 using Microsoft.WindowsAPICodePack.Dialogs;
-using Microsoft.WindowsAPICodePack.Shell;
 using Newtonsoft.Json;
 
 namespace InazumaSearch.Forms

@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace InazumaSearch.Groonga
+﻿namespace InazumaSearch.Groonga
 {
     /// <summary>
     /// 動的カラム。Selectコマンドで使用

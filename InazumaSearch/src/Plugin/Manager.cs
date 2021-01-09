@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Alphaleonis.Win32.Filesystem;
 using InazumaSearch.Core;
 using InazumaSearch.PluginSDK.V1;

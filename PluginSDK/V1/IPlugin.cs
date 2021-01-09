@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace InazumaSearch.PluginSDK.V1
+﻿namespace InazumaSearch.PluginSDK.V1
 {
     public interface IPlugin
     {

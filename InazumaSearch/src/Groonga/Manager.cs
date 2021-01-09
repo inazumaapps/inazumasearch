@@ -1,9 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
 using Alphaleonis.Win32.Filesystem;
-using InazumaSearch.Core;
 
 namespace InazumaSearch.Groonga
 {

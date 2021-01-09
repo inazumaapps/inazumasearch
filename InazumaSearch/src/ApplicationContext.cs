@@ -1,11 +1,9 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Runtime.Remoting;
 using System.Runtime.Remoting.Channels;
 using System.Runtime.Remoting.Channels.Ipc;
 using Alphaleonis.Win32.Filesystem;
 using InazumaSearch.Core;
-using InazumaSearch.Forms;
 using InazumaSearch.src.Forms;
 
 namespace InazumaSearch

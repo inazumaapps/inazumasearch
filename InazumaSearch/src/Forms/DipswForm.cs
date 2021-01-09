@@ -1,14 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Drawing;
-using System.Drawing.Imaging;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Alphaleonis.Win32.Filesystem;
 using InazumaSearch.Core;
-using Microsoft.WindowsAPICodePack.Shell;
 
 namespace InazumaSearch.Forms
 {

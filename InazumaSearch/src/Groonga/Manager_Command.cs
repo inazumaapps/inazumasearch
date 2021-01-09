@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
+﻿using System.Collections.Generic;
 using System.Text;
-using System.Threading.Tasks;
 using InazumaSearch.Groonga.Exceptions;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;

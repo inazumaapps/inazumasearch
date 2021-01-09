@@ -1,9 +1,7 @@
 ﻿using System;
-using System.Linq;
 using System.Runtime.Remoting.Channels;
 using System.Runtime.Remoting.Channels.Ipc;
 using System.Threading;
-using System.Windows;
 using Alphaleonis.Win32.Filesystem;
 using InazumaSearch.Core;
 using InazumaSearch.Forms;

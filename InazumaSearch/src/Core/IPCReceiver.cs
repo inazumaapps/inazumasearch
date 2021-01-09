@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using System.Security.Cryptography;
 using System.Windows.Forms;
 using InazumaSearch.src.Forms;
