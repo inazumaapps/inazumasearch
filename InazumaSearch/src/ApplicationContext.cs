@@ -58,10 +58,18 @@ namespace InazumaSearch
             mainForm.Hide();
 
             // IPCサーバーを起動（二重起動時に他プロセスからの操作を受けるために使用）
-            var ipcChannel = new IpcServerChannel(IPCReceiver.GetIPCPortName());
-            ChannelServices.RegisterChannel(ipcChannel, true);
-            var ipcReceiver = new IPCReceiver(comp, mainForm);
-            RemotingServices.Marshal(ipcReceiver, IPCReceiver.UriName, typeof(IPCReceiver));
+            // 例外が発生した場合は無視
+            try
+            {
+                var ipcChannel = new IpcServerChannel(IPCReceiver.GetIPCPortName());
+                ChannelServices.RegisterChannel(ipcChannel, true);
+                var ipcReceiver = new IPCReceiver(comp, mainForm);
+                RemotingServices.Marshal(ipcReceiver, IPCReceiver.UriName, typeof(IPCReceiver));
+            }
+            catch (Exception ex)
+            {
+                app.Logger.Warn(ex);
+            }
 
             // ブラウザの立ち上げ
             if (showBrowser)
