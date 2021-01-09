@@ -4,7 +4,6 @@ using System.Data;
 using System.Diagnostics;
 using System.Linq;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using Alphaleonis.Win32.Filesystem;
 using CefSharp;
@@ -176,8 +175,8 @@ namespace InazumaSearch.Forms
                     folders.Add(new UserSetting.TargetFolder() { Path = path, Type = UserSetting.TargetFolderType.DocumentFile });
                     App.UserSettings.SaveTargetFolders(folders);
 
-                    // 検索対象設定変更後の共通処理を実行
-                    OnSearchTargetChanged();
+                    // 常駐クロール実行中であれば再起動
+                    App.RestartAlwaysCrawlIfRunning(OwnerForm);
 
                     // すでに登録されているファイル数をカウント
                     var res = App.GM.Select(
@@ -203,30 +202,9 @@ namespace InazumaSearch.Forms
                     folders.Remove(folders.First(f => f.Path == path));
                     App.UserSettings.SaveTargetFolders(folders);
 
-                    // 検索対象設定変更後の共通処理を実行
-                    OnSearchTargetChanged();
+                    // 常駐クロール実行中であれば再起動
+                    App.RestartAlwaysCrawlIfRunning(OwnerForm);
                 });
-            }
-
-            /// <summary>
-            /// 検索対象設定変更後の共通処理を行う
-            /// </summary>
-            protected void OnSearchTargetChanged()
-            {
-                // 常駐クロール実行中の場合、一度常駐クロールを止めて、最初から常駐クロールを再開する
-                if (App.Crawler.AlwaysCrawlIsRunning)
-                {
-                    OwnerForm.InvokeOnUIThread((f) =>
-                    {
-                        // 実行中の常駐クロール処理を中止
-                        var stoppingTask = App.Crawler.StopAlwaysCrawlIfRunningAsync();
-                        var pf = new ProgressForm(stoppingTask, "常駐クロールを再起動中...");
-                        pf.ShowDialog(f);
-
-                        // 常駐クロール再開
-                        App.Crawler.StartAlwaysCrawl();
-                    });
-                }
             }
 
             public void ShowIgnoreEditFormFromSearchResult(string path)
@@ -248,8 +226,8 @@ namespace InazumaSearch.Forms
                     var res = dialog.ShowDialog(form);
                     if (res == DialogResult.OK)
                     {
-                        // 無視設定を更新した場合、検索対象設定変更後の共通処理を実行
-                        OnSearchTargetChanged();
+                        // 無視設定を更新した場合、常駐クロール実行中であれば再起動
+                        App.RestartAlwaysCrawlIfRunning(OwnerForm);
                     }
                 });
 
@@ -265,8 +243,8 @@ namespace InazumaSearch.Forms
                     var res = dialog.ShowDialog(form);
                     if (res == DialogResult.OK)
                     {
-                        // 無視設定を更新した場合、検索対象設定変更後の共通処理を実行
-                        OnSearchTargetChanged();
+                        // 無視設定を更新した場合、常駐クロール実行中であれば再起動
+                        App.RestartAlwaysCrawlIfRunning(OwnerForm);
                     }
                 });
             }
@@ -287,7 +265,7 @@ namespace InazumaSearch.Forms
                 OwnerForm.InvokeOnUIThread((f) =>
                 {
                     // クロール中の場合は停止してから処理
-                    InvokeAfterSuspendingCrawl(f, "DBのラベル情報を更新中...", () =>
+                    App.InvokeAfterSuspendingCrawl(f, "DBのラベル情報を更新中...", () =>
                     {
                         var folders = App.UserSettings.TargetFolders;
                         var folder = folders.First(f2 => f2.Path == path);
@@ -297,35 +275,6 @@ namespace InazumaSearch.Forms
                         App.UpdateDocumentFolderLabels();
                     });
                 });
-            }
-
-
-            /// <summary>
-            /// 指定処理の実行。
-            /// 現在実行中のクロール処理がある場合、そのクロールを停止したうえで指定処理を実行し、完了後に必要に応じて常駐クロールを再開する
-            /// （DB全体に影響を与える更新操作などの実行時に使用）
-            /// </summary>
-            protected void InvokeAfterSuspendingCrawl(IWin32Window ownerForm, string caption, Action mainProc)
-            {
-                // 進捗状況ダイアログを開いた上で実行する処理
-                var mainTask = Task.Run(async () =>
-                {
-                    // 常駐クロール実行中の場合、停止
-                    await App.Crawler.StopAlwaysCrawlIfRunningAsync();
-
-                    // メイン処理実行
-                    mainProc.Invoke();
-                });
-
-                // 進捗状況ダイアログを開き、上記処理を実行
-                var pf = new ProgressForm(mainTask, caption);
-                pf.ShowDialog(ownerForm);
-
-                // ユーザー設定で常駐クロールがONの場合、メイン処理完了後に常駐クロールを再開
-                if (App.UserSettings.AlwaysCrawlMode)
-                {
-                    App.Crawler.StartAlwaysCrawl();
-                }
             }
         }
 

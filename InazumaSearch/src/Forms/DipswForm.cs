@@ -26,14 +26,13 @@ namespace InazumaSearch.Forms
         {
             if (Util.Confirm(this, "クロール時に収集した文書データと、文書のサムネイル画像をクリアします。\nよろしいですか？", defaultNo: true))
             {
-                var t = Task.Run(() =>
+                Application.InvokeAfterSuspendingCrawl(this, "文書データをクリアしています...", () =>
                 {
                     Application.GM.Truncate(Table.Documents);
                     Application.GM.Truncate(Table.DocumentsIndex);
                     Application.DeleteAllThumbnailFiles();
+
                 });
-                var f = new ProgressForm(t, "文書データをクリアしています...");
-                f.ShowDialog();
                 UpdateLabels();
             }
         }
@@ -42,8 +41,12 @@ namespace InazumaSearch.Forms
         {
             if (Util.Confirm(this, "ユーザー設定を含む全てのデータを初期化します。\nこの操作は取り消せません。\n\nよろしいですか？", defaultNo: true))
             {
-                var t = Task.Run(() =>
+                var t = Task.Run(async () =>
                 {
+                    // 常駐クロール実行中の場合、停止
+                    await Application.Crawler.StopAlwaysCrawlIfRunningAsync();
+
+                    // Groongaを停止し、データをクリアして再起動
                     Application.GM.Shutdown();
                     CleanDBFiles();
                     Application.GM.Boot();
@@ -51,6 +54,7 @@ namespace InazumaSearch.Forms
                     Application.GM.SetupSchema(0, out dummy);
                     Application.DeleteAllThumbnailFiles();
 
+                    // ユーザー設定を初期化
                     var newSetting = new UserSetting.Store(Application.UserSettings.SettingFilePath);
                     newSetting.Save();
                     Application.UserSettings.Load();
@@ -143,6 +147,8 @@ namespace InazumaSearch.Forms
                 // リストボックスの表示を更新
                 UpdateExtensionList();
 
+                // 常駐クロール実行中であれば再起動
+                Application.RestartAlwaysCrawlIfRunning(this);
             }
         }
 
@@ -175,6 +181,9 @@ namespace InazumaSearch.Forms
 
             // リストボックスの表示を更新
             UpdateExtensionList();
+
+            // 常駐クロール実行中であれば再起動
+            Application.RestartAlwaysCrawlIfRunning(this);
         }
 
         private void lnkOpenDataFolder_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)

@@ -509,6 +509,55 @@ namespace InazumaSearch.Core
             }
         }
 
+        /// <summary>
+        /// 指定処理の実行。
+        /// 現在実行中のクロール処理がある場合、そのクロールを停止したうえで指定処理を実行し、完了後に必要に応じて常駐クロールを再開する
+        /// （DB全体に影響を与える更新操作などの実行時に使用）
+        /// </summary>
+        public virtual void InvokeAfterSuspendingCrawl(IWin32Window ownerForm, string caption, Action mainProc)
+        {
+            // 進捗状況ダイアログを開いた上で実行する処理
+            var mainTask = Task.Run(async () =>
+            {
+                // 常駐クロール実行中の場合、停止
+                await Crawler.StopAlwaysCrawlIfRunningAsync();
+
+                // メイン処理実行
+                mainProc.Invoke();
+            });
+
+            // 進捗状況ダイアログを開き、上記処理を実行
+            var pf = new ProgressForm(mainTask, caption);
+            pf.ShowDialog(ownerForm);
+
+            // ユーザー設定で常駐クロールがONの場合、メイン処理完了後に常駐クロールを再開
+            if (UserSettings.AlwaysCrawlMode)
+            {
+                Crawler.StartAlwaysCrawl();
+            }
+        }
+
+        /// <summary>
+        /// 常駐クロール実行中であれば再起動する
+        /// </summary>
+        public virtual void RestartAlwaysCrawlIfRunning(Form ownerForm)
+        {
+            // 常駐クロール実行中の場合、一度常駐クロールを止めて、最初から常駐クロールを再開する
+            if (Crawler.AlwaysCrawlIsRunning)
+            {
+                // UI側スレッドで処理実行
+                ownerForm.Invoke((MethodInvoker)delegate
+                {
+                    // 実行中の常駐クロール処理を中止
+                    var stoppingTask = Crawler.StopAlwaysCrawlIfRunningAsync();
+                    var pf = new ProgressForm(stoppingTask, "常駐クロールを再起動中...");
+                    pf.ShowDialog(ownerForm);
+
+                    // 常駐クロール再開
+                    Crawler.StartAlwaysCrawl();
+                });
+            }
+        }
 
         /// <summary>
         /// 文書データのラベル情報を一括更新
