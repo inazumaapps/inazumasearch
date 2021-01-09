@@ -45,12 +45,12 @@ namespace InazumaSearch.Core
         /// </summary>
         public static string GetIPCPortName()
         {
-            // ドメイン名とユーザー名から、一意なハッシュを生成し、左側から8桁を取得
+            // ドメイン名とユーザー名、アセンブリの名前 (exe名) から、一意なハッシュを生成し、左側から8桁を取得
             var hashProvider = new SHA1CryptoServiceProvider();
-            var userHash8 = Util.HexDigest(hashProvider, $@"{Environment.UserDomainName}\{Environment.UserName}").Substring(0, 8);
+            var idHash8 = Util.HexDigest(hashProvider, $@"{Environment.UserDomainName}\{Environment.UserName}-{AppDomain.CurrentDomain.FriendlyName}").Substring(0, 8);
 
             // ポート名を生成して返す
-            return $"{userHash8}.inazumasearch.inazumaapps.info";
+            return $"{idHash8}.inazumasearch.inazumaapps.info";
         }
     }
 }
