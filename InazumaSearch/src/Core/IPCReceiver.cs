@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Security.Cryptography;
+using System.Security.Permissions;
 using System.Windows.Forms;
 using InazumaSearch.src.Forms;
 
@@ -51,6 +52,15 @@ namespace InazumaSearch.Core
 
             // ポート名を生成して返す
             return $"{idHash8}.inazumasearch.inazumaapps.info";
+        }
+
+        /// <inheritdoc />
+        [SecurityPermissionAttribute(SecurityAction.Demand, Flags = SecurityPermissionFlag.Infrastructure)]
+        public override object InitializeLifetimeService()
+        {
+            // 起動後しばらく経っても開放されないように、生存期間を無期限とする
+            // 参考: <https://stackoverflow.com/questions/2410221/appdomain-and-marshalbyrefobject-life-time-how-to-avoid-remotingexception>
+            return null;
         }
     }
 }
