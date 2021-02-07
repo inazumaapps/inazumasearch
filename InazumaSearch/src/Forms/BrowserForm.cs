@@ -1047,27 +1047,6 @@ namespace InazumaSearch.Forms
                 }
             }
 
-            // デバッグモードかどうかにかかわらず共通の表示
-            switch (state.CurrentStep)
-            {
-                case ProgressState.Step.AlwaysCrawlBegin:
-                    StlBackgroundCrawl.Text = "";
-                    return;
-
-                case ProgressState.Step.Finish:
-                    StlBackgroundCrawl.Text = $"常駐クロール: 更新済";
-                    return;
-
-                case ProgressState.Step.AlwaysCrawlEnd:
-                    StlBackgroundCrawl.Text = "";
-                    return;
-
-                case ProgressState.Step.RecordUpdateEnd:
-                case ProgressState.Step.PurgeProcessEnd:
-                    // スキップ
-                    return;
-            }
-
             string suffix;
             if (AlwaysCrawlProgressTick < AlwaysCrawlProgressTickEnd / 3)
             {
@@ -1082,47 +1061,73 @@ namespace InazumaSearch.Forms
                 suffix = "...";
             }
 
-            var newCaption = "";
+            var newCaption = GetBackgroundCrawlCaption(state.CurrentStep, state.Path);
+            if (newCaption != null) {
+                if (!string.IsNullOrEmpty(newCaption)) newCaption += suffix;
+                StlBackgroundCrawl.Text = newCaption;
+            }
+        }
+
+        protected virtual string GetBackgroundCrawlCaption(ProgressState.Step currentStep, string path)
+        {
+            // デバッグモードかどうかにかかわらず共通の表示
+            switch (currentStep)
+            {
+                case ProgressState.Step.AlwaysCrawlBegin:
+                    return "";
+
+                case ProgressState.Step.Finish:
+                    return $"常駐クロール: 更新済";
+
+                case ProgressState.Step.AlwaysCrawlEnd:
+                    return "";
+
+                default:
+                    // 上記以外はスキップ
+                    break;
+            }
+
+
             if (App.DebugMode)
             {
                 // デバッグモード時のみの表示
-                switch (state.CurrentStep)
+                switch (currentStep)
                 {
                     case ProgressState.Step.RecordUpdateCheckBegin:
-                        newCaption = $"常駐クロール: 文書ファイルを検索中 ({Path.GetDirectoryName(state.Path)})";
-                        break;
+                        return $"常駐クロール: 文書ファイルを検索中 ({Path.GetDirectoryName(path)})";
 
                     case ProgressState.Step.RecordUpdateBegin:
-                        newCaption = $"常駐クロール: 文書データ登録中 ({state.Path})";
-                        break;
+                        return $"常駐クロール: 文書データ登録中 ({path})";
 
                     case ProgressState.Step.PurgeBegin:
-                        newCaption = $"常駐クロール: 存在しない文書データを削除中";
-                        break;
+                        return $"常駐クロール: 存在しない文書データを削除中";
 
                     case ProgressState.Step.AlwaysCrawlDBDocumentDeleteBegin:
                     case ProgressState.Step.AlwaysCrawlDBDirectoryDeleteBegin:
-                        newCaption = $"常駐クロール: 文書データを削除中 ({state.Path})";
-                        break;
+                        return $"常駐クロール: 文書データを削除中 ({path})";
+                    default:
+                        // 上記以外はスキップ
+                        return null;
                 }
             }
             else
             {
                 // 通常モード時のみの表示
-                switch (state.CurrentStep)
+                switch (currentStep)
                 {
                     case ProgressState.Step.RecordUpdateCheckBegin:
                     case ProgressState.Step.RecordUpdateBegin:
                     case ProgressState.Step.PurgeBegin:
                     case ProgressState.Step.AlwaysCrawlDBDocumentDeleteBegin:
                     case ProgressState.Step.AlwaysCrawlDBDirectoryDeleteBegin:
-                        newCaption = $"常駐クロール: 文書ファイルの情報を更新中";
-                        break;
+                        return $"常駐クロール: 文書ファイルの情報を更新中";
+                    default:
+                        // 上記以外はスキップ
+                        return null;
                 }
             }
-
-            newCaption += suffix;
-            StlBackgroundCrawl.Text = newCaption;
         }
     }
+
+    
 }
