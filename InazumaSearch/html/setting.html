@@ -406,7 +406,7 @@
                     var resultJson = api.addTargetDirectory(selectedPath);
                     if (resultJson != null) {
                         var result = JSON.parse(resultJson);
-                        addFolder(selectedPath, "", data.pathHashes[dir.Path], result.fileCount, 0);
+                        addFolder(selectedPath, "", result.pathHash, result.fileCount, 0);
                     }
                 }
                 return false;

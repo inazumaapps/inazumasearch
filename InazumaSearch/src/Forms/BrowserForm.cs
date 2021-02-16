@@ -185,7 +185,7 @@ namespace InazumaSearch.Forms
                         , outputColumns: new string[] { Groonga.VColumn.ID }
                         , filter: $"{Column.Documents.KEY} @^ {Groonga.Util.EscapeForScript(Util.MakeDocumentDirKeyPrefix(path))}"
                     );
-                    return JsonConvert.SerializeObject(new { fileCount = res.SearchResult.NHits });
+                    return JsonConvert.SerializeObject(new { fileCount = res.SearchResult.NHits, pathHash = Util.HexDigest(App.HashProvider, path) });
                 });
 
             }
