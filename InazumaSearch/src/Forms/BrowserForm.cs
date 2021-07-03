@@ -1061,25 +1061,31 @@ namespace InazumaSearch.Forms
                 suffix = "...";
             }
 
-            var newCaption = GetBackgroundCrawlCaption(state.CurrentStep, state.Path);
+            bool onProgress;
+            var newCaption = GetBackgroundCrawlCaption(state.CurrentStep, state.Path, out onProgress);
             if (newCaption != null) {
-                if (!string.IsNullOrEmpty(newCaption)) newCaption += suffix;
+                if (!string.IsNullOrEmpty(newCaption) && onProgress) newCaption += suffix;
                 StlBackgroundCrawl.Text = newCaption;
             }
         }
 
-        protected virtual string GetBackgroundCrawlCaption(ProgressState.Step currentStep, string path)
+        protected virtual string GetBackgroundCrawlCaption(ProgressState.Step currentStep, string path, out bool onProgress)
         {
+            onProgress = true;
+
             // デバッグモードかどうかにかかわらず共通の表示
             switch (currentStep)
             {
                 case ProgressState.Step.AlwaysCrawlBegin:
+                    onProgress = false;
                     return "";
 
                 case ProgressState.Step.Finish:
+                    onProgress = false;
                     return $"常駐クロール: 更新済";
 
                 case ProgressState.Step.AlwaysCrawlEnd:
+                    onProgress = false;
                     return "";
 
                 default:
