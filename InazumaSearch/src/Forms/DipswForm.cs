@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using Alphaleonis.Win32.Filesystem;
 using InazumaSearch.Core;
+using Microsoft.WindowsAPICodePack.Dialogs;
 
 namespace InazumaSearch.Forms
 {
@@ -108,6 +109,10 @@ namespace InazumaSearch.Forms
             tblDebug.Visible = Application.DebugMode;
             lnkOpenDataFolder.Visible = Application.DebugMode;
             UpdateExtensionList();
+
+            // 「初期設定へ戻す」ボタンの押下可否を更新
+            RefreshBtnResetDocumentDBDirPathEnabled();
+
         }
 
         protected void UpdateLabels()
@@ -189,6 +194,97 @@ namespace InazumaSearch.Forms
         private void lnkOpenDataFolder_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
             Process.Start("explorer.exe", $"\"{Application.UserSettingDirPath}\"");
+        }
+
+        /// <summary>
+        /// 文書DBフォルダパスの変更ボタンを押下
+        /// </summary>
+        private void BtnChangeDocumentDBDirPath_Click(object sender, EventArgs e)
+        {
+            var msg = $@"
+文書DBフォルダは、高速な検索のために最適化するため
+数百MB～数GBのファイルサイズになる可能性があります。
+ネットワーク上やUSBメモリ上に保存先を変更する場合は、十分にご注意ください。
+（現在のファイルサイズ：{Util.FormatFileSizeByMB(1646)}）
+
+保存先フォルダを変更してよろしいですか？
+";
+            if (Util.Confirm(msg, defaultNo: true))
+            {
+                using (var dialog = new CommonOpenFileDialog())
+                {
+                    dialog.IsFolderPicker = true;
+                    dialog.InitialDirectory = TxtDocumentDBDirPath.Text;
+
+                    var ret = dialog.ShowDialog();
+
+                    if (ret == CommonFileDialogResult.Ok)
+                    {
+                        // メイン処理へ移行
+                        ChangeDocumentDBDirPathMain(dialog.FileName);
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// 文書DBフォルダパスのリセットボタンを押下
+        /// </summary>
+        private void BtnResetDocumentDBDirPath_Click(object sender, EventArgs e)
+        {
+            // メイン処理へ移行
+            ChangeDocumentDBDirPathMain(Application.DefaultDBDirPath);
+
+        }
+
+        /// <summary>
+        /// 文書DBフォルダパス変更メイン処理
+        /// </summary>
+        /// <param name="newDirPath"></param>
+        protected virtual void ChangeDocumentDBDirPathMain(string newDirPath)
+        {
+            // 空フォルダでなければ警告
+            string confirmMsg;
+            if (Directory.GetFiles(newDirPath).Any())
+            {
+                confirmMsg = $"指定したフォルダは空ではありません。\n本当に文書DBの保存先を下記フォルダに変更してよろしいですか？\n{newDirPath}";
+            }
+            else
+            {
+                confirmMsg = $"文書DBの保存先を下記フォルダに変更します。\nよろしいですか？\n{newDirPath}";
+            }
+
+            if (!Util.Confirm(confirmMsg, defaultNo: true))
+            {
+                // キャンセルした場合は中断
+                return;
+            }
+
+            // フォルダ変更処理
+            var t = Task.Run(() =>
+            {
+                string errorMessage;
+                if (!Application.ChangeDocumentDBDir(newDirPath, out errorMessage))
+                {
+                    Util.ShowErrorMessage(errorMessage);
+                }
+            });
+            var f = new ProgressForm(t, "文書DBフォルダを変更しています...");
+            f.ShowDialog();
+
+            // 表示されているパスを置き換え
+            TxtDocumentDBDirPath.Text = newDirPath;
+
+            // 「初期設定へ戻す」ボタンの押下可否を更新
+            RefreshBtnResetDocumentDBDirPathEnabled();
+        }
+
+        /// <summary>
+        /// 「初期設定へ戻す」ボタンの押下可否更新
+        /// </summary>
+        protected void RefreshBtnResetDocumentDBDirPathEnabled()
+        {
+            BtnResetDocumentDBDirPath.Enabled = (TxtDocumentDBDirPath.Text.ToLower() != Application.DefaultDBDirPath.ToLower());
         }
     }
 }

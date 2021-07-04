@@ -80,9 +80,27 @@ namespace InazumaSearch.Core
         #region 特殊パスの取得
 
         /// <summary>
-        /// DBディレクトリのパス
+        /// 文書DBディレクトリのパス
         /// </summary>
         public virtual string DBDirPath
+        {
+            get
+            {
+                if (UserSettings.DocumentDBDirPath != null)
+                {
+                    return UserSettings.DocumentDBDirPath;
+                }
+                else
+                {
+                    return DefaultDBDirPath;
+                }
+            }
+        }
+
+        /// <summary>
+        /// 文書DBディレクトリの初期パス
+        /// </summary>
+        public virtual string DefaultDBDirPath
         {
             get
             {
@@ -96,6 +114,7 @@ namespace InazumaSearch.Core
                 }
             }
         }
+
         /// <summary>
         /// サムネイルディレクトリのパス
         /// </summary>
@@ -670,6 +689,94 @@ namespace InazumaSearch.Core
             {
                 File.Delete(path);
             }
+        }
+
+        /// <summary>
+        /// 文書DB保存先フォルダを変更
+        /// </summary>
+        /// <remarks>
+        /// 変更処理に成功した場合はtrue、失敗した場合はfalse
+        /// </remarks>
+        public virtual bool ChangeDocumentDBDir(string newDirPath, out string errorMessage)
+        {
+            // 出力変数初期化
+            errorMessage = null;
+
+            // 書き込み可能なフォルダかどうかをチェック (テキストファイルを書き込む)
+            try
+            {
+                var testFilePath = Path.Combine(newDirPath, "__testfile.txt");
+                File.WriteAllText(testFilePath, "test");
+
+                // 書き込みに成功した場合は、書き込んだファイルを削除
+                File.Delete(testFilePath);
+            }
+            catch (Exception ex)
+            {
+                Logger.Error(ex);
+                errorMessage = "移動先へのファイルの書き込みに失敗しました。";
+                return false;
+            }
+
+            // Groongaを停止
+            GM.Shutdown();
+
+            var copiedDestPaths = new List<string>();
+            try
+            {
+                // 元フォルダのファイルを全てコピー（ファイルが存在する場合は上書き）
+                foreach (var fromPath in Directory.GetFiles(DBDirPath))
+                {
+                    if (File.Exists(fromPath))
+                    {
+                        var toPath = Path.Combine(newDirPath, Path.GetFileName(fromPath));
+                        File.Copy(fromPath, toPath, overwrite: true);
+
+                        // コピーを実施したパスを記録
+                        copiedDestPaths.Add(toPath);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.Error(ex);
+
+                // 途中で例外が発生した場合は、（可能であれば）コピー先のファイルを削除してから中断
+                foreach (var destPath in copiedDestPaths)
+                {
+                    try
+                    {
+                        File.Delete(destPath);
+                    }
+                    catch (Exception ex2)
+                    {
+                        Logger.Error(ex2);
+                    }
+                }
+
+                errorMessage = "移動先へのファイルの書き込みに失敗しました。";
+                return false;
+            }
+
+            // コピーが終了したなら、元フォルダのファイルを削除
+            foreach (var fromPath in Directory.GetFiles(DBDirPath))
+            {
+                if (File.Exists(fromPath))
+                {
+                    File.Delete(fromPath);
+                }
+            }
+
+            // 新しい文書DBフォルダパスを記録
+            this.UserSettings.SaveDocumentDBDirPath(newDirPath);
+
+            // Groonga ManagerのDBパスを置き換える
+            GM.DBDirPath = newDirPath;
+
+            // Groongaを起動
+            GM.Boot();
+
+            return true;
         }
 
         /// <summary>

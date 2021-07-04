@@ -49,6 +49,7 @@ namespace InazumaSearch.Core
             public virtual string LastBootVersion { get; set; } = null;
             public virtual Dictionary<string, int> LastLoadedPluginVersionNumbers { get; set; } = new Dictionary<string, int>();
             public virtual List<Extension> TextExtensions { get; set; } = new List<Extension>();
+            public virtual string DocumentDBDirPath { get; set; } = null;
             public virtual List<string> LastExcludingDirPaths { get; set; } = null;
         }
 
@@ -194,6 +195,20 @@ namespace InazumaSearch.Core
             public void SaveTextExtNames(List<Extension> value)
             {
                 PlainData.TextExtensions = value;
+                Save();
+            }
+
+            /// <summary>
+            /// 文書DB保存先パス（未設定時は初期フォルダへ保存）
+            /// </summary>
+            public string DocumentDBDirPath { get { return PlainData.DocumentDBDirPath; } }
+
+            /// <summary>
+            /// 文書DB保存先パスの設定
+            /// </summary>
+            public void SaveDocumentDBDirPath(string value)
+            {
+                PlainData.DocumentDBDirPath = value;
                 Save();
             }
 

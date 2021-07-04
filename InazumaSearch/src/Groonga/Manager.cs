@@ -28,7 +28,7 @@ namespace InazumaSearch.Groonga
         public string GroongaDirPath { get { return Path.GetDirectoryName(GroongaExePath); } }
 
         public string LogDirPath { get; protected set; }
-        public string DBDirPath { get; protected set; }
+        public string DBDirPath { get; set; }
         public string DBPath { get { return Path.Combine(DBDirPath, "InazumaSearch.db"); } }
 
         public Process Proc { get; protected set; }

@@ -51,6 +51,8 @@
             this.BtnDeleteTextExt = new System.Windows.Forms.Button();
             this.BtnAddTextExt = new System.Windows.Forms.Button();
             this.lnkOpenDataFolder = new System.Windows.Forms.LinkLabel();
+            this.BtnChangeDocumentDBDirPath = new System.Windows.Forms.Button();
+            this.BtnResetDocumentDBDirPath = new System.Windows.Forms.Button();
             this.tblDebug.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.tableLayoutPanel2.SuspendLayout();
@@ -104,7 +106,7 @@
             this.tblDebug.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 38.53659F));
             this.tblDebug.Controls.Add(this.lblDocumentDBSize, 1, 0);
             this.tblDebug.Controls.Add(this.label6, 0, 0);
-            this.tblDebug.Location = new System.Drawing.Point(177, 186);
+            this.tblDebug.Location = new System.Drawing.Point(177, 215);
             this.tblDebug.Name = "tblDebug";
             this.tblDebug.RowCount = 1;
             this.tblDebug.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 47.76119F));
@@ -134,10 +136,12 @@
             // 
             // groupBox2
             // 
+            this.groupBox2.Controls.Add(this.BtnResetDocumentDBDirPath);
+            this.groupBox2.Controls.Add(this.BtnChangeDocumentDBDirPath);
             this.groupBox2.Controls.Add(this.TxtDocumentDBDirPath);
             this.groupBox2.Location = new System.Drawing.Point(13, 130);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(399, 50);
+            this.groupBox2.Size = new System.Drawing.Size(399, 80);
             this.groupBox2.TabIndex = 2;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "文書データベースの保存先";
@@ -265,13 +269,34 @@
             // lnkOpenDataFolder
             // 
             this.lnkOpenDataFolder.AutoSize = true;
-            this.lnkOpenDataFolder.Location = new System.Drawing.Point(317, 225);
+            this.lnkOpenDataFolder.Location = new System.Drawing.Point(317, 254);
             this.lnkOpenDataFolder.Name = "lnkOpenDataFolder";
             this.lnkOpenDataFolder.Size = new System.Drawing.Size(95, 12);
             this.lnkOpenDataFolder.TabIndex = 24;
             this.lnkOpenDataFolder.TabStop = true;
             this.lnkOpenDataFolder.Text = "データフォルダを開く";
             this.lnkOpenDataFolder.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.lnkOpenDataFolder_LinkClicked);
+            // 
+            // BtnChangeDocumentDBDirPath
+            // 
+            this.BtnChangeDocumentDBDirPath.Location = new System.Drawing.Point(332, 44);
+            this.BtnChangeDocumentDBDirPath.Name = "BtnChangeDocumentDBDirPath";
+            this.BtnChangeDocumentDBDirPath.Size = new System.Drawing.Size(61, 23);
+            this.BtnChangeDocumentDBDirPath.TabIndex = 29;
+            this.BtnChangeDocumentDBDirPath.Text = "変更";
+            this.BtnChangeDocumentDBDirPath.UseVisualStyleBackColor = true;
+            this.BtnChangeDocumentDBDirPath.Click += new System.EventHandler(this.BtnChangeDocumentDBDirPath_Click);
+            // 
+            // BtnResetDocumentDBDirPath
+            // 
+            this.BtnResetDocumentDBDirPath.Enabled = false;
+            this.BtnResetDocumentDBDirPath.Location = new System.Drawing.Point(174, 44);
+            this.BtnResetDocumentDBDirPath.Name = "BtnResetDocumentDBDirPath";
+            this.BtnResetDocumentDBDirPath.Size = new System.Drawing.Size(152, 23);
+            this.BtnResetDocumentDBDirPath.TabIndex = 30;
+            this.BtnResetDocumentDBDirPath.Text = "初期設定フォルダに戻す";
+            this.BtnResetDocumentDBDirPath.UseVisualStyleBackColor = true;
+            this.BtnResetDocumentDBDirPath.Click += new System.EventHandler(this.BtnResetDocumentDBDirPath_Click);
             // 
             // DipswForm
             // 
@@ -327,6 +352,8 @@
         private System.Windows.Forms.ColumnHeader columnHeader1;
         private System.Windows.Forms.ColumnHeader columnHeader2;
         private System.Windows.Forms.LinkLabel lnkOpenDataFolder;
+        private System.Windows.Forms.Button BtnResetDocumentDBDirPath;
+        private System.Windows.Forms.Button BtnChangeDocumentDBDirPath;
     }
 }
 
