@@ -260,16 +260,26 @@ namespace InazumaSearch.Forms
                 return;
             }
 
+            // 進捗報告用オブジェクトの作成
+            var progress = new Progress<ProgressGuageState>();
+
             // フォルダ変更処理
             var t = Task.Run(() =>
             {
                 string errorMessage;
-                if (!Application.ChangeDocumentDBDir(newDirPath, out errorMessage))
+                if (!Application.ChangeDocumentDBDir(newDirPath, out errorMessage, progress))
                 {
                     Util.ShowErrorMessage(errorMessage);
                 }
             });
             var f = new ProgressForm(t, "文書DBフォルダを変更しています...");
+            progress.ProgressChanged += (sender, state) =>
+            {
+                f.ProgressBar.Value = state.Value;
+                f.ProgressBar.Maximum = state.Maximum;
+                f.ProgressBar.Style = (state.Indeterminate ? ProgressBarStyle.Marquee : ProgressBarStyle.Continuous);
+            };
+
             f.ShowDialog();
 
             // 表示されているパスを置き換え

@@ -115,7 +115,6 @@
         }
 
         #endregion
-        private System.Windows.Forms.ProgressBar ProgressBar;
         private System.Windows.Forms.StatusStrip statusStrip1;
         private System.Windows.Forms.ToolStripStatusLabel statusText;
         private System.Windows.Forms.FolderBrowserDialog folderBrowserDialog1;
@@ -123,6 +122,7 @@
         private System.Windows.Forms.Timer timeCounter;
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel1;
         private System.Windows.Forms.Label lblMessage;
+        public System.Windows.Forms.ProgressBar ProgressBar;
     }
 }
 

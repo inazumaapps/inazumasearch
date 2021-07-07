@@ -192,6 +192,7 @@
   <ItemGroup>
     <Compile Include="src\ApplicationContext.cs" />
     <Compile Include="src\Core\Application.cs" />
+    <Compile Include="src\Core\ProgressGuageState.cs" />
     <Compile Include="src\Core\Crawl\IWork.cs" />
     <Compile Include="src\Core\Crawl\Result.cs" />
     <Compile Include="src\Core\Crawl\WorkBase.cs" />

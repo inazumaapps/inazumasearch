@@ -697,10 +697,15 @@ namespace InazumaSearch.Core
         /// <remarks>
         /// 変更処理に成功した場合はtrue、失敗した場合はfalse
         /// </remarks>
-        public virtual bool ChangeDocumentDBDir(string newDirPath, out string errorMessage)
+        public virtual bool ChangeDocumentDBDir(string newDirPath, out string errorMessage, IProgress<ProgressGuageState> progress = null)
         {
             // 出力変数初期化
             errorMessage = null;
+
+
+            // 進捗を表すオブジェクトを作成
+            var progressState = new ProgressGuageState() { Indeterminate = true };
+            if (progress != null) progress.Report(progressState);
 
             // 書き込み可能なフォルダかどうかをチェック (テキストファイルを書き込む)
             try
@@ -721,20 +726,42 @@ namespace InazumaSearch.Core
             // Groongaを停止
             GM.Shutdown();
 
+            // 移動対象のファイルリストを取得
+            var fromFiles = Directory.GetFiles(DBDirPath).Where(p => File.Exists(p));
+
+            // 元フォルダ内の各ファイルについて、ファイルサイズ合計値を取得
+            var fromFileSizeMap = fromFiles.ToDictionary(p => p, p => File.GetSize(p));
+            var fromFileTotalSize = fromFileSizeMap.Values.Sum();
+
+            // 進捗状態を設定
+            progressState.Value = 0;
+            progressState.Maximum = 1000;
+            progressState.Indeterminate = false;
+            if (progress != null) progress.Report(progressState);
+
+            var copyWeight = 800;
+            var deleteWeight = progressState.Maximum - copyWeight;
+
+            // コピー処理
+            var copiedSize = (long)0;
             var copiedDestPaths = new List<string>();
             try
             {
                 // 元フォルダのファイルを全てコピー（ファイルが存在する場合は上書き）
-                foreach (var fromPath in Directory.GetFiles(DBDirPath))
+                foreach (var fromPath in fromFiles)
                 {
-                    if (File.Exists(fromPath))
-                    {
-                        var toPath = Path.Combine(newDirPath, Path.GetFileName(fromPath));
-                        File.Copy(fromPath, toPath, overwrite: true);
+                    var toPath = Path.Combine(newDirPath, Path.GetFileName(fromPath));
+                    File.Copy(fromPath, toPath, overwrite: true);
 
-                        // コピーを実施したパスを記録
-                        copiedDestPaths.Add(toPath);
-                    }
+                    // コピーを実施したパスを記録
+                    copiedDestPaths.Add(toPath);
+
+                    // コピー済ファイルサイズを加算
+                    copiedSize += fromFileSizeMap[fromPath];
+
+                    // 進捗状態を設定
+                    progressState.Value = (int)Math.Round(((decimal)copiedSize / (decimal)fromFileTotalSize) * copyWeight);
+                    if (progress != null) progress.Report(progressState);
                 }
             }
             catch (Exception ex)
@@ -759,12 +786,18 @@ namespace InazumaSearch.Core
             }
 
             // コピーが終了したなら、元フォルダのファイルを削除
-            foreach (var fromPath in Directory.GetFiles(DBDirPath))
+            var deletedSize = (long)0;
+            foreach (var fromPath in fromFiles)
             {
-                if (File.Exists(fromPath))
-                {
-                    File.Delete(fromPath);
-                }
+                // 削除
+                File.Delete(fromPath);
+
+                // 削除済ファイルサイズを加算
+                deletedSize += fromFileSizeMap[fromPath];
+
+                // 進捗状態を設定
+                progressState.Value = copyWeight + (int)Math.Round(((decimal)deletedSize / (decimal)fromFileTotalSize) * deleteWeight);
+                if (progress != null) progress.Report(progressState);
             }
 
             // 新しい文書DBフォルダパスを記録
