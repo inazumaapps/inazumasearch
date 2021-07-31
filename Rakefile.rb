@@ -1,26 +1,39 @@
-VERSION = '0.20.2'
+# get assembly version
+asmLines = File.readlines('InazumaSearch/Properties/AssemblyInfo.cs', encoding: 'utf-8')
+version = nil
+asmLines.each do |line|
+	if line =~ /\[assembly\: AssemblyVersion\("(\d+\.\d+\.\d+)\.0"\)\]/ then
+		version = $1
+	end
+end
+
+unless asmLines
+	$stderr.puts "AssemblyVersion not found."
+	return
+end
+
 MSBUILD = 'C:\\Program Files (x86)\\MSBuild\\14.0\\Bin\\MSBuild.exe'
 EXEPRESS = 'C:\\Program Files (x86)\\Web Technology\\EXEpress 6\\EXEpress.exe'
 
 PLATFORMS = ['x86', 'x64']
 
 DEST_EXES = {}
-DEST_EXES['x86'] = "out/InazumaSearch-#{VERSION}-x86.exe"
-DEST_EXES['x64'] = "out/InazumaSearch-#{VERSION}-x64.exe"
+DEST_EXES['x86'] = "out/InazumaSearch-#{version}-x86.exe"
+DEST_EXES['x64'] = "out/InazumaSearch-#{version}-x64.exe"
 EXEPRESS_INIS = {}
-EXEPRESS_INIS['x86'] = "out/IInazumaSearch_exepress_#{VERSION}_x86.ini"
-EXEPRESS_INIS['x64'] = "out/IInazumaSearch_exepress_#{VERSION}_x64.ini"
+EXEPRESS_INIS['x86'] = "out/IInazumaSearch_exepress_#{version}_x86.ini"
+EXEPRESS_INIS['x64'] = "out/IInazumaSearch_exepress_#{version}_x64.ini"
 
 DEST_ZIPS = {}
-DEST_ZIPS['x86'] = "out/InazumaSearch-#{VERSION}-x86.zip"
-DEST_ZIPS['x64'] = "out/InazumaSearch-#{VERSION}-x64.zip"
+DEST_ZIPS['x86'] = "out/InazumaSearch-#{version}-x86.zip"
+DEST_ZIPS['x64'] = "out/InazumaSearch-#{version}-x64.zip"
 DEST_CABS = {}
 PLATFORMS.each do |platform|
 	DEST_CABS[platform] = DEST_ZIPS[platform].sub(/zip$/, 'cab')
 end
 DEST_ZIPS_PORTABLE = {}
-DEST_ZIPS_PORTABLE['x86'] = "out/InazumaSearch-#{VERSION}-Portable-x86.zip"
-DEST_ZIPS_PORTABLE['x64'] = "out/InazumaSearch-#{VERSION}-Portable-x64.zip"
+DEST_ZIPS_PORTABLE['x86'] = "out/InazumaSearch-#{version}-Portable-x86.zip"
+DEST_ZIPS_PORTABLE['x64'] = "out/InazumaSearch-#{version}-Portable-x64.zip"
 
 RELEASE_EXE = {}
 RELEASE_EXE['x86'] = "InazumaSearch/bin/Release/x86/InazumaSearch.exe"
@@ -97,7 +110,7 @@ PLATFORMS.each do |platform|
 	    express_enc = 'UTF-16LE'
 	    inibody = File.read('InazumaSearch_exepress_template.ini', encoding: express_enc, mode: 'rb')
 	    inibody.gsub!('${CHDIR}'.encode(express_enc), Dir.pwd.gsub('/', '\\').encode(express_enc));
-	    inibody.gsub!('${VERSION}'.encode(express_enc), VERSION.encode(express_enc));
+	    inibody.gsub!('${version}'.encode(express_enc), version.encode(express_enc));
 	    inibody.gsub!('${PLATFORM}'.encode(express_enc), platform.encode(express_enc));
 	    inibody.gsub!('${64bitSFX}'.encode(express_enc), (platform == 'x64' ? '1' : '0').encode(express_enc));
 	    inibody.gsub!('${TITLE_SUFFIX}'.encode(express_enc), (platform == 'x64' ? '' : ' (32ビット版)').encode(express_enc));
