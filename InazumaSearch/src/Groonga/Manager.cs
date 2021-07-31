@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Text;
 using Alphaleonis.Win32.Filesystem;
 
@@ -7,6 +9,13 @@ namespace InazumaSearch.Groonga
 {
     public partial class Manager
     {
+        /// <summary>
+        /// DB名
+        /// </summary>
+        /// <remarks>
+        /// 原則変更しないようにしてください。この値が変わると、以前のデータベースを引き継ぐことができません。
+        /// </remarks>
+        public const string DB_NAME = "InazumaSearch.db";
         /// <summary>
         /// ログ出力用オブジェクト
         /// </summary>
@@ -29,7 +38,7 @@ namespace InazumaSearch.Groonga
 
         public string LogDirPath { get; protected set; }
         public string DBDirPath { get; set; }
-        public string DBPath { get { return Path.Combine(DBDirPath, "InazumaSearch.db"); } }
+        public string DBPath { get { return Path.Combine(DBDirPath, DB_NAME); } }
 
         public Process Proc { get; protected set; }
 
@@ -135,6 +144,23 @@ namespace InazumaSearch.Groonga
             }
         }
 
+        /// <summary>
+        /// データベースファイルの一覧を取得
+        /// </summary>
+        /// <returns></returns>
+        public virtual List<string> GetDBFiles()
+        {
+            if (Directory.Exists(DBDirPath))
+            {
+                return Directory.GetFiles(DBDirPath)
+                                .Where(p => Path.GetFileName(p).StartsWith(DB_NAME))
+                                .ToList();
+            }
+            else
+            {
+                return new List<string>();
+            }
+        }
 
         /// <summary>
         /// データベースのファイルサイズ合計を取得
@@ -142,19 +168,12 @@ namespace InazumaSearch.Groonga
         /// <returns></returns>
         public virtual long GetDBFileSizeTotal()
         {
-            if (Directory.Exists(DBDirPath))
+            long size = 0;
+            foreach (var path in GetDBFiles())
             {
-                long size = 0;
-                foreach (var path in Directory.GetFiles(DBDirPath))
-                {
-                    size += new FileInfo(path).Length;
-                }
-                return size;
+                size += new FileInfo(path).Length;
             }
-            else
-            {
-                return 0;
-            }
+            return size;
         }
 
 

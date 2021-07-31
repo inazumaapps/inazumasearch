@@ -727,7 +727,7 @@ namespace InazumaSearch.Core
             GM.Shutdown();
 
             // 移動対象のファイルリストを取得
-            var fromFiles = Directory.GetFiles(DBDirPath).Where(p => File.Exists(p));
+            var fromFiles = GM.GetDBFiles();
 
             // 元フォルダ内の各ファイルについて、ファイルサイズ合計値を取得
             var fromFileSizeMap = fromFiles.ToDictionary(p => p, p => File.GetSize(p));

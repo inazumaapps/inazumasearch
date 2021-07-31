@@ -118,7 +118,7 @@ namespace InazumaSearch.Forms
         protected void UpdateLabels()
         {
             TxtDocumentDBDirPath.Text = Path.GetFullPath(Application.GM.DBDirPath);
-            lblDocumentDBSize.Text = Util.FormatFileSizeByMB(Application.GM.GetDBFileSizeTotal());
+            lblDocumentDBSize.Text = Util.FormatFileSize(Application.GM.GetDBFileSizeTotal());
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -202,14 +202,14 @@ namespace InazumaSearch.Forms
         private void BtnChangeDocumentDBDirPath_Click(object sender, EventArgs e)
         {
             var msg = $@"
-文書DBフォルダは、高速な検索のために最適化するため
+文書データベースは、高速検索するための最適化を行っているため
 数百MB～数GBのファイルサイズになる可能性があります。
 ネットワーク上やUSBメモリ上に保存先を変更する場合は、十分にご注意ください。
-（現在のファイルサイズ：{Util.FormatFileSizeByMB(1646)}）
+（現在のファイルサイズ：{lblDocumentDBSize.Text}）
 
 保存先フォルダを変更してよろしいですか？
 ";
-            if (Util.Confirm(msg, defaultNo: true))
+            if (Util.Confirm(this, msg.Trim(), defaultNo: true))
             {
                 using (var dialog = new CommonOpenFileDialog())
                 {
@@ -243,18 +243,25 @@ namespace InazumaSearch.Forms
         /// <param name="newDirPath"></param>
         protected virtual void ChangeDocumentDBDirPathMain(string newDirPath)
         {
+            // 元フォルダと同じならエラー
+            if (Application.DBDirPath.ToLower() == newDirPath.ToLower())
+            {
+                Util.ShowErrorMessage(this, "現在の保存先と同じフォルダです。");
+                return;
+            }
+
             // 空フォルダでなければ警告
             string confirmMsg;
             if (Directory.GetFiles(newDirPath).Any())
             {
-                confirmMsg = $"指定したフォルダは空ではありません。\n本当に文書DBの保存先を下記フォルダに変更してよろしいですか？\n{newDirPath}";
+                confirmMsg = $"指定したフォルダは空ではありません。\n本当に文書データベースの保存先を下記フォルダに変更してよろしいですか？\n{newDirPath}";
             }
             else
             {
-                confirmMsg = $"文書DBの保存先を下記フォルダに変更します。\nよろしいですか？\n{newDirPath}";
+                confirmMsg = $"文書データベースの保存先を下記フォルダに変更します。\nよろしいですか？\n{newDirPath}";
             }
 
-            if (!Util.Confirm(confirmMsg, defaultNo: true))
+            if (!Util.Confirm(this, confirmMsg, defaultNo: true))
             {
                 // キャンセルした場合は中断
                 return;
@@ -269,10 +276,10 @@ namespace InazumaSearch.Forms
                 string errorMessage;
                 if (!Application.ChangeDocumentDBDir(newDirPath, out errorMessage, progress))
                 {
-                    Util.ShowErrorMessage(errorMessage);
+                    Util.ShowErrorMessage(this, errorMessage);
                 }
             });
-            var f = new ProgressForm(t, "文書DBフォルダを変更しています...");
+            var f = new ProgressForm(t, "文書データベースの保存先を変更しています...");
             progress.ProgressChanged += (sender, state) =>
             {
                 f.ProgressBar.Value = state.Value;
