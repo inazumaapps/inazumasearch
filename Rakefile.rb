@@ -21,8 +21,8 @@ DEST_EXES = {}
 DEST_EXES['x86'] = "out/InazumaSearch-#{version}-x86.exe"
 DEST_EXES['x64'] = "out/InazumaSearch-#{version}-x64.exe"
 EXEPRESS_INIS = {}
-EXEPRESS_INIS['x86'] = "out/IInazumaSearch_exepress_#{version}_x86.ini"
-EXEPRESS_INIS['x64'] = "out/IInazumaSearch_exepress_#{version}_x64.ini"
+EXEPRESS_INIS['x86'] = "out/InazumaSearch_exepress_#{version}_x86.ini"
+EXEPRESS_INIS['x64'] = "out/InazumaSearch_exepress_#{version}_x64.ini"
 
 DEST_ZIPS = {}
 DEST_ZIPS['x86'] = "out/InazumaSearch-#{version}-x86.zip"
@@ -110,7 +110,7 @@ PLATFORMS.each do |platform|
 	    express_enc = 'UTF-16LE'
 	    inibody = File.read('InazumaSearch_exepress_template.ini', encoding: express_enc, mode: 'rb')
 	    inibody.gsub!('${CHDIR}'.encode(express_enc), Dir.pwd.gsub('/', '\\').encode(express_enc));
-	    inibody.gsub!('${version}'.encode(express_enc), version.encode(express_enc));
+	    inibody.gsub!('${VERSION}'.encode(express_enc), version.encode(express_enc));
 	    inibody.gsub!('${PLATFORM}'.encode(express_enc), platform.encode(express_enc));
 	    inibody.gsub!('${64bitSFX}'.encode(express_enc), (platform == 'x64' ? '1' : '0').encode(express_enc));
 	    inibody.gsub!('${TITLE_SUFFIX}'.encode(express_enc), (platform == 'x64' ? '' : ' (32ビット版)').encode(express_enc));
