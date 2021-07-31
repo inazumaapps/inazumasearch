@@ -119,26 +119,62 @@ namespace InazumaSearch.Core
 
         #region 文字列フォーマット
 
+        /// <summary>
+        /// ファイルサイズをフォーマット　※値に応じて、B / KB / MB / GBのうち適切な単位を自動選択する
+        /// </summary>
+        public static string FormatFileSize(long size)
+        {
+            if (size >= 1024 * 1024 * 1024)
+            {
+                // 1GB以上
+                return FormatFileSizeByGB(size);
+            }
+            else if (size >= 1024 * 1024)
+            {
+                // 1MB以上
+                return FormatFileSizeByMB(size);
+            }
+            else if (size >= 1024)
+            {
+                // 1KB以上
+                return FormatFileSizeByKB(size);
+            }
+            else
+            {
+                // 上記以外
+                return string.Format("{0:#,0} B", size);
+            }
+        }
+
+        /// <summary>
+        /// ファイルサイズをKB単位でフォーマット
+        /// </summary>
         public static string FormatFileSizeByKB(long size)
         {
             // KB単位で表記 (小数点以下切り上げ)
-            var byKB = Math.Ceiling(size / (decimal)1024);
+            var byKB = Math.Ceiling((decimal)size / (decimal)1024);
 
             return string.Format("{0:#,0} KB", byKB);
         }
 
+        /// <summary>
+        /// ファイルサイズをMB単位でフォーマット
+        /// </summary>
         public static string FormatFileSizeByMB(long size)
         {
             // MB単位で表記 (小数点以下切り上げ)
-            var byMB = Math.Ceiling(size / (decimal)1024 / 1024);
+            var byMB = Math.Ceiling((decimal)size / (decimal)1024 / (decimal)1024);
 
             return string.Format("{0:#,0} MB", byMB);
         }
 
+        /// <summary>
+        /// ファイルサイズをGB単位でフォーマット
+        /// </summary>
         public static string FormatFileSizeByGB(long size)
         {
             // GB単位で表記 (小数点第二位まで)
-            var byGB = Math.Round(size / (decimal)1024 / 1024 / 1024, 2);
+            var byGB = Math.Round((decimal)size / (decimal)1024 / (decimal)1024 / (decimal)1024, 2);
 
             return string.Format("{0:#,0.00} GB", byGB);
         }
