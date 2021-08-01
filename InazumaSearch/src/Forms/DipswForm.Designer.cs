@@ -38,6 +38,8 @@
             this.label6 = new System.Windows.Forms.Label();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.BtnResetDocumentDBDirPath = new System.Windows.Forms.Button();
+            this.BtnChangeDocumentDBDirPath = new System.Windows.Forms.Button();
             this.TxtDocumentDBDirPath = new System.Windows.Forms.TextBox();
             this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
             this.lblVersion = new System.Windows.Forms.Label();
@@ -51,8 +53,7 @@
             this.BtnDeleteTextExt = new System.Windows.Forms.Button();
             this.BtnAddTextExt = new System.Windows.Forms.Button();
             this.lnkOpenDataFolder = new System.Windows.Forms.LinkLabel();
-            this.BtnChangeDocumentDBDirPath = new System.Windows.Forms.Button();
-            this.BtnResetDocumentDBDirPath = new System.Windows.Forms.Button();
+            this.LblDBDocumentDirUnchangable = new System.Windows.Forms.Label();
             this.tblDebug.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.tableLayoutPanel2.SuspendLayout();
@@ -136,6 +137,7 @@
             // 
             // groupBox2
             // 
+            this.groupBox2.Controls.Add(this.LblDBDocumentDirUnchangable);
             this.groupBox2.Controls.Add(this.BtnResetDocumentDBDirPath);
             this.groupBox2.Controls.Add(this.BtnChangeDocumentDBDirPath);
             this.groupBox2.Controls.Add(this.TxtDocumentDBDirPath);
@@ -145,6 +147,27 @@
             this.groupBox2.TabIndex = 2;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "文書データベースの保存先";
+            // 
+            // BtnResetDocumentDBDirPath
+            // 
+            this.BtnResetDocumentDBDirPath.Enabled = false;
+            this.BtnResetDocumentDBDirPath.Location = new System.Drawing.Point(174, 44);
+            this.BtnResetDocumentDBDirPath.Name = "BtnResetDocumentDBDirPath";
+            this.BtnResetDocumentDBDirPath.Size = new System.Drawing.Size(152, 23);
+            this.BtnResetDocumentDBDirPath.TabIndex = 30;
+            this.BtnResetDocumentDBDirPath.Text = "初期設定フォルダに戻す";
+            this.BtnResetDocumentDBDirPath.UseVisualStyleBackColor = true;
+            this.BtnResetDocumentDBDirPath.Click += new System.EventHandler(this.BtnResetDocumentDBDirPath_Click);
+            // 
+            // BtnChangeDocumentDBDirPath
+            // 
+            this.BtnChangeDocumentDBDirPath.Location = new System.Drawing.Point(332, 44);
+            this.BtnChangeDocumentDBDirPath.Name = "BtnChangeDocumentDBDirPath";
+            this.BtnChangeDocumentDBDirPath.Size = new System.Drawing.Size(61, 23);
+            this.BtnChangeDocumentDBDirPath.TabIndex = 29;
+            this.BtnChangeDocumentDBDirPath.Text = "変更";
+            this.BtnChangeDocumentDBDirPath.UseVisualStyleBackColor = true;
+            this.BtnChangeDocumentDBDirPath.Click += new System.EventHandler(this.BtnChangeDocumentDBDirPath_Click);
             // 
             // TxtDocumentDBDirPath
             // 
@@ -277,26 +300,17 @@
             this.lnkOpenDataFolder.Text = "データフォルダを開く";
             this.lnkOpenDataFolder.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.lnkOpenDataFolder_LinkClicked);
             // 
-            // BtnChangeDocumentDBDirPath
+            // LblDBDocumentDirUnchangable
             // 
-            this.BtnChangeDocumentDBDirPath.Location = new System.Drawing.Point(332, 44);
-            this.BtnChangeDocumentDBDirPath.Name = "BtnChangeDocumentDBDirPath";
-            this.BtnChangeDocumentDBDirPath.Size = new System.Drawing.Size(61, 23);
-            this.BtnChangeDocumentDBDirPath.TabIndex = 29;
-            this.BtnChangeDocumentDBDirPath.Text = "変更";
-            this.BtnChangeDocumentDBDirPath.UseVisualStyleBackColor = true;
-            this.BtnChangeDocumentDBDirPath.Click += new System.EventHandler(this.BtnChangeDocumentDBDirPath_Click);
-            // 
-            // BtnResetDocumentDBDirPath
-            // 
-            this.BtnResetDocumentDBDirPath.Enabled = false;
-            this.BtnResetDocumentDBDirPath.Location = new System.Drawing.Point(174, 44);
-            this.BtnResetDocumentDBDirPath.Name = "BtnResetDocumentDBDirPath";
-            this.BtnResetDocumentDBDirPath.Size = new System.Drawing.Size(152, 23);
-            this.BtnResetDocumentDBDirPath.TabIndex = 30;
-            this.BtnResetDocumentDBDirPath.Text = "初期設定フォルダに戻す";
-            this.BtnResetDocumentDBDirPath.UseVisualStyleBackColor = true;
-            this.BtnResetDocumentDBDirPath.Click += new System.EventHandler(this.BtnResetDocumentDBDirPath_Click);
+            this.LblDBDocumentDirUnchangable.BackColor = System.Drawing.SystemColors.Control;
+            this.LblDBDocumentDirUnchangable.ForeColor = System.Drawing.Color.Gray;
+            this.LblDBDocumentDirUnchangable.Location = new System.Drawing.Point(153, 44);
+            this.LblDBDocumentDirUnchangable.Name = "LblDBDocumentDirUnchangable";
+            this.LblDBDocumentDirUnchangable.Size = new System.Drawing.Size(240, 23);
+            this.LblDBDocumentDirUnchangable.TabIndex = 25;
+            this.LblDBDocumentDirUnchangable.Text = "（ポータブル版では変更不可）";
+            this.LblDBDocumentDirUnchangable.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.LblDBDocumentDirUnchangable.Visible = false;
             // 
             // DipswForm
             // 
@@ -354,6 +368,7 @@
         private System.Windows.Forms.LinkLabel lnkOpenDataFolder;
         private System.Windows.Forms.Button BtnResetDocumentDBDirPath;
         private System.Windows.Forms.Button BtnChangeDocumentDBDirPath;
+        private System.Windows.Forms.Label LblDBDocumentDirUnchangable;
     }
 }
 

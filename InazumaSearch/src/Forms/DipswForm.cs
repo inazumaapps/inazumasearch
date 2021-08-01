@@ -110,8 +110,8 @@ namespace InazumaSearch.Forms
             lnkOpenDataFolder.Visible = Application.DebugMode;
             UpdateExtensionList();
 
-            // 「初期設定へ戻す」ボタンの押下可否を更新
-            RefreshBtnResetDocumentDBDirPathEnabled();
+            // 文書データベース保存先関連のボタン押下可否を更新
+            DocumentDBDirOperationDisplayState();
 
         }
 
@@ -292,16 +292,29 @@ namespace InazumaSearch.Forms
             // 表示されているパスを置き換え
             TxtDocumentDBDirPath.Text = newDirPath;
 
-            // 「初期設定へ戻す」ボタンの押下可否を更新
-            RefreshBtnResetDocumentDBDirPathEnabled();
+            // 文書データベース保存先関連のボタン押下可否を更新
+            DocumentDBDirOperationDisplayState();
         }
 
         /// <summary>
-        /// 「初期設定へ戻す」ボタンの押下可否更新
+        /// 文書データベース保存先関連のコントロール表示を更新
         /// </summary>
-        protected void RefreshBtnResetDocumentDBDirPathEnabled()
+        protected void DocumentDBDirOperationDisplayState()
         {
-            BtnResetDocumentDBDirPath.Enabled = (TxtDocumentDBDirPath.Text.ToLower() != Application.DefaultDBDirPath.ToLower());
+            if (Util.IsPortableMode())
+            {
+                // ポータブル版の場合は押下不可
+                LblDBDocumentDirUnchangable.Visible = true;
+                BtnChangeDocumentDBDirPath.Enabled = false;
+                BtnResetDocumentDBDirPath.Enabled = false;
+            }
+            else
+            {
+                // 通常版の場合は押下可能、ただし「初期設定に戻す」ボタンは変更時のみ押下可能
+                LblDBDocumentDirUnchangable.Visible = false;
+                BtnChangeDocumentDBDirPath.Enabled = true;
+                BtnResetDocumentDBDirPath.Enabled = (TxtDocumentDBDirPath.Text.ToLower() != Application.DefaultDBDirPath.ToLower());
+            }
         }
     }
 }
