@@ -79,7 +79,7 @@ namespace InazumaSearch.Forms
             body.AppendLine(new string('-', 80));
             if (!string.IsNullOrWhiteSpace(TxtErrorComment.Text))
             {
-                body.AppendLine(TxtErrorComment.Text);
+                body.AppendLine("<補足>:" + TxtErrorComment.Text);
                 body.AppendLine(new string('-', 80));
 
             }
