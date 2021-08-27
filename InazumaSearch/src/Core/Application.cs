@@ -333,6 +333,23 @@ namespace InazumaSearch.Core
                 f.ShowDialog();
             }
 
+            // 前回の最終起動バージョンが0.21.0よりも前であれば、再クロールを促す
+            if (UserSettings.LastBootVersion != null && UserSettings.LastBootVersion <= "0.21.0")
+            {
+                if (Util.Confirm("【バージョンアップに伴うお知らせ】\nver 0.21.0以前のInazuma Searchをお使いいただいていた場合は、不具合により、Inazuma Searchが保持するクロール済み文書情報の一部が破損していた可能性があります。\nこれまでのバージョンで、クロール時や検索時にシステムエラーが多発していた方は、ご迷惑をおかけして申し訳ありませんが、クロール済み文書情報を一度削除していただいた上で、再度のクロール実行をお願いいたします。\n\nInazuma Searchが保持している、クロール済み文書情報を削除してもよろしいですか？\n（文書ファイルや設定情報は削除されません）"))
+                {
+                    var t = Task.Run(() =>
+                    {
+                        GM.Truncate(Table.Documents);
+                        GM.Truncate(Table.DocumentsIndex);
+                        DeleteAllThumbnailFiles();
+                    });
+                    var f = new ProgressForm(t, "クロール済み文書情報をクリアしています...");
+                    f.ShowDialog();
+                };
+
+            }
+
             // サムネイルフォルダが存在しなければ作成
             Directory.CreateDirectory(ThumbnailDirPath);
 
