@@ -35,6 +35,7 @@
             this.toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripMenuItem14 = new System.Windows.Forms.ToolStripMenuItem();
             this.NotifyIcon = new System.Windows.Forms.NotifyIcon(this.components);
+            this.ProcessMonitoringTimer = new System.Windows.Forms.Timer(this.components);
             this.TaskBarContextMenu.SuspendLayout();
             // 
             // TaskBarContextMenu
@@ -73,6 +74,12 @@
             this.NotifyIcon.Icon = ((System.Drawing.Icon)(resources.GetObject("NotifyIcon.Icon")));
             this.NotifyIcon.Text = "Inazuma Search (常駐クロール中)";
             this.NotifyIcon.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.NotifyIcon_MouseDoubleClick);
+            // 
+            // ProcessMonitoringTimer
+            // 
+            this.ProcessMonitoringTimer.Enabled = true;
+            this.ProcessMonitoringTimer.Interval = 10000;
+            this.ProcessMonitoringTimer.Tick += new System.EventHandler(this.ProcessMonitoringTimer_Tick);
             this.TaskBarContextMenu.ResumeLayout(false);
 
         }
@@ -83,5 +90,6 @@
         internal System.Windows.Forms.ToolStripSeparator toolStripSeparator4;
         internal System.Windows.Forms.ToolStripMenuItem toolStripMenuItem14;
         internal System.Windows.Forms.NotifyIcon NotifyIcon;
+        private System.Windows.Forms.Timer ProcessMonitoringTimer;
     }
 }
