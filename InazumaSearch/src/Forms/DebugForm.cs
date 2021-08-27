@@ -261,5 +261,11 @@ namespace InazumaSearch.Forms
             var pf = new ProgressForm(t, "DBのラベル情報を更新中...");
             pf.ShowDialog(this);
         }
+
+        private void BtnShowProcessStatus_Click(object sender, EventArgs e)
+        {
+            var procStatusForm = new ProcessStatusForm();
+            procStatusForm.Show();
+        }
     }
 }

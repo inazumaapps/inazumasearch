@@ -225,6 +225,12 @@
       <DependentUpon>BrowserForm.cs</DependentUpon>
     </Compile>
     <Compile Include="src\Core\ExcelTextExtractor.cs" />
+    <Compile Include="src\Forms\ProcessStatusForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="src\Forms\ProcessStatusForm.Designer.cs">
+      <DependentUpon>ProcessStatusForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="src\Forms\GroongaDebugForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -329,6 +335,9 @@
     <EmbeddedResource Include="src\Forms\BrowserForm.resx">
       <DependentUpon>BrowserForm.cs</DependentUpon>
       <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="src\Forms\ProcessStatusForm.resx">
+      <DependentUpon>ProcessStatusForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="src\Forms\GroongaDebugForm.resx">
       <DependentUpon>GroongaDebugForm.cs</DependentUpon>

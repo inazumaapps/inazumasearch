@@ -49,6 +49,7 @@
             this.LstIcons = new System.Windows.Forms.ListView();
             this.BtnOpenExcelFile = new System.Windows.Forms.Button();
             this.BtnUpdateDocumentFolderLabels = new System.Windows.Forms.Button();
+            this.BtnShowProcessStatus = new System.Windows.Forms.Button();
             this.statusStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
@@ -245,11 +246,22 @@
             this.BtnUpdateDocumentFolderLabels.UseVisualStyleBackColor = true;
             this.BtnUpdateDocumentFolderLabels.Click += new System.EventHandler(this.BtnUpdateDocumentFolderLabels_Click);
             // 
+            // BtnShowProcessStatus
+            // 
+            this.BtnShowProcessStatus.Location = new System.Drawing.Point(12, 112);
+            this.BtnShowProcessStatus.Name = "BtnShowProcessStatus";
+            this.BtnShowProcessStatus.Size = new System.Drawing.Size(137, 23);
+            this.BtnShowProcessStatus.TabIndex = 33;
+            this.BtnShowProcessStatus.Text = "プロセス状態表示";
+            this.BtnShowProcessStatus.UseVisualStyleBackColor = true;
+            this.BtnShowProcessStatus.Click += new System.EventHandler(this.BtnShowProcessStatus_Click);
+            // 
             // DebugForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1163, 563);
+            this.Controls.Add(this.BtnShowProcessStatus);
             this.Controls.Add(this.BtnUpdateDocumentFolderLabels);
             this.Controls.Add(this.BtnOpenExcelFile);
             this.Controls.Add(this.LstIcons);
@@ -300,6 +312,7 @@
         private System.Windows.Forms.ListView LstIcons;
         private System.Windows.Forms.Button BtnOpenExcelFile;
         private System.Windows.Forms.Button BtnUpdateDocumentFolderLabels;
+        private System.Windows.Forms.Button BtnShowProcessStatus;
     }
 }
 
