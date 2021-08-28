@@ -625,9 +625,6 @@ namespace InazumaSearch.Forms
         {
             if (!Cef.IsInitialized)
             {
-                // CefSharp初期化
-                CefSharpSettings.WcfEnabled = true; // from <https://github.com/cefsharp/CefSharp/issues/2990>
-
                 var settings = new CefSettings
                 {
                     Locale = "ja-JP"
