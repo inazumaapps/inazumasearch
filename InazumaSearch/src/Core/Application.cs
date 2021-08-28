@@ -346,8 +346,9 @@ namespace InazumaSearch.Core
                     });
                     var f = new ProgressForm(t, "クロール済み文書情報をクリアしています...");
                     f.ShowDialog();
-                };
 
+                    Util.ShowInformationMessage("クロール済み文書情報を削除しました。\nお手数ですが、Inazuma Searchの起動後に、もう一度クロールを実行してください。");
+                };
             }
 
             // サムネイルフォルダが存在しなければ作成

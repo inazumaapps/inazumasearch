@@ -78,6 +78,10 @@ namespace InazumaSearch.Core
 
         #region ダイアログボックス表示
 
+        public static void ShowInformationMessage(string message)
+        {
+            MessageBox.Show(message, "情報", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        }
         public static void ShowInformationMessage(IWin32Window owner, string message)
         {
             MessageBox.Show(owner, message, "情報", MessageBoxButtons.OK, MessageBoxIcon.Information);
