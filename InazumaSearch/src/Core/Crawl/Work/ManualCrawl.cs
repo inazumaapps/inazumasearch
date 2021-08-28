@@ -58,12 +58,7 @@ namespace InazumaSearch.Core.Crawl.Work
 
             // 実際にファイルを検索する対象フォルダパスを決定
             // プロパティで指定されていればそのパスリストを使用、指定されていなければユーザー設定から取得した全ての検索対象フォルダ
-            var usingTargetDirPaths = TargetDirPaths;
-            if (usingTargetDirPaths == null)
-            {
-                usingTargetDirPaths = _app.UserSettings.TargetFolders.Where(f => f.Type == UserSetting.TargetFolderType.DocumentFile)
-                                                                     .Select(f => f.Path).OrderBy(f => f).ToList();
-            }
+            var usingTargetDirPaths = _app.GetCrawlTargetDirPaths(TargetDirPaths);
 
             // クロール開始を報告
             progress?.Report(new ProgressState() { CurrentStep = ProgressState.Step.RecordUpdateProcessBegin });
@@ -72,7 +67,8 @@ namespace InazumaSearch.Core.Crawl.Work
             workStack.Push(new DBPurge(_app, IsBackgroundCrawl, dbRecordMap));
 
             // 検索対象フォルダの更新処理をワークスタックに追加
-            foreach (var targetDirPath in usingTargetDirPaths.Reverse()) // フォルダパスが若い順から処理されるようにするため、逆順にする
+            usingTargetDirPaths.Reverse();
+            foreach (var targetDirPath in usingTargetDirPaths) // フォルダパスが若い順から処理されるようにするため、逆順にする
             {
                 workStack.Push(new DirectoryCrawl(_app, IsBackgroundCrawl, targetDirPath, ignoreSettings, dbRecordMap));
             }

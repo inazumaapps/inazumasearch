@@ -135,6 +135,7 @@ namespace InazumaSearch.Core.Crawl
                 try
                 {
                     // (1) 登録ファイル数の計測 (別スレッドで並列実行)
+                    //     ※内部で例外が発生した場合には、ログのみ出力して処理を中断するため注意
                     Task.Run(() =>
                     {
                         var workStack = new Stack<IWork>();

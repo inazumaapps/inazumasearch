@@ -48,9 +48,12 @@ namespace InazumaSearch.Core.Crawl.Work
             // 展開対象の拡張子一覧を取得
             var extractableExtNames = _app.GetExtractableExtNames();
 
+            // クロール対象ディレクトリ一覧を取得
+            var crawlTargetDirPaths = _app.GetCrawlTargetDirPaths(TargetDirPaths);
+
             // 対象ディレクトリを探索し、ファイル数をカウント
             var targetFilePaths = new HashSet<string>();
-            foreach (var dirPath in TargetDirPaths)
+            foreach (var dirPath in crawlTargetDirPaths)
             {
                 // 検索対象ディレクトリ内の全ファイルを探索
                 ApplyAllFiles(dirPath, (filePath) =>

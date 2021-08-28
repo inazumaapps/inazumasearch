@@ -840,7 +840,7 @@ namespace InazumaSearch.Forms
         protected virtual void CrawlStart(IEnumerable<string> targetDirPaths = null)
         {
             // 検索対象フォルダが存在するかどうかをチェック
-            foreach (var dirPath in targetDirPaths ?? App.UserSettings.TargetFolders.Select(folder => folder.Path))
+            foreach (var dirPath in App.GetCrawlTargetDirPaths(targetDirPaths))
             {
                 if (!Directory.Exists(dirPath))
                 {
