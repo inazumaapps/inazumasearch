@@ -374,8 +374,6 @@ namespace InazumaSearch.Core
         /// 実際にファイルを検索する対象フォルダパスを決定する。
         /// 引数でリストが指定されていればそのパスリストを使用、指定されていなければユーザー設定から取得した全ての検索対象フォルダを返す。
         /// </summary>
-        /// <param name="specifiedTargetDirPaths"></param>
-        /// <returns></returns>
         public virtual List<string> GetCrawlTargetDirPaths(IEnumerable<string> specifiedTargetDirPaths)
         {
             var usingTargetDirPaths = specifiedTargetDirPaths;
