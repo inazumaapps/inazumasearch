@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.Net.Http;
 using System.Text;
@@ -14,6 +15,13 @@ namespace InazumaSearch.Forms
         public string ExceptionString { get; set; }
         public DateTime RaisedTime { get; set; }
 
+        public long? ProcessWorkingSet { get; set; } = null;
+        public long? ProcessPeakWorkingSet { get; set; } = null;
+        public long? ProcessPagedMemorySize { get; set; } = null;
+        public long? ProcessPeakPagedMemorySize { get; set; } = null;
+        public string OSCaption { get; set; } = null;
+        public bool? OSIs64Bit { get; set; } = null;
+
         public SystemErrorDialog()
         {
             InitializeComponent();
@@ -24,6 +32,48 @@ namespace InazumaSearch.Forms
             Exception = ex;
             ExceptionString = ex.ToString();
             RaisedTime = DateTime.Now;
+
+            try
+            {
+                // プロセス情報を取得
+                var proc = Process.GetCurrentProcess();
+                proc.Refresh(); // キャッシュクリア
+
+                // 物理RAM使用量と、ページングファイル使用量を取得
+                ProcessWorkingSet = proc.WorkingSet64;
+                ProcessPagedMemorySize = proc.PagedMemorySize64;
+                ProcessPeakWorkingSet = proc.PeakWorkingSet64;
+                ProcessPeakPagedMemorySize = proc.PeakPagedMemorySize64;
+
+ 
+            }
+            catch (Exception)
+            {
+            }
+
+            try
+            {
+                // OS情報を取得
+                var os = System.Environment.OSVersion;
+                OSIs64Bit = System.Environment.Is64BitOperatingSystem;
+
+                // WMI情報を取得
+                using (var mc = new System.Management.ManagementClass("Win32_OperatingSystem"))
+                {
+                    using (var moc = mc.GetInstances())
+                    {
+                        foreach (System.Management.ManagementObject mo in moc)
+                        {
+                            //簡単な説明（Windows 8.1では「Microsoft Windows 8.1 Pro」等）
+                            OSCaption = (string)mo["Caption"];
+                        }
+                    }
+                }
+            }
+            catch (Exception)
+            {
+            }
+
         }
 
         private void ChkErrorReportSend_CheckedChanged(object sender, EventArgs e)
@@ -89,9 +139,28 @@ namespace InazumaSearch.Forms
             {
                 body.AppendLine($"UUID: {UserSetting.LastLoadedUserUuid}");
             }
+            body.AppendLine();
+            body.AppendLine($"[OS]");
+            var bitCaption = (OSIs64Bit == null ? "ビット数不明" : OSIs64Bit.Value ? "64ビット" : "32ビット");
+            body.AppendLine($"{OSCaption ?? "不明"} {bitCaption}");
+            body.AppendLine($"[メモリ使用量]");
+            body.AppendLine($"物理RAM            : {FormatMemorySize(ProcessWorkingSet)}  (ピーク: {FormatMemorySize(ProcessPeakWorkingSet)})");
+            body.AppendLine($"ページングファイル : {FormatMemorySize(ProcessPagedMemorySize)}  (ピーク: {FormatMemorySize(ProcessPeakPagedMemorySize)})");
 
 
             return body.ToString();
+        }
+
+        protected virtual string FormatMemorySize(long? size)
+        {
+            if (size != null)
+            {
+                return Util.FormatFileSizeByMB(size.Value).PadLeft(10);
+            }
+            else
+            {
+                return "(不明)";
+            }
         }
 
         private void ReportSend()
