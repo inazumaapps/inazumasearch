@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using Alphaleonis.Win32.Filesystem;
+using InazumaSearch.Core;
 
 namespace InazumaSearch.Groonga
 {
@@ -29,7 +30,7 @@ namespace InazumaSearch.Groonga
         /// <summary>
         /// Groonga.exeのパス
         /// </summary>
-        public string GroongaExePath { get { return Path.Combine(System.Windows.Forms.Application.StartupPath, $"externals/{Core.Util.GetPlatform()}/groonga/bin/groonga.exe"); } }
+        public string GroongaExePath { get { return Path.Combine(System.Windows.Forms.Application.StartupPath, $"externals/{ApplicationEnvironment.GetPlatform()}/groonga/bin/groonga.exe"); } }
 
         /// <summary>
         /// Groonga.exeが存在するディレクトリのパス

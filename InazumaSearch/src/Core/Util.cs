@@ -3,47 +3,11 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Windows.Forms;
 using Alphaleonis.Win32.Filesystem;
-using Semver;
 
 namespace InazumaSearch.Core
 {
     public class Util
     {
-        /// <summary>
-        /// バージョンを取得 (セマンティックバージョニング準拠)
-        /// </summary>
-        public static SemVersion GetVersion()
-        {
-            // アセンブリバージョンを取得
-            var asm = System.Reflection.Assembly.GetExecutingAssembly();
-            var asmVer = asm.GetName().Version;
-
-            // アセンブリバージョンをSemVer形式とする
-            return new SemVersion(asmVer.Major, asmVer.Minor, asmVer.Build, SystemConst.PreReleaseVersion);
-        }
-
-        /// <summary>
-        /// ポータブル版かどうかを判定
-        /// </summary>
-        /// <returns></returns>
-        public static bool IsPortableMode()
-        {
-#if PORTABLE
-            return true;
-#else
-            return false;
-#endif
-        }
-
-        /// <summary>
-        /// プラットフォーム文字列を取得 "x86" or "x64"
-        /// </summary>
-        /// <returns></returns>
-        public static string GetPlatform()
-        {
-            return (Environment.Is64BitProcess ? "x64" : "x86");
-        }
-
         /// <summary>
         /// ファイルのフルパスからDocumentsテーブルのキー文字列を生成
         /// </summary>

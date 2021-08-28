@@ -10,7 +10,7 @@ namespace InazumaSearch.Core
         public static string Extract(string path)
         {
             var p = new Process();
-            p.StartInfo.FileName = $"externals/{Util.GetPlatform()}/xdoc2txt/xdoc2txt.exe";
+            p.StartInfo.FileName = $"externals/{ApplicationEnvironment.GetPlatform()}/xdoc2txt/xdoc2txt.exe";
             p.StartInfo.Arguments = $"\"{path}\"";
             p.StartInfo.CreateNoWindow = true;
             p.StartInfo.UseShellExecute = false;

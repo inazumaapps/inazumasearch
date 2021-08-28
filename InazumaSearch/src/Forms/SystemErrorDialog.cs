@@ -45,7 +45,7 @@ namespace InazumaSearch.Forms
                 ProcessPeakWorkingSet = proc.PeakWorkingSet64;
                 ProcessPeakPagedMemorySize = proc.PeakPagedMemorySize64;
 
- 
+
             }
             catch (Exception)
             {
@@ -133,7 +133,7 @@ namespace InazumaSearch.Forms
                 body.AppendLine(new string('-', 80));
 
             }
-            body.AppendLine($"バージョン: Inazuma Search {Util.GetVersion().ToString()}" + (Util.GetPlatform() == "x86" ? " (32ビットバージョン)" : ""));
+            body.AppendLine($"バージョン: Inazuma Search {ApplicationEnvironment.GetVersion().ToString()}" + (ApplicationEnvironment.GetPlatform() == "x86" ? " (32ビットバージョン)" : ""));
             body.AppendLine($"発生日時: {RaisedTime.ToString("yyyy-MM-dd HH:mm:ss")}");
             if (UserSetting.LastLoadedUserUuid != null)
             {

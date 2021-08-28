@@ -62,7 +62,7 @@ namespace InazumaSearch
             UpdateFoundProc = updateFoundProc;
 
             var edition = (isPortable ? "portable" : "standard");
-            var platform = Util.GetPlatform();
+            var platform = ApplicationEnvironment.GetPlatform();
             var url = $"https://inazumaapps.info/inazumasearch/autoupdate/AutoUpdate-{edition}-{platform}.xml";
 
             AutoUpdater.Start(url);

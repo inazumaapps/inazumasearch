@@ -94,7 +94,7 @@ namespace InazumaSearch
                         try
                         {
                             var mainForm = Core.Application.BootingBrowserForms.LastOrDefault();
-                            if(mainForm != null) mainForm.Activate();
+                            if (mainForm != null) mainForm.Activate();
                             var msg = $"" +
                                 $"Inazuma Searchのメモリ使用量が非常に大きくなっており、これ以上起動し続けると、PC全体の処理が重くなってしまう可能性があります。\n" +
                                 $"（物理RAM使用量：{Util.FormatFileSizeByMB(workingSet)}、ページングファイル使用量：{Util.FormatFileSizeByMB(pagedMemorySize)}）\n" +
@@ -116,7 +116,8 @@ namespace InazumaSearch
                         }
                     }
                 }
-            } catch(Exception ex)
+            }
+            catch (Exception ex)
             {
                 this.App.Logger.Warn(ex);
             }
