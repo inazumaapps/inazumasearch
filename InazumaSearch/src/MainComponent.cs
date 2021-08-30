@@ -84,8 +84,8 @@ namespace InazumaSearch
                 var workingSet = proc.WorkingSet64;
                 var pagedMemorySize = proc.PagedMemorySize64;
 
-                // どちらか片方でも500MBを超えたら警告
-                var threshold = 1024 * 1024 * 500;
+                // どちらか片方でも1GBを超えたら警告
+                var threshold = 1024 * 1024 * 1000;
                 if (workingSet > threshold || pagedMemorySize > threshold)
                 {
                     if (!MemoryOverflowWarningSkipped && !MemoryOverflowWarningShowing)
