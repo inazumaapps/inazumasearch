@@ -1,10 +1,3 @@
-
-// var gui = require('nw.gui');
-// var win = gui.Window.get();
-// gui.App.addOriginAccessWhitelistEntry('http://localhost:17281/', 'app', 'InazumaSearch', true);
-
-
-
 // persistent variables
 var g_lastQueryObject = null;
 var g_lastSelectedFormatName = null;
@@ -14,7 +7,6 @@ var g_lastSelectedView = null;
 var g_nextOffset = 0;
 var g_lastSearchOffset = 0;
 var g_searchFinished = false;
-
 
 // functions
 function handleDragOver(e){
@@ -405,7 +397,9 @@ cols = document.querySelectorAll('.droppable');
 });
 
 
-$(function(){
+$(async function () {
+    await CefSharp.BindObjectAsync("api", "asyncApi", "dbState");
+
     if (api.isDebugMode()) {
         $('.debug-mode-only').show();
         $('.release-mode-only').hide();

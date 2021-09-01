@@ -625,10 +625,6 @@ namespace InazumaSearch.Forms
         {
             if (!Cef.IsInitialized)
             {
-                // CefSharp初期化
-                CefSharpSettings.LegacyJavascriptBindingEnabled = true;
-                CefSharpSettings.WcfEnabled = true; // from <https://github.com/cefsharp/CefSharp/issues/2990>
-
                 var settings = new CefSettings
                 {
                     Locale = "ja-JP"
@@ -641,7 +637,6 @@ namespace InazumaSearch.Forms
             // Create a browser component
             ChromeBrowser = new ChromiumWebBrowser(Path.Combine(htmlDirPath, "index.html"));
             ChromeBrowser.BrowserSettings.AcceptLanguageList = "ja-JP";
-            ChromeBrowser.BrowserSettings.WebSecurity = CefState.Disabled;
             BrowserPanel.Controls.Add(ChromeBrowser);
 
             Api = new CefApi();
