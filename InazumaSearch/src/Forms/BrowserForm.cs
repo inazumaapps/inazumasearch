@@ -53,7 +53,7 @@ namespace InazumaSearch.Forms
 
             public bool IsPortableMode()
             {
-                return Util.IsPortableMode();
+                return ApplicationEnvironment.IsPortableMode();
             }
 
             public bool IsUpdateCheckFailed()
@@ -68,7 +68,7 @@ namespace InazumaSearch.Forms
 
             public string GetVersionCaption()
             {
-                return App.GetVersionCaption();
+                return ApplicationEnvironment.GetVersionCaption();
             }
 
             /// <summary>
@@ -664,7 +664,7 @@ namespace InazumaSearch.Forms
                 DBState.AlwaysCrawlMode = App.UserSettings.AlwaysCrawlMode;
 
                 // 更新の有無をチェック
-                ISAutoUpdater.Check(Util.IsPortableMode(), (args) =>
+                ISAutoUpdater.Check(ApplicationEnvironment.IsPortableMode(), (args) =>
                 {
                     var msg = $"新しいバージョン ({args.CurrentVersion.TrimEnd('0').TrimEnd('.')}) に更新可能です";
                     ChromeBrowser.EvaluateScriptAsync($"$('#UPDATE-LINK .message').text('{msg}'); $('#UPDATE-LINK').show();");
@@ -987,7 +987,7 @@ namespace InazumaSearch.Forms
         {
             if (App.DebugMode)
             {
-                Text = $"Inazuma Search {App.GetVersionCaption()} [Debug Mode]";
+                Text = $"Inazuma Search {ApplicationEnvironment.GetVersionCaption()} [Debug Mode]";
             }
             App.Crawler.AlwaysCrawlProgress.ProgressChanged += AlwaysCrawlProgress_ProgressChanged;
         }
@@ -1058,7 +1058,8 @@ namespace InazumaSearch.Forms
 
             bool onProgress;
             var newCaption = GetBackgroundCrawlCaption(state.CurrentStep, state.Path, out onProgress);
-            if (newCaption != null) {
+            if (newCaption != null)
+            {
                 if (!string.IsNullOrEmpty(newCaption) && onProgress) newCaption += suffix;
                 StlBackgroundCrawl.Text = newCaption;
             }
@@ -1130,5 +1131,5 @@ namespace InazumaSearch.Forms
         }
     }
 
-    
+
 }

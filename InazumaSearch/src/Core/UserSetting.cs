@@ -232,7 +232,7 @@ namespace InazumaSearch.Core
             /// </summary>
             public void SaveOnAfterBoot(Dictionary<string, int> lastLoadedPluginVersionNumbers)
             {
-                PlainData.LastBootVersion = Util.GetVersion().ToString();
+                PlainData.LastBootVersion = ApplicationEnvironment.GetVersion().ToString();
                 PlainData.LastLoadedPluginVersionNumbers = lastLoadedPluginVersionNumbers;
                 Save();
             }

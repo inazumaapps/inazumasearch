@@ -25,6 +25,11 @@ namespace InazumaSearch.Core
         /// </summary>
         public static List<BrowserForm> BootingBrowserForms { get; set; } = new List<BrowserForm>();
 
+        /// <summary>
+        /// 通知アイコン。画面の初期化完了時に設定される。システム全体で必ず1つしか存在しない (static)
+        /// </summary>
+        public static NotifyIcon NotifyIcon { get; set; }
+
         #endregion
 
         /// <summary>
@@ -72,11 +77,6 @@ namespace InazumaSearch.Core
         /// </summary>
         public HashAlgorithm HashProvider { get; set; } = new SHA1CryptoServiceProvider();
 
-        /// <summary>
-        /// 通知アイコン。画面の初期化完了時に設定される。システム全体で必ず1つしか存在しない (static)
-        /// </summary>
-        public static NotifyIcon NotifyIcon { get; set; }
-
         #region 特殊パスの取得
 
         /// <summary>
@@ -92,25 +92,7 @@ namespace InazumaSearch.Core
                 }
                 else
                 {
-                    return DefaultDBDirPath;
-                }
-            }
-        }
-
-        /// <summary>
-        /// 文書DBディレクトリの初期パス
-        /// </summary>
-        public virtual string DefaultDBDirPath
-        {
-            get
-            {
-                if (Util.IsPortableMode())
-                {
-                    return Path.Combine(System.Windows.Forms.Application.StartupPath, @"..\data\db");
-                }
-                else
-                {
-                    return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), @"Inazuma Search\db");
+                    return ApplicationEnvironment.DefaultDBDirPath;
                 }
             }
         }
@@ -122,7 +104,7 @@ namespace InazumaSearch.Core
         {
             get
             {
-                if (Util.IsPortableMode())
+                if (ApplicationEnvironment.IsPortableMode())
                 {
                     return Path.Combine(System.Windows.Forms.Application.StartupPath, @"..\data\thumbnail");
                 }
@@ -139,7 +121,7 @@ namespace InazumaSearch.Core
         {
             get
             {
-                if (Util.IsPortableMode())
+                if (ApplicationEnvironment.IsPortableMode())
                 {
                     return Path.Combine(System.Windows.Forms.Application.StartupPath, @"..\data\log");
                 }
@@ -157,7 +139,7 @@ namespace InazumaSearch.Core
         {
             get
             {
-                if (Util.IsPortableMode())
+                if (ApplicationEnvironment.IsPortableMode())
                 {
                     return Path.Combine(System.Windows.Forms.Application.StartupPath, @"..\data");
                 }
@@ -179,15 +161,6 @@ namespace InazumaSearch.Core
         public virtual string StartupShortcutPath { get { return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Startup), @"Inazuma Search.lnk"); } }
 
         #endregion
-
-        /// <summary>
-        /// バージョン表記文字列を取得
-        /// </summary>
-        /// <returns></returns>
-        public virtual string GetVersionCaption()
-        {
-            return $"{Util.GetVersion()}" + (Util.IsPortableMode() ? " ポータブル版" : "") + (Util.GetPlatform() == "x86" ? " (32ビットバージョン)" : "");
-        }
 
         /// <summary>
         /// 対応している拡張子のリストを取得 ("txt" 形式で取得する)

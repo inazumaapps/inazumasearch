@@ -105,7 +105,7 @@ namespace InazumaSearch.Forms
         private void DipswForm_Load(object sender, EventArgs e)
         {
             UpdateLabels();
-            lblVersion.Text = Application.GetVersionCaption();
+            lblVersion.Text = ApplicationEnvironment.GetVersionCaption();
             tblDebug.Visible = Application.DebugMode;
             lnkOpenDataFolder.Visible = Application.DebugMode;
             UpdateExtensionList();
@@ -233,7 +233,7 @@ namespace InazumaSearch.Forms
         private void BtnResetDocumentDBDirPath_Click(object sender, EventArgs e)
         {
             // メイン処理へ移行
-            ChangeDocumentDBDirPathMain(Application.DefaultDBDirPath);
+            ChangeDocumentDBDirPathMain(ApplicationEnvironment.DefaultDBDirPath);
 
         }
 
@@ -301,7 +301,7 @@ namespace InazumaSearch.Forms
         /// </summary>
         protected void DocumentDBDirOperationDisplayState()
         {
-            if (Util.IsPortableMode())
+            if (ApplicationEnvironment.IsPortableMode())
             {
                 // ポータブル版の場合は押下不可
                 LblDBDocumentDirUnchangable.Visible = true;
@@ -313,7 +313,7 @@ namespace InazumaSearch.Forms
                 // 通常版の場合は押下可能、ただし「初期設定に戻す」ボタンは変更時のみ押下可能
                 LblDBDocumentDirUnchangable.Visible = false;
                 BtnChangeDocumentDBDirPath.Enabled = true;
-                BtnResetDocumentDBDirPath.Enabled = (TxtDocumentDBDirPath.Text.ToLower() != Application.DefaultDBDirPath.ToLower());
+                BtnResetDocumentDBDirPath.Enabled = (TxtDocumentDBDirPath.Text.ToLower() != ApplicationEnvironment.DefaultDBDirPath.ToLower());
             }
         }
     }
