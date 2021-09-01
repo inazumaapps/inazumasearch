@@ -63,7 +63,7 @@ namespace InazumaSearch
 
             var edition = (isPortable ? "portable" : "standard");
             var platform = ApplicationEnvironment.GetPlatform();
-            var url = $"https://inazumaapps.info/inazumasearch/autoupdate/AutoUpdate-{edition}-{platform}.xml";
+            var url = $"https://inazumaapps.info/inazumasearch/autoupdate/AutoUpdate-{edition}-{platform}-after-0.24.0.xml";
 
             AutoUpdater.Start(url);
         }
