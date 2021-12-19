@@ -51,6 +51,8 @@ namespace InazumaSearch.Core
             public virtual List<Extension> TextExtensions { get; set; } = new List<Extension>();
             public virtual string DocumentDBDirPath { get; set; } = null;
             public virtual List<string> LastExcludingDirPaths { get; set; } = null;
+            public virtual int DisplayPageSizeForNormalView { get; set; } = 20;
+            public virtual int DisplayPageSizeForListView { get; set; } = 100;
         }
 
         public class Store
@@ -222,6 +224,34 @@ namespace InazumaSearch.Core
             /// 最後にクロールした時、選択から除外した検索対象フォルダ一覧。指定なし時（設定された検索対象フォルダが1件しかない場合含む）はnull
             /// </summary>
             public List<string> LastExcludingDirPaths { get { return PlainData.LastExcludingDirPaths; } }
+
+            /// <summary>
+            /// 一度に表示する検索結果件数（通常表示）
+            /// </summary>
+            public int DisplayPageSizeForNormalView { get { return PlainData.DisplayPageSizeForNormalView; } }
+
+            /// <summary>
+            /// 一度に表示する検索結果件数の設定（通常表示）
+            /// </summary>
+            public void SaveDisplayPageSizeForNormalView(int value)
+            {
+                PlainData.DisplayPageSizeForNormalView = value;
+                Save();
+            }
+
+            /// <summary>
+            /// 一度に表示する検索結果件数（一覧表示）
+            /// </summary>
+            public int DisplayPageSizeForListView { get { return PlainData.DisplayPageSizeForListView; } }
+
+            /// <summary>
+            /// 一度に表示する検索結果件数の設定（一覧表示）
+            /// </summary>
+            public void SaveDisplayPageSizeForListView(int value)
+            {
+                PlainData.DisplayPageSizeForListView = value;
+                Save();
+            }
 
             #endregion
 

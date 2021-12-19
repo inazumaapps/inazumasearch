@@ -33,6 +33,11 @@ namespace InazumaSearch.Core
             public long nHits { get; set; }
 
             /// <summary>
+            /// 検索時に使用したページサイズ（1ページ当たりの結果表示数）
+            /// </summary>
+            public int pageSize { get; set; }
+
+            /// <summary>
             /// 取得した検索結果 (offsetから10件分)
             /// </summary>
             public IList<Record> records { get; set; }
@@ -124,6 +129,23 @@ namespace InazumaSearch.Core
             public const string FILE_PATH = "file_path";
         }
 
+        /// <summary>
+        /// 表示形式
+        /// </summary>
+        public class ViewType
+        {
+            /// <summary>
+            /// 通常
+            /// </summary>
+            public const string NORMAL = "normal";
+
+            /// <summary>
+            /// ファイルの更新日が新しい順
+            /// </summary>
+            public const string LIST = "list";
+        }
+
+
         #endregion
 
         #region プロパティ
@@ -167,6 +189,7 @@ namespace InazumaSearch.Core
             , string selectedFormat = null
             , string selectedFolderLabel = null
             , string selectedOrderType = null
+            , string selectedView = null
         )
         {
             var groongaQueries = new List<string>();
@@ -350,6 +373,7 @@ namespace InazumaSearch.Core
             // SELECT実行
             var joinedQuery = string.Join(" ", groongaQueries.Select(q => "(" + q + ")"));
             var joinedFilter = string.Join(" && ", groongaFilters.Select(q => "(" + q + ")"));
+            var pageSize = (selectedView == ViewType.LIST ? App.UserSettings.DisplayPageSizeForListView : App.UserSettings.DisplayPageSizeForNormalView);
 
             Groonga.SelectResult selectRes = null;
             try
@@ -359,6 +383,7 @@ namespace InazumaSearch.Core
                     , query: joinedQuery
                     , filter: joinedFilter
                     , offset: offset
+                    , limit: pageSize
                     //, drilldown: new[] { Column.Documents.EXT, Column.Documents.FILE_UPDATED_YEAR }
                     , drilldown: new[] { Column.Documents.EXT, Column.Documents.FOLDER_LABELS }
                     , drilldownSortKeys: new[] { Column.Documents.KEY }
@@ -588,6 +613,8 @@ namespace InazumaSearch.Core
                 folderLabelDrilldownLinks = folderLabelDrilldownLinks.OrderByDescending(l => l.nSubRecs).ToList() // 件数の多い順で並べる
                 ,
                 orderList = OrderList
+                ,
+                pageSize = pageSize
             };
 
             return ret;

@@ -110,6 +110,9 @@ namespace InazumaSearch.Forms
             lnkOpenDataFolder.Visible = Application.DebugMode;
             UpdateExtensionList();
 
+            NumDisplayPageSizeForNormalView.Value = Application.UserSettings.DisplayPageSizeForNormalView;
+            NumDisplayPageSizeForListView.Value = Application.UserSettings.DisplayPageSizeForListView;
+
             // 文書データベース保存先関連のボタン押下可否を更新
             DocumentDBDirOperationDisplayState();
 
@@ -315,6 +318,18 @@ namespace InazumaSearch.Forms
                 BtnChangeDocumentDBDirPath.Enabled = true;
                 BtnResetDocumentDBDirPath.Enabled = (TxtDocumentDBDirPath.Text.ToLower() != ApplicationEnvironment.DefaultDBDirPath.ToLower());
             }
+        }
+
+        private void NumDisplayPageSizeForNormalView_ValueChanged(object sender, EventArgs e)
+        {
+            var numControl = (NumericUpDown)sender;
+            Application.UserSettings.SaveDisplayPageSizeForNormalView((int)numControl.Value);
+        }
+
+        private void NumDisplayPageSizeForListView_ValueChanged(object sender, EventArgs e)
+        {
+            var numControl = (NumericUpDown)sender;
+            Application.UserSettings.SaveDisplayPageSizeForListView((int)numControl.Value);
         }
     }
 }

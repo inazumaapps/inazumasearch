@@ -499,6 +499,7 @@ namespace InazumaSearch.Forms
                 , string selectedFormat = null
                 , string selectedFolderLabel = null
                 , string selectedOrder = null
+                , string selectedView = null
                 , bool ignoreError = false
             )
             {
@@ -547,6 +548,7 @@ namespace InazumaSearch.Forms
                         , selectedFormat
                         , selectedFolderLabel
                         , selectedOrder
+                        , selectedView
                     );
 
                     // 失敗した場合はエラーダイアログを表示して終了
