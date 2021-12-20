@@ -123,6 +123,22 @@ namespace InazumaSearch
             {
                 this.App.Logger.Warn(ex);
             }
+
+            try
+            {
+                // 常駐クロールONの設定で、手動クロールも実行中でないにもかかわらず、常駐クロールプロセスが終了しているならば再起動
+                if (App.UserSettings.AlwaysCrawlMode
+                    && !App.Crawler.ManualCrawlIsRunning
+                    && !App.Crawler.AlwaysCrawlIsRunning)
+                {
+                    this.App.Logger.Warn("常駐クローラが終了しているため再起動します...");
+                    App.Crawler.StartAlwaysCrawl();
+                }
+            }
+            catch (Exception ex)
+            {
+                this.App.Logger.Warn(ex);
+            }
         }
     }
 }

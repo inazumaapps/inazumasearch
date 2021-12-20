@@ -202,6 +202,8 @@
     <Compile Include="src\ApplicationContext.cs" />
     <Compile Include="src\Core\ApplicationEnvironment.cs" />
     <Compile Include="src\Core\Application.cs" />
+    <Compile Include="src\Core\Crawl\FileSystemEvent.cs" />
+    <Compile Include="src\Core\Crawl\FileWatcher.cs" />
     <Compile Include="src\Core\ProgressGuageState.cs" />
     <Compile Include="src\Core\Crawl\IWork.cs" />
     <Compile Include="src\Core\Crawl\Result.cs" />

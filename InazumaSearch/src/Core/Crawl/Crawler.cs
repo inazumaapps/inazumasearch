@@ -3,31 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Alphaleonis.Win32.Filesystem;
 
 namespace InazumaSearch.Core.Crawl
 {
     public partial class Crawler
     {
-        public class FileSystemEvent
-        {
-            public FileSystemEventType Type { get; set; }
-            public FileSystemEventTargetType? TargetType { get; set; }
-            public string Path { get; set; }
-        }
-
-        public enum FileSystemEventType
-        {
-            UPDATE
-            , DELETE
-        }
-
-        public enum FileSystemEventTargetType
-        {
-            FILE
-            , FOLDER
-        }
-
         /// <summary>
         /// クロール状態をカプセル化したクラス
         /// </summary>
@@ -66,11 +46,6 @@ namespace InazumaSearch.Core.Crawl
         public NLog.Logger Logger { get; protected set; }
 
         public Core.Application App { get; set; }
-
-        /// <summary>
-        /// ファイルシステムの変更イベントキュー
-        /// </summary>
-        protected virtual IList<FileSystemEvent> FileSystemEventQueue { get; set; } = new List<FileSystemEvent>();
 
         /// <summary>
         /// 常駐クロール時の進捗報告用オブジェクト
@@ -223,31 +198,14 @@ namespace InazumaSearch.Core.Crawl
                 // 最初にフルクロールを実行
                 workStack.Push(new Work.ManualCrawl(App, isBackgroundCrawl: true));
 
+                // ファイル監視オブジェクト生成
+                var fileWatcher = new FileWatcher(Logger, App.UserSettings.TargetFolders.Select(f => f.Path).OrderBy(p => p).ToList());
+
                 // メイン処理
                 try
                 {
-                    // 対象フォルダ全件について変更を監視
-                    foreach (var targetFolder in App.UserSettings.TargetFolders)
-                    {
-                        var watcher = new System.IO.FileSystemWatcher(targetFolder.Path)
-                        {
-                            NotifyFilter =
-                            System.IO.NotifyFilters.LastWrite |
-                            System.IO.NotifyFilters.DirectoryName |
-                            System.IO.NotifyFilters.FileName |
-                            System.IO.NotifyFilters.Security |
-                            System.IO.NotifyFilters.Size |
-                            System.IO.NotifyFilters.Attributes,
-                            Filter = "" // すべてのファイルが対象
-                        };
-
-                        watcher.Created += Watcher_Created;
-                        watcher.Changed += Watcher_Changed;
-                        watcher.Renamed += Watcher_Renamed;
-                        watcher.Deleted += Watcher_Deleted;
-                        watcher.EnableRaisingEvents = true;
-                        watcher.IncludeSubdirectories = true;
-                    }
+                    // 監視スタート
+                    fileWatcher.Start();
 
                     // 無視設定を取得
                     var ignoreSettings = App.GetIgnoreSettings();
@@ -255,13 +213,13 @@ namespace InazumaSearch.Core.Crawl
                     while (true)
                     {
                         // ファイル変更イベントがあれば、対応するワークを生成
-                        if (FileSystemEventQueue.Count >= 1)
+                        if (fileWatcher.EventQueue.Count >= 1)
                         {
-                            while (FileSystemEventQueue.Count >= 1)
+                            while (fileWatcher.EventQueue.Count >= 1)
                             {
                                 // キューの先頭にあるイベントを取得
-                                var evt = FileSystemEventQueue[0];
-                                FileSystemEventQueue.RemoveAt(0);
+                                var evt = fileWatcher.EventQueue[0];
+                                fileWatcher.EventQueue.RemoveAt(0);
 
                                 if (Logger.IsTraceEnabled)
                                 {
@@ -324,16 +282,16 @@ namespace InazumaSearch.Core.Crawl
                                 Thread.Sleep(1000);
                                 ctSource.Token.ThrowIfCancellationRequested(); // キャンセル受付
                             }
+
+                            // ファイル監視オブジェクトを再起動
+                            fileWatcher.Restart();
                         }
                     }
                 }
                 catch (OperationCanceledException)
                 {
                     // ファイル監視オブジェクトをすべて解放
-                    foreach (var watcher in watchers)
-                    {
-                        watcher.Dispose();
-                    }
+                    fileWatcher.Stop();
                     Logger.Info("常駐クロール終了");
 
                     // 終了を報告
@@ -381,35 +339,6 @@ namespace InazumaSearch.Core.Crawl
                 // キャンセルが完了するまで待機
                 await AlwaysCrawlState.Task;
             }
-        }
-
-        private void Watcher_Deleted(object sender, System.IO.FileSystemEventArgs e)
-        {
-            Logger.Trace("[FileSystemWatcher] Deleted - {0}", e.FullPath);
-            var targetType = (Directory.Exists(e.FullPath) ? FileSystemEventTargetType.FOLDER : FileSystemEventTargetType.FILE);
-            FileSystemEventQueue.Add(new FileSystemEvent() { Type = FileSystemEventType.DELETE, Path = e.FullPath, TargetType = targetType });
-        }
-
-        private void Watcher_Renamed(object sender, System.IO.RenamedEventArgs e)
-        {
-            Logger.Trace("[FileSystemWatcher] Renamed - {0} -> {1}", e.OldFullPath, e.FullPath);
-            var targetType = (Directory.Exists(e.FullPath) ? FileSystemEventTargetType.FOLDER : FileSystemEventTargetType.FILE);
-            FileSystemEventQueue.Add(new FileSystemEvent() { Type = FileSystemEventType.DELETE, Path = e.OldFullPath, TargetType = targetType });
-            FileSystemEventQueue.Add(new FileSystemEvent() { Type = FileSystemEventType.UPDATE, Path = e.FullPath, TargetType = targetType });
-        }
-
-        private void Watcher_Changed(object sender, System.IO.FileSystemEventArgs e)
-        {
-            Logger.Trace("[FileSystemWatcher] Changed - {0}", e.FullPath);
-            var targetType = (Directory.Exists(e.FullPath) ? FileSystemEventTargetType.FOLDER : FileSystemEventTargetType.FILE);
-            FileSystemEventQueue.Add(new FileSystemEvent() { Type = FileSystemEventType.UPDATE, Path = e.FullPath, TargetType = targetType });
-        }
-
-        private void Watcher_Created(object sender, System.IO.FileSystemEventArgs e)
-        {
-            Logger.Trace("[FileSystemWatcher] Created - {0}", e.FullPath);
-            var targetType = (Directory.Exists(e.FullPath) ? FileSystemEventTargetType.FOLDER : FileSystemEventTargetType.FILE);
-            FileSystemEventQueue.Add(new FileSystemEvent() { Type = FileSystemEventType.UPDATE, Path = e.FullPath, TargetType = targetType });
         }
     }
 }
