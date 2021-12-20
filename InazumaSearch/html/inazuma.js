@@ -4,7 +4,6 @@ var g_lastSelectedFormatName = null;
 var g_lastSelectedFolderLabel = null;
 var g_lastSelectedOrder = null;
 var g_lastSelectedView = null;
-var g_nextOffset = 0;
 var g_lastSearchOffset = 0;
 var g_searchFinished = false;
 
@@ -36,6 +35,7 @@ function executeSearch(
     , selectedView = null
 ) {
     var $header = $('#SEARCH-RESULT-HEADER');
+    var userSetting = JSON.parse(api.getUserSettings());
 
     // 変数を初期化
     g_lastSearchOffset = 0;
@@ -56,11 +56,10 @@ function executeSearch(
     g_lastSelectedFolderLabel = selectedFolderLabel;
     g_lastSelectedOrder = selectedOrder || g_lastSelectedOrder; // 再検索時、並び順は前回と同じ
     g_lastSelectedView = selectedView || g_lastSelectedView; // 再検索時、表示形式は前回と同じ
-    g_nextOffset = 10;
 
     // 検索実施
     $('#SEARCH-PROGRESS-BAR').css('opacity', '1');
-    asyncApi.search(g_lastQueryObject, true, 0, g_lastSelectedFormatName, g_lastSelectedFolderLabel, g_lastSelectedOrder).then(function (resJson) {
+    asyncApi.search(g_lastQueryObject, true, 0, g_lastSelectedFormatName, g_lastSelectedFolderLabel, g_lastSelectedOrder, g_lastSelectedView).then(function (resJson) {
         var data = JSON.parse(resJson);
 
         // 検索中表示を消す
@@ -73,7 +72,7 @@ function executeSearch(
         $('#SEARCH-RESULT-SUB-MESSAGE').text(data.searchResultSubMessage);
 
         // 全結果の表示が完了していれば、完了フラグを立てる
-        if(data.nHits === 0 || 10 >= data.nHits){
+        if (data.nHits === 0 || data.pageSize >= data.nHits){
             g_searchFinished = true;
         }
 
@@ -449,7 +448,7 @@ $(async function () {
                         , tfIdf: ''
                     }
 
-                    asyncApi.search(queryObject, false, 0, null, null, null, true).then(function (resJson) {
+                    asyncApi.search(queryObject, false, 0, null, null, null, null, true).then(function (resJson) {
                         if (resJson) {
                             var data = JSON.parse(resJson);
 
@@ -724,21 +723,20 @@ $(async function () {
     win.scroll(function() {
         // End of the document reached?
         if (($(document).height() - win.height() - 100) <= win.scrollTop()) {
+            var userSetting = JSON.parse(api.getUserSettings());
+            var pageSize = (g_lastSelectedView === 'list' ? userSetting.DisplayPageSizeForListView : userSetting.DisplayPageSizeForNormalView);
+            var offset = g_lastSearchOffset + pageSize;
 
-            var offset = g_nextOffset;
             if(offset > g_lastSearchOffset && !g_searchFinished){
                 g_lastSearchOffset = offset;
 
-                asyncApi.search(g_lastQueryObject, false, offset, g_lastSelectedFormatName, g_lastSelectedFolderLabel, g_lastSelectedOrder).then(function (resJson) {
+                asyncApi.search(g_lastQueryObject, false, offset, g_lastSelectedFormatName, g_lastSelectedFolderLabel, g_lastSelectedOrder, g_lastSelectedView).then(function (resJson) {
                     var data = JSON.parse(resJson);
-    
+                    
                     // 全結果の表示が完了していれば、完了フラグを立てる
-                    if(offset + 10 >= data.nHits){
+                    if (offset + data.pageSize >= data.nHits){
                         g_searchFinished = true;
                     }
-    
-                    // 次のオフセットを記憶
-                    g_nextOffset += 10;
     
                     // 検索結果の各行を表示
                     displayResultRows(data, g_lastSelectedView, offset);

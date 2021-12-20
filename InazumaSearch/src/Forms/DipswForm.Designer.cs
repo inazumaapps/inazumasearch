@@ -38,6 +38,7 @@
             this.label6 = new System.Windows.Forms.Label();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.LblDBDocumentDirUnchangable = new System.Windows.Forms.Label();
             this.BtnResetDocumentDBDirPath = new System.Windows.Forms.Button();
             this.BtnChangeDocumentDBDirPath = new System.Windows.Forms.Button();
             this.TxtDocumentDBDirPath = new System.Windows.Forms.TextBox();
@@ -53,11 +54,18 @@
             this.BtnDeleteTextExt = new System.Windows.Forms.Button();
             this.BtnAddTextExt = new System.Windows.Forms.Button();
             this.lnkOpenDataFolder = new System.Windows.Forms.LinkLabel();
-            this.LblDBDocumentDirUnchangable = new System.Windows.Forms.Label();
+            this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.label3 = new System.Windows.Forms.Label();
+            this.label2 = new System.Windows.Forms.Label();
+            this.NumDisplayPageSizeForListView = new System.Windows.Forms.NumericUpDown();
+            this.NumDisplayPageSizeForNormalView = new System.Windows.Forms.NumericUpDown();
             this.tblDebug.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.tableLayoutPanel2.SuspendLayout();
             this.groupBox3.SuspendLayout();
+            this.groupBox1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.NumDisplayPageSizeForListView)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.NumDisplayPageSizeForNormalView)).BeginInit();
             this.SuspendLayout();
             // 
             // BtnClearDocumentDB
@@ -73,7 +81,7 @@
             // BtnClose
             // 
             this.BtnClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.BtnClose.Location = new System.Drawing.Point(602, 266);
+            this.BtnClose.Location = new System.Drawing.Point(597, 356);
             this.BtnClose.Name = "BtnClose";
             this.BtnClose.Size = new System.Drawing.Size(110, 28);
             this.BtnClose.TabIndex = 4;
@@ -94,7 +102,7 @@
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(32, 79);
+            this.label1.Location = new System.Drawing.Point(12, 79);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(348, 12);
             this.label1.TabIndex = 17;
@@ -148,6 +156,18 @@
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "文書データベースの保存先";
             // 
+            // LblDBDocumentDirUnchangable
+            // 
+            this.LblDBDocumentDirUnchangable.BackColor = System.Drawing.SystemColors.Control;
+            this.LblDBDocumentDirUnchangable.ForeColor = System.Drawing.Color.Gray;
+            this.LblDBDocumentDirUnchangable.Location = new System.Drawing.Point(153, 44);
+            this.LblDBDocumentDirUnchangable.Name = "LblDBDocumentDirUnchangable";
+            this.LblDBDocumentDirUnchangable.Size = new System.Drawing.Size(240, 23);
+            this.LblDBDocumentDirUnchangable.TabIndex = 25;
+            this.LblDBDocumentDirUnchangable.Text = "（ポータブル版では変更不可）";
+            this.LblDBDocumentDirUnchangable.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.LblDBDocumentDirUnchangable.Visible = false;
+            // 
             // BtnResetDocumentDBDirPath
             // 
             this.BtnResetDocumentDBDirPath.Enabled = false;
@@ -179,12 +199,13 @@
             // 
             // tableLayoutPanel2
             // 
+            this.tableLayoutPanel2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.tableLayoutPanel2.ColumnCount = 2;
             this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 20.23121F));
             this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 79.76878F));
             this.tableLayoutPanel2.Controls.Add(this.lblVersion, 1, 0);
             this.tableLayoutPanel2.Controls.Add(this.label8, 0, 0);
-            this.tableLayoutPanel2.Location = new System.Drawing.Point(13, 269);
+            this.tableLayoutPanel2.Location = new System.Drawing.Point(13, 359);
             this.tableLayoutPanel2.Name = "tableLayoutPanel2";
             this.tableLayoutPanel2.RowCount = 1;
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 45.28302F));
@@ -218,7 +239,7 @@
             this.groupBox3.Controls.Add(this.label7);
             this.groupBox3.Controls.Add(this.BtnDeleteTextExt);
             this.groupBox3.Controls.Add(this.BtnAddTextExt);
-            this.groupBox3.Location = new System.Drawing.Point(437, 12);
+            this.groupBox3.Location = new System.Drawing.Point(441, 107);
             this.groupBox3.Name = "groupBox3";
             this.groupBox3.Size = new System.Drawing.Size(275, 225);
             this.groupBox3.TabIndex = 3;
@@ -300,23 +321,99 @@
             this.lnkOpenDataFolder.Text = "データフォルダを開く";
             this.lnkOpenDataFolder.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.lnkOpenDataFolder_LinkClicked);
             // 
-            // LblDBDocumentDirUnchangable
+            // groupBox1
             // 
-            this.LblDBDocumentDirUnchangable.BackColor = System.Drawing.SystemColors.Control;
-            this.LblDBDocumentDirUnchangable.ForeColor = System.Drawing.Color.Gray;
-            this.LblDBDocumentDirUnchangable.Location = new System.Drawing.Point(153, 44);
-            this.LblDBDocumentDirUnchangable.Name = "LblDBDocumentDirUnchangable";
-            this.LblDBDocumentDirUnchangable.Size = new System.Drawing.Size(240, 23);
-            this.LblDBDocumentDirUnchangable.TabIndex = 25;
-            this.LblDBDocumentDirUnchangable.Text = "（ポータブル版では変更不可）";
-            this.LblDBDocumentDirUnchangable.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.LblDBDocumentDirUnchangable.Visible = false;
+            this.groupBox1.Controls.Add(this.label3);
+            this.groupBox1.Controls.Add(this.label2);
+            this.groupBox1.Controls.Add(this.NumDisplayPageSizeForListView);
+            this.groupBox1.Controls.Add(this.NumDisplayPageSizeForNormalView);
+            this.groupBox1.Location = new System.Drawing.Point(441, 12);
+            this.groupBox1.Name = "groupBox1";
+            this.groupBox1.Size = new System.Drawing.Size(185, 79);
+            this.groupBox1.TabIndex = 31;
+            this.groupBox1.TabStop = false;
+            this.groupBox1.Text = "一度に表示する結果件数";
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(16, 47);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(59, 12);
+            this.label3.TabIndex = 30;
+            this.label3.Text = "一覧表示：";
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(16, 20);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(59, 12);
+            this.label2.TabIndex = 29;
+            this.label2.Text = "通常表示：";
+            // 
+            // NumDisplayPageSizeForListView
+            // 
+            this.NumDisplayPageSizeForListView.Increment = new decimal(new int[] {
+            10,
+            0,
+            0,
+            0});
+            this.NumDisplayPageSizeForListView.Location = new System.Drawing.Point(86, 45);
+            this.NumDisplayPageSizeForListView.Maximum = new decimal(new int[] {
+            99999,
+            0,
+            0,
+            0});
+            this.NumDisplayPageSizeForListView.Minimum = new decimal(new int[] {
+            10,
+            0,
+            0,
+            0});
+            this.NumDisplayPageSizeForListView.Name = "NumDisplayPageSizeForListView";
+            this.NumDisplayPageSizeForListView.Size = new System.Drawing.Size(73, 19);
+            this.NumDisplayPageSizeForListView.TabIndex = 2;
+            this.NumDisplayPageSizeForListView.Value = new decimal(new int[] {
+            10,
+            0,
+            0,
+            0});
+            this.NumDisplayPageSizeForListView.ValueChanged += new System.EventHandler(this.NumDisplayPageSizeForListView_ValueChanged);
+            // 
+            // NumDisplayPageSizeForNormalView
+            // 
+            this.NumDisplayPageSizeForNormalView.Increment = new decimal(new int[] {
+            10,
+            0,
+            0,
+            0});
+            this.NumDisplayPageSizeForNormalView.Location = new System.Drawing.Point(86, 18);
+            this.NumDisplayPageSizeForNormalView.Maximum = new decimal(new int[] {
+            99999,
+            0,
+            0,
+            0});
+            this.NumDisplayPageSizeForNormalView.Minimum = new decimal(new int[] {
+            10,
+            0,
+            0,
+            0});
+            this.NumDisplayPageSizeForNormalView.Name = "NumDisplayPageSizeForNormalView";
+            this.NumDisplayPageSizeForNormalView.Size = new System.Drawing.Size(73, 19);
+            this.NumDisplayPageSizeForNormalView.TabIndex = 1;
+            this.NumDisplayPageSizeForNormalView.Value = new decimal(new int[] {
+            10,
+            0,
+            0,
+            0});
+            this.NumDisplayPageSizeForNormalView.ValueChanged += new System.EventHandler(this.NumDisplayPageSizeForNormalView_ValueChanged);
             // 
             // DipswForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(742, 314);
+            this.ClientSize = new System.Drawing.Size(737, 404);
+            this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.lnkOpenDataFolder);
             this.Controls.Add(this.BtnClose);
             this.Controls.Add(this.groupBox3);
@@ -338,6 +435,10 @@
             this.tableLayoutPanel2.PerformLayout();
             this.groupBox3.ResumeLayout(false);
             this.groupBox3.PerformLayout();
+            this.groupBox1.ResumeLayout(false);
+            this.groupBox1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.NumDisplayPageSizeForListView)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.NumDisplayPageSizeForNormalView)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -369,6 +470,11 @@
         private System.Windows.Forms.Button BtnResetDocumentDBDirPath;
         private System.Windows.Forms.Button BtnChangeDocumentDBDirPath;
         private System.Windows.Forms.Label LblDBDocumentDirUnchangable;
+        private System.Windows.Forms.GroupBox groupBox1;
+        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.NumericUpDown NumDisplayPageSizeForListView;
+        private System.Windows.Forms.NumericUpDown NumDisplayPageSizeForNormalView;
     }
 }
 
