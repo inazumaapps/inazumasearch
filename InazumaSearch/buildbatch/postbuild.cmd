@@ -15,4 +15,8 @@ type %~dp0\_plugins_folder_guide.txt > "%TARGETDIR%plugins\このフォルダについて.
 REM externalsのコピー
 xcopy /y /e "%PROJECTDIR%externals\%PLATFORMNAME%" "%TARGETDIR%externals\%PLATFORMNAME%"
 
+REM Visual C++ 再頒布可能パッケージ DLLのコピー
+xcopy /y /e "%~dp0\%PLATFORMNAME%\vcruntime2019\msvcp140.dll" "%TARGETDIR%"
+if %PLATFORMNAME% == x64 xcopy /y /e "%~dp0\%PLATFORMNAME%\vcruntime2019\vcruntime140.dll" "%TARGETDIR%"
+
 echo ---- Inazuma Search Build Batch End ----
