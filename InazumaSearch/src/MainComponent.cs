@@ -51,8 +51,8 @@ namespace InazumaSearch
             catch (System.IO.FileNotFoundException ex)
             {
                 App.Logger.Error(ex);
-                App.Logger.Error($"見つからなかったファイル: ${ex.FileName}");
-                App.Logger.Error($"FusionLog: ${ex.FusionLog}");
+                App.Logger.Error($"見つからなかったファイル: {ex.FileName}");
+                App.Logger.Error($"FusionLog: {ex.FusionLog}");
                 Util.ShowErrorMessage("必要なファイルが読み込めなかったため、ブラウザコントロールの初期化に失敗しました。");
                 Core.Application.Quit();
             }
