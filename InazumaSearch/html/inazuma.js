@@ -720,27 +720,29 @@ $(async function () {
 
     // Each time the user scrolls
     var win = $(window);
-    win.scroll(function() {
-        // End of the document reached?
-        if (($(document).height() - win.height() - 100) <= win.scrollTop()) {
-            var userSetting = JSON.parse(api.getUserSettings());
-            var pageSize = (g_lastSelectedView === 'list' ? userSetting.DisplayPageSizeForListView : userSetting.DisplayPageSizeForNormalView);
-            var offset = g_lastSearchOffset + pageSize;
+    win.scroll(function () {
+        if (location.href.endsWith('index.html')) {
+            // End of the document reached?
+            if (($(document).height() - win.height() - 100) <= win.scrollTop()) {
+                var userSetting = JSON.parse(api.getUserSettings());
+                var pageSize = (g_lastSelectedView === 'list' ? userSetting.DisplayPageSizeForListView : userSetting.DisplayPageSizeForNormalView);
+                var offset = g_lastSearchOffset + pageSize;
 
-            if(offset > g_lastSearchOffset && !g_searchFinished){
-                g_lastSearchOffset = offset;
+                if (offset > g_lastSearchOffset && !g_searchFinished) {
+                    g_lastSearchOffset = offset;
 
-                asyncApi.search(g_lastQueryObject, false, offset, g_lastSelectedFormatName, g_lastSelectedFolderLabel, g_lastSelectedOrder, g_lastSelectedView).then(function (resJson) {
-                    var data = JSON.parse(resJson);
-                    
-                    // 全結果の表示が完了していれば、完了フラグを立てる
-                    if (offset + data.pageSize >= data.nHits){
-                        g_searchFinished = true;
-                    }
-    
-                    // 検索結果の各行を表示
-                    displayResultRows(data, g_lastSelectedView, offset);
-                });
+                    asyncApi.search(g_lastQueryObject, false, offset, g_lastSelectedFormatName, g_lastSelectedFolderLabel, g_lastSelectedOrder, g_lastSelectedView).then(function (resJson) {
+                        var data = JSON.parse(resJson);
+
+                        // 全結果の表示が完了していれば、完了フラグを立てる
+                        if (offset + data.pageSize >= data.nHits) {
+                            g_searchFinished = true;
+                        }
+
+                        // 検索結果の各行を表示
+                        displayResultRows(data, g_lastSelectedView, offset);
+                    });
+                }
             }
         }
     });
