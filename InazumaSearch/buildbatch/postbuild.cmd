@@ -17,6 +17,7 @@ xcopy /y /e "%PROJECTDIR%externals\%PLATFORMNAME%" "%TARGETDIR%externals\%PLATFO
 
 REM Visual C++ 再頒布可能パッケージ DLLのコピー
 xcopy /y /e "%~dp0\%PLATFORMNAME%\vcruntime2019\msvcp140.dll" "%TARGETDIR%"
-if %PLATFORMNAME% == x64 xcopy /y /e "%~dp0\%PLATFORMNAME%\vcruntime2019\vcruntime140.dll" "%TARGETDIR%"
+xcopy /y /e "%~dp0\%PLATFORMNAME%\vcruntime2019\vcruntime140.dll" "%TARGETDIR%"
+if %PLATFORMNAME% == x64 xcopy /y /e "%~dp0\%PLATFORMNAME%\vcruntime2019\vcruntime140_1.dll" "%TARGETDIR%"
 
 echo ---- Inazuma Search Build Batch End ----
