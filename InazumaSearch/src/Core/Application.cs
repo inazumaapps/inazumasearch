@@ -10,6 +10,7 @@ using CommandLine;
 using Hnx8.ReadJEnc;
 using InazumaSearch.Core.Crawl;
 using InazumaSearch.Forms;
+using MimeKit;
 
 namespace InazumaSearch.Core
 {
@@ -376,13 +377,22 @@ namespace InazumaSearch.Core
         {
             return PluginManager.GetTextExtNameToLabelMap().Keys.ToList();
         }
+        
+        /// <summary>
+        /// <see cref="ExtractFile(string, IEnumerable{string}, IEnumerable{string})"で抽出した結果です。 />
+        /// </summary>
+        public class ExtractFileResult
+        {
+            public string Title { get; set; }
+            public string Body { get; set; }
+        }
 
         /// <summary>
-        /// 拡張子に応じて、指定した文書ファイルの本文テキストを抽出
+        /// 拡張子に応じて、指定した文書ファイルの情報（件名、本文テキスト）を抽出
         /// </summary>
         /// <param name="path">文書ファイルパス</param>
-        /// <returns>ファイル本文。何らかのエラー</returns>
-        public virtual string ExtractFileText(
+        /// <returns>ファイル本文</returns>
+        public virtual ExtractFileResult ExtractFile(
             string path
             , IEnumerable<string> textExtNames
             , IEnumerable<string> pluginExtNames
@@ -394,7 +404,24 @@ namespace InazumaSearch.Core
             {
                 // プラグインが対応している場合は、プラグインを使用してテキスト抽出
                 Logger.Trace($"Extract by plugin - {path}");
-                return PluginManager.ExtractText(path);
+                return new ExtractFileResult() { Body = PluginManager.ExtractText(path) };
+            }
+            else if (ext == "eml")
+            {
+                // メールの場合は、MIMEKitでパース
+                using (var stream = File.OpenRead(path))
+                {
+                    // パーサを生成
+                    var parser = new MimeParser(stream, MimeFormat.Entity);
+                    while (!parser.IsEndOfStream)
+                    {
+                        var message = parser.ParseMessage();
+                        return new ExtractFileResult() { Title = message.Subject, Body = message.TextBody ?? message.HtmlBody ?? "" };
+                    }
+
+                    // 1件もメールがなければ空文書とする
+                    return new ExtractFileResult() { Body = "" };
+                }
             }
             else if (textExtNames.Contains(ext))
             {
@@ -403,13 +430,13 @@ namespace InazumaSearch.Core
                 var body = "";
                 var bytes = File.ReadAllBytes(path);
                 var charCode = ReadJEnc.JP.GetEncoding(bytes, bytes.Length, out body);
-                return body ?? "";
+                return new ExtractFileResult() { Body = body };
             }
             else
             {
                 // 上記以外の場合はXDoc2Txtを使用
                 Logger.Trace($"Extract by xdoc2txt - {path}");
-                return XDoc2TxtApi.Extract(path);
+                return new ExtractFileResult() { Body = XDoc2TxtApi.Extract(path) };
             }
         }
 

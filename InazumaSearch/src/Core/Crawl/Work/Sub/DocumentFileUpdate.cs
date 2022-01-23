@@ -156,65 +156,26 @@ namespace InazumaSearch.Core.Crawl.Work
             // データの登録
             // メールの場合とそれ以外の場合で処理を分ける
             var ext = Path.GetExtension(FilePath).TrimStart('.').ToLower();
-            string body = null;
-            string title = "";
+            Application.ExtractFileResult extRes;
 
-            if (ext == "eml")
+            // 拡張子に応じてテキストを抽出する
+            try
             {
-                // メールの場合、MIMEKitでパース
-                try
-                {
-                    using (var stream = File.OpenRead(FilePath))
-                    {
-                        // パーサを生成
-                        var parser = new MimeParser(stream, MimeFormat.Entity);
-                        while (!parser.IsEndOfStream)
-                        {
-                            var message = parser.ParseMessage();
-                            body = message.TextBody ?? message.HtmlBody ?? "";
-                            title = message.Subject ?? "";
-                        }
-                    }
-                }
-                catch (OperationCanceledException ex)
-                {
-                    // キャンセル操作の場合は外に投げる
-                    throw (ex);
-                }
-                catch (Exception ex)
-                {
-                    // 例外発生時はスキップ
-                    Logger.Warn("Crawl Mail Extract Error - {0}", FilePath);
-                    Logger.Warn(ex.ToString());
-                    return false;
-                }
+                extRes = _app.ExtractFile(FilePath, textExtNames, pluginExtNames);
+                Logger.Debug($"Extract OK - {FilePath} (title: {extRes.Title}, body length: {extRes.Body.Length})");
             }
-            else
+            catch (OperationCanceledException ex)
             {
-                // 拡張子に応じてテキストを抽出する
-                try
-                {
-                    body = _app.ExtractFileText(FilePath, textExtNames, pluginExtNames);
-                    Logger.Debug($"Extract OK - {FilePath} (length: {body.Length})");
-                }
-                catch (OperationCanceledException ex)
-                {
-                    // キャンセル操作の場合は外に投げる
-                    throw (ex);
-                }
-                catch (Exception ex)
-                {
-                    // 例外発生時はスキップ
-                    Logger.Warn("Crawl Extract Error - {0}", FilePath);
-                    Logger.Warn(ex.ToString());
-                    return false;
-                }
+                // キャンセル操作の場合は外に投げる
+                throw (ex);
             }
-
-            Thread.Sleep(0); // 他のスレッドに処理を渡す
-
-            // 本文が取得できなかった場合はスキップ
-            if (body == null) return false;
+            catch (Exception ex)
+            {
+                // 例外発生時はスキップ
+                Logger.Warn("Crawl Extract Error - {0}", FilePath);
+                Logger.Warn(ex.ToString());
+                return false;
+            }
 
             Thread.Sleep(0); // 他のスレッドに処理を渡す
 
@@ -227,8 +188,8 @@ namespace InazumaSearch.Core.Crawl.Work
             var obj = new Dictionary<string, object>
                             {
                                 { Column.Documents.KEY, key },
-                                { Column.Documents.TITLE, title },
-                                { Column.Documents.BODY, body },
+                                { Column.Documents.TITLE, extRes.Title },
+                                { Column.Documents.BODY, extRes.Body },
                                 { Column.Documents.FILE_NAME, Path.GetFileName(FilePath) },
                                 { Column.Documents.FILE_PATH, FilePath },
                                 { Column.Documents.FILE_UPDATED_AT, Groonga.Util.ToUnixTime(fileUpdated) },

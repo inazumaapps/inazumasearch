@@ -458,11 +458,11 @@ namespace InazumaSearch.Forms
                         // ファイル本文の抽出
                         var textExtNames = App.GetTextExtNames();
                         var pluginExtNames = App.GetPluginExtNames();
-                        var body = App.ExtractFileText(filePath, textExtNames, pluginExtNames);
+                        var extRes = App.ExtractFile(filePath, textExtNames, pluginExtNames);
 
                         var dialog = new FileBodyViewDialog
                         {
-                            Body = body
+                            Body = extRes.Body
                         };
                         dialog.ShowDialog(f);
                     });
