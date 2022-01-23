@@ -50,6 +50,7 @@
             this.BtnOpenExcelFile = new System.Windows.Forms.Button();
             this.BtnUpdateDocumentFolderLabels = new System.Windows.Forms.Button();
             this.BtnShowProcessStatus = new System.Windows.Forms.Button();
+            this.BtnParseMBox = new System.Windows.Forms.Button();
             this.statusStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
@@ -256,11 +257,22 @@
             this.BtnShowProcessStatus.UseVisualStyleBackColor = true;
             this.BtnShowProcessStatus.Click += new System.EventHandler(this.BtnShowProcessStatus_Click);
             // 
+            // BtnParseMBox
+            // 
+            this.BtnParseMBox.Location = new System.Drawing.Point(945, 16);
+            this.BtnParseMBox.Name = "BtnParseMBox";
+            this.BtnParseMBox.Size = new System.Drawing.Size(114, 23);
+            this.BtnParseMBox.TabIndex = 34;
+            this.BtnParseMBox.Text = "mboxパース";
+            this.BtnParseMBox.UseVisualStyleBackColor = true;
+            this.BtnParseMBox.Click += new System.EventHandler(this.BtnParseMBox_Click);
+            // 
             // DebugForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1163, 563);
+            this.Controls.Add(this.BtnParseMBox);
             this.Controls.Add(this.BtnShowProcessStatus);
             this.Controls.Add(this.BtnUpdateDocumentFolderLabels);
             this.Controls.Add(this.BtnOpenExcelFile);
@@ -313,6 +325,7 @@
         private System.Windows.Forms.Button BtnOpenExcelFile;
         private System.Windows.Forms.Button BtnUpdateDocumentFolderLabels;
         private System.Windows.Forms.Button BtnShowProcessStatus;
+        private System.Windows.Forms.Button BtnParseMBox;
     }
 }
 

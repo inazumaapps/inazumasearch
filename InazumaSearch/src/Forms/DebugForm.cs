@@ -2,11 +2,13 @@
 using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Alphaleonis.Win32.Filesystem;
 using InazumaSearch.Core;
 using Microsoft.WindowsAPICodePack.Shell;
+using MimeKit;
 
 namespace InazumaSearch.Forms
 {
@@ -266,6 +268,35 @@ namespace InazumaSearch.Forms
         {
             var procStatusForm = new ProcessStatusForm();
             procStatusForm.Show();
+        }
+
+        private void BtnParseMBox_Click(object sender, EventArgs e)
+        {
+            using (var stream = File.OpenRead(TxtPath.Text))
+            {
+                // パーサを生成
+                var parser = new MimeParser(stream, MimeFormat.Mbox);
+                while (!parser.IsEndOfStream)
+                {
+                    // メッセージをパースする
+                    var message = parser.ParseMessage();
+
+                    // メッセージを使って何かする
+                    Console.WriteLine("[From]");
+                    Console.WriteLine(string.Join(Environment.NewLine, message.From.Select(a => a.ToString())));
+                    Console.WriteLine("[To]");
+                    Console.WriteLine(string.Join(Environment.NewLine, message.To.Select(a => a.ToString())));
+                    Console.WriteLine("[Subject]");
+                    Console.WriteLine(message.Subject);
+                    Console.WriteLine("[TextBody]");
+                    Console.WriteLine(message.TextBody);
+                    Console.WriteLine("[HtmlBody]");
+                    Console.WriteLine(message.HtmlBody);
+                    Console.WriteLine("[Attachments]");
+                    Console.WriteLine(string.Join(Environment.NewLine, message.Attachments.Select(a => a.ContentDisposition)));
+                    Console.WriteLine();
+                }
+            }
         }
     }
 }
