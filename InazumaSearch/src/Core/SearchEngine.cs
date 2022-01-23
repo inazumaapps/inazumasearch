@@ -461,35 +461,6 @@ namespace InazumaSearch.Core
                 rec.base_score = selectRec.GetIntValue(Groonga.VColumn.SCORE).Value;
                 rec.final_score = selectRec.GetIntValue("final_score").Value;
 
-                //// OSからアイコン画像を取得
-                //var icon = WindowsIconGetter.GetFileIcon(path);
-                //byte[] bytes;
-                //using (var ms = new MemoryStream())
-                //{
-                //    icon.Save(ms);
-                //    bytes = ms.ToArray();
-                //}
-
-                //var b64String = Convert.ToBase64String(bytes);
-                //rec.icon_data_url = "data:image/png;base64," + b64String;
-
-                //// OSからサムネイル画像を取得
-                //var sh = ShellObject.FromParsingName(path);
-                //sh.Thumbnail.FormatOption = ShellThumbnailFormatOption.IconOnly;
-                //var bmp = sh.Thumbnail.LargeBitmap;
-                //bmp.MakeTransparent(Color.Black);
-
-                //byte[] bytes;
-                //using (var ms = new MemoryStream())
-                //{
-                //    bmp.Save(ms, ImageFormat.Png);
-                //    bytes = ms.GetBuffer();
-                //}
-
-                //var b64String = Convert.ToBase64String(bytes);
-                //rec.icon_data_url = "data:image/png;base64," + b64String;
-
-
                 var fileNameSnippets = selectRec[Groonga.Function.SnippetHtml(Column.Documents.FILE_NAME)] as object[];
                 if (fileNameSnippets != null)
                 {
@@ -499,7 +470,7 @@ namespace InazumaSearch.Core
                 var bodySnippets = selectRec[Groonga.Function.SnippetHtml(Column.Documents.BODY)] as object[];
                 if (bodySnippets != null)
                 {
-                    rec.body_snippets = bodySnippets.Cast<string>().Select(s => s.Replace("\n", "<br>")).ToArray();
+                    rec.body_snippets = bodySnippets.Cast<string>().ToArray();
                 }
 
                 rec.ext = (string)selectRec[Column.Documents.EXT];
