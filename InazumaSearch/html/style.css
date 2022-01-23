@@ -104,6 +104,10 @@ html {
 	background-image: url(./fugue-icons/document.png);
 }
 
+.icon.file-type-eml {
+	background-image: url(./fugue-icons/mail.png);
+}
+
 .icon.file-type-htm,
 .icon.file-type-html {
 	background-image: url(./fugue-icons/document-globe.png);
@@ -121,6 +125,7 @@ html {
 .icon.file-type-dotm {
 	background-image: url(./fugue-icons/document-word.png);
 }
+
 .row.file-type-doc .card:before,
 .row.file-type-docx .card:before,
 .row.file-type-docm .card:before,

@@ -70,10 +70,12 @@ namespace InazumaSearch.Core
         public class Record
         {
             public string key { get; set; }
+            public string folder_path { get; set; }
             public string file_path { get; set; }
             public string file_name { get; set; }
-            public string folder_path { get; set; }
             public string[] file_name_snippets { get; set; } = new string[] { };
+            public string title { get; set; }
+            public string[] title_snippets { get; set; } = new string[] { };
             public string[] body_snippets { get; set; } = new string[] { };
             public string ext { get; set; }
             public string timestamp_updated_caption { get; set; }
@@ -399,6 +401,7 @@ namespace InazumaSearch.Core
                             , Column.Documents.FILE_UPDATED_AT
                             , Column.Documents.SIZE
                             , Groonga.Function.SnippetHtml(Column.Documents.FILE_NAME)
+                            , Groonga.Function.SnippetHtml(Column.Documents.TITLE)
                             , Groonga.Function.SnippetHtml(Column.Documents.BODY)
                             , "elapsed_hour_from_file_updated"
                             , "freshness_score_rate"
@@ -452,7 +455,8 @@ namespace InazumaSearch.Core
                 {
                     key = (string)selectRec.Key,
                     file_name = (string)selectRec[Column.Documents.FILE_NAME],
-                    file_path = (string)selectRec[Column.Documents.FILE_PATH]
+                    file_path = (string)selectRec[Column.Documents.FILE_PATH],
+                    title = (string)selectRec[Column.Documents.TITLE]
                 };
                 if (!string.IsNullOrEmpty(rec.file_path))
                 {
@@ -460,6 +464,12 @@ namespace InazumaSearch.Core
                 }
                 rec.base_score = selectRec.GetIntValue(Groonga.VColumn.SCORE).Value;
                 rec.final_score = selectRec.GetIntValue("final_score").Value;
+
+                var titleSnippets = selectRec[Groonga.Function.SnippetHtml(Column.Documents.TITLE)] as object[];
+                if (titleSnippets != null)
+                {
+                    rec.title_snippets = titleSnippets.Cast<string>().ToArray();
+                }
 
                 var fileNameSnippets = selectRec[Groonga.Function.SnippetHtml(Column.Documents.FILE_NAME)] as object[];
                 if (fileNameSnippets != null)

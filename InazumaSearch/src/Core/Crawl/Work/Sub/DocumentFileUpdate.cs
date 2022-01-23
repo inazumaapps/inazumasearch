@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading;
 using Alphaleonis.Win32.Filesystem;
 using Microsoft.WindowsAPICodePack.Shell;
+using MimeKit;
 
 namespace InazumaSearch.Core.Crawl.Work
 {
@@ -153,25 +154,67 @@ namespace InazumaSearch.Core.Crawl.Work
             progress?.Report(new ProgressState() { CurrentStep = ProgressState.Step.RecordUpdateBegin, CurrentValue = crawlResult.Updated + crawlResult.Skipped, TotalValue = crawlResult.TotalTargetCount, Path = FilePath });
 
             // データの登録
-            // 拡張子に応じてテキストを抽出する
-            string body;
-            try
+            // メールの場合とそれ以外の場合で処理を分ける
+            var ext = Path.GetExtension(FilePath).TrimStart('.').ToLower();
+            string body = null;
+            string title = "";
+
+            if (ext == "eml")
             {
-                body = _app.ExtractFileText(FilePath, textExtNames, pluginExtNames);
-                Logger.Debug($"Extract OK - {FilePath} (length: {body.Length})");
+                // メールの場合、MIMEKitでパース
+                try
+                {
+                    using (var stream = File.OpenRead(FilePath))
+                    {
+                        // パーサを生成
+                        var parser = new MimeParser(stream, MimeFormat.Entity);
+                        while (!parser.IsEndOfStream)
+                        {
+                            var message = parser.ParseMessage();
+                            body = message.TextBody ?? message.HtmlBody ?? "";
+                            title = message.Subject ?? "";
+                        }
+                    }
+                }
+                catch (OperationCanceledException ex)
+                {
+                    // キャンセル操作の場合は外に投げる
+                    throw (ex);
+                }
+                catch (Exception ex)
+                {
+                    // 例外発生時はスキップ
+                    Logger.Warn("Crawl Mail Extract Error - {0}", FilePath);
+                    Logger.Warn(ex.ToString());
+                    return false;
+                }
             }
-            catch (OperationCanceledException ex)
+            else
             {
-                // キャンセル操作の場合は外に投げる
-                throw (ex);
+                // 拡張子に応じてテキストを抽出する
+                try
+                {
+                    body = _app.ExtractFileText(FilePath, textExtNames, pluginExtNames);
+                    Logger.Debug($"Extract OK - {FilePath} (length: {body.Length})");
+                }
+                catch (OperationCanceledException ex)
+                {
+                    // キャンセル操作の場合は外に投げる
+                    throw (ex);
+                }
+                catch (Exception ex)
+                {
+                    // 例外発生時はスキップ
+                    Logger.Warn("Crawl Extract Error - {0}", FilePath);
+                    Logger.Warn(ex.ToString());
+                    return false;
+                }
             }
-            catch (Exception ex)
-            {
-                // 例外発生時はスキップ
-                Logger.Warn("Crawl Extract Error - {0}", FilePath);
-                Logger.Warn(ex.ToString());
-                return false;
-            }
+
+            Thread.Sleep(0); // 他のスレッドに処理を渡す
+
+            // 本文が取得できなかった場合はスキップ
+            if (body == null) return false;
 
             Thread.Sleep(0); // 他のスレッドに処理を渡す
 
@@ -184,6 +227,7 @@ namespace InazumaSearch.Core.Crawl.Work
             var obj = new Dictionary<string, object>
                             {
                                 { Column.Documents.KEY, key },
+                                { Column.Documents.TITLE, title },
                                 { Column.Documents.BODY, body },
                                 { Column.Documents.FILE_NAME, Path.GetFileName(FilePath) },
                                 { Column.Documents.FILE_PATH, FilePath },

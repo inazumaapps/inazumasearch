@@ -184,13 +184,17 @@ function displayResultRows_NormalView(getJsonData, searchOffset){
 
         var $new_row = $row_base.clone();
 
-        var file_name;
-        if(res.file_name_snippets.length >= 1){
-            file_name = res.file_name_snippets[0];
+        var title;
+        if (res.title_snippets.length >= 1) {
+            title = res.title_snippets[0];
+        } else if (res.title !== null && res.title !== "") {
+            title = res.title;
+        } else if(res.file_name_snippets.length >= 1) {
+            title = res.file_name_snippets[0];
         } else {
-            file_name = res.file_name;
+            title = res.file_name;
         }
-        $new_row.find('.card-title a').html(file_name).attr('data-file-path', res.file_path);
+        $new_row.find('.card-title a').html(title).attr('data-file-path', res.file_path);
         var fileLinkHref = '#FILE:' + res.file_path ;
         $new_row.find('.card-title a').attr('href', fileLinkHref);
         $new_row.find('.card-action a.file-path').text(res.file_path).attr('href', fileLinkHref).attr('data-file-path', res.file_path);
