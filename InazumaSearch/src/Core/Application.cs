@@ -377,7 +377,7 @@ namespace InazumaSearch.Core
         {
             return PluginManager.GetTextExtNameToLabelMap().Keys.ToList();
         }
-        
+
         /// <summary>
         /// <see cref="ExtractFile(string, IEnumerable{string}, IEnumerable{string})"で抽出した結果です。 />
         /// </summary>

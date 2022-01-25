@@ -4,7 +4,6 @@ using System.Linq;
 using System.Threading;
 using Alphaleonis.Win32.Filesystem;
 using Microsoft.WindowsAPICodePack.Shell;
-using MimeKit;
 
 namespace InazumaSearch.Core.Crawl.Work
 {
@@ -154,8 +153,6 @@ namespace InazumaSearch.Core.Crawl.Work
             progress?.Report(new ProgressState() { CurrentStep = ProgressState.Step.RecordUpdateBegin, CurrentValue = crawlResult.Updated + crawlResult.Skipped, TotalValue = crawlResult.TotalTargetCount, Path = FilePath });
 
             // データの登録
-            // メールの場合とそれ以外の場合で処理を分ける
-            var ext = Path.GetExtension(FilePath).TrimStart('.').ToLower();
             Application.ExtractFileResult extRes;
 
             // 拡張子に応じてテキストを抽出する
