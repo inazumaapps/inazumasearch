@@ -10,7 +10,7 @@ namespace InazumaSearch.Groonga
         /// <summary>
         /// アプリケーションが要求するスキーマバージョン
         /// </summary>
-        public const int AppSchemaVersion = 2;
+        public const int AppSchemaVersion = 3;
 
         /// <summary>
         /// スキーマのセットアップ(新規作成 or アップグレード)を実行
@@ -208,6 +208,33 @@ namespace InazumaSearch.Groonga
                 Process.Start(psi);
                 Boot();
 
+            }
+
+            #endregion
+
+            #region 2 -> 3
+
+            if (nextSchemaVer == 3)
+            {
+                // アプリケーションバージョンの列を追加
+                ColumnCreate(
+                      Table.Documents
+                    , Column.Documents.APPLICATION_MAJOR_VERSION_ON_UPDATED
+                    , new[] { ColumnCreateFlag.COLUMN_SCALAR }
+                    , DataType.UInt8
+                );
+                ColumnCreate(
+                      Table.Documents
+                    , Column.Documents.APPLICATION_MINOR_VERSION_ON_UPDATED
+                    , new[] { ColumnCreateFlag.COLUMN_SCALAR }
+                    , DataType.UInt8
+                );
+                ColumnCreate(
+                      Table.Documents
+                    , Column.Documents.APPLICATION_PATCH_VERSION_ON_UPDATED
+                    , new[] { ColumnCreateFlag.COLUMN_SCALAR }
+                    , DataType.UInt8
+                );
             }
 
             #endregion

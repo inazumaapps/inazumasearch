@@ -137,15 +137,27 @@ namespace InazumaSearch.Core.Crawl.Work
             if (AlreadyDBRecordMap.ContainsKey(key))
             {
                 var rec = AlreadyDBRecordMap[key];
-                var recSize = (long)rec[Column.Documents.SIZE];
+                var recSize = rec.GetIntValue(Column.Documents.SIZE).Value;
                 var recUpdated = (double)rec[Column.Documents.FILE_UPDATED_AT];
+                var recMajorVerOnUpdated = rec.GetIntValue(Column.Documents.APPLICATION_MAJOR_VERSION_ON_UPDATED).Value;
+                var recMinorVerOnUpdated = rec.GetIntValue(Column.Documents.APPLICATION_MINOR_VERSION_ON_UPDATED).Value;
 
                 // 日付はGroonga側とFileInfo側で精度の違いがある場合があるため、秒部分のみ比較
-                if (recSize == fileSize && Math.Floor(recUpdated) == Math.Floor(Groonga.Util.ToUnixTime(fileUpdated)))
+                var recUpdatedSec = Math.Floor(recUpdated);
+                var fileUpdatedSec = Math.Floor(Groonga.Util.ToUnixTime(fileUpdated));
+                if (recSize == fileSize && recUpdatedSec == fileUpdatedSec)
                 {
-                    Logger.Debug("Skip - {0}", FilePath);
+                    // ver 0.25.0より前かつeml形式のファイルであればスキップしない（ver 0.25.0でパース方法に変更が入ったため）
+                    var ext = Path.GetExtension(FilePath).TrimStart('.').ToLower();
+                    if (recMajorVerOnUpdated == 0 && recMinorVerOnUpdated < 25 && ext == "eml")
+                    {
+                    }
+                    else
+                    {
+                        Logger.Debug("Skip - {0}", FilePath);
 
-                    return false;
+                        return false;
+                    }
                 }
             }
 
@@ -182,6 +194,7 @@ namespace InazumaSearch.Core.Crawl.Work
                                                                                       .ToArray();
 
             // Groongaへデータを登録
+            var appVer = ApplicationEnvironment.GetVersion();
             var obj = new Dictionary<string, object>
                             {
                                 { Column.Documents.KEY, key },
@@ -194,7 +207,10 @@ namespace InazumaSearch.Core.Crawl.Work
                                 { Column.Documents.SIZE, fileSize },
                                 { Column.Documents.EXT, Path.GetExtension(FilePath).TrimStart('.').ToLower() },
                                 { Column.Documents.UPDATED_AT, Groonga.Util.ToUnixTime(DateTime.Now) },
-                                { Column.Documents.FOLDER_LABELS, folderLabels}
+                                { Column.Documents.FOLDER_LABELS, folderLabels},
+                                { Column.Documents.APPLICATION_MAJOR_VERSION_ON_UPDATED, appVer.Major },
+                                { Column.Documents.APPLICATION_MINOR_VERSION_ON_UPDATED, appVer.Minor },
+                                { Column.Documents.APPLICATION_PATCH_VERSION_ON_UPDATED, appVer.Patch },
                             };
 
             Logger.Trace($"Store to groonga DB");

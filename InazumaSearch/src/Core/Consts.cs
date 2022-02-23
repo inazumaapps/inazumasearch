@@ -91,6 +91,20 @@
             /// </summary>
             public const string UPDATED_AT = "updated_at";
 
+            /// <summary>
+            /// 更新時のアプリケーションのメジャーバージョン
+            /// </summary>
+            public const string APPLICATION_MAJOR_VERSION_ON_UPDATED = "application_major_version_on_updated";
+
+            /// <summary>
+            /// 更新時のアプリケーションのマイナーバージョン
+            /// </summary>
+            public const string APPLICATION_MINOR_VERSION_ON_UPDATED = "application_minor_version_on_updated";
+
+            /// <summary>
+            /// 更新時のアプリケーションのパッチバージョン
+            /// </summary>
+            public const string APPLICATION_PATCH_VERSION_ON_UPDATED = "application_patch_version_on_updated";
         }
     }
     public class LoggerName
