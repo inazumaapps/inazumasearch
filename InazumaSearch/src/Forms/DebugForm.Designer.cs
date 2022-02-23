@@ -51,6 +51,7 @@
             this.BtnUpdateDocumentFolderLabels = new System.Windows.Forms.Button();
             this.BtnShowProcessStatus = new System.Windows.Forms.Button();
             this.BtnParseMBox = new System.Windows.Forms.Button();
+            this.BtnDBDefrag = new System.Windows.Forms.Button();
             this.statusStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
@@ -267,11 +268,22 @@
             this.BtnParseMBox.UseVisualStyleBackColor = true;
             this.BtnParseMBox.Click += new System.EventHandler(this.BtnParseMBox_Click);
             // 
+            // BtnDBDefrag
+            // 
+            this.BtnDBDefrag.Location = new System.Drawing.Point(12, 158);
+            this.BtnDBDefrag.Name = "BtnDBDefrag";
+            this.BtnDBDefrag.Size = new System.Drawing.Size(120, 23);
+            this.BtnDBDefrag.TabIndex = 35;
+            this.BtnDBDefrag.Text = "DBデフラグ";
+            this.BtnDBDefrag.UseVisualStyleBackColor = true;
+            this.BtnDBDefrag.Click += new System.EventHandler(this.BtnDBDefrag_Click);
+            // 
             // DebugForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1163, 563);
+            this.Controls.Add(this.BtnDBDefrag);
             this.Controls.Add(this.BtnParseMBox);
             this.Controls.Add(this.BtnShowProcessStatus);
             this.Controls.Add(this.BtnUpdateDocumentFolderLabels);
@@ -326,6 +338,7 @@
         private System.Windows.Forms.Button BtnUpdateDocumentFolderLabels;
         private System.Windows.Forms.Button BtnShowProcessStatus;
         private System.Windows.Forms.Button BtnParseMBox;
+        private System.Windows.Forms.Button BtnDBDefrag;
     }
 }
 

@@ -298,5 +298,22 @@ namespace InazumaSearch.Forms
                 }
             }
         }
+
+        private void BtnDBDefrag_Click(object sender, EventArgs e)
+        {
+            long oldSize = 0;
+            long newSize = 0;
+            var t = Task.Run(() =>
+            {
+                oldSize = Application.GM.GetDBFileSizeTotal();
+                Application.GM.ExecuteCommand("defrag");
+                newSize = Application.GM.GetDBFileSizeTotal();
+            });
+            var f = new ProgressForm(t, "データベースをデフラグしています...");
+            f.ShowDialog();
+
+            Util.ShowInformationMessage($"ファイルサイズ: {Util.FormatFileSize(oldSize)} -> {Util.FormatFileSize(newSize)} (差分: {Util.FormatFileSize(oldSize - newSize)})");
+
+        }
     }
 }

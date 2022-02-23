@@ -124,17 +124,6 @@ namespace InazumaSearch.Forms
             lblDocumentDBSize.Text = Util.FormatFileSize(Application.GM.GetDBFileSizeTotal());
         }
 
-        private void button1_Click(object sender, EventArgs e)
-        {
-            var t = Task.Run(() =>
-            {
-                Application.GM.ExecuteCommand("defrag");
-            });
-            var f = new ProgressForm(t, "データベースをデフラグしています...");
-            f.ShowDialog();
-            UpdateLabels();
-        }
-
         private void BtnAddTextExt_Click(object sender, EventArgs e)
         {
             var f = new ExtNameAddDialog();
