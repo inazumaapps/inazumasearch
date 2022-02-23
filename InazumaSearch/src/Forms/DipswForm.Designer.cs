@@ -59,6 +59,7 @@
             this.label2 = new System.Windows.Forms.Label();
             this.NumDisplayPageSizeForListView = new System.Windows.Forms.NumericUpDown();
             this.NumDisplayPageSizeForNormalView = new System.Windows.Forms.NumericUpDown();
+            this.BtnRebootDebugMode = new System.Windows.Forms.Button();
             this.tblDebug.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.tableLayoutPanel2.SuspendLayout();
@@ -408,11 +409,22 @@
             0});
             this.NumDisplayPageSizeForNormalView.ValueChanged += new System.EventHandler(this.NumDisplayPageSizeForNormalView_ValueChanged);
             // 
+            // BtnRebootDebugMode
+            // 
+            this.BtnRebootDebugMode.Location = new System.Drawing.Point(12, 321);
+            this.BtnRebootDebugMode.Name = "BtnRebootDebugMode";
+            this.BtnRebootDebugMode.Size = new System.Drawing.Size(268, 23);
+            this.BtnRebootDebugMode.TabIndex = 32;
+            this.BtnRebootDebugMode.Text = "デバッグモードで再起動 (不具合調査用)";
+            this.BtnRebootDebugMode.UseVisualStyleBackColor = true;
+            this.BtnRebootDebugMode.Click += new System.EventHandler(this.BtnRebootDebugMode_Click);
+            // 
             // DipswForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(737, 404);
+            this.Controls.Add(this.BtnRebootDebugMode);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.lnkOpenDataFolder);
             this.Controls.Add(this.BtnClose);
@@ -475,6 +487,7 @@
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.NumericUpDown NumDisplayPageSizeForListView;
         private System.Windows.Forms.NumericUpDown NumDisplayPageSizeForNormalView;
+        private System.Windows.Forms.Button BtnRebootDebugMode;
     }
 }
 

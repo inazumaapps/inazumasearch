@@ -108,6 +108,7 @@ namespace InazumaSearch.Forms
             lblVersion.Text = ApplicationEnvironment.GetVersionCaption();
             tblDebug.Visible = Application.DebugMode;
             lnkOpenDataFolder.Visible = Application.DebugMode;
+            BtnRebootDebugMode.Visible = !Application.DebugMode;
             UpdateExtensionList();
 
             NumDisplayPageSizeForNormalView.Value = Application.UserSettings.DisplayPageSizeForNormalView;
@@ -319,6 +320,11 @@ namespace InazumaSearch.Forms
         {
             var numControl = (NumericUpDown)sender;
             Application.UserSettings.SaveDisplayPageSizeForListView((int)numControl.Value);
+        }
+
+        private void BtnRebootDebugMode_Click(object sender, EventArgs e)
+        {
+            Core.Application.Restart(forceDebug: true);
         }
     }
 }

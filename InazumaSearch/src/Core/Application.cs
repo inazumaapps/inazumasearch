@@ -943,7 +943,7 @@ namespace InazumaSearch.Core
         /// アプリケーション全体を再起動
         /// </summary>
         /// <remarks>from https://dobon.net/vb/dotnet/programing/applicationrestart.html</remarks>
-        public static void Restart()
+        public static void Restart(bool forceDebug = false)
         {
             //拡張:デバッガがアタッチされている場合は再起動不可 (メインアプリを終了した時点でデバッグも終了するため)
             if (Debugger.IsAttached)
@@ -958,7 +958,7 @@ namespace InazumaSearch.Core
             //コマンドライン引数を作成する
             var cmd = "\"" + processId.ToString() + "\" " +
                 "\"" + waitTime.ToString() + "\" " +
-                Environment.CommandLine;
+                Environment.CommandLine.Replace("InazumaSearch.exe", "InazumaSearch_Debug.exe");
             //再起動用アプリケーションのパスを取得する
             var restartPath = Path.Combine(
                 System.Windows.Forms.Application.StartupPath, "restart.exe");
