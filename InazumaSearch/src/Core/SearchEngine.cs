@@ -187,6 +187,8 @@ namespace InazumaSearch.Core
             , string queryFileName = null
             , string queryBody = null
             , string queryUpdated = null
+            , bool fuzzyFlag = false
+            , int fuzzyLevel = 2
             , int offset = 0
             , string selectedFormat = null
             , string selectedFolderLabel = null
@@ -201,29 +203,57 @@ namespace InazumaSearch.Core
             // キーワード、ファイル名、本文での絞り込みをエスケープして追加
             if (!string.IsNullOrWhiteSpace(queryKeyword))
             {
-                // Groongaのクエリ構文は一部のみ有効
-                // バックスラッシュ、シングルクォート、コロンなどの特殊記号はエスケープする
-                // 有効なのは " - ( ) のみ
-                groongaQueries.Add(queryKeyword
-                                    .Replace(@"\", @"\\")
-                                    .Replace("'", @"\'")
-                                    .Replace(":", @"\:")
-                                    .Replace("+", @"\+"));
+                // あいまい検索ON時はクエリ構文無効
+                if (fuzzyFlag)
+                {
+                    groongaFilters.Add(
+                        $"fuzzy_search({Column.Documents.FILE_NAME}, {Groonga.Util.EscapeForScript(queryKeyword)}, {fuzzyLevel}) || " +
+                        $"fuzzy_search({Column.Documents.BODY}, {Groonga.Util.EscapeForScript(queryKeyword)}, {fuzzyLevel})"
+                    );
+                }
+                else
+                {
+                    // Groongaのクエリ構文は一部のみ有効
+                    // バックスラッシュ、シングルクォート、コロンなどの特殊記号はエスケープする
+                    // 有効なのは " - ( ) のみ
+                    groongaQueries.Add(queryKeyword
+                                        .Replace(@"\", @"\\")
+                                        .Replace("'", @"\'")
+                                        .Replace(":", @"\:")
+                                        .Replace("+", @"\+"));
+                }
             }
+
             if (!string.IsNullOrWhiteSpace(queryFileName))
             {
-                groongaQueries.Add(string.Format("{0}:@{1}"
-                                                , Column.Documents.FILE_NAME
-                                                , Groonga.Util.EscapeForQuery(queryFileName)));
-                querySubMessages.Add(string.Format("ファイル名: 「{0}」", queryFileName));
+                if (fuzzyFlag)
+                {
+                    groongaFilters.Add($"fuzzy_search({Column.Documents.FILE_NAME}, {Groonga.Util.EscapeForScript(queryFileName)}, {fuzzyLevel})");
+                }
+                else
+                {
+                    groongaQueries.Add($"{Column.Documents.FILE_NAME}:@{Groonga.Util.EscapeForQuery(queryFileName)}");
+                }
+                querySubMessages.Add($"ファイル名: 「{queryFileName}」");
             }
             if (!string.IsNullOrWhiteSpace(queryBody))
             {
-                groongaQueries.Add(string.Format("{0}:@{1}"
-                                                , Column.Documents.BODY
-                                                , Groonga.Util.EscapeForQuery(queryBody)));
-                querySubMessages.Add(string.Format("本文: 「{0}」", queryBody));
+                if (fuzzyFlag)
+                {
+                    groongaFilters.Add($"fuzzy_search({Column.Documents.BODY}, {Groonga.Util.EscapeForScript(queryBody)}, {fuzzyLevel})");
+                }
+                else
+                {
+                    groongaQueries.Add($"{Column.Documents.BODY}:@{Groonga.Util.EscapeForQuery(queryBody)}");
+                }
+                querySubMessages.Add($"本文: 「{queryBody}」");
             }
+
+            if (fuzzyFlag)
+            {
+                querySubMessages.Add($"あいまい検索");
+            }
+
             // 拡張子での絞り込みを追加 (フォーマットから生成する)
             if (selectedFormat != null)
             {

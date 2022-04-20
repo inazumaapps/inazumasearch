@@ -446,6 +446,8 @@ $(async function () {
                     // 検索リクエストを実行
                     var queryObject = {
                         keyword: value
+                        , fuzzyFlag: false
+                        , fuzzyLevel: 0
                         , fileName: ''
                         , body: ''
                         , updated: ''
@@ -618,6 +620,16 @@ $(async function () {
         if(backgroundSearchTimeoutHandle) clearTimeout(backgroundSearchTimeoutHandle);
     });
 
+    // あいまい検索スイッチ変更
+    $('#FUZZY-FLAG-SWITCH input:checkbox').click(function () {
+        var checked = $(this).is(':checked');
+
+        if (checked) {
+            $('#FUZZY-OPTION').slideDown();
+        } else {
+            $('#FUZZY-OPTION').slideUp();
+        }
+    });
 
     // 検索ボタンクリック
     $('.search-button').click(function(){
@@ -626,6 +638,8 @@ $(async function () {
         var file_name = $('input[name=file_name]').val();
         var body = $('input[name=body]').val();
         var updated = $('select[name=updated]').val();
+        var fuzzyFlag = $('#FUZZY-FLAG-SWITCH input:checkbox').is(':checked');
+        var fuzzyLevel = parseInt($('#FUZZY-LEVEL').val());
 
         // 詳細検索OFFの場合はキーワード以外を反映しない
         var detailSearchFlag = $('#DETAIL-SEARCH-SWITCH input:checkbox').is(':checked');
@@ -633,6 +647,7 @@ $(async function () {
             file_name = '';
             body = '';
             updated = '';
+            fuzzyFlag = false;
         }
 
         // 検索語が入力されていなければエラー
@@ -643,10 +658,12 @@ $(async function () {
 
         // 検索リクエストを実行
         var queryObject = {
-            keyword: keyword
+            keyword
+            , fuzzyFlag
+            , fuzzyLevel
             , fileName: file_name
-            , body: body
-            , updated: updated
+            , body
+            , updated
             , tfIdf: $('input:checkbox[name=tf_idf]').is(':checked')
         }
         executeSearch(queryObject);

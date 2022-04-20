@@ -41,10 +41,10 @@
                     <p>文書情報が収集されていません。「クロール」を実行して文書情報を収集してください。</p>
                 </div>
                 <!--
-              <div class="card-action">
-                <a href="setting.html"><i class="material-icons left">settings</i>設定画面を開く</a>
-              </div>
-            -->
+          <div class="card-action">
+            <a href="setting.html"><i class="material-icons left">settings</i>設定画面を開く</a>
+          </div>
+        -->
             </div><!-- /#MESSAGE-AREA -->
 
             <div class="right-align">
@@ -53,7 +53,7 @@
                 </button>
                 <p class="subtext" id="LAST-CRAWL-TIME-CAPTION">&nbsp;</p>
                 <!-- <button class="btn waves-effect waves-light" id="DEVTOOL" draggable="true">開発ツール<i class="mdi-action-search right"></i>
-            </button> -->
+        </button> -->
                 <div class="progress" id="PROGRESS-BAR" style="display: none;">
                     <div class="indeterminate"></div>
                 </div>
@@ -92,6 +92,23 @@
 
             <form id="DETAIL-SEARCH" style="display: none">
                 <div class="row">
+                    <div class="col s3">
+                        <label>あいまい検索</label>
+                        <div class="switch" id="FUZZY-FLAG-SWITCH"><label>Off<input type="checkbox"><span class="lever"></span>On</label></div>
+                    </div><!-- /.col -->
+                    <div class="col s9" div id="FUZZY-OPTION" style="display: none">
+                        <div class="row" style="margin-bottom: 0;">
+                            <div class="col s4">
+                                <label>あいまいレベル</label>
+                                <div class="range-field">
+                                    <input id="FUZZY-LEVEL" type="range" min="1" max="5" value="2" />
+                                </div>
+                            </div><!-- /.col -->
+                        </div><!-- /.row -->
+                        <div style="font-size: small; color: gray;">※あいまい検索時はキーワードのハイライトは行われません。</div>
+                    </div><!-- /#FUZZY-OPTION -->
+                </div><!-- /.row -->
+                <div class="row">
                     <div class="input-field col s4">
                         <input id="ADVSEARCH-FILE-NAME" name="file_name" type="text" class="validate">
                         <label for="ADVSEARCH-FILE-NAME">ファイル名</label>
@@ -100,6 +117,7 @@
                         <input id="ADVSEARCH-BODY" type="text" name="body" class="validate">
                         <label for="ADVSEARCH-BODY">本文</label>
                     </div>
+
                     <div class="input-field col s4">
                         <select name="updated">
                             <option value="">指定なし</option>
@@ -131,7 +149,7 @@
                 <p class="drilldown-result" id="DRILLDOWN-RESULT-FOLDER-LABEL"></p>
                 <p class="drilldown-result" id="DRILLDOWN-ORDER"></p>
                 <!-- <ul class="pagination">
-        </ul> -->
+                </ul> -->
             </div><!-- / #SEARCH-RESULT-HEADER -->
 
             <div id="SEARCH-RESULT-BODY">

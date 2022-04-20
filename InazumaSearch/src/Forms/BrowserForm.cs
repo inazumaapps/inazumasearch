@@ -537,6 +537,8 @@ namespace InazumaSearch.Forms
                     var queryFileName = (string)queryObject["fileName"];
                     var queryBody = (string)queryObject["body"];
                     var queryUpdated = (string)queryObject["updated"];
+                    var queryFuzzyFlag = (bool)queryObject["fuzzyFlag"];
+                    var queryFuzzyLevel = (int)queryObject["fuzzyLevel"];
 
                     var searchEngine = new SearchEngine(App);
                     var ret = searchEngine.Search(
@@ -544,6 +546,8 @@ namespace InazumaSearch.Forms
                         , queryFileName
                         , queryBody
                         , queryUpdated
+                        , queryFuzzyFlag
+                        , queryFuzzyLevel
                         , offset
                         , selectedFormat
                         , selectedFolderLabel
