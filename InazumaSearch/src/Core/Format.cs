@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace InazumaSearch.Core
 {
@@ -44,6 +45,9 @@ namespace InazumaSearch.Core
         public static readonly Format RICH_TEXT =
             new Format("richtext", "リッチテキスト", new[] { "rtf" });
 
+        public static readonly Format JAVASCRIPT = new Format("javascript", "JavaScript", new[] { "js", "mjs", "cjs" });
+        public static readonly Format TYPESCRIPT = new Format("typescript", "Typecript", new[] { "ts", "mts", "cts" });
+
         public static readonly Format EML =
            new Format("eml", "メール", new[] { "eml" });
 
@@ -54,7 +58,27 @@ namespace InazumaSearch.Core
                 , ODF_WRITER, ODF_SHEET, ODF_PRESENTATION, ODF_DRAW
                 , ICHITARO
                 , HTML, PDF, EML
+
+                , JAVASCRIPT
+                , TYPESCRIPT
             };
+
+        public static ISet<string> SOURCE_CODE_EXTENSIONS = new HashSet<string>();
+
+        #endregion
+
+        #region スタティックコンストラクタ
+
+        static Format()
+        {
+            foreach (var format in ALL_DEFAULT_FORMATS.Where(f => f.IsSourceCode))
+            {
+                foreach (var ext in format.Extensions)
+                {
+                    SOURCE_CODE_EXTENSIONS.Add(ext);
+                }
+            }
+        }
 
         #endregion
 
@@ -75,6 +99,11 @@ namespace InazumaSearch.Core
         /// </summary>
         public IList<string> Extensions { get; set; }
 
+        /// <summary>
+        /// ソースコードフラグ
+        /// </summary>
+        public bool IsSourceCode { get; set; }
+
         #endregion
 
         /// <summary>
@@ -83,11 +112,12 @@ namespace InazumaSearch.Core
         /// <param name="name"></param>
         /// <param name="caption"></param>
         /// <param name="extensions"></param>
-        public Format(string name, string caption, IEnumerable<string> extensions)
+        public Format(string name, string caption, IEnumerable<string> extensions, bool sourceCode = false)
         {
             Name = name;
             Label = caption;
             Extensions = new List<string>(extensions);
+            IsSourceCode = sourceCode;
         }
 
 

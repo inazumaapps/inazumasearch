@@ -407,6 +407,7 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
+    <Content Include="html\source-grep.html" />
     <Content Include="html\setting.js" />
     <Content Include="html\inazuma.js" />
     <Content Include="html\index.html" />

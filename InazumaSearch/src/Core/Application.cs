@@ -423,9 +423,9 @@ namespace InazumaSearch.Core
                     return new ExtractFileResult() { Body = "" };
                 }
             }
-            else if (textExtNames.Contains(ext))
+            else if (textExtNames.Contains(ext) || Format.SOURCE_CODE_EXTENSIONS.Contains(ext))
             {
-                // テキストの拡張子として登録されている場合は、テキストファイルとして読み込み
+                // テキストファイルまたはソースコードの拡張子として登録されている場合は、テキストファイルとして読み込み
                 Logger.Trace($"Extract as text file - {path}");
                 var body = "";
                 var bytes = File.ReadAllBytes(path);
