@@ -73,19 +73,17 @@ namespace InazumaSearch.Core
             public string folder_path { get; set; }
             public string file_path { get; set; }
             public string file_name { get; set; }
-            public string[] file_name_snippets { get; set; } = new string[] { };
             public string title { get; set; }
-            public string[] title_snippets { get; set; } = new string[] { };
-            public string[] body_snippets { get; set; } = new string[] { };
+            public string body { get; set; }
             public string ext { get; set; }
             public string timestamp_updated_caption { get; set; }
             public string timestamp_updated_caption_for_list_view { get; set; }
             public string size_caption { get; set; }
-            public long base_score { get; set; }
-            public long final_score { get; set; }
 
             public string icon_data_url { get; set; }
             public string thumbnail_path { get; set; }
+
+            public string grep_result_line_expr { get; set; }
         }
 
         public class FormatDrilldownLink
@@ -201,28 +199,7 @@ namespace InazumaSearch.Core
             // キーワード、ファイル名、本文での絞り込みをエスケープして追加
             if (!string.IsNullOrWhiteSpace(queryKeyword))
             {
-                // Groongaのクエリ構文は一部のみ有効
-                // バックスラッシュ、シングルクォート、コロンなどの特殊記号はエスケープする
-                // 有効なのは " - ( ) のみ
-                groongaQueries.Add(queryKeyword
-                                    .Replace(@"\", @"\\")
-                                    .Replace("'", @"\'")
-                                    .Replace(":", @"\:")
-                                    .Replace("+", @"\+"));
-            }
-            if (!string.IsNullOrWhiteSpace(queryFileName))
-            {
-                groongaQueries.Add(string.Format("{0}:@{1}"
-                                                , Column.Documents.FILE_NAME
-                                                , Groonga.Util.EscapeForQuery(queryFileName)));
-                querySubMessages.Add(string.Format("ファイル名: 「{0}」", queryFileName));
-            }
-            if (!string.IsNullOrWhiteSpace(queryBody))
-            {
-                groongaQueries.Add(string.Format("{0}:@{1}"
-                                                , Column.Documents.BODY
-                                                , Groonga.Util.EscapeForQuery(queryBody)));
-                querySubMessages.Add(string.Format("本文: 「{0}」", queryBody));
+                groongaQueries.Add(Groonga.Util.EscapeForQuery(queryKeyword));
             }
             // 拡張子での絞り込みを追加 (フォーマットから生成する)
             if (selectedFormat != null)
@@ -310,66 +287,14 @@ namespace InazumaSearch.Core
             }
 
             var matchColumns = new[] {
-                Column.Documents.FILE_NAME + " * 1000"
-                , string.Format("scorer_tf_idf({0})", Column.Documents.BODY)
+                Column.Documents.FILE_NAME + "," + Column.Documents.BODY
             };
 
             var columns = new List<Groonga.DynamicColumn>();
-            // 最終更新からの経過時間
-            var elapsedExpr = string.Format("((now() - {0}) / (60 * 60))", Column.Documents.FILE_UPDATED_AT);
-            columns.Add(new Groonga.DynamicColumn(
-                    "elapsed_hour_from_file_updated"
-                , Groonga.Stage.FILTERED
-                , Groonga.DataType.Int64
-                , elapsedExpr
-            ));
-            // 鮮度補正 (最終更新からの経過時間によるスコア補正倍率)
-            var rateData = new[] {
-                        Tuple.Create(12, 30.0) // 半日以内なら×30
-                    , Tuple.Create(24, 20.0) // 1日以内なら×20
-                    , Tuple.Create(24 * 3, 10.0) // 3日以内なら×10
-                    , Tuple.Create(24 * 7, 7.0) // 1週間以内なら×7
-                    , Tuple.Create(24 * 15, 5.0) // 15日以内なら×5
-                    , Tuple.Create(24 * 30, 3.0) // 30日(約1ヶ月)以内なら×3
-                    , Tuple.Create(24 * 60, 2.0) // 60日(約2ヶ月)以内なら×2
-                    , Tuple.Create(24 * 90, 1.5) // 90日(約3ヶ月)以内なら×1.5
-                };
-            var rateExpr = "1.0";
-            foreach (var t in rateData.Reverse())
-            {
-                var border = t.Item1;
-                var rate = t.Item2;
-
-                rateExpr = string.Format("({0} <= {1} ? {2} : {3})", elapsedExpr, border, rate, rateExpr);
-            }
-            columns.Add(new Groonga.DynamicColumn(
-                    "freshness_score_rate"
-                , Groonga.Stage.FILTERED
-                , Groonga.DataType.Float
-                , rateExpr
-            ));
-
-            // 最終スコア
-            columns.Add(new Groonga.DynamicColumn(
-                    "final_score"
-                , Groonga.Stage.FILTERED
-                , Groonga.DataType.Int64
-                , string.Format("{0} * {1}", Groonga.VColumn.SCORE, rateExpr)
-            ));
 
             // 並び順の設定。並び順が指定されていれば、その並び順を優先
             var sortKeys = new List<string>();
-            switch (selectedOrderType)
-            {
-                case OrderType.FILE_PATH:
-                    sortKeys.Add(Column.Documents.FILE_PATH);
-                    break;
-                case OrderType.FILE_UPDATED_DESC:
-                    sortKeys.Add("-" + Column.Documents.FILE_UPDATED_AT);
-                    break;
-            }
-            // 標準では最終スコア(関連度+鮮度)が高い順に並べる
-            sortKeys.Add("-final_score");
+            sortKeys.Add(Column.Documents.FILE_PATH);
 
 
             // SELECT実行
@@ -394,18 +319,12 @@ namespace InazumaSearch.Core
                     , outputColumns: new[] {
                                 Column.Documents.KEY
                             , Column.Documents.FILE_PATH
-                            , Groonga.VColumn.SCORE // 鮮度補正を加味していない生のスコア
                             , Column.Documents.TITLE
                             , Column.Documents.EXT
+                            , Column.Documents.BODY
                             , Column.Documents.FILE_NAME
                             , Column.Documents.FILE_UPDATED_AT
                             , Column.Documents.SIZE
-                            , Groonga.Function.SnippetHtml(Column.Documents.FILE_NAME)
-                            , Groonga.Function.SnippetHtml(Column.Documents.TITLE)
-                            , Groonga.Function.SnippetHtml(Column.Documents.BODY)
-                            , "elapsed_hour_from_file_updated"
-                            , "freshness_score_rate"
-                            , "final_score"
                     }
                     , columns: columns
                 );
@@ -456,31 +375,12 @@ namespace InazumaSearch.Core
                     key = (string)selectRec.Key,
                     file_name = (string)selectRec[Column.Documents.FILE_NAME],
                     file_path = (string)selectRec[Column.Documents.FILE_PATH],
-                    title = (string)selectRec[Column.Documents.TITLE]
+                    title = (string)selectRec[Column.Documents.TITLE],
+                    body = (string)selectRec[Column.Documents.BODY]
                 };
                 if (!string.IsNullOrEmpty(rec.file_path))
                 {
                     rec.folder_path = Path.GetDirectoryName(rec.file_path);
-                }
-                rec.base_score = selectRec.GetIntValue(Groonga.VColumn.SCORE).Value;
-                rec.final_score = selectRec.GetIntValue("final_score").Value;
-
-                var titleSnippets = selectRec[Groonga.Function.SnippetHtml(Column.Documents.TITLE)] as object[];
-                if (titleSnippets != null)
-                {
-                    rec.title_snippets = titleSnippets.Cast<string>().ToArray();
-                }
-
-                var fileNameSnippets = selectRec[Groonga.Function.SnippetHtml(Column.Documents.FILE_NAME)] as object[];
-                if (fileNameSnippets != null)
-                {
-                    rec.file_name_snippets = fileNameSnippets.Cast<string>().ToArray();
-                }
-
-                var bodySnippets = selectRec[Groonga.Function.SnippetHtml(Column.Documents.BODY)] as object[];
-                if (bodySnippets != null)
-                {
-                    rec.body_snippets = bodySnippets.Cast<string>().ToArray();
                 }
 
                 rec.ext = (string)selectRec[Column.Documents.EXT];
@@ -499,6 +399,10 @@ namespace InazumaSearch.Core
                 {
                     rec.thumbnail_path = null;
                 }
+
+                // grep結果を設定
+                var engine = new GrepEngine();
+                rec.grep_result_line_expr = engine.Grep(rec.body, queryKeyword).GetPrismLineRange();
 
                 records.Add(rec);
             }

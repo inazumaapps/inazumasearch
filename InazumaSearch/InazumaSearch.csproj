@@ -211,6 +211,7 @@
     <Compile Include="src\Core\Application.cs" />
     <Compile Include="src\Core\Crawl\FileSystemEvent.cs" />
     <Compile Include="src\Core\Crawl\FileWatcher.cs" />
+    <Compile Include="src\Core\GrepEngine.cs" />
     <Compile Include="src\Core\ProgressGuageState.cs" />
     <Compile Include="src\Core\Crawl\IWork.cs" />
     <Compile Include="src\Core\Crawl\Result.cs" />
@@ -407,6 +408,8 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
+    <Content Include="html\prism\prism.css" />
+    <Content Include="html\prism\prism.js" />
     <Content Include="html\source-grep.html" />
     <Content Include="html\setting.js" />
     <Content Include="html\inazuma.js" />

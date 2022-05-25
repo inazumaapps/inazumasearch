@@ -29,10 +29,7 @@ html {
 	margin-bottom: 0.2em;
 }
 
-.keyword {
-	background-color: yellow;
-	font-weight: bold;
-}
+
 
 .subtext{
 	color: gray;
@@ -234,6 +231,11 @@ pre .keyword {
 #SETTING-LINK.disabled {
 	pointer-events: none;
 	color: silver !important;
+}
+
+.sourcecode, .sourcecode * {
+	font-family: monospace !important;
+	font-size: small !important;
 }
 
 

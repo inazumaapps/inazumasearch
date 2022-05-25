@@ -184,29 +184,13 @@ function displayResultRows_NormalView(getJsonData, searchOffset){
 
         var $new_row = $row_base.clone();
 
-        var title;
-        if (res.title_snippets.length >= 1) {
-            title = res.title_snippets[0];
-        } else if (res.title !== null && res.title !== "") {
-            title = res.title;
-        } else if(res.file_name_snippets.length >= 1) {
-            title = res.file_name_snippets[0];
-        } else {
-            title = res.file_name;
-        }
+        var title = res.file_name;
         $new_row.find('.card-title a').html(title).attr('data-file-path', res.file_path);
         var fileLinkHref = '#FILE:' + res.file_path ;
         $new_row.find('.card-title a').attr('href', fileLinkHref);
         $new_row.find('.card-action a.file-path').text(res.file_path).attr('href', fileLinkHref).attr('data-file-path', res.file_path);
         $new_row.find('.card-action a.folder-open-link').attr('data-file-path', res.file_path);
-        if(res.body_snippets.length >= 1){
-            res.body_snippets.forEach(function(snip){
-                $new_row.find('.body-snippets').append('<div style="border: 1px solid #f0f0f0; margin: 1em 0; padding: 1em; font-size: small;">' + snip + '</div>');
-            });
-     
-        } else {
-            $new_row.find('.body-snippets').remove();
-        }
+        $new_row.find('.body-snippets').append('<div style="border: 1px solid #f0f0f0; font-family: monospace !important; line-height: 1; margin: 1em 0; padding: 1em; font-size: small;"><pre class="sourcecode" data-line="' + res.grep_result_line_expr + '"><code class="language-typescript line-numbers">' + res.body + '</code></pre></div>');
 
         $new_row.find('.document-information-size').text(res.size_caption);
         $new_row.find('.document-information-file-updated').text(res.timestamp_updated_caption);
@@ -260,6 +244,8 @@ function displayResultRows_NormalView(getJsonData, searchOffset){
             setTimeout(cardDisplayCallback, 200);
         }
     };
+
+    Prism.highlightAll();
 
     setTimeout(cardDisplayCallback, 200);
 
