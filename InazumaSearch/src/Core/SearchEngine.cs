@@ -83,7 +83,8 @@ namespace InazumaSearch.Core
             public string icon_data_url { get; set; }
             public string thumbnail_path { get; set; }
 
-            public string grep_result_line_expr { get; set; }
+            public string prism_view_range { get; set; }
+            public string prism_match_lines { get; set; }
         }
 
         public class FormatDrilldownLink
@@ -402,7 +403,9 @@ namespace InazumaSearch.Core
 
                 // grep結果を設定
                 var engine = new GrepEngine();
-                rec.grep_result_line_expr = engine.Grep(rec.body, queryKeyword).GetPrismLineRange();
+                var grepResult = engine.Grep(rec.body, queryKeyword);
+                rec.prism_view_range = grepResult.GetPrismViewRange();
+                rec.prism_match_lines = grepResult.GetPrismMatchLines();
 
                 records.Add(rec);
             }
