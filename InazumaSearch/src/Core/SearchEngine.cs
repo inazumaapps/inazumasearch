@@ -75,6 +75,7 @@ namespace InazumaSearch.Core
             public string file_name { get; set; }
             public string title { get; set; }
             public string body { get; set; }
+            public string highlighted_body { get; set; }
             public string ext { get; set; }
             public string timestamp_updated_caption { get; set; }
             public string timestamp_updated_caption_for_list_view { get; set; }
@@ -293,6 +294,13 @@ namespace InazumaSearch.Core
 
             var columns = new List<Groonga.DynamicColumn>();
 
+            columns.Add(new Groonga.DynamicColumn(
+                    "highlighted_body"
+                , Groonga.Stage.OUTPUT
+                , Groonga.DataType.Text
+                , Groonga.Function.HighlightFull(Column.Documents.BODY, "NormalizerAuto", true, queryKeyword, "<mark>", "</mark>")
+            ));
+
             // 並び順の設定。並び順が指定されていれば、その並び順を優先
             var sortKeys = new List<string>();
             sortKeys.Add(Column.Documents.FILE_PATH);
@@ -323,6 +331,7 @@ namespace InazumaSearch.Core
                             , Column.Documents.TITLE
                             , Column.Documents.EXT
                             , Column.Documents.BODY
+                            , "highlighted_body"
                             , Column.Documents.FILE_NAME
                             , Column.Documents.FILE_UPDATED_AT
                             , Column.Documents.SIZE
@@ -377,7 +386,8 @@ namespace InazumaSearch.Core
                     file_name = (string)selectRec[Column.Documents.FILE_NAME],
                     file_path = (string)selectRec[Column.Documents.FILE_PATH],
                     title = (string)selectRec[Column.Documents.TITLE],
-                    body = (string)selectRec[Column.Documents.BODY]
+                    body = (string)selectRec[Column.Documents.BODY],
+                    highlighted_body = (string)selectRec["highlighted_body"],
                 };
                 if (!string.IsNullOrEmpty(rec.file_path))
                 {

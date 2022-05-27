@@ -408,6 +408,8 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
+    <Content Include="html\prism\prism-noplugin.css" />
+    <Content Include="html\prism\prism-noplugin.js" />
     <Content Include="html\prism\prism.css" />
     <Content Include="html\prism\prism.js" />
     <Content Include="html\source-grep.html" />
