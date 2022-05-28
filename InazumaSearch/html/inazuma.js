@@ -752,6 +752,14 @@ $(async function () {
         }
     });
 
+
+    $('body').on('click', '[data-goto-source-line]', function () {
+        var path = $(this).closest('.search-result-row').attr('data-file-path');
+        var line = parseInt($(this).attr('data-goto-source-line'));
+
+        api.openSourceLine(path, line);
+    });
+
     Prism.hooks.add('before-insert', function (env) {
         const lines = env.highlightedCode.split(/\r\n|\r|\n/);
         const code = env.element;
@@ -871,6 +879,7 @@ $(async function () {
             div.style.width = `100%`;
             div.style.height = `18px`;
             div.style.backgroundColor = "rgba(100, 100, 240, 0.1)";
+            div.setAttribute(`data-goto-source-line`, matchLine.toString());
             code.appendChild(div);
         }
 

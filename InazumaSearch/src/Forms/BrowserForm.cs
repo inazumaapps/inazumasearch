@@ -107,10 +107,14 @@ namespace InazumaSearch.Forms
                 OwnerForm.InvokeOnUIThread((f) => f.OpenFileByResultSelect(path));
             }
 
-
             public void OpenFolder(string path)
             {
                 OwnerForm.InvokeOnUIThread((f) => f.OpenFolder(path));
+            }
+
+            public void OpenSourceLine(string path, long line)
+            {
+                OwnerForm.InvokeOnUIThread((f) => f.OpenSourceLine(path, line));
             }
 
             /// <summary>
@@ -968,6 +972,45 @@ namespace InazumaSearch.Forms
                 return;
             }
             Process.Start("explorer.exe", $"/select,\"{path}\"");
+        }
+
+        /// <summary>
+        /// 指定したソースコード行をエディタで開く
+        /// </summary>
+        public virtual void OpenSourceLine(string path, long line)
+        {
+            if (!File.Exists(path))
+            {
+                Util.ShowErrorMessage(this,
+                    "ファイルが存在しません。\n前回のクロール後に、移動または削除された可能性があるため、再度クロールを実行してください。"
+                );
+                return;
+            }
+
+            // ファイルパスがWindowsの標準最大長を超えている場合は確認
+            if (path.Length > SystemConst.WindowsMaxPath)
+            {
+                if (!Util.Confirm($"ファイルパスが{SystemConst.WindowsMaxPath}文字を越えているため、このファイルを正しく開けない可能性があります。\n（エクスプローラを含む多くのアプリケーションでは、{SystemConst.WindowsMaxPath}文字を超えるパスのファイルを正しく扱えません）\n\n開いてもよろしいですか？"))
+                {
+                    return;
+                }
+            }
+
+            // ファイルを開く
+            // 例外発生時はエラーダイアログ表示
+            try
+            {
+                var p = new Process();
+                p.StartInfo = new ProcessStartInfo(@"Code.exe", $@"--goto ""{path}:{line}""");
+                //p.StartInfo = new ProcessStartInfo(@"C:\Users\watson\AppData\Roaming\Mery\Mery.exe", $@"/l {line} ""{path}""");
+                p.Start();
+            }
+            catch (Exception ex)
+            {
+                App.Logger.Error(ex);
+                Util.ShowErrorMessage(this, $"下記のエラーにより、ファイルを開くことができませんでした。\n\n{ex.Message}");
+                return;
+            }
         }
 
         public virtual void InvokeOnUIThread(Action<BrowserForm> act)
