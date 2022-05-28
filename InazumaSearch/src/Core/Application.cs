@@ -478,9 +478,12 @@ namespace InazumaSearch.Core
                 var bytes = File.ReadAllBytes(path);
                 var charCode = ReadJEnc.JP.GetEncoding(bytes, bytes.Length, out body);
 
-                if (charCode != null) {
+                if (charCode != null)
+                {
                     return new ExtractFileResult() { Body = body };
-                } else {
+                }
+                else
+                {
                     // 文字コード判別に失敗した場合は、UTF-8として登録
                     return new ExtractFileResult() { Body = File.ReadAllText(path, Encoding.UTF8) };
 

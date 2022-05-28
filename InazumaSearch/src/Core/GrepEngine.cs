@@ -75,7 +75,8 @@ namespace InazumaSearch.Core
             /// コンストラクタ
             /// </summary>
             /// <param name="lineTotal"></param>
-            public MatchBlock(long lineTotal) {
+            public MatchBlock(long lineTotal)
+            {
                 this.LineTotal = lineTotal;
             }
 
