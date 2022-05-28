@@ -211,6 +211,7 @@
     <Compile Include="src\Core\Application.cs" />
     <Compile Include="src\Core\Crawl\FileSystemEvent.cs" />
     <Compile Include="src\Core\Crawl\FileWatcher.cs" />
+    <Compile Include="src\Core\Format\SourceCodeFormat.cs" />
     <Compile Include="src\Core\GrepEngine.cs" />
     <Compile Include="src\Core\ProgressGuageState.cs" />
     <Compile Include="src\Core\Crawl\IWork.cs" />
@@ -322,7 +323,7 @@
     <Compile Include="src\Forms\ExtNameAddDialog.Designer.cs">
       <DependentUpon>ExtNameAddDialog.cs</DependentUpon>
     </Compile>
-    <Compile Include="src\Core\Format.cs" />
+    <Compile Include="src\Core\Format\DocumentFormat.cs" />
     <Compile Include="src\Groonga\Manager_Schema.cs" />
     <Compile Include="src\Groonga\SelectResult.cs" />
     <Compile Include="src\Groonga\Function.cs" />
