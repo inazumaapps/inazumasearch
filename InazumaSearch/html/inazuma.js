@@ -833,6 +833,11 @@ $(async function () {
                         line += origLine[j];
                     }
 
+                    // markがまだ閉じていなければ閉じる
+                    if (inMark) {
+                        line += "</mark>";
+                    }
+
                 } else {
                     line = origLine;
                 }
