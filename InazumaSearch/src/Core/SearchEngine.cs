@@ -86,6 +86,7 @@ namespace InazumaSearch.Core
 
             public string prism_view_range { get; set; }
             public string prism_match_lines { get; set; }
+            public string prism_line { get; set; }
         }
 
         public class FormatDrilldownLink
