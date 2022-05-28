@@ -190,7 +190,7 @@ function displayResultRows_NormalView(getJsonData, searchOffset){
         $new_row.find('.card-title a').attr('href', fileLinkHref);
         $new_row.find('.card-action a.file-path').text(res.file_path).attr('href', fileLinkHref).attr('data-file-path', res.file_path);
         $new_row.find('.card-action a.folder-open-link').attr('data-file-path', res.file_path);
-        $new_row.find('.body-snippets').append('<div style="border: 1px solid #f0f0f0; font-family: monospace !important; line-height: 1; margin: 1em 0; padding: 1em; font-size: small;"><pre class="sourcecode"><code class="language-typescript" data-view-range="' + res.prism_view_range + '" data-match-lines="' + res.prism_match_lines + '">' + res.highlighted_body + '</code></pre></div>');
+        $new_row.find('.body-snippets').append('<div style="border: 1px solid #f0f0f0; font-family: monospace !important; line-height: 1; margin: 1em 0; padding: 1em; font-size: small;"><pre class="sourcecode"><code class="language-typescript" data-view-range="' + res.prism_view_range + '" data-match-lines="' + res.prism_match_lines + '">' + res.body + '</code></pre></div>');
 
         $new_row.find('.document-information-size').text(res.size_caption);
         $new_row.find('.document-information-file-updated').text(res.timestamp_updated_caption);

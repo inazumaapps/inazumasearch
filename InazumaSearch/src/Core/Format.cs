@@ -45,8 +45,8 @@ namespace InazumaSearch.Core
         public static readonly Format RICH_TEXT =
             new Format("richtext", "リッチテキスト", new[] { "rtf" });
 
-        public static readonly Format JAVASCRIPT = new Format("javascript", "JavaScript", new[] { "js", "mjs", "cjs" });
-        public static readonly Format TYPESCRIPT = new Format("typescript", "Typecript", new[] { "ts", "mts", "cts" });
+        public static readonly Format JAVASCRIPT = new Format("javascript", "JavaScript", new[] { "js", "mjs", "cjs" }, sourceCode: true);
+        public static readonly Format TYPESCRIPT = new Format("typescript", "Typecript", new[] { "ts", "mts", "cts" }, sourceCode: true);
 
         public static readonly Format EML =
            new Format("eml", "メール", new[] { "eml" });

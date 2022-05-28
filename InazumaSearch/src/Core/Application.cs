@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Security.Cryptography;
+using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Alphaleonis.Win32.Filesystem;
@@ -423,14 +424,24 @@ namespace InazumaSearch.Core
                     return new ExtractFileResult() { Body = "" };
                 }
             }
-            else if (textExtNames.Contains(ext) || Format.SOURCE_CODE_EXTENSIONS.Contains(ext))
+            else if ( Format.SOURCE_CODE_EXTENSIONS.Contains(ext))
             {
-                // テキストファイルまたはソースコードの拡張子として登録されている場合は、テキストファイルとして読み込み
+                // ソースコードの拡張子として登録されている場合は、ソースコードとして読み込む
+                Logger.Trace($"Extract as source code - {path}");
+                var body = "";
+                var bytes = File.ReadAllBytes(path);
+                var charCode = ReadJEnc.JP.GetEncoding(bytes, bytes.Length, out body);
+                return new ExtractFileResult() { Body = body };
+            }
+            else if (textExtNames.Contains(ext))
+            {
+                // テキストファイルの拡張子として登録されている場合は、テキストファイルとして読み込む
                 Logger.Trace($"Extract as text file - {path}");
                 var body = "";
                 var bytes = File.ReadAllBytes(path);
                 var charCode = ReadJEnc.JP.GetEncoding(bytes, bytes.Length, out body);
                 return new ExtractFileResult() { Body = body };
+
             }
             else
             {
