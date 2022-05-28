@@ -46,11 +46,6 @@ namespace InazumaSearch.Core.Format
         /// </summary>
         public IList<string> Extensions { get; set; }
 
-        /// <summary>
-        /// ソースコードフラグ
-        /// </summary>
-        public bool IsSourceCode { get; set; }
-
         #endregion
 
         /// <summary>

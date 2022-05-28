@@ -10,6 +10,7 @@ using Alphaleonis.Win32.Filesystem;
 using CommandLine;
 using Hnx8.ReadJEnc;
 using InazumaSearch.Core.Crawl;
+using InazumaSearch.Core.Format;
 using InazumaSearch.Forms;
 using MimeKit;
 
@@ -65,9 +66,14 @@ namespace InazumaSearch.Core
         public Plugin.Manager PluginManager { get; protected set; }
 
         /// <summary>
-        /// 対応しているすべてのフォーマットリスト
+        /// 対応しているすべての文書フォーマットリスト
         /// </summary>
-        public IList<Format> Formats { get; protected set; } = new List<Format>();
+        public IList<DocumentFormat> DocumentFormats { get; protected set; } = new List<DocumentFormat>();
+
+        /// <summary>
+        /// 対応しているすべてのソースコードフォーマットリスト
+        /// </summary>
+        public IList<SourceCodeFormat> SourceCodeFormats { get; protected set; } = new List<SourceCodeFormat>();
 
         /// <summary>
         /// クローラ
@@ -171,7 +177,11 @@ namespace InazumaSearch.Core
         public virtual List<string> GetExtractableExtNames()
         {
             var ret = new List<string>();
-            foreach (var format in Formats)
+            foreach (var format in DocumentFormats)
+            {
+                ret.AddRange(format.Extensions);
+            }
+            foreach (var format in SourceCodeFormats)
             {
                 ret.AddRange(format.Extensions);
             }
@@ -183,25 +193,43 @@ namespace InazumaSearch.Core
         /// </summary>
         public void RefreshFormats()
         {
-            // フォーマット関連の変数を初期化
-            // (1)プラグインが対応している形式
-            // (2)テキストファイルとして設定されている形式
-            // (3)デフォルト形式
-            // の順で全フォーマットを登録
-            var formats = new List<Format>();
-            foreach (var pair in PluginManager.GetTextExtNameToLabelMap())
             {
-                var extName = pair.Key;
-                var label = pair.Value;
-                formats.Add(new Format("plugindoc", label, new[] { extName }));
+                // 文書フォーマット関連の変数を初期化
+                // (1)プラグインが対応している形式
+                // (2)テキストファイルとして設定されている形式
+                // (3)デフォルト形式
+                // の順で全フォーマットを登録
+                var formats = new List<DocumentFormat>();
+                foreach (var pair in PluginManager.GetTextExtNameToLabelMap())
+                {
+                    var extName = pair.Key;
+                    var label = pair.Value;
+                    formats.Add(new DocumentFormat("plugindoc", label, new[] { extName }));
+                }
+                formats.Add(new DocumentFormat("text", "テキストファイル", new[] { "txt" }));
+                foreach (var ext in UserSettings.TextExtensions)
+                {
+                    formats.Add(new DocumentFormat("text", ext.Label, new[] { ext.ExtName }));
+                }
+                formats.AddRange(DocumentFormat.ALL_DEFAULT_FORMATS);
+                DocumentFormats = formats;
             }
-            formats.Add(new Format("text", "テキストファイル", new[] { "txt" }));
-            foreach (var ext in UserSettings.TextExtensions)
+
             {
-                formats.Add(new Format("text", ext.Label, new[] { ext.ExtName }));
+                // ソースコードフォーマット関連の変数を初期化
+                // (1)プラグインが対応している形式
+                // (2)デフォルト形式
+                // の順で全フォーマットを登録
+                var formats = new List<SourceCodeFormat>();
+                //foreach (var pair in PluginManager.GetTextExtNameToLabelMap())
+                //{
+                //    var extName = pair.Key;
+                //    var label = pair.Value;
+                //    formats.Add(new DocumentFormat("plugindoc", label, new[] { extName }));
+                //}
+                formats.AddRange(SourceCodeFormat.ALL_DEFAULT_FORMATS);
+                SourceCodeFormats = formats;
             }
-            formats.AddRange(Format.ALL_DEFAULT_FORMATS);
-            Formats = formats;
         }
 
         /// <summary>
@@ -424,15 +452,6 @@ namespace InazumaSearch.Core
                     return new ExtractFileResult() { Body = "" };
                 }
             }
-            else if ( Format.SOURCE_CODE_EXTENSIONS.Contains(ext))
-            {
-                // ソースコードの拡張子として登録されている場合は、ソースコードとして読み込む
-                Logger.Trace($"Extract as source code - {path}");
-                var body = "";
-                var bytes = File.ReadAllBytes(path);
-                var charCode = ReadJEnc.JP.GetEncoding(bytes, bytes.Length, out body);
-                return new ExtractFileResult() { Body = body };
-            }
             else if (textExtNames.Contains(ext))
             {
                 // テキストファイルの拡張子として登録されている場合は、テキストファイルとして読み込む
@@ -440,14 +459,32 @@ namespace InazumaSearch.Core
                 var body = "";
                 var bytes = File.ReadAllBytes(path);
                 var charCode = ReadJEnc.JP.GetEncoding(bytes, bytes.Length, out body);
-                return new ExtractFileResult() { Body = body };
 
+                if (charCode != null)
+                {
+                    return new ExtractFileResult() { Body = body };
+                }
+                else
+                {
+                    // 文字コード判別に失敗した場合は、UTF-8として登録
+                    return new ExtractFileResult() { Body = File.ReadAllText(path, Encoding.UTF8) };
+                }
             }
             else
             {
-                // 上記以外の場合はXDoc2Txtを使用
-                Logger.Trace($"Extract by xdoc2txt - {path}");
-                return new ExtractFileResult() { Body = XDoc2TxtApi.Extract(path) };
+                // 上記以外の場合は、ソースコードとして読み込む
+                Logger.Trace($"Extract as source code - {path}");
+                var body = "";
+                var bytes = File.ReadAllBytes(path);
+                var charCode = ReadJEnc.JP.GetEncoding(bytes, bytes.Length, out body);
+
+                if (charCode != null) {
+                    return new ExtractFileResult() { Body = body };
+                } else {
+                    // 文字コード判別に失敗した場合は、UTF-8として登録
+                    return new ExtractFileResult() { Body = File.ReadAllText(path, Encoding.UTF8) };
+
+                }
             }
         }
 

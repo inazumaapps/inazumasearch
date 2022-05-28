@@ -211,7 +211,7 @@ namespace InazumaSearch.Core
                 {
                     // 「その他」が指定された場合は、登録されている拡張子をすべて除外
                     var excludeExtNames = new List<string>();
-                    foreach (var format in App.Formats)
+                    foreach (var format in App.SourceCodeFormats)
                     {
                         excludeExtNames.AddRange(format.Extensions);
                     }
@@ -229,7 +229,7 @@ namespace InazumaSearch.Core
                 else
                 {
                     var targetExtNames = new List<string>();
-                    foreach (var format in App.Formats.Where(f => f.Label == selectedFormat))
+                    foreach (var format in App.SourceCodeFormats.Where(f => f.Label == selectedFormat))
                     {
                         targetExtNames.AddRange(format.Extensions);
                     };
@@ -427,7 +427,7 @@ namespace InazumaSearch.Core
             var formatDrilldownLinks = new List<FormatDrilldownLink>();
             var formatCounts = new Dictionary<string, long>();
             var formatToLabelMap = new Dictionary<string, string>();
-            foreach (var format in App.Formats)
+            foreach (var format in App.SourceCodeFormats)
             {
                 foreach (var ext in format.Extensions)
                 {
