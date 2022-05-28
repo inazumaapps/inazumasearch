@@ -154,6 +154,29 @@ html {
 .icon.file-type-pdf {
 	background-image: url(./fugue-icons/document-pdf.png);
 }
+
+.icon.file-type-js {
+	background-image: url(./vscode-simple-icons/javascript.svg);
+	background-size: contain;
+}
+.icon.file-type-ts {
+	background-image: url(./vscode-simple-icons/typescript.svg);
+	background-size: contain;
+}
+.icon.file-type-css {
+	background-image: url(./vscode-simple-icons/css.svg);
+	background-size: contain;
+}
+.icon.file-type-sass,
+.icon.file-type-scss {
+	background-image: url(./vscode-simple-icons/sass.svg);
+	background-size: contain;
+}
+.icon.file-type-vue {
+	background-image: url(./vscode-simple-icons/vue.svg);
+	background-size: contain;
+}
+
 .row.file-type-pdf .card:before {
 	content: '\e90b';
 }
