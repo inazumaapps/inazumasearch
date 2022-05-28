@@ -171,6 +171,22 @@ function displayResultRows(getJsonData, selectedView, searchOffset = 0){
 
 }
 
+function escape_html(string) {
+    if (typeof string !== 'string') {
+        return string;
+    }
+    return string.replace(/[&'`"<>]/g, function (match) {
+        return {
+            '&': '&amp;',
+            "'": '&#x27;',
+            '`': '&#x60;',
+            '"': '&quot;',
+            '<': '&lt;',
+            '>': '&gt;',
+        }[match]
+    });
+}
+
 // 結果リストを表示する(通常モード)
 function displayResultRows_NormalView(getJsonData, searchOffset){
     // 通常表示用の結果エリアを表示
@@ -184,13 +200,12 @@ function displayResultRows_NormalView(getJsonData, searchOffset){
 
         var $new_row = $row_base.clone();
 
-        var title = res.file_name;
-        $new_row.find('.card-title a').html(title).attr('data-file-path', res.file_path);
+        $new_row.find('.card-title a').text(res.file_path).attr('data-file-path', res.file_path);
         var fileLinkHref = '#FILE:' + res.file_path ;
         $new_row.find('.card-title a').attr('href', fileLinkHref);
         $new_row.find('.card-action a.file-path').text(res.file_path).attr('href', fileLinkHref).attr('data-file-path', res.file_path);
         $new_row.find('.card-action a.folder-open-link').attr('data-file-path', res.file_path);
-        $new_row.find('.body-snippets').append('<div style="border: 1px solid #f0f0f0; font-family: monospace !important; line-height: 1; margin: 1em 0; padding: 1em; font-size: small;"><pre class="sourcecode"><code class="language-typescript" data-view-range="' + res.prism_view_range + '" data-match-lines="' + res.prism_match_lines + '">' + res.body + '</code></pre></div>');
+        $new_row.find('.body-snippets').append('<div style="border: 1px solid #f0f0f0; font-family: monospace !important; line-height: 1; margin: 1em 0; padding: 1em; font-size: small;"><pre class="sourcecode"><code class="language-typescript" data-view-range="' + res.prism_view_range + '" data-match-lines="' + res.prism_match_lines + '" data-match-ranges="' + res.prism_match_ranges + '">' + escape_html(res.body) + '</code></pre></div>');
 
         $new_row.find('.document-information-size').text(res.size_caption);
         $new_row.find('.document-information-file-updated').text(res.timestamp_updated_caption);
@@ -742,10 +757,25 @@ $(async function () {
         const code = env.element;
         const viewRange = code.getAttribute('data-view-range');
         const matchLines = code.getAttribute('data-match-lines');
+        const matchRanges = code.getAttribute('data-match-ranges');
+        const matchRangeList = matchRanges.split(",");
 
         // 分割
         const viewRangeList = viewRange.split(",");
         const matchLineList = matchLines.split(",").map(s => parseInt(s));
+
+        // matchRangeListを、行番号をキーとするオブジェクトに変換
+        const matchRangeData = {};
+        for (let matchRange of matchRangeList) {
+            const [lineNumberStr, letterRange] = matchRange.split(":");
+            const lineNumber = parseInt(lineNumberStr);
+            const [letterStart, letterEnd] = letterRange.split("-").map(x => parseInt(x));
+
+            if (!matchRangeData[lineNumber]) {
+                matchRangeData[lineNumber] = [];
+            }
+            matchRangeData[lineNumber].push([letterStart, letterEnd]);
+        }
 
         // 表示ブロックの配列を作成
         const filteredLines = [];
@@ -755,8 +785,54 @@ $(async function () {
             const sliced = lines.slice(start - 1, end);
 
             for (let i = 0; i < sliced.length; i++) {
-                const line = sliced[i];
+                let origLine = sliced[i];
                 const lineNumber = start + i; // 実際の行番号
+
+                // マッチ情報が存在する場合、ハイライト処理を行う
+                let line;
+                if (matchRangeData[lineNumber]) {
+                    line = "";
+                    let inHtmlTag = false; // HTMLタグ
+                    let inEntity = false; // 実態参照
+                    let letterIndex = 0;
+                    for (var j = 0; j < origLine.length; j++) {
+                        if (inHtmlTag) {
+                            if (origLine[j] === ">") {
+                                // HTMLタグ終了
+                                inHtmlTag = false;
+                            }
+                        } else if (inEntity) {
+                            if (origLine[j] === ";") {
+                                // 実体参照終了 letterIndexを1つ進める
+                                inEntity = false;
+                                letterIndex++;
+                            }
+                        } else {
+                            if (origLine[j] === "<") {
+                                // HTMLタグ開始
+                                inHtmlTag = true;
+                            } else if (origLine[j] === "&") {
+                                // 実体参照開始
+                                inEntity = true;
+                            } else {
+                                if (letterIndex === matchRangeData[lineNumber][0][0]) {
+                                    line += "<mark>";
+                                    inMark = true;
+                                }
+                                if (letterIndex === matchRangeData[lineNumber][0][1]) {
+                                    line += "</mark>";
+                                    inMark = false;
+                                }
+                                letterIndex++;
+                            }
+                        }
+
+                        line += origLine[j];
+                    }
+
+                } else {
+                    line = origLine;
+                }
 
                 filteredLines.push(`<span style='color: #a0a0a0' data-source-line='${lineNumber}'  data-view-line='${filteredLines.length + 1}'>${lineNumber.toString().padStart(5, ' ')}</span>  ` + line);
             }
@@ -789,6 +865,9 @@ $(async function () {
             div.style.backgroundColor = "rgba(100, 100, 240, 0.1)";
             code.appendChild(div);
         }
+
+
+
     });
 
 });

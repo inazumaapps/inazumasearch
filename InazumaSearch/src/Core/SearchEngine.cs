@@ -86,7 +86,7 @@ namespace InazumaSearch.Core
 
             public string prism_view_range { get; set; }
             public string prism_match_lines { get; set; }
-            public string prism_line { get; set; }
+            public string prism_match_ranges { get; set; }
         }
 
         public class FormatDrilldownLink
@@ -417,6 +417,7 @@ namespace InazumaSearch.Core
                 var grepResult = engine.Grep(rec.body, queryKeyword);
                 rec.prism_view_range = grepResult.GetPrismViewRange();
                 rec.prism_match_lines = grepResult.GetPrismMatchLines();
+                rec.prism_match_ranges = grepResult.GetPrismMatchRanges();
 
                 records.Add(rec);
             }

@@ -27,7 +27,11 @@ namespace InazumaSearch.Core
             }
             public string GetPrismMatchLines()
             {
-                return string.Join(",", Blocks.Select(b => string.Join(",", b.MatchLines)));
+                return string.Join(",", Blocks.Select(b => b.GetPrismMatchLines()));
+            }
+            public string GetPrismMatchRanges()
+            {
+                return string.Join(",", Blocks.Select(b => b.GetPrismMatchRanges()));
             }
         }
 
@@ -36,7 +40,7 @@ namespace InazumaSearch.Core
         /// </summary>
         public class MatchBlock
         {
-            public IList<long> MatchLines { get; protected set; } = new List<long>();
+            public IList<MatchLine> MatchLines { get; protected set; } = new List<MatchLine>();
 
             /// <summary>
             /// ソースコードの総行数
@@ -50,7 +54,7 @@ namespace InazumaSearch.Core
             {
                 get
                 {
-                    var top = MatchLines.First() - ViewRangeBeforeAndAfterMatchLine;
+                    var top = MatchLines.First().LineNumber - ViewRangeBeforeAndAfterMatchLine;
                     return (top < 1 ? 1 : top);
                 }
             }
@@ -62,7 +66,7 @@ namespace InazumaSearch.Core
             {
                 get
                 {
-                    var bottom = MatchLines.Last() + ViewRangeBeforeAndAfterMatchLine;
+                    var bottom = MatchLines.Last().LineNumber + ViewRangeBeforeAndAfterMatchLine;
                     return (bottom > LineTotal ? LineTotal : bottom);
                 }
             }
@@ -79,6 +83,47 @@ namespace InazumaSearch.Core
             {
                 return $"{StartLine}-{EndLine}";
             }
+            public string GetPrismMatchLines()
+            {
+                return string.Join(",", this.MatchLines.Select(l => l.LineNumber));
+            }
+            public string GetPrismMatchRanges()
+            {
+                return string.Join(",", this.MatchLines.Select(l => l.GetPrismMatchRanges()));
+            }
+        }
+
+
+
+        /// <summary>
+        /// マッチ結果行
+        /// </summary>
+        public class MatchLine
+        {
+            /// <summary>
+            /// 行番号
+            /// </summary>
+            public long LineNumber { get; protected set; }
+
+            /// <summary>
+            /// 行内でのマッチ範囲のリスト
+            /// </summary>
+            public IList<Tuple<long, long>> MatchRanges { get; protected set; } = new List<Tuple<long, long>>();
+
+            /// <summary>
+            /// コンストラクタ
+            /// </summary>
+            /// <param name="lineTotal"></param>
+            public MatchLine(long lineNumber)
+            {
+                this.LineNumber = lineNumber;
+            }
+
+            public string GetPrismMatchRanges()
+            {
+                return String.Join(",", MatchRanges.Select(r => $"{LineNumber}:{r.Item1}-{r.Item2}"));
+            }
+
         }
 
         /// <summary>
@@ -107,13 +152,15 @@ namespace InazumaSearch.Core
                     }
 
                     // マッチ行を保持
-                    currentBlock.MatchLines.Add(lineNumber);
+                    var matchLine = new MatchLine(lineNumber);
+                    matchLine.MatchRanges.Add(Tuple.Create((long)pos, (long)pos + keyword.Length));
+                    currentBlock.MatchLines.Add(matchLine);
                 }
                 else
                 {
 
                     // 前回マッチ行から指定行数以上離れたらブロックを切断
-                    if (currentBlock != null && lineNumber > currentBlock.MatchLines.Last() + ViewRangeBeforeAndAfterMatchLine)
+                    if (currentBlock != null && lineNumber > currentBlock.MatchLines.Last().LineNumber + ViewRangeBeforeAndAfterMatchLine)
                     {
                         res.Blocks.Add(currentBlock);
                         currentBlock = null;
