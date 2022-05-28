@@ -190,7 +190,7 @@ function displayResultRows_NormalView(getJsonData, searchOffset){
         $new_row.find('.card-title a').attr('href', fileLinkHref);
         $new_row.find('.card-action a.file-path').text(res.file_path).attr('href', fileLinkHref).attr('data-file-path', res.file_path);
         $new_row.find('.card-action a.folder-open-link').attr('data-file-path', res.file_path);
-        $new_row.find('.body-snippets').append('<div style="border: 1px solid #f0f0f0; font-family: monospace !important; line-height: 1; margin: 1em 0; padding: 1em; font-size: small;"><pre class="sourcecode" data-line="' + res.prism_match_lines + '"><code class="language-typescript" data-view-range="' + res.prism_view_range + '" data-match-lines="' + res.prism_match_lines + '">' + res.highlighted_body + '</code></pre></div>');
+        $new_row.find('.body-snippets').append('<div style="border: 1px solid #f0f0f0; font-family: monospace !important; line-height: 1; margin: 1em 0; padding: 1em; font-size: small;"><pre class="sourcecode"><code class="language-typescript" data-view-range="' + res.prism_view_range + '" data-match-lines="' + res.prism_match_lines + '">' + res.highlighted_body + '</code></pre></div>');
 
         $new_row.find('.document-information-size').text(res.size_caption);
         $new_row.find('.document-information-file-updated').text(res.timestamp_updated_caption);
@@ -752,23 +752,43 @@ $(async function () {
         for (let viewRangeItem of viewRangeList) {
             const [startStr, endStr] = viewRangeItem.split("-");
             const [start, end] = [parseInt(startStr), parseInt(endStr)];
-            const sliced = lines.slice(start - 1, end - 1);
+            const sliced = lines.slice(start - 1, end);
 
             for (let i = 0; i < sliced.length; i++) {
                 const line = sliced[i];
                 const lineNumber = start + i; // 実際の行番号
 
-                //if (matchLineList.includes(lineNumber)) {
-                //    filteredLines.push(`<span style='color: #a0a0a0'>${lineNumber.toString().padStart(5, ' ')}</span>  ` + "<span style='background-color: aqua;'>" + line + "</span>");
-                //} else {
-                    filteredLines.push(`<span style='color: #a0a0a0'>${lineNumber.toString().padStart(5, ' ')}</span>  ` + line);
-            //    }
+                filteredLines.push(`<span style='color: #a0a0a0' data-source-line='${lineNumber}'  data-view-line='${filteredLines.length + 1}'>${lineNumber.toString().padStart(5, ' ')}</span>  ` + line);
             }
-            filteredLines.push("<div> ... </div>");
+            filteredLines.push("<span> ... </span>");
         }
 
         // 最後にpushした ... を削除して結合
         env.highlightedCode = filteredLines.slice(0, -1).join("\n");
+    });
+
+    Prism.hooks.add('complete', function (env) {
+        const lines = env.highlightedCode.split(/\r\n|\r|\n/);
+        const code = env.element;
+        const matchLines = code.getAttribute('data-match-lines');
+        const matchLineList = matchLines.split(",").map(s => parseInt(s));
+
+        const $code = $(code);
+
+        // highlight用のdivを作成
+        for (let matchLine of matchLineList) {
+            // 表示用の行位置を取得
+            const viewLine = parseInt($code.find(`[data-source-line=${matchLine}]`).attr('data-view-line'));
+
+            // divを生成して追加
+            const div = document.createElement("div");
+            div.style.position = "absolute";
+            div.style.top = `${18 * (viewLine - 1)}px`;
+            div.style.width = `100%`;
+            div.style.height = `18px`;
+            div.style.backgroundColor = "rgba(100, 100, 240, 0.1)";
+            code.appendChild(div);
+        }
     });
 
 });

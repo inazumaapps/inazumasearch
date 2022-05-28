@@ -12,7 +12,7 @@ namespace InazumaSearch.Core
         /// <summary>
         /// マッチ行の前後何行まで表示対象とするか
         /// </summary>
-        public const long ViewRangeBeforeAndAfterMatchLine = 5;
+        public const long ViewRangeBeforeAndAfterMatchLine = 3;
 
         /// <summary>
         /// マッチ結果（1つ以上のブロックを含む）
@@ -97,7 +97,8 @@ namespace InazumaSearch.Core
                 var lineNumber = i + 1;
 
                 // マッチ判定
-                if (line.Contains(keyword))
+                var pos = line.IndexOf(keyword);
+                if (pos >= 0)
                 {
                     // ブロック開始
                     if (currentBlock == null)
