@@ -974,6 +974,63 @@ namespace InazumaSearch.Forms
             Process.Start("explorer.exe", $"/select,\"{path}\"");
         }
 
+        ///// <summary>
+        ///// 指定したコマンドと対応する実行可能ファイルのパスを取得。PATH環境変数やPATHEXT環境変数も考慮する
+        ///// </summary>
+        //public virtual string FindExecutableFilePathFromCommand(string command)
+        //{
+        //    // 環境変数を取得
+        //    var envPath = System.Environment.GetEnvironmentVariable("PATH");
+        //    var paths = envPath.Split(';');
+        //    var envPathExt = System.Environment.GetEnvironmentVariable("PATHEXT");
+        //    var pathExtNames = envPathExt.Split(';');
+
+        //    // (1) まずは渡された値がフルパスであると想定して処理
+        //    if (File.Exists(command))
+        //    {
+        //        // C:\Program Files\VSCode\code.exe のような指定がされた場合、引数をそのまま返す
+        //        return command;
+        //    }
+
+        //    foreach (var pathExtName in pathExtNames)
+        //    {
+        //        var extCombined = Path.Combine(command, pathExtName);
+        //        if (File.Exists(extCombined))
+        //        {
+        //            // 拡張子付与あり
+        //            return extCombined; 
+        //        }
+        //    }
+
+        //    // (2) その後、コマンドの中にパス区切り文字列を含んでいないなら、PATH環境変数の中も探す
+        //    if (!command.Contains(Path.PathSeparator))
+        //    {
+        //        foreach (var basePath in paths)
+        //        {
+        //            var combined = Path.Combine(basePath, command);
+
+        //            if (File.Exists(combined))
+        //            {
+        //                // code.exe のような指定がされた場合、PATHの中を探索して最初に見つかった code.exe のパスを返す
+        //                return combined;
+        //            }
+
+        //            foreach (var pathExtName in pathExtNames)
+        //            {
+        //                var extCombined = Path.Combine(combined, pathExtName);
+        //                if (File.Exists(extCombined))
+        //                {
+        //                    // 拡張子付与あり
+        //                    return extCombined;
+        //                }
+        //            }
+
+        //        }
+        //    }
+
+        //    return null;
+        //}
+
         /// <summary>
         /// 指定したソースコード行をエディタで開く
         /// </summary>
@@ -996,12 +1053,21 @@ namespace InazumaSearch.Forms
                 }
             }
 
+            //// PATHからVSCodeを探す
+            //var codeExePath = FindExecutableFilePathFromCommand("code.cmd");
+
+            // Visual Studio Codeのパスを取得
+            var localAppDataPath = System.Environment.GetEnvironmentVariable("LOCALAPPDATA");
+            var codeExePath = Path.Combine(localAppDataPath, @"Programs\Microsoft VS Code\Code.exe");
+
             // ファイルを開く
             // 例外発生時はエラーダイアログ表示
             try
             {
                 var p = new Process();
-                p.StartInfo = new ProcessStartInfo(@"Code.exe", $@"--goto ""{path}:{line}""");
+                p.StartInfo = new ProcessStartInfo(codeExePath, $@"--goto ""{path}:{line}""");
+                p.StartInfo.UseShellExecute = false;
+                p.StartInfo.CreateNoWindow = true;
                 //p.StartInfo = new ProcessStartInfo(@"C:\Users\watson\AppData\Roaming\Mery\Mery.exe", $@"/l {line} ""{path}""");
                 p.Start();
             }
