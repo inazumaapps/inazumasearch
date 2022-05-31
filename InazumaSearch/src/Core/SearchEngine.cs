@@ -75,7 +75,7 @@ namespace InazumaSearch.Core
             public string file_name { get; set; }
             public string title { get; set; }
             public string body { get; set; }
-            //public string highlighted_body { get; set; }
+            public string highlighted_body { get; set; }
             public string ext { get; set; }
             public string timestamp_updated_caption { get; set; }
             public string timestamp_updated_caption_for_list_view { get; set; }
@@ -296,12 +296,12 @@ namespace InazumaSearch.Core
 
             var columns = new List<Groonga.DynamicColumn>();
 
-            //columns.Add(new Groonga.DynamicColumn(
-            //        "highlighted_body"
-            //    , Groonga.Stage.OUTPUT
-            //    , Groonga.DataType.Text
-            //    , Groonga.Function.HighlightFull(Column.Documents.BODY, "NormalizerAuto", true, queryKeyword, "<mark>", "</mark>")
-            //));
+            columns.Add(new Groonga.DynamicColumn(
+                  "highlighted_body"
+                , Groonga.Stage.OUTPUT
+                , Groonga.DataType.Text
+                , Groonga.Function.HighlightFull(Column.Documents.BODY, "NormalizerAuto", true, queryKeyword, "<match>", "</match>")
+            ));
 
             // 並び順の設定。並び順が指定されていれば、その並び順を優先
             var sortKeys = new List<string>();
@@ -333,7 +333,7 @@ namespace InazumaSearch.Core
                             , Column.Documents.TITLE
                             , Column.Documents.EXT
                             , Column.Documents.BODY
-                            //, "highlighted_body"
+                            , "highlighted_body"
                             , Column.Documents.FILE_NAME
                             , Column.Documents.FILE_UPDATED_AT
                             , Column.Documents.SIZE
@@ -389,7 +389,6 @@ namespace InazumaSearch.Core
                     file_path = (string)selectRec[Column.Documents.FILE_PATH],
                     title = (string)selectRec[Column.Documents.TITLE],
                     body = (string)selectRec[Column.Documents.BODY],
-                    //highlighted_body = (string)selectRec["highlighted_body"],
                 };
                 if (!string.IsNullOrEmpty(rec.file_path))
                 {
@@ -415,12 +414,13 @@ namespace InazumaSearch.Core
 
                 // grep結果を設定
                 var engine = new GrepEngine();
-                var grepResult = engine.Grep(rec.body, queryKeyword);
+                var grepResult = engine.Grep((string)selectRec["highlighted_body"]);
                 var format = App.SourceCodeFormats.First(f => f.Extensions.Contains(rec.ext));
                 rec.prism_language = format.PrismJSLanguageName;
                 rec.prism_view_range = grepResult.GetPrismViewRange();
                 rec.prism_match_lines = grepResult.GetPrismMatchLines();
                 rec.prism_match_ranges = grepResult.GetPrismMatchRanges();
+                rec.highlighted_body = grepResult.BodyWithoutTag;
 
                 records.Add(rec);
             }
