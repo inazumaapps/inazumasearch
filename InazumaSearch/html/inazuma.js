@@ -205,7 +205,7 @@ function displayResultRows_NormalView(getJsonData, searchOffset){
         $new_row.find('.card-title a').attr('href', fileLinkHref);
         $new_row.find('.card-action a.file-path').text(res.file_path).attr('href', fileLinkHref).attr('data-file-path', res.file_path);
         $new_row.find('.card-action a.folder-open-link').attr('data-file-path', res.file_path);
-        $new_row.find('.body-snippets').append('<div style="border: 1px solid #f0f0f0; font-family: monospace !important; line-height: 1; margin: 1em 0; padding: 1em; font-size: small;"><pre class="sourcecode"><code class="language-' + res.prism_language + '" data-view-range="' + res.prism_view_range + '" data-match-lines="' + res.prism_match_lines + '" data-match-ranges="' + res.prism_match_ranges + '">' + escape_html(res.body) + '</code></pre></div>');
+        $new_row.find('.body-snippets').append('<div style="border: 1px solid #f0f0f0; font-family: monospace !important; line-height: 1; margin: 1em 0; padding: 1em; font-size: small;"><pre class="sourcecode"><code class="language-' + res.prism_language + '" data-view-range="' + res.prism_view_range + '" data-match-lines="' + res.prism_match_lines + '" data-match-ranges="' + res.prism_match_ranges + '">' + res.highlighted_body + '</code></pre></div>');
 
         $new_row.find('.document-information-size').text(res.size_caption);
         $new_row.find('.document-information-file-updated').text(res.timestamp_updated_caption);
@@ -802,6 +802,9 @@ $(async function () {
                 // マッチ情報が存在する場合、ハイライト処理を行う
                 let line;
                 if (matchRangeData[lineNumber]) {
+                    const matchCount = matchRangeData[lineNumber].length;
+                    let matchIndex = 0;
+
                     line = "";
                     let inHtmlTag = false; // HTMLタグ
                     let inEntity = false; // 実態参照
@@ -826,13 +829,16 @@ $(async function () {
                                 // 実体参照開始
                                 inEntity = true;
                             } else {
-                                if (letterIndex === matchRangeData[lineNumber][0][0]) {
+                                if (matchIndex < matchCount &&
+                                    letterIndex === matchRangeData[lineNumber][matchIndex][0] - 1) { // 桁数は1始まり
                                     line += "<mark>";
                                     inMark = true;
                                 }
-                                if (letterIndex === matchRangeData[lineNumber][0][1]) {
+                                if (matchIndex < matchCount &&
+                                    letterIndex === matchRangeData[lineNumber][matchIndex][1] - 1) { // 桁数は1始まり
                                     line += "</mark>";
                                     inMark = false;
+                                    matchIndex++;
                                 }
                                 letterIndex++;
                             }
@@ -841,7 +847,7 @@ $(async function () {
                         line += origLine[j];
                     }
 
-                    // markがまだ閉じていなければ閉じる
+                    // markがまだ閉じていなければ閉じる（不具合があった場合の対策）
                     if (inMark) {
                         line += "</mark>";
                     }
@@ -880,7 +886,7 @@ $(async function () {
             div.style.height = `18px`;
             div.style.backgroundColor = "rgba(100, 100, 240, 0.1)";
             div.setAttribute(`data-goto-source-line`, matchLine.toString());
-            code.appendChild(div);
+        //    code.appendChild(div);
         }
 
     });

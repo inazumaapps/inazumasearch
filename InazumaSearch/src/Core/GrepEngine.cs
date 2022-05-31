@@ -198,14 +198,13 @@ namespace InazumaSearch.Core
                             newLine += matched;
                             restLine = restLine.Substring(matched.Length + closeTagLength);
 
-                            // マッチ範囲を記録
-                            matchLine.MatchRanges.Add(Tuple.Create(matchStartPos, matchEndPos));
+                            // マッチ範囲を記録（1始まりの桁番号に変換）
+                            matchLine.MatchRanges.Add(Tuple.Create(matchStartPos + 1, matchEndPos + 1));
                         }
 
                         // 最後にタグを削除した後の行を上書き
-                        lines[i] = newLine;
+                        lines[i] = newLine + restLine;
                     }
-                    //matchLine.MatchRanges.Add(Tuple.Create((long)pos, (long)pos + keyword.Length));
                 }
                 else
                 {
