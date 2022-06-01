@@ -807,28 +807,21 @@ $(async function () {
 
                     line = "";
                     let inHtmlTag = false; // HTMLタグ
-                    let inEntity = false; // 実態参照
                     let letterIndex = 0;
                     for (var j = 0; j < origLine.length; j++) {
-                        if (inHtmlTag) {
+                       if (inHtmlTag) {
                             if (origLine[j] === ">") {
                                 // HTMLタグ終了
                                 inHtmlTag = false;
-                            }
-                        } else if (inEntity) {
-                            if (origLine[j] === ";") {
-                                // 実体参照終了 letterIndexを1つ進める
-                                inEntity = false;
-                                letterIndex++;
                             }
                         } else {
                             if (origLine[j] === "<") {
                                 // HTMLタグ開始
                                 inHtmlTag = true;
-                            } else if (origLine[j] === "&") {
-                                // 実体参照開始
-                                inEntity = true;
                             } else {
+                                console.warn(line);
+                                console.warn({ letterIndex });
+
                                 if (matchIndex < matchCount &&
                                     letterIndex === matchRangeData[lineNumber][matchIndex][0] - 1) { // 桁数は1始まり
                                     line += "<mark>";
@@ -839,12 +832,13 @@ $(async function () {
                                     line += "</mark>";
                                     inMark = false;
                                     matchIndex++;
-                                }
+                               }
                                 letterIndex++;
                             }
                         }
 
                         line += origLine[j];
+
                     }
 
                     // markがまだ閉じていなければ閉じる（不具合があった場合の対策）
