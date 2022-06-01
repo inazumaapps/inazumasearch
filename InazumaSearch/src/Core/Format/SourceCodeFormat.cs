@@ -10,6 +10,7 @@ namespace InazumaSearch.Core.Format
         public static readonly SourceCodeFormat JAVASCRIPT = new SourceCodeFormat("javascript", "javascript", "JavaScript", new[] { "js", "mjs", "cjs" });
         public static readonly SourceCodeFormat TYPESCRIPT = new SourceCodeFormat("typescript", "typescript", "TypeScript", new[] { "ts", "mts", "cts" });
         public static readonly SourceCodeFormat VUE = new SourceCodeFormat("vue", "markup", "vue", new[] { "vue" });
+        public static readonly SourceCodeFormat HTML = new SourceCodeFormat("html", "html", "html", new[] { "htm", "html" });
         public static readonly SourceCodeFormat CSS = new SourceCodeFormat("css", "css", "CSS", new[] { "css" });
         public static readonly SourceCodeFormat SCSS = new SourceCodeFormat("scss", "scss", "SCSS", new[] { "scss" });
         public static readonly SourceCodeFormat CSHARP = new SourceCodeFormat("csharp", "csharp", "C#", new[] { "cs" });
@@ -20,6 +21,7 @@ namespace InazumaSearch.Core.Format
                 JAVASCRIPT
                 , TYPESCRIPT
                 , VUE
+                , HTML
                 , CSS, SCSS
                 , CSHARP
                 , JAVA
