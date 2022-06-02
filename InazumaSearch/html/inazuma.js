@@ -753,11 +753,13 @@ $(async function () {
     });
 
 
-    $('body').on('click', '[data-goto-source-line]', function () {
+    $('body').on('click', '[data-goto-source-line]', function (e) {
         var path = $(this).closest('.search-result-row').attr('data-file-path');
         var line = parseInt($(this).attr('data-goto-source-line'));
 
         api.openSourceLine(path, line);
+
+        return false;
     });
 
     Prism.hooks.add('before-insert', function (env) {
@@ -801,6 +803,7 @@ $(async function () {
 
                 // マッチ情報が存在する場合、ハイライト処理を行う
                 let line;
+                let lineNumberHtml;
                 if (matchRangeData[lineNumber]) {
                     const matchCount = matchRangeData[lineNumber].length;
                     let matchIndex = 0;
@@ -846,43 +849,20 @@ $(async function () {
                         line += "</mark>";
                     }
 
+                    lineNumberHtml = `<a href='#' data-goto-source-line='${lineNumber}'><span data-source-line='${lineNumber}' data-view-line='${filteredLines.length + 1}'>${lineNumber.toString().padStart(5, ' ')}</span></a>`;
+
                 } else {
                     line = origLine;
+                    lineNumberHtml = `<span style='color: #a0a0a0' data-source-line='${lineNumber}'  data-view-line='${filteredLines.length + 1}'>${lineNumber.toString().padStart(5, ' ')}</span>`;
                 }
 
-                filteredLines.push(`<span style='color: #a0a0a0' data-source-line='${lineNumber}'  data-view-line='${filteredLines.length + 1}'>${lineNumber.toString().padStart(5, ' ')}</span>  ` + line);
+                filteredLines.push(lineNumberHtml + '  ' + line);
             }
             filteredLines.push("<span> ... </span>");
         }
 
         // 最後にpushした ... を削除して結合
         env.highlightedCode = filteredLines.slice(0, -1).join("\n");
-    });
-
-    Prism.hooks.add('complete', function (env) {
-        const lines = env.highlightedCode.split(/\r\n|\r|\n/);
-        const code = env.element;
-        const matchLines = code.getAttribute('data-match-lines');
-        const matchLineList = matchLines.split(",").map(s => parseInt(s));
-
-        const $code = $(code);
-
-        // highlight用のdivを作成
-        for (let matchLine of matchLineList) {
-            // 表示用の行位置を取得
-            const viewLine = parseInt($code.find(`[data-source-line=${matchLine}]`).attr('data-view-line'));
-
-            // divを生成して追加
-            const div = document.createElement("div");
-            div.style.position = "absolute";
-            div.style.top = `${18 * (viewLine - 1)}px`;
-            div.style.width = `100%`;
-            div.style.height = `18px`;
-            div.style.backgroundColor = "rgba(100, 100, 240, 0.1)";
-            div.setAttribute(`data-goto-source-line`, matchLine.toString());
-        //    code.appendChild(div);
-        }
-
     });
 
 });

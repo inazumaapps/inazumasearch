@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 
 namespace InazumaSearch.Core
 {
@@ -166,7 +167,7 @@ namespace InazumaSearch.Core
                     // <match></match>タグの位置を元にマッチした位置をすべて取得し、タグを削除する
                     {
                         var newLine = "";
-                        var restLine = line;
+                        var restLine = WebUtility.HtmlDecode(line); // HTMLエスケープを解除した状態での列位置を判定する
                         var curPosWithoutTag = 0; // <match></match>タグを無視した場合のカレントポジション（桁位置）
                         var matchRanges = new List<Tuple<int, int>>();
 
@@ -202,8 +203,8 @@ namespace InazumaSearch.Core
                             matchLine.MatchRanges.Add(Tuple.Create(matchStartPos + 1, matchEndPos + 1));
                         }
 
-                        // 最後にタグを削除した後の行を上書き
-                        lines[i] = newLine + restLine;
+                        // 最後にタグを削除した後の行を上書き（HTMLエスケープも再度実施）
+                        lines[i] = WebUtility.HtmlEncode(newLine + restLine);
                     }
                 }
                 else
