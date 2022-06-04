@@ -414,6 +414,7 @@ namespace InazumaSearch.Core
         {
             public string Title { get; set; }
             public string Body { get; set; }
+            public string Source { get; set; }
         }
 
         /// <summary>

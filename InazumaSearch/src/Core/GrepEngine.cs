@@ -22,7 +22,7 @@ namespace InazumaSearch.Core
         {
             public IList<MatchBlock> Blocks { get; protected set; } = new List<MatchBlock>();
 
-            public string BodyWithoutTag { get; set; }
+            public string SourceWithoutTag { get; set; }
 
             public string GetPrismViewRange()
             {
@@ -226,7 +226,7 @@ namespace InazumaSearch.Core
             }
 
             // タグ削除後のボディをセット
-            res.BodyWithoutTag = string.Join("\n", lines);
+            res.SourceWithoutTag = string.Join("\n", lines);
 
             return res;
         }

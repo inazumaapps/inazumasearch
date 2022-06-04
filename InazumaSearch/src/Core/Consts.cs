@@ -47,6 +47,11 @@
             public const string BODY = "body";
 
             /// <summary>
+            /// 文書のソーステキスト
+            /// </summary>
+            public const string SOURCE = "source";
+
+            /// <summary>
             /// ファイルパス
             /// </summary>
             public const string FILE_PATH = "file_path";

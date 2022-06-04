@@ -10,7 +10,7 @@ namespace InazumaSearch.Groonga
         /// <summary>
         /// アプリケーションが要求するスキーマバージョン
         /// </summary>
-        public const int AppSchemaVersion = 3;
+        public const int AppSchemaVersion = 4;
 
         /// <summary>
         /// スキーマのセットアップ(新規作成 or アップグレード)を実行
@@ -239,10 +239,31 @@ namespace InazumaSearch.Groonga
 
             #endregion
 
+            #region 3 -> 4
+
+            if (nextSchemaVer == 4)
+            {
+                ColumnCreate(
+                      Table.Documents
+                    , Column.Documents.SOURCE
+                    , new[] { ColumnCreateFlag.COLUMN_SCALAR, ColumnCreateFlag.COMPRESS_ZSTD }
+                    , DataType.LongText
+                );
+
+                ColumnCreate(
+                      Table.DocumentsIndex
+                    , "documents_source"
+                    , new[] { ColumnCreateFlag.COLUMN_INDEX, ColumnCreateFlag.WITH_POSITION }
+                    , type: Table.Documents
+                    , source: Column.Documents.SOURCE
+                );
+            }
+
+            #endregion
+
             // 更新したスキーマの値を設定
             var meta = new Dictionary<string, object> { { Groonga.VColumn.ID, 1 }, { Column.MetaData.SCHEMA_VERSION, nextSchemaVer } };
             Load(table: Table.MetaData, values: new[] { meta });
         }
-
     }
 }
