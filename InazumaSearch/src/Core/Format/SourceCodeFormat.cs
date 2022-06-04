@@ -15,6 +15,7 @@ namespace InazumaSearch.Core.Format
         public static readonly SourceCodeFormat SCSS = new SourceCodeFormat("scss", "scss", "SCSS", new[] { "scss" });
         public static readonly SourceCodeFormat CSHARP = new SourceCodeFormat("csharp", "csharp", "C#", new[] { "cs" });
         public static readonly SourceCodeFormat JAVA = new SourceCodeFormat("java", "java", "Java", new[] { "java" });
+        public static readonly SourceCodeFormat TEXT = new SourceCodeFormat("text", "text", "テキストファイル", new[] { "txt" });
 
         public static readonly SourceCodeFormat[] ALL_DEFAULT_FORMATS =
             new[] {
@@ -25,6 +26,7 @@ namespace InazumaSearch.Core.Format
                 , CSS, SCSS
                 , CSHARP
                 , JAVA
+                , TEXT
             };
 
         #endregion
