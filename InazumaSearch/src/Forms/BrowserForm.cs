@@ -460,9 +460,9 @@ namespace InazumaSearch.Forms
                     App.ExecuteInExceptionCatcher(() =>
                     {
                         // ファイル本文の抽出
-                        var textExtNames = App.GetTextExtNames();
-                        var pluginExtNames = App.GetPluginExtNames();
-                        var extRes = App.ExtractFile(filePath, textExtNames, pluginExtNames);
+                        var textExtNames = App.GetTextDocumentExtNames();
+                        var pluginExtNames = App.GetPluginDocumentExtNames();
+                        var extRes = App.ExtractDocumentFile(filePath, textExtNames, pluginExtNames);
 
                         var dialog = new FileBodyViewDialog
                         {

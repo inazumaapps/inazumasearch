@@ -70,14 +70,11 @@ namespace InazumaSearch.Core.Crawl.Work
         {
             Logger.Debug("ファイル変更時クロール - {0}", FilePath);
 
-            // 展開対象の拡張子一覧を取得
-            var extractableExtNames = _app.GetExtractableExtNames();
-
             // ファイルの拡張子を "txt" 形式で取得
             var ext = Path.GetExtension(FilePath).TrimStart('.').ToLower();
 
             // 登録対象の拡張子である場合のみ処理
-            if (extractableExtNames.Contains(ext))
+            if (_app.DocumentExtNames.Contains(ext) || _app.SourceCodeExtNames.Contains(ext))
             {
                 // 無視設定に合致しない場合のみ処理
                 if (IgnoreSettings.Any(s => s.IsMatch(FilePath, false)))

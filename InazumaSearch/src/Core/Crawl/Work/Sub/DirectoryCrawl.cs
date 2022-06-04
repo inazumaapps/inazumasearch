@@ -76,9 +76,6 @@ namespace InazumaSearch.Core.Crawl.Work
             IProgress<ProgressState> progress = null
         )
         {
-            // 展開対象の拡張子一覧を取得
-            var extractableExtNames = _app.GetExtractableExtNames();
-
             // 実行時、指定ディレクトリがすでに削除(もしくは移動)されている場合は、処理をスキップ
             if (!Directory.Exists(DirPath))
             {
@@ -120,7 +117,7 @@ namespace InazumaSearch.Core.Crawl.Work
                 var ext = Path.GetExtension(filePath).TrimStart('.').ToLower();
 
                 // 登録対象の拡張子である場合のみ処理
-                if (extractableExtNames.Contains(ext))
+                if (_app.DocumentExtNames.Contains(ext) || _app.SourceCodeExtNames.Contains(ext))
                 {
                     // 無視設定に合致しない場合のみ処理
                     if (IgnoreSettings.Any(s => s.IsMatch(filePath, false)))

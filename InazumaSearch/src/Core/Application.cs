@@ -68,12 +68,22 @@ namespace InazumaSearch.Core
         /// <summary>
         /// 対応しているすべての文書フォーマットリスト
         /// </summary>
-        public IList<DocumentFormat> DocumentFormats { get; protected set; } = new List<DocumentFormat>();
+        public List<DocumentFormat> DocumentFormats { get; protected set; } = new List<DocumentFormat>();
+
+        /// <summary>
+        /// 対応しているすべての文書拡張子リスト (ドットなしの "txt" 形式)
+        /// </summary>
+        public List<string> DocumentExtNames { get; protected set; } = new List<string>();
 
         /// <summary>
         /// 対応しているすべてのソースコードフォーマットリスト
         /// </summary>
-        public IList<SourceCodeFormat> SourceCodeFormats { get; protected set; } = new List<SourceCodeFormat>();
+        public List<SourceCodeFormat> SourceCodeFormats { get; protected set; } = new List<SourceCodeFormat>();
+
+        /// <summary>
+        /// 対応しているすべてのソースコード拡張子リスト (ドットなしの "txt" 形式)
+        /// </summary>
+        public List<string> SourceCodeExtNames { get; protected set; } = new List<string>();
 
         /// <summary>
         /// クローラ
@@ -171,24 +181,6 @@ namespace InazumaSearch.Core
         #endregion
 
         /// <summary>
-        /// 対応している拡張子のリストを取得 ("txt" 形式で取得する)
-        /// </summary>
-        /// <returns></returns>
-        public virtual List<string> GetExtractableExtNames()
-        {
-            var ret = new List<string>();
-            foreach (var format in DocumentFormats)
-            {
-                ret.AddRange(format.Extensions);
-            }
-            foreach (var format in SourceCodeFormats)
-            {
-                ret.AddRange(format.Extensions);
-            }
-            return ret;
-        }
-
-        /// <summary>
         /// 対応フォーマット一覧を更新
         /// </summary>
         public void RefreshFormats()
@@ -216,6 +208,15 @@ namespace InazumaSearch.Core
             }
 
             {
+                // 文書ファイルの拡張子を更新
+                DocumentExtNames.Clear();
+                foreach (var format in DocumentFormats)
+                {
+                    DocumentExtNames.AddRange(format.Extensions);
+                }
+            }
+
+            {
                 // ソースコードフォーマット関連の変数を初期化
                 // (1)プラグインが対応している形式
                 // (2)デフォルト形式
@@ -230,6 +231,16 @@ namespace InazumaSearch.Core
                 formats.AddRange(SourceCodeFormat.ALL_DEFAULT_FORMATS);
                 SourceCodeFormats = formats;
             }
+
+            {
+                // ソースコードの拡張子を更新
+                SourceCodeExtNames.Clear();
+                foreach (var format in SourceCodeFormats)
+                {
+                    SourceCodeExtNames.AddRange(format.Extensions);
+                }
+            }
+
         }
 
         /// <summary>
@@ -392,7 +403,7 @@ namespace InazumaSearch.Core
         /// <summary>
         /// テキストファイルとして扱うファイル拡張子の一覧を取得。結果にドット記号は含まない (例: "txt")
         /// </summary>
-        public virtual List<string> GetTextExtNames()
+        public virtual List<string> GetTextDocumentExtNames()
         {
             var textExtNames = UserSettings.TextExtensions.Select(x => x.ExtName).ToList();
             textExtNames.Add("txt");
@@ -400,21 +411,20 @@ namespace InazumaSearch.Core
         }
 
         /// <summary>
-        /// プラグインで扱うファイル拡張子の一覧を取得。結果にドット記号は含まない (例: "xdw")
+        /// プラグインで扱う文書ファイル拡張子の一覧を取得。結果にドット記号は含まない (例: "xdw")
         /// </summary>
-        public virtual List<string> GetPluginExtNames()
+        public virtual List<string> GetPluginDocumentExtNames()
         {
             return PluginManager.GetTextExtNameToLabelMap().Keys.ToList();
         }
 
         /// <summary>
-        /// <see cref="ExtractFile(string, IEnumerable{string}, IEnumerable{string})"で抽出した結果です。 />
+        /// <see cref="ExtractDocumentFile(string, IEnumerable{string}, IEnumerable{string})"で抽出した結果です。 />
         /// </summary>
-        public class ExtractFileResult
+        public class ExtractDocumentResult
         {
             public string Title { get; set; }
             public string Body { get; set; }
-            public string Source { get; set; }
         }
 
         /// <summary>
@@ -422,7 +432,7 @@ namespace InazumaSearch.Core
         /// </summary>
         /// <param name="path">文書ファイルパス</param>
         /// <returns>ファイル本文</returns>
-        public virtual ExtractFileResult ExtractFile(
+        public virtual ExtractDocumentResult ExtractDocumentFile(
             string path
             , IEnumerable<string> textExtNames
             , IEnumerable<string> pluginExtNames
@@ -430,11 +440,17 @@ namespace InazumaSearch.Core
         {
             var ext = Path.GetExtension(path).TrimStart('.').ToLower();
 
+            // 文書ファイルの拡張子でない場合例外
+            if (!DocumentExtNames.Contains(ext))
+            {
+                throw new InvalidOperationException($"文書ファイルとして解析不可能なファイル {Path.GetFileName(path)} から文書情報を抽出しようとしました。");
+            }
+
             if (pluginExtNames.Contains(ext))
             {
                 // プラグインが対応している場合は、プラグインを使用してテキスト抽出
                 Logger.Trace($"Extract by plugin - {path}");
-                return new ExtractFileResult() { Body = PluginManager.ExtractText(path) };
+                return new ExtractDocumentResult() { Body = PluginManager.ExtractText(path) };
             }
             else if (ext == "eml")
             {
@@ -446,11 +462,11 @@ namespace InazumaSearch.Core
                     while (!parser.IsEndOfStream)
                     {
                         var message = parser.ParseMessage();
-                        return new ExtractFileResult() { Title = message.Subject, Body = message.TextBody ?? message.HtmlBody ?? "" };
+                        return new ExtractDocumentResult() { Title = message.Subject, Body = message.TextBody ?? message.HtmlBody ?? "" };
                     }
 
                     // 1件もメールがなければ空文書とする
-                    return new ExtractFileResult() { Body = "" };
+                    return new ExtractDocumentResult() { Body = "" };
                 }
             }
             else if (textExtNames.Contains(ext))
@@ -463,32 +479,19 @@ namespace InazumaSearch.Core
 
                 if (charCode != null)
                 {
-                    return new ExtractFileResult() { Body = body };
+                    return new ExtractDocumentResult() { Body = body };
                 }
                 else
                 {
                     // 文字コード判別に失敗した場合は、UTF-8として登録
-                    return new ExtractFileResult() { Body = File.ReadAllText(path, Encoding.UTF8) };
+                    return new ExtractDocumentResult() { Body = File.ReadAllText(path, Encoding.UTF8) };
                 }
             }
             else
             {
-                // 上記以外の場合は、ソースコードとして読み込む
-                Logger.Trace($"Extract as source code - {path}");
-                var body = "";
-                var bytes = File.ReadAllBytes(path);
-                var charCode = ReadJEnc.JP.GetEncoding(bytes, bytes.Length, out body);
-
-                if (charCode != null)
-                {
-                    return new ExtractFileResult() { Body = body };
-                }
-                else
-                {
-                    // 文字コード判別に失敗した場合は、UTF-8として登録
-                    return new ExtractFileResult() { Body = File.ReadAllText(path, Encoding.UTF8) };
-
-                }
+                // 上記以外の場合は、XDoc2Txtを使用
+                Logger.Trace($"Extract by xdoc2txt - {path}");
+                return new ExtractDocumentResult() { Body = XDoc2TxtApi.Extract(path) };
             }
         }
 

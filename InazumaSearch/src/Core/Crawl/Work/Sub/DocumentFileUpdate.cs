@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using Alphaleonis.Win32.Filesystem;
+using Hnx8.ReadJEnc;
 using Microsoft.WindowsAPICodePack.Shell;
 
 namespace InazumaSearch.Core.Crawl.Work
@@ -106,6 +107,9 @@ namespace InazumaSearch.Core.Crawl.Work
             IProgress<ProgressState> progress = null
         )
         {
+            // 拡張子を切り出す
+            var ext = Path.GetExtension(FilePath).TrimStart('.').ToLower();
+
             // 進捗を報告
             ReportProgressLimitedFrequency(
                 progress,
@@ -114,8 +118,8 @@ namespace InazumaSearch.Core.Crawl.Work
             );
 
             // 展開対象の拡張子一覧を取得
-            var textExtNames = _app.GetTextExtNames();
-            var pluginExtNames = _app.GetPluginExtNames();
+            var textExtNames = _app.GetTextDocumentExtNames();
+            var pluginExtNames = _app.GetPluginDocumentExtNames();
 
             // 実行時、指定ファイルがすでに削除(もしくは移動)されている場合は、処理をスキップ
             if (!File.Exists(FilePath))
@@ -148,7 +152,6 @@ namespace InazumaSearch.Core.Crawl.Work
                 if (recSize == fileSize && recUpdatedSec == fileUpdatedSec)
                 {
                     // ver 0.25.0より前かつeml形式のファイルであればスキップしない（ver 0.25.0でパース方法に変更が入ったため）
-                    var ext = Path.GetExtension(FilePath).TrimStart('.').ToLower();
                     if (recMajorVerOnUpdated == 0 && recMinorVerOnUpdated < 25 && ext == "eml")
                     {
                     }
@@ -164,26 +167,39 @@ namespace InazumaSearch.Core.Crawl.Work
             // 進捗を報告
             progress?.Report(new ProgressState() { CurrentStep = ProgressState.Step.RecordUpdateBegin, CurrentValue = crawlResult.Updated + crawlResult.Skipped, TotalValue = crawlResult.TotalTargetCount, Path = FilePath });
 
-            // データの登録
-            Application.ExtractFileResult extRes;
+            // 文書データの抽出
+            Application.ExtractDocumentResult documentExtRes = null;
+            if (_app.DocumentExtNames.Contains(ext))
+            {
 
-            // 拡張子に応じてテキストを抽出する
-            try
-            {
-                extRes = _app.ExtractFile(FilePath, textExtNames, pluginExtNames);
-                Logger.Debug($"Extract OK - {FilePath} (title: {extRes.Title}, body length: {extRes.Body.Length})");
+                // 拡張子に応じてファイルの件名と本文テキストを抽出する
+                try
+                {
+                    documentExtRes = _app.ExtractDocumentFile(FilePath, textExtNames, pluginExtNames);
+                    Logger.Debug($"Extract OK - {FilePath} (title: {documentExtRes.Title}, body length: {documentExtRes.Body.Length})");
+                }
+                catch (OperationCanceledException ex)
+                {
+                    // キャンセル操作の場合は外に投げる
+                    throw (ex);
+                }
+                catch (Exception ex)
+                {
+                    // 例外発生時はスキップ
+                    Logger.Warn("Crawl Extract Error - {0}", FilePath);
+                    Logger.Warn(ex.ToString());
+                    return false;
+                }
             }
-            catch (OperationCanceledException ex)
+
+            // ソースコードテキストの抽出
+            string source = null;
+            if (_app.SourceCodeExtNames.Contains(ext))
             {
-                // キャンセル操作の場合は外に投げる
-                throw (ex);
-            }
-            catch (Exception ex)
-            {
-                // 例外発生時はスキップ
-                Logger.Warn("Crawl Extract Error - {0}", FilePath);
-                Logger.Warn(ex.ToString());
-                return false;
+                // ソースコードとして読み込む
+                Logger.Trace($"Extract as source code - {FilePath}");
+                var bytes = File.ReadAllBytes(FilePath);
+                var charCode = ReadJEnc.JP.GetEncoding(bytes, bytes.Length, out source);
             }
 
             Thread.Sleep(0); // 他のスレッドに処理を渡す
@@ -198,9 +214,9 @@ namespace InazumaSearch.Core.Crawl.Work
             var obj = new Dictionary<string, object>
                             {
                                 { Column.Documents.KEY, key },
-                                { Column.Documents.TITLE, extRes.Title },
-                                { Column.Documents.BODY, extRes.Body },
-                                { Column.Documents.SOURCE, extRes.Source },
+                                { Column.Documents.TITLE, (documentExtRes != null ? documentExtRes.Title : null) },
+                                { Column.Documents.BODY, (documentExtRes != null ? documentExtRes.Body : null) },
+                                { Column.Documents.SOURCE, source },
                                 { Column.Documents.FILE_NAME, Path.GetFileName(FilePath) },
                                 { Column.Documents.FILE_PATH, FilePath },
                                 { Column.Documents.FILE_UPDATED_AT, Groonga.Util.ToUnixTime(fileUpdated) },
