@@ -89,10 +89,9 @@ namespace InazumaSearch.Plugin
             return Api.TextExtNameToLabelMap;
         }
 
-
         public virtual string ExtractText(string path)
         {
-            var handler = Api.TextExtractHandlers[Path.GetExtension(path).TrimStart('.')];
+            var handler = Api.DocumentTextExtractHandlers[Path.GetExtension(path).TrimStart('.')];
             return handler.Invoke(path);
         }
     }

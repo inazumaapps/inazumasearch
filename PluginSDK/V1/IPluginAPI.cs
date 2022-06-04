@@ -23,7 +23,7 @@
         /// <param name="formatTitle">ファイルのフォーマット名 (検索画面で表示される)。通常は"Excel", "Word"のような名前を指定</param>
         /// <param name="extensions">対応する拡張子。"txt" 形式で指定 (ピリオドなし)<param>
         /// <param name="handler">テキスト抽出処理。ファイルパス(string)を受け取り、テキストの抽出結果(string)を返すメソッドもしくはラムダ式を渡す</param>
-        void RegisterTextExtractor(string formatTitle, string[] extensions, TextExtractHandler handler);
+        void RegisterDocumentTextExtractor(string formatTitle, string[] extensions, TextExtractHandler handler);
 
         ///// <summary>
         ///// 検索を実行する
