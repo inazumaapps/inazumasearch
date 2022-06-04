@@ -164,15 +164,15 @@ namespace InazumaSearch.Groonga
         }
 
         /// <summary>
-        /// データベースのファイルサイズ合計を取得
+        /// データベースのファイルサイズ合計を取得（NTFSの圧縮なども考慮した、ディスク上のサイズを取得する）
         /// </summary>
         /// <returns></returns>
-        public virtual long GetDBFileSizeTotal()
+        public virtual long GetDBFileCompressedSizeTotal()
         {
             long size = 0;
             foreach (var path in GetDBFiles())
             {
-                size += new FileInfo(path).Length;
+                size += File.GetCompressedSize(path);
             }
             return size;
         }

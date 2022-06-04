@@ -303,12 +303,12 @@ namespace InazumaSearch.Forms
         {
             long oldSize = 0;
             long newSize = 0;
-            var t = Task.Run(() =>
+            var t = Task.Run((Action)(() =>
             {
-                oldSize = Application.GM.GetDBFileSizeTotal();
+                oldSize = Application.GM.GetDBFileCompressedSizeTotal();
                 Application.GM.ExecuteCommand("defrag");
-                newSize = Application.GM.GetDBFileSizeTotal();
-            });
+                newSize = Application.GM.GetDBFileCompressedSizeTotal();
+            }));
             var f = new ProgressForm(t, "データベースをデフラグしています...");
             f.ShowDialog();
 

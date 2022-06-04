@@ -851,7 +851,7 @@ namespace InazumaSearch.Forms
             }
 
             // 実行前にDBのサイズを取得
-            var dbFileSize = App.GM.GetDBFileSizeTotal();
+            var dbFileSize = App.GM.GetDBFileCompressedSizeTotal();
 
             // ルートパスを取得 
             var rootPath = Path.GetPathRoot(Path.GetFullPath(App.GM.DBDirPath));
