@@ -237,7 +237,12 @@ function displayResultRows_NormalView(getJsonData, searchOffset){
         $('#SEARCH-RESULT-BODY').append($new_row);
         $new_row.attr('data-search-offset', searchOffset);
         $new_row.css('position', 'relative').css('left', '200px');
-    
+
+        //const startTime = Date.now();
+        const sourcePre = $new_row.find('pre.sourcecode code').get(0);
+        Prism.highlightElement(sourcePre, true);
+        //const endTime = Date.now();
+        //console.warn("highlight time (sec): ", (endTime - startTime) / 1000.0);
     }
 
     // 一番下の要素と同じ縦位置に、スクロール補正用要素を移動
@@ -259,8 +264,6 @@ function displayResultRows_NormalView(getJsonData, searchOffset){
             setTimeout(cardDisplayCallback, 200);
         }
     };
-
-    Prism.highlightAll();
 
     setTimeout(cardDisplayCallback, 200);
 
@@ -822,8 +825,8 @@ $(async function () {
                                 // HTMLタグ開始
                                 inHtmlTag = true;
                             } else {
-                                console.warn(line);
-                                console.warn({ letterIndex });
+                                //console.warn(line);
+                                //console.warn({ letterIndex });
 
                                 if (matchIndex < matchCount &&
                                     letterIndex === matchRangeData[lineNumber][matchIndex][0] - 1) { // 桁数は1始まり
@@ -849,7 +852,7 @@ $(async function () {
                         line += "</mark>";
                     }
 
-                    lineNumberHtml = `<a href='#' data-goto-source-line='${lineNumber}'><span data-source-line='${lineNumber}' data-view-line='${filteredLines.length + 1}'>${lineNumber.toString().padStart(5, ' ')}</span></a>`;
+                    lineNumberHtml = `<a href='#' style='color: blue;' data-goto-source-line='${lineNumber}'><span data-source-line='${lineNumber}' data-view-line='${filteredLines.length + 1}'>${lineNumber.toString().padStart(5, ' ')}</span></a>`;
 
                 } else {
                     line = origLine;
