@@ -204,11 +204,11 @@ function displayResultRows_NormalView(getJsonData, searchOffset){
         $new_row.attr('data-search-offset', searchOffset);
         $new_row.css('position', 'relative').css('left', '200px');
 
-        //const startTime = Date.now();
+        const startTime = Date.now();
         const sourcePre = $new_row.find('pre.sourcecode code').get(0);
         Prism.highlightElement(sourcePre);
-        //const endTime = Date.now();
-        //console.warn("highlight time (sec): ", (endTime - startTime) / 1000.0);
+        const endTime = Date.now();
+        console.warn("highlight time (sec): ", (endTime - startTime) / 1000.0);
     }
 
     // 一番下の要素と同じ縦位置に、スクロール補正用要素を移動
@@ -610,28 +610,26 @@ $(async function () {
     // Each time the user scrolls
     var win = $(window);
     win.scroll(function () {
-        if (location.href.endsWith('index.html')) {
-            // End of the document reached?
-            if (($(document).height() - win.height() - 100) <= win.scrollTop()) {
-                var userSetting = JSON.parse(api.getUserSettings());
-                var pageSize = (g_lastSelectedView === 'list' ? userSetting.DisplayPageSizeForListView : userSetting.DisplayPageSizeForNormalView);
-                var offset = g_lastSearchOffset + pageSize;
+        // End of the document reached?
+        if (($(document).height() - win.height() - 100) <= win.scrollTop()) {
+            var userSetting = JSON.parse(api.getUserSettings());
+            var pageSize = (g_lastSelectedView === 'list' ? userSetting.DisplayPageSizeForListView : userSetting.DisplayPageSizeForNormalView);
+            var offset = g_lastSearchOffset + pageSize;
 
-                if (offset > g_lastSearchOffset && !g_searchFinished) {
-                    g_lastSearchOffset = offset;
+            if (offset > g_lastSearchOffset && !g_searchFinished) {
+                g_lastSearchOffset = offset;
 
-                    asyncApi.search(g_lastQueryObject, false, offset, g_lastSelectedFormatName, g_lastSelectedFolderLabel, g_lastSelectedOrder, g_lastSelectedView).then(function (resJson) {
-                        var data = JSON.parse(resJson);
+                asyncApi.search(g_lastQueryObject, false, offset, g_lastSelectedFormatName, g_lastSelectedFolderLabel, g_lastSelectedOrder, g_lastSelectedView).then(function (resJson) {
+                    var data = JSON.parse(resJson);
 
-                        // 全結果の表示が完了していれば、完了フラグを立てる
-                        if (offset + data.pageSize >= data.nHits) {
-                            g_searchFinished = true;
-                        }
+                    // 全結果の表示が完了していれば、完了フラグを立てる
+                    if (offset + data.pageSize >= data.nHits) {
+                        g_searchFinished = true;
+                    }
 
-                        // 検索結果の各行を表示
-                        displayResultRows(data, g_lastSelectedView, offset);
-                    });
-                }
+                    // 検索結果の各行を表示
+                    displayResultRows(data, g_lastSelectedView, offset);
+                });
             }
         }
     });
@@ -716,8 +714,8 @@ $(async function () {
                                 // 実体参照開始
                                 inEntity = true;
                             } else {
-                                console.warn(line);
-                                console.warn({ lineNumber, letterIndex });
+                                //console.warn(line);
+                                //console.warn({ lineNumber, letterIndex });
 
                                 if (matchIndex < matchCount &&
                                     letterIndex === matchRangeData[lineNumber][matchIndex][0] - 1) { // 桁数は1始まり

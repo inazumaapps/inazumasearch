@@ -86,7 +86,9 @@ function updateCountsAsync() {
     });
 }
 
-$(function () {
+$(async function () {
+    await CefSharp.BindObjectAsync("api", "asyncApi", "dbState");
+
     var userSettings = JSON.parse(api.getUserSettings());
     console.log(userSettings);
 
