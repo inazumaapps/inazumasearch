@@ -240,7 +240,7 @@ function displayResultRows_NormalView(getJsonData, searchOffset){
 
         //const startTime = Date.now();
         const sourcePre = $new_row.find('pre.sourcecode code').get(0);
-        Prism.highlightElement(sourcePre, true);
+        Prism.highlightElement(sourcePre);
         //const endTime = Date.now();
         //console.warn("highlight time (sec): ", (endTime - startTime) / 1000.0);
     }
