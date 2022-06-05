@@ -2,17 +2,18 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no"/>
-  <title>InazumaSearch</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no" />
+    <title>InazumaSearch</title>
 
-  <!-- CSS  -->
-  <link href="materialize/css/materialize.css" type="text/css" rel="stylesheet" media="screen,projection"/>
+    <!-- CSS  -->
+    <link href="materialize/css/materialize.css" type="text/css" rel="stylesheet" media="screen,projection" />
     <link href="style.css" type="text/css" rel="stylesheet" media="screen,projection" />
-  <link href="material-icons/material-icons.css" rel="stylesheet">
-  <link href="icomoon/style.css" type="text/css" rel="stylesheet" media="screen,projection"/>
-  <link rel="stylesheet" type="text/css" href="tooltipster/css/tooltipster.bundle.min.css" />
-  <!-- <link rel="stylesheet" type="text/css" href="tooltipster/css/plugins/tooltipster/sideTip/themes/tooltipster-sideTip-shadow.min.css" /> -->
+    <link href="material-icons/material-icons.css" rel="stylesheet">
+    <link href="icomoon/style.css" type="text/css" rel="stylesheet" media="screen,projection" />
+    <link rel="stylesheet" type="text/css" href="tooltipster/css/tooltipster.bundle.min.css" />
+    <link rel="stylesheet" type="text/css" href="prism/prism.css" />
+    <!-- <link rel="stylesheet" type="text/css" href="tooltipster/css/plugins/tooltipster/sideTip/themes/tooltipster-sideTip-shadow.min.css" /> -->
 </head>
 <body style="-webkit-app-region: drag">
     <nav class="light-blue lighten-1" role="navigation" id="PAGETOP">
@@ -20,7 +21,7 @@
             <a href="#" class="brand-logo">Inazuma Search</a>
             <ul id="nav-mobile" class="right ">
                 <li><a href="index.html"><i class="material-icons left">search</i>文書検索</a></li>
-                <li class="active"><a href="source-grep.html"><i class="material-icons left">search</i>ソースコードGREP検索</a></li>
+                <li class="active"><a href="source-grep.html"><i class="material-icons left">search</i>ソースコード行検索</a></li>
                 <li><a id="SETTING-LINK" href="setting.html"><i class="material-icons left">settings</i>設定</a></li>
             </ul>
         </div>
@@ -42,10 +43,10 @@
                     <p>文書情報が収集されていません。「クロール」を実行して文書情報を収集してください。</p>
                 </div>
                 <!--
-              <div class="card-action">
-                <a href="setting.html"><i class="material-icons left">settings</i>設定画面を開く</a>
-              </div>
-            -->
+                  <div class="card-action">
+                    <a href="setting.html"><i class="material-icons left">settings</i>設定画面を開く</a>
+                  </div>
+                -->
             </div><!-- /#MESSAGE-AREA -->
 
             <div class="right-align">
@@ -54,7 +55,7 @@
                 </button>
                 <p class="subtext" id="LAST-CRAWL-TIME-CAPTION">&nbsp;</p>
                 <!-- <button class="btn waves-effect waves-light" id="DEVTOOL" draggable="true">開発ツール<i class="mdi-action-search right"></i>
-            </button> -->
+                </button> -->
                 <div class="progress" id="PROGRESS-BAR" style="display: none;">
                     <div class="indeterminate"></div>
                 </div>
@@ -132,7 +133,7 @@
                 <p class="drilldown-result" id="DRILLDOWN-RESULT-FOLDER-LABEL"></p>
                 <p class="drilldown-result" id="DRILLDOWN-ORDER"></p>
                 <!-- <ul class="pagination">
-        </ul> -->
+                </ul> -->
             </div><!-- / #SEARCH-RESULT-HEADER -->
 
             <div id="SEARCH-RESULT-BODY">
@@ -333,9 +334,11 @@
     <!--  Scripts-->
     <script src="jquery/jquery-3.3.1.min.js"></script>
     <script type="text/javascript" src="tooltipster/js/tooltipster.bundle.min.js"></script>
+    <script type="text/javascript" src="prism/prism.js" data-manual></script>
     <script src="smoothScroll/smoothScroll.js"></script>
     <script src="materialize/js/materialize.js"></script>
-    <script src="inazuma.js"></script>
+    <script src="inazuma-common.js"></script>
+    <script src="inazuma-source-grep.js"></script>
 
 
 </body>
