@@ -328,6 +328,9 @@ namespace InazumaSearch.Core
             // サムネイルフォルダが存在しなければ作成
             Directory.CreateDirectory(ThumbnailDirPath);
 
+            // シェル出力エンコーディングの判定
+            XDoc2TxtApi.IdentifyOutputEncoding();
+
             // 起動完了時の更新処理（最終起動バージョンの更新、プラグイン構成の保存）
             UserSettings.SaveOnAfterBoot(new Dictionary<string, int>(loadedPluginVersionNumbers));
 
