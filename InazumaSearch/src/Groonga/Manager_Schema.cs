@@ -10,7 +10,7 @@ namespace InazumaSearch.Groonga
         /// <summary>
         /// アプリケーションが要求するスキーマバージョン
         /// </summary>
-        public const int AppSchemaVersion = 3;
+        public const int AppSchemaVersion = 4;
 
         /// <summary>
         /// スキーマのセットアップ(新規作成 or アップグレード)を実行
@@ -235,6 +235,27 @@ namespace InazumaSearch.Groonga
                     , new[] { ColumnCreateFlag.COLUMN_SCALAR }
                     , DataType.UInt8
                 );
+            }
+
+            #endregion
+
+            #region 3 -> 4
+
+            if (nextSchemaVer == 4)
+            {
+                // サジェスト関連のテーブルは不要なので削除
+                // （念のため、テーブルがない場合はcatchしてそのまま続行）
+                var tableNames = new[] { "event_type" , "bigram" , "kana" , "item_query" , "pair_query" , "sequence_query", "event_query", "configuration"};
+                foreach (var tableName in tableNames)
+                {
+                    try
+                    {
+                        TableRemove(tableName, true);
+                    }
+                    catch (Exceptions.GroongaCommandError)
+                    {
+                    }
+                }
             }
 
             #endregion

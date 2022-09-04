@@ -201,12 +201,13 @@ namespace InazumaSearch.Groonga
         }
         public bool TableRemove(
               string name
-            , bool? dependent = null // 未実装
+            , bool? dependent = null
         )
         {
             var opts = new
             {
                 name
+                , dependent = (dependent.HasValue ? (dependent.Value ? "yes" : "no") : null)
             };
             return (bool)ExecuteCommand("table_remove", opts);
         }
