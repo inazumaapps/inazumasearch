@@ -706,18 +706,7 @@ namespace InazumaSearch.Forms
 
             void IContextMenuHandler.OnBeforeContextMenu(IWebBrowser browserControl, IBrowser browser, IFrame frame, IContextMenuParams parameters, IMenuModel model)
             {
-
-
-                //To disable the menu then call clear
-                // model.Clear();
-
-                //Removing existing menu item
-                //bool removed = model.Remove(CefMenuCommand.ViewSource); // Remove "View Source" option
-
-                //Add new custom menu items
-
                 model.Clear();
-
                 if (parameters.TypeFlags.HasFlag(ContextMenuType.Link)
                     && new Uri(parameters.LinkUrl).Fragment.StartsWith("#FILE:"))
                 {
@@ -728,7 +717,21 @@ namespace InazumaSearch.Forms
                 }
                 else
                 {
-                    if (Application.DebugMode)
+                    // テキストボックス選択時のメニュー
+                    if (parameters.TypeFlags.HasFlag(ContextMenuType.Editable))
+                    {
+                        model.AddItem(CefMenuCommand.Copy, "コピー(&C)");
+                        model.AddItem(CefMenuCommand.Cut, "切り取り(&T)");
+                        model.AddItem(CefMenuCommand.Paste, "貼り付け(&P)");
+                        model.AddSeparator();
+                        model.AddItem(CefMenuCommand.SelectAll, "すべて選択(&A)");
+                    }
+                    else if (parameters.TypeFlags.HasFlag(ContextMenuType.Selection))
+                    {
+                        // テキスト選択時のメニュー
+                        model.AddItem(CefMenuCommand.Copy, "コピー(&C)");
+                    }
+                    else if (Application.DebugMode)
                     {
                         model.AddItem((CefMenuCommand)ShowDevTools, "開発ツール");
                         model.AddItem((CefMenuCommand)ShowDBBrowser, "DBブラウザー(β版)");
