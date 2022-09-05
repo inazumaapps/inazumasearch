@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using Alphaleonis.Win32.Filesystem;
@@ -106,8 +107,9 @@ namespace InazumaSearch.Core
             }
 
             /// <summary>
-            /// ファイルに保存
+            /// ファイルに保存（排他制御あり）
             /// </summary>
+            [MethodImpl(MethodImplOptions.Synchronized)]
             public void Save()
             {
                 Directory.CreateDirectory(Path.GetDirectoryName(FilePath));
