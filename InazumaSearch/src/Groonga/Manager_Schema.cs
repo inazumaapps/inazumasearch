@@ -245,7 +245,7 @@ namespace InazumaSearch.Groonga
             {
                 // サジェスト関連のテーブルは不要なので削除
                 // （念のため、テーブルがない場合はcatchしてそのまま続行）
-                var tableNames = new[] { "event_type" , "bigram" , "kana" , "item_query" , "pair_query" , "sequence_query", "event_query", "configuration"};
+                var tableNames = new[] { "event_type", "bigram", "kana", "item_query", "pair_query", "sequence_query", "event_query", "configuration" };
                 foreach (var tableName in tableNames)
                 {
                     try

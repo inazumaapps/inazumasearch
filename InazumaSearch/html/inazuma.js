@@ -137,6 +137,9 @@ function executeSearch(
 
         // 検索結果の各行を表示
         displayResultRows(data, g_lastSelectedView);
+
+        // 1秒待ってオートコンプリートデータを更新
+        updateAutoCompleteData();
     });
 }
 
@@ -399,6 +402,12 @@ cols = document.querySelectorAll('.droppable');
     //col.addEventListener('dragend', handleDragEnd, false);
 });
 
+/** オートコンプリートデータを取得・更新する（非同期処理） */
+async function updateAutoCompleteData() {
+    const dataJson = await asyncApi.getAutoCompleteData();
+    var data = JSON.parse(dataJson);
+    $('#KEYWORD-INPUT').autocomplete('updateData', data);
+}
 
 $(async function () {
     await CefSharp.BindObjectAsync("api", "asyncApi", "dbState");
@@ -408,25 +417,18 @@ $(async function () {
         $('.release-mode-only').hide();
     }
 
-    // 入力情報のクリア
-    asyncApi.clearUserInputLog();
+    $('#KEYWORD-INPUT').autocomplete({
+        limit: 20
+    })
 
-    //$('#KEYWORD-INPUT').autocomplete({
-    //    limit: 20
-    //})
+    // オートコンプリートデータを取得・更新
+    updateAutoCompleteData();
 
     var backgroundSearchTimeoutHandle = null;
     var keywordOnLastKeydown = '';
     $('#KEYWORD-INPUT').on('keyup', function(e){
         var $input = $(this);
         var value = $input.val();
-
-        asyncApi.addUserInputLog(new Date(), value);
-
-        //asyncApi.getAutoCompleteData(value).then(function(dataJson){
-        //    var data = JSON.parse(dataJson);
-        //    $input.autocomplete('updateData', data);
-        //});
 
         // テキストの値が変わった場合で、詳細検索をONにしていない場合は、バックグラウンド検索を実行
         var detailSearchFlag = $('#DETAIL-SEARCH-SWITCH input:checkbox').is(':checked');
@@ -440,7 +442,7 @@ $(async function () {
                 $('#BACKGROUND-SEARCH-RESULT').text("");
             } else {
                 // 空文字列でなければ、検索を予約
-                $('#BACKGROUND-SEARCH-RESULT').text("条件に合致する文書数: ");
+                $('#BACKGROUND-SEARCH-RESULT').text("検索中...");
 
                 backgroundSearchTimeoutHandle = setTimeout(function(){
                     // 検索リクエストを実行
@@ -456,9 +458,9 @@ $(async function () {
                         if (resJson) {
                             var data = JSON.parse(resJson);
 
-                            $('#BACKGROUND-SEARCH-RESULT').text("条件に合致する文書数: " + data.nHits.toString());
+                            $('#BACKGROUND-SEARCH-RESULT').text(`件数: ${data.nHits}`);
                         } else {
-                            $('#BACKGROUND-SEARCH-RESULT').text("条件に合致する文書数: 不明");
+                            $('#BACKGROUND-SEARCH-RESULT').text(`件数: ?`);
                         }
                     });
 

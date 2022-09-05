@@ -54,6 +54,11 @@ namespace InazumaSearch.Core
         public UserSetting.Store UserSettings { get; protected set; }
 
         /// <summary>
+        /// 検索履歴データ
+        /// </summary>
+        public SearchHistory.Store SearchHistoryStore { get; protected set; }
+
+        /// <summary>
         /// Groonga制御用オブジェクト
         /// </summary>
         public Groonga.Manager GM { get; protected set; }
@@ -157,6 +162,11 @@ namespace InazumaSearch.Core
         public virtual string UserSettingPath { get { return Path.Combine(UserSettingDirPath, @"UserSettings.json"); } }
 
         /// <summary>
+        /// 検索履歴データのパス
+        /// </summary>
+        public virtual string SearchHistoryFilePath { get { return Path.Combine(UserSettingDirPath, @"SearchHistory.json"); } }
+
+        /// <summary>
         /// スタートアップフォルダに配置するショートカットのパス
         /// </summary>
         public virtual string StartupShortcutPath { get { return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Startup), @"Inazuma Search.lnk"); } }
@@ -217,6 +227,9 @@ namespace InazumaSearch.Core
 
             // ユーザー設定の読み込み
             UserSettings = UserSetting.Store.Setup(UserSettingPath);
+
+            // 検索履歴データの読み込み
+            SearchHistoryStore = SearchHistory.Store.Setup(SearchHistoryFilePath);
 
             // Groongaの起動 (Groongaが存在しなければ終了)
             GM = new Groonga.Manager(DBDirPath, LogDirPath);

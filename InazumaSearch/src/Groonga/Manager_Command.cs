@@ -207,7 +207,8 @@ namespace InazumaSearch.Groonga
             var opts = new
             {
                 name
-                , dependent = (dependent.HasValue ? (dependent.Value ? "yes" : "no") : null)
+                ,
+                dependent = (dependent.HasValue ? (dependent.Value ? "yes" : "no") : null)
             };
             return (bool)ExecuteCommand("table_remove", opts);
         }
@@ -451,42 +452,6 @@ namespace InazumaSearch.Groonga
 
             return resJToken.ToObject<IDictionary<string, ObjectListResult>>();
         }
-        public RecordSet Suggest(
-              string[] types
-            , string table
-            , string column
-            , string query
-            , string sortBy = null
-            , string[] outputColumns = null
-            , long? offset = null
-            , long? limit = null
-            , long? frequencyThreshold = null
-            , double? conditionalProbabilityThreshold = null
-            , string prefixSearch = null
-            , string similarSearch = null
-        )
-        {
-            var opts = new Dictionary<string, object>
-            {
-                ["types"] = string.Join("|", types),
-                ["table"] = table,
-                ["column"] = column,
-                ["query"] = FormatForParameter(query),
-                ["sortby"] = sortBy,
-                ["output_columns"] = (outputColumns == null ? null : string.Join(",", outputColumns)),
-                ["offset"] = offset,
-                ["limit"] = limit,
-                ["frequency_threshold"] = frequencyThreshold,
-                ["conditional_probability_threshold"] = conditionalProbabilityThreshold,
-                ["prefix_search"] = prefixSearch,
-                ["similarSearch"] = similarSearch
-            };
-
-            var resJToken = (JObject)ExecuteCommandByDict("suggest", opts);
-            return SelectResultDataToRecordSet((JArray)resJToken["complete"]);
-        }
-
-
 
         public SelectResult Select(
               string table

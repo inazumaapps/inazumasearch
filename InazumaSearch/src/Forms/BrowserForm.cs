@@ -288,12 +288,9 @@ namespace InazumaSearch.Forms
             public BrowserForm OwnerForm { get; set; }
             public Core.Application App { get; set; }
 
-            public IList<Tuple<DateTime, string>> UserInputLogs { get; protected set; }
-
             public CefAsyncApi(ChromiumWebBrowser browser)
             {
                 Browser = browser;
-                UserInputLogs = new List<Tuple<DateTime, string>>();
             }
 
             public string SearchTargetDirectories(string order = null)
@@ -471,22 +468,6 @@ namespace InazumaSearch.Forms
             }
 
             /// <summary>
-            /// 学習のために入力ログを保持
-            /// </summary>
-            public void AddUserInputLog(DateTime timestamp, string text)
-            {
-                UserInputLogs.Add(Tuple.Create(timestamp, text));
-            }
-
-            /// <summary>
-            /// 入力ログをクリア (ページ切り替え時などに使用)
-            /// </summary>
-            public void ClearUserInputLog()
-            {
-                UserInputLogs.Clear();
-            }
-
-            /// <summary>
             /// 全文検索の実行
             /// </summary>
             /// <param name="query"></param>
@@ -494,7 +475,7 @@ namespace InazumaSearch.Forms
             /// <returns></returns>
             public string Search(
                 IDictionary<string, object> queryObject
-                , bool learning = false
+                , bool savingHistory = false
                 , int offset = 0
                 , string selectedFormat = null
                 , string selectedFolderLabel = null
@@ -506,31 +487,6 @@ namespace InazumaSearch.Forms
                 return App.ExecuteInExceptionCatcher<string>(() =>
                 {
 
-                    // 学習
-                    if (learning)
-                    {
-                        var learnData = new List<Dictionary<string, object>>();
-                        foreach (var log in UserInputLogs)
-                        {
-                            var data = new Dictionary<string, object>
-                            {
-                                ["sequence"] = "1",
-                                ["time"] = Groonga.Util.ToUnixTime(log.Item1),
-                                ["item"] = log.Item2
-                            };
-                            learnData.Add(data);
-                        }
-                        var submitData = new Dictionary<string, object>
-                        {
-                            ["sequence"] = "1",
-                            ["time"] = Groonga.Util.ToUnixTime(DateTime.Now),
-                            ["item"] = (string)queryObject["keyword"],
-                            ["type"] = "submit"
-                        };
-                        learnData.Add(submitData);
-                        App.GM.Load(table: "event_query", each: "suggest_preparer(_id, type, item, sequence, time, pair_query)", values: learnData);
-                        UserInputLogs.Clear();
-                    }
 
                     // 全文検索の実行
                     var queryKeyword = (string)queryObject["keyword"];
@@ -564,27 +520,27 @@ namespace InazumaSearch.Forms
                         return null;
                     }
 
+                    // 成功した場合はキーワードを検索履歴に記録（非同期に実行）
+                    if (savingHistory)
+                    {
+                        App.SearchHistoryStore.SaveOnSearchAsync(queryKeyword);
+                    }
+
                     // 結果の返却
                     return JsonConvert.SerializeObject(ret);
                 });
 
             }
 
-            public string GetAutoCompleteData(string val)
+            public string GetAutoCompleteData()
             {
                 return App.ExecuteInExceptionCatcher<string>(() =>
                 {
 
                     var res = new Dictionary<string, object>();
-                    if (string.IsNullOrWhiteSpace(val))
+                    foreach (var query in App.SearchHistoryStore.GetCandidates())
                     {
-                        return JsonConvert.SerializeObject(res);
-                    }
-
-                    var recordSet = App.GM.Suggest(types: new[] { "complete", "correct", "suggest" }, table: "item_query", column: "kana", query: val, frequencyThreshold: 1);
-                    foreach (var rec in recordSet.Records)
-                    {
-                        res[(string)rec.Key] = null;
+                        res[query] = null;
                     }
 
                     return JsonConvert.SerializeObject(res);

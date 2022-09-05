@@ -7,6 +7,9 @@ using Semver;
 
 namespace InazumaSearch.Core
 {
+    /// <summary>
+    /// ユーザー設定
+    /// </summary>
     public class UserSetting
     {
         public const int CurrentSettingVersion = 3;
@@ -18,7 +21,6 @@ namespace InazumaSearch.Core
             public const string DocumentFile = "document_file";
             public const string Mail = "mail";
         }
-
 
         public class TargetFolder
         {

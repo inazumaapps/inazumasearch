@@ -230,6 +230,7 @@
     <Compile Include="src\Core\IconFetcher.cs" />
     <Compile Include="src\Core\IgnoreSetting.cs" />
     <Compile Include="src\Core\SearchEngine.cs" />
+    <Compile Include="src\Core\SearchHistory.cs" />
     <Compile Include="src\Core\Util.cs" />
     <Compile Include="src\Forms\BackgroundMainForm.cs">
       <SubType>Form</SubType>
