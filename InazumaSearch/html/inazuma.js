@@ -404,22 +404,28 @@ cols = document.querySelectorAll('.droppable');
 
 /** オートコンプリートデータを取得・更新する（非同期処理） */
 async function updateAutoCompleteData() {
-    const dataJson = await asyncApi.getAutoCompleteData();
-    var data = JSON.parse(dataJson);
-    $('#KEYWORD-INPUT').autocomplete('updateData', data);
+    const userSetting = JSON.parse(api.getUserSettings());
+    if (userSetting.KeywordAutoComplete) {
+        const dataJson = await asyncApi.getAutoCompleteData();
+        const data = JSON.parse(dataJson);
+        $('#KEYWORD-INPUT').autocomplete('updateData', data);
+    }
 }
 
 $(async function () {
     await CefSharp.BindObjectAsync("api", "asyncApi", "dbState");
+    const userSetting = JSON.parse(api.getUserSettings());
 
     if (api.isDebugMode()) {
         $('.debug-mode-only').show();
         $('.release-mode-only').hide();
     }
 
-    $('#KEYWORD-INPUT').autocomplete({
-        limit: 20
-    })
+    if (userSetting.KeywordAutoComplete) {
+        $('#KEYWORD-INPUT').autocomplete({
+            limit: 20
+        })
+    }
 
     // オートコンプリートデータを取得・更新
     updateAutoCompleteData();

@@ -577,6 +577,14 @@ namespace InazumaSearch.Forms
                 });
             }
 
+            /// <summary>
+            /// 「検索キーワードの自動補完」設定の変更
+            /// </summary>
+            /// <param name="checked"></param>
+            public void ChangeKeywordAutoComplete(bool @checked)
+            {
+                App.UserSettings.SaveKeywordAutoComplete(@checked);
+            }
         }
 
         public void InitializeChromium(string htmlDirPath)

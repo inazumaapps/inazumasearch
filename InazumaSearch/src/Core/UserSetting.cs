@@ -48,6 +48,7 @@ namespace InazumaSearch.Core
             public virtual DateTime? LastCrawlTime { get; set; } = null;
             public virtual bool AlwaysCrawlMode { get; set; } = false;
             public virtual bool StartUp { get; set; } = false;
+            public virtual bool KeywordAutoComplete { get; set; } = true;
             public virtual string LastBootVersion { get; set; } = null;
             public virtual Dictionary<string, int> LastLoadedPluginVersionNumbers { get; set; } = new Dictionary<string, int>();
             public virtual List<Extension> TextExtensions { get; set; } = new List<Extension>();
@@ -179,6 +180,20 @@ namespace InazumaSearch.Core
             public void SaveStartUp(bool value)
             {
                 PlainData.StartUp = value;
+                Save();
+            }
+
+            /// <summary>
+            /// 検索キーワードの自動補完
+            /// </summary>
+            public bool KeywordAutoComplete { get { return PlainData.KeywordAutoComplete; } }
+
+            /// <summary>
+            /// 検索キーワードの自動補完ON/OFFの設定
+            /// </summary>
+            public void SaveKeywordAutoComplete(bool value)
+            {
+                PlainData.KeywordAutoComplete = value;
                 Save();
             }
 

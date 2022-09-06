@@ -120,6 +120,7 @@ $(function () {
     $('#ALWAYS-CRAWL-MODE').prop('checked', userSettings.AlwaysCrawlMode);
     $('#STARTUP').prop('checked', userSettings.StartUp);
     updateStartUpEnabled();
+    $('#KEYWORD-AUTO-COMPLETE').prop('checked', userSettings.KeywordAutoComplete);
 
     // ポータブルモードならスタートアップ起動の設定は不可
     if (api.isPortableMode()) {
@@ -151,6 +152,10 @@ $(function () {
     $('#STARTUP').on('change', function () {
         asyncApi.changeStartUp($(this).is(':checked'));
     });
+    $('#KEYWORD-AUTO-COMPLETE').on('change', function () {
+        asyncApi.changeKeywordAutoComplete($(this).is(':checked'));
+    });
+
 
     $('ul.collection').on('click', 'a.delete-link', function () {
         var $li = $(this).closest('li');
