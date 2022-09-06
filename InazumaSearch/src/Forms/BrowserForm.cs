@@ -523,7 +523,7 @@ namespace InazumaSearch.Forms
                     // 成功した場合はキーワードを検索履歴に記録（非同期に実行）
                     if (savingHistory)
                     {
-                        App.SearchHistoryStore.SaveOnSearchAsync(queryKeyword);
+                        App.SearchHistoryStore.SaveOnSearchAsync(queryKeyword, ret.nHits >= 1);
                     }
 
                     // 結果の返却
@@ -532,19 +532,21 @@ namespace InazumaSearch.Forms
 
             }
 
+            /// <summary>
+            /// 自動保管用のデータを取得
+            /// </summary>
+            /// <returns></returns>
             public string GetAutoCompleteData()
             {
                 return App.ExecuteInExceptionCatcher<string>(() =>
                 {
-
                     var res = new Dictionary<string, object>();
-                    foreach (var query in App.SearchHistoryStore.GetCandidates())
+                    foreach (var query in App.SearchHistoryStore.GetAutoCompleteCandidates())
                     {
                         res[query] = null;
                     }
 
                     return JsonConvert.SerializeObject(res);
-
                 });
             }
 

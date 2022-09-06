@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
@@ -37,6 +38,11 @@ namespace InazumaSearch.Core
                 /// 累計検索回数
                 /// </summary>
                 public long SearchCount { get; set; }
+
+                /// <summary>
+                /// 過去に一度でも文書が見つかったことがあったかづか
+                /// </summary>
+                public bool DocumentFound { get; set; }
             }
         }
 
@@ -130,7 +136,8 @@ namespace InazumaSearch.Core
             /// 検索実行時の保存処理
             /// </summary>
             /// <param name="query">検索クエリ</param>
-            public void SaveOnSearch(string query)
+            /// <param name="documentFound">検索時に文書が見つかったか</param>
+            public void SaveOnSearch(string query, bool documentFound)
             {
                 // クエリが0文字の場合か、30文字を超えている場合は記録しない
                 if (query.Length == 0 || query.Length > 30)
@@ -149,10 +156,13 @@ namespace InazumaSearch.Core
                 {
                     PlainData.Queries[encodedQuery].SearchCount++;
                     PlainData.Queries[encodedQuery].LastSearchAt = now;
+                    if (documentFound) {
+                        PlainData.Queries[encodedQuery].DocumentFound = documentFound;
+                    }
                 }
                 else
                 {
-                    PlainData.Queries[encodedQuery] = new PlainData.QueryData() { SearchCount = 1, LastSearchAt = now };
+                    PlainData.Queries[encodedQuery] = new PlainData.QueryData() { SearchCount = 1, LastSearchAt = now, DocumentFound = documentFound };
                 }
 
                 // 保存
@@ -163,22 +173,24 @@ namespace InazumaSearch.Core
             /// 検索実行時の保存処理（非同期実行）
             /// </summary>
             /// <param name="query">検索クエリ</param>
-            public async void SaveOnSearchAsync(string query)
+            /// <param name="documentFound">検索時に文書が見つかったか</param>
+            public async void SaveOnSearchAsync(string query, bool documentFound)
             {
                 await Task.Run(() =>
                 {
-                    SaveOnSearch(query);
+                    SaveOnSearch(query, documentFound);
                 });
             }
 
 
             /// <summary>
-            /// 入力欄に表示するための検索候補を取得
+            /// 入力欄に表示するための自動補完候補を取得
             /// </summary>
-            public List<string> GetCandidates()
+            public List<string> GetAutoCompleteCandidates()
             {
+                // 過去に一度でも検索結果が見つかったことがあるキーワードを、自動補完の対象とする
                 var res = new List<string>();
-                foreach (var queryData in PlainData.Queries)
+                foreach (var queryData in PlainData.Queries.Where(x => x.Value.DocumentFound))
                 {
                     var decodedQuery = Base64Encoding.GetString(Convert.FromBase64String(queryData.Key));
                     res.Add(decodedQuery);
