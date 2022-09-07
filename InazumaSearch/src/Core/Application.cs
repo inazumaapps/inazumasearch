@@ -10,6 +10,7 @@ using CommandLine;
 using Hnx8.ReadJEnc;
 using InazumaSearch.Core.Crawl;
 using InazumaSearch.Forms;
+using MessagePack;
 using MimeKit;
 
 namespace InazumaSearch.Core
@@ -339,6 +340,30 @@ namespace InazumaSearch.Core
             {
                 Crawler.StartAlwaysCrawl();
             }
+
+            for (var i = 0; i < 10; i++)
+            {
+                var log = new OperationLog() { Message = "テストメッセージです", TypeCode = i };
+                using (var stream = Alphaleonis.Win32.Filesystem.File.Open("messagepack-test.dat", System.IO.FileMode.Create | System.IO.FileMode.Append))
+                {
+                    using (var writer = new System.IO.BinaryWriter(stream))
+                    {
+                        writer.Write(MessagePackSerializer.Serialize(log));
+                    }
+                }
+            }
+
+            using (var stream = File.Open("messagepack-test.dat", System.IO.FileMode.Open))
+            {
+                using (var reader = new System.IO.BinaryReader(stream))
+                {
+                    var deserialized = MessagePackSerializer.Deserialize<OperationLog[]>(stream);
+                }
+            }
+
+            
+            //var json = MessagePackSerializer.ToJson(bytes);
+            //System.Console.WriteLine(json);
 
             // 正常起動
             return true;
