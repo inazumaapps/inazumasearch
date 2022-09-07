@@ -161,7 +161,6 @@
   <PropertyGroup>
     <PostBuildEvent>set TARGETDIR=$(TargetDir)
 set PROJECTDIR=$(ProjectDir)
-set PROJECTDIR=$(ProjectDir)
 set PLATFORMNAME=$(PlatformName)
 call "$(ProjectDir)buildbatch\postbuild.cmd"</PostBuildEvent>
   </PropertyGroup>
