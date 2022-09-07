@@ -4,6 +4,18 @@
     <OutputType>WinExe</OutputType>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <UseWindowsForms>true</UseWindowsForms>
+    <AssemblyVersion>0.25.1.0</AssemblyVersion>
+    <FileVersion>0.25.1.0</FileVersion>
+    <Copyright>Copyright ©  2017-2022</Copyright>
+    <Company />
+    <Product>Inazuma Search</Product>
+    <Version>0.25.1</Version>
+    <Authors>Inazuma Apps</Authors>
+    <Platforms>x64;x86</Platforms>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <PlatformTarget>x64</PlatformTarget>
   </PropertyGroup>
 
   <ItemGroup>
@@ -25,5 +37,18 @@
   <ItemGroup>
     <ProjectReference Include="..\PluginSDK\PluginSDK.csproj" />
   </ItemGroup>
+
+  <ItemGroup>
+    <None Update="nlogconf\Debug.config">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="nlogconf\Release.config">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Exec Command="set TARGETDIR=$(TargetDir)&#xD;&#xA;&#xA;set PROJECTDIR=$(ProjectDir)&#xD;&#xA;&#xA;set PLATFORMNAME=$(PlatformName)&#xA;&#xD;&#xA;&#xD;&#xA;echo &quot;$(ProjectDir)buildbatch\postbuild.cmd&quot;&#xD;&#xA;call &quot;$(ProjectDir)buildbatch\postbuild.cmd&quot;" />
+  </Target>
 
 </Project>

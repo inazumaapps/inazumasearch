@@ -4,6 +4,11 @@
     <OutputType>WinExe</OutputType>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <UseWindowsForms>true</UseWindowsForms>
+    <Version>0.25.1</Version>
+    <Authors>Inazuma Apps</Authors>
+    <Product>Inazuma Search (Debug)</Product>
+    <Copyright>Copyright ©  2017-2022</Copyright>
+    <Platforms>x64;x86</Platforms>
   </PropertyGroup>
 
   <ItemGroup>
