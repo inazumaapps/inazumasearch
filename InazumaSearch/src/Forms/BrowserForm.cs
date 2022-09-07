@@ -642,11 +642,11 @@ namespace InazumaSearch.Forms
             BrowserPanel.Controls.Add(ChromeBrowser);
 
             Api = new CefApi();
-            ChromeBrowser.JavascriptObjectRepository.Register("api", Api, isAsync: false);
+            ChromeBrowser.JavascriptObjectRepository.Register("api", Api);
             AsyncApi = new CefAsyncApi(ChromeBrowser);
-            ChromeBrowser.JavascriptObjectRepository.Register("asyncApi", AsyncApi, isAsync: true);
+            ChromeBrowser.JavascriptObjectRepository.Register("asyncApi", AsyncApi);
             DBState = new DBStateApi();
-            ChromeBrowser.JavascriptObjectRepository.Register("dbState", DBState, isAsync: false);
+            ChromeBrowser.JavascriptObjectRepository.Register("dbState", DBState);
 
             ChromeBrowser.IsBrowserInitializedChanged += ChromeBrowser_IsBrowserInitializedChanged;
             ChromeBrowser.FrameLoadStart += ChromeBrowser_FrameLoadStart;
