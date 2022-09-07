@@ -1,4 +1,5 @@
-﻿namespace InazumaSearch.Forms
+﻿
+namespace InazumaSearch.Forms
 {
     partial class IgnorePatternHelpDialog
     {

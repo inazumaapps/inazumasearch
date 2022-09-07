@@ -1,8 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using Alphaleonis.Win32.Filesystem;
+﻿using Alphaleonis.Win32.Filesystem;
 using InazumaSearch.Core;
 using InazumaSearch.PluginSDK.V1;
+using System;
+using System.Collections.Generic;
 
 namespace InazumaSearch.Plugin
 {

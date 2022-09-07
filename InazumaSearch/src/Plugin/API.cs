@@ -1,5 +1,5 @@
-﻿using System.Collections.Generic;
-using InazumaSearch.PluginSDK.V1;
+﻿using InazumaSearch.PluginSDK.V1;
+using System.Collections.Generic;
 
 namespace InazumaSearch.Plugin
 {

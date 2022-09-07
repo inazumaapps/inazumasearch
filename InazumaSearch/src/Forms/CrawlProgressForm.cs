@@ -1,9 +1,9 @@
-﻿using System;
+﻿using InazumaSearch.Core.Crawl;
+using Microsoft.WindowsAPICodePack.Taskbar;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
-using InazumaSearch.Core.Crawl;
-using Microsoft.WindowsAPICodePack.Taskbar;
 
 namespace InazumaSearch.Forms
 {

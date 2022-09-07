@@ -1,8 +1,8 @@
-﻿using System;
-using System.Threading;
-using Alphaleonis.Win32.Filesystem;
+﻿using Alphaleonis.Win32.Filesystem;
 using InazumaSearch.Core;
 using InazumaSearch.Forms;
+using System;
+using System.Threading;
 
 namespace InazumaSearch
 {

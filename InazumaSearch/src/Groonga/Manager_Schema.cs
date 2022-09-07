@@ -1,7 +1,7 @@
-﻿using System.Collections.Generic;
-using System.Diagnostics;
-using Alphaleonis.Win32.Filesystem;
+﻿using Alphaleonis.Win32.Filesystem;
 using InazumaSearch.Core;
+using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace InazumaSearch.Groonga
 {

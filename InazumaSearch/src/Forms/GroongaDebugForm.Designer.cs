@@ -1,4 +1,5 @@
-﻿namespace InazumaSearch.Forms
+﻿
+namespace InazumaSearch.Forms
 {
     partial class GroongaDebugForm
     {
@@ -48,7 +49,7 @@
             // 
             // TxtCommand
             // 
-            this.TxtCommand.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            this.TxtCommand.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
             | System.Windows.Forms.AnchorStyles.Right)));
             this.TxtCommand.Location = new System.Drawing.Point(13, 13);
             this.TxtCommand.Name = "TxtCommand";
@@ -68,8 +69,8 @@
             // 
             // TxtResult
             // 
-            this.TxtResult.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
+            this.TxtResult.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            | System.Windows.Forms.AnchorStyles.Left)
             | System.Windows.Forms.AnchorStyles.Right)));
             this.TxtResult.Font = new System.Drawing.Font("ＭＳ ゴシック", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
             this.TxtResult.Location = new System.Drawing.Point(13, 38);

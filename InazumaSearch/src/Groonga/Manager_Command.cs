@@ -1,8 +1,8 @@
-﻿using System.Collections.Generic;
-using System.Text;
-using InazumaSearch.Groonga.Exceptions;
+﻿using InazumaSearch.Groonga.Exceptions;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using System.Collections.Generic;
+using System.Text;
 
 namespace InazumaSearch.Groonga
 {

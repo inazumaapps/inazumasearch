@@ -1,9 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using Alphaleonis.Win32.Filesystem;
+﻿using Alphaleonis.Win32.Filesystem;
 using Newtonsoft.Json;
 using Semver;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace InazumaSearch.Core
 {

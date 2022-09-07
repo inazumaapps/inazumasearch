@@ -1,9 +1,9 @@
-﻿using System;
+﻿using Alphaleonis.Win32.Filesystem;
+using InazumaSearch.Groonga.Exceptions;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography;
-using Alphaleonis.Win32.Filesystem;
-using InazumaSearch.Groonga.Exceptions;
 
 namespace InazumaSearch.Core
 {

@@ -1,9 +1,9 @@
-﻿using System;
+﻿using Alphaleonis.Win32.Filesystem;
+using Microsoft.WindowsAPICodePack.Shell;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
-using Alphaleonis.Win32.Filesystem;
-using Microsoft.WindowsAPICodePack.Shell;
 
 namespace InazumaSearch.Core.Crawl.Work
 {

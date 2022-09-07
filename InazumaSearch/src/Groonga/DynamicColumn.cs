@@ -1,4 +1,5 @@
-﻿namespace InazumaSearch.Groonga
+﻿
+namespace InazumaSearch.Groonga
 {
     /// <summary>
     /// 動的カラム。Selectコマンドで使用

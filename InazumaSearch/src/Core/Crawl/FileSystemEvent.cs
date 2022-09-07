@@ -1,4 +1,5 @@
-﻿namespace InazumaSearch.Core.Crawl
+﻿
+namespace InazumaSearch.Core.Crawl
 {
     public class FileSystemEvent
     {

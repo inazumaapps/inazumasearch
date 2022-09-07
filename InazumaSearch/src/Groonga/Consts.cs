@@ -1,4 +1,5 @@
-﻿namespace InazumaSearch.Groonga
+﻿
+namespace InazumaSearch.Groonga
 {
     public class VColumn
     {

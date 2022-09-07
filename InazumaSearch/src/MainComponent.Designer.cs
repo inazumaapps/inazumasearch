@@ -1,4 +1,5 @@
-﻿namespace InazumaSearch
+﻿
+namespace InazumaSearch
 {
     partial class MainComponent
     {

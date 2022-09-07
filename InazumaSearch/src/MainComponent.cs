@@ -1,10 +1,10 @@
-﻿using System;
+﻿using InazumaSearch.Core;
+using InazumaSearch.Forms;
+using System;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Windows.Forms;
-using InazumaSearch.Core;
-using InazumaSearch.Forms;
 
 namespace InazumaSearch
 {

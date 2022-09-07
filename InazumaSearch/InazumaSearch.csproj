@@ -1,167 +1,29 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+
   <PropertyGroup>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
     <OutputType>WinExe</OutputType>
-    <IsWebBootstrapper>false</IsWebBootstrapper>
-    <PublishUrl>publish\</PublishUrl>
-    <Install>true</Install>
-    <InstallFrom>Disk</InstallFrom>
-    <UpdateEnabled>false</UpdateEnabled>
-    <UpdateMode>Foreground</UpdateMode>
-    <UpdateInterval>7</UpdateInterval>
-    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
-    <UpdatePeriodically>false</UpdatePeriodically>
-    <UpdateRequired>false</UpdateRequired>
-    <MapFileExtensions>true</MapFileExtensions>
-    <ApplicationRevision>1</ApplicationRevision>
-    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
-    <UseApplicationTrust>false</UseApplicationTrust>
-    <PublishWizardCompleted>true</PublishWizardCompleted>
-    <BootstrapperEnabled>true</BootstrapperEnabled>
-    <LangVersion>6</LangVersion>
-    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
     <UseWindowsForms>true</UseWindowsForms>
-    <UseWPF>true</UseWPF>
-    <ImportWindowsDesktopTargets>true</ImportWindowsDesktopTargets>
-    <StartArguments>--html-path ../../../html</StartArguments>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
-    <OutputPath>bin\Debug\x86\</OutputPath>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
-    <OutputPath>bin\Release\x86\</OutputPath>
-    <DefineConstants></DefineConstants>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-  </PropertyGroup>
-  <PropertyGroup>
-    <ManifestCertificateThumbprint>1213DFB7B3000832B6AE1AF8C30FBACA98A1A3BE</ManifestCertificateThumbprint>
-  </PropertyGroup>
-  <PropertyGroup>
-    <ManifestKeyFile>InazumaSearch_一時キー.pfx</ManifestKeyFile>
-  </PropertyGroup>
-  <PropertyGroup>
-    <GenerateManifests>false</GenerateManifests>
-  </PropertyGroup>
-  <PropertyGroup>
-    <SignManifests>false</SignManifests>
-  </PropertyGroup>
-  <PropertyGroup>
-    <TargetZone>LocalIntranet</TargetZone>
-  </PropertyGroup>
-  <PropertyGroup>
-    <ApplicationIcon>icon\inazumasearch-icon.ico</ApplicationIcon>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release %28Portable%29|x86'">
-    <OutputPath>bin\Release_Portable\x86\program\</OutputPath>
-    <DefineConstants>PORTABLE</DefineConstants>
-    <Optimize>true</Optimize>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-  </PropertyGroup>
-  <PropertyGroup>
-    <ApplicationManifest>Properties\app.manifest</ApplicationManifest>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release %28Portable%29|x64'">
-    <OutputPath>bin\Release_Portable\x64\program\</OutputPath>
-    <Optimize>true</Optimize>
-    <DefineConstants>PORTABLE</DefineConstants>
-    <DebugSymbols>true</DebugSymbols>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
-    <OutputPath>bin\Debug\x64\</OutputPath>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
-    <OutputPath>bin\Release\x64\</OutputPath>
-    <WarningLevel>2</WarningLevel>
-    <DebugSymbols>true</DebugSymbols>
-  </PropertyGroup>
-  <ItemGroup>
-    <Reference Include="System.Configuration" />
-    <Reference Include="System.IO.Compression" />
-    <Reference Include="System.Runtime.Remoting" />
-    <Reference Include="System.Security" />
-    <Reference Include="System.ServiceModel" />
-    <Reference Include="System.Transactions" />
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Update="src\MainComponent.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Content Include="html\setting.js" />
-    <Content Include="html\inazuma.js" />
-    <Content Include="html\index.html" />
-    <Content Include="html\setting.html" />
-    <Content Include="html\style.css" />
-    <Content Include="icon\inazumasearch-icon.ico" />
-    <Content Include="nlogconf\Debug.config">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="nlogconf\Release.config">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-  </ItemGroup>
-  <ItemGroup>
-    <BootstrapperPackage Include=".NETFramework,Version=v4.5.2">
-      <Visible>False</Visible>
-      <ProductName>Microsoft .NET Framework 4.5.2 %28x86 および x64%29</ProductName>
-      <Install>true</Install>
-    </BootstrapperPackage>
-    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
-      <Visible>False</Visible>
-      <ProductName>.NET Framework 3.5 SP1</ProductName>
-      <Install>false</Install>
-    </BootstrapperPackage>
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\PluginSDK\PluginSDK.csproj" />
-    <ProjectReference Include="..\restarter\restart.csproj" />
-  </ItemGroup>
+
   <ItemGroup>
     <PackageReference Include="AlphaFS.New" Version="2.3.0" />
-    <PackageReference Include="Autoupdater.NET.Official">
-      <Version>1.7.0</Version>
-    </PackageReference>
-    <PackageReference Include="cef.redist.x64">
-      <Version>96.0.18</Version>
-    </PackageReference>
-    <PackageReference Include="cef.redist.x86">
-      <Version>96.0.18</Version>
-    </PackageReference>
-    <PackageReference Include="CefSharp.Common.NETCore" Version="104.4.240" />
+    <PackageReference Include="Autoupdater.NET.Official" Version="1.7.5" />
     <PackageReference Include="CefSharp.WinForms.NETCore" Version="104.4.240" />
-    <PackageReference Include="CommandLineParser">
-      <Version>2.8.0</Version>
-    </PackageReference>
-    <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
-    <PackageReference Include="MimeKitLite">
-      <Version>3.1.0</Version>
-    </PackageReference>
-    <PackageReference Include="Newtonsoft.Json">
-      <Version>13.0.1</Version>
-    </PackageReference>
-    <PackageReference Include="NLog">
-      <Version>4.7.13</Version>
-    </PackageReference>
-    <PackageReference Include="NLog.Schema">
-      <Version>4.7.13</Version>
-    </PackageReference>
-    <PackageReference Include="ReadJEnc">
-      <Version>1.3.1.2</Version>
-    </PackageReference>
-    <PackageReference Include="Semver">
-      <Version>2.0.6</Version>
-    </PackageReference>
-    <PackageReference Include="System.Buffers">
-      <Version>4.5.1</Version>
-    </PackageReference>
-    <PackageReference Include="System.Data.DataSetExtensions" Version="4.5.0" />
+    <PackageReference Include="CommandLineParser" Version="2.9.1" />
+    <PackageReference Include="Microsoft-WindowsAPICodePack-Core" Version="1.1.4" />
+    <PackageReference Include="Microsoft-WindowsAPICodePack-Shell" Version="1.1.4" />
+    <PackageReference Include="MimeKitLite" Version="3.4.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+    <PackageReference Include="NLog" Version="5.0.4" />
+    <PackageReference Include="NLog.Schema" Version="5.0.4" />
+    <PackageReference Include="ReadJEnc" Version="1.3.1.2" />
+    <PackageReference Include="Semver" Version="2.2.0" />
     <PackageReference Include="System.Management" Version="6.0.0" />
-    <PackageReference Include="WindowsAPICodePack" Version="1.1.3" />
   </ItemGroup>
-  <PropertyGroup>
-    <PostBuildEvent>set TARGETDIR=$(TargetDir)
-set PROJECTDIR=$(ProjectDir)
-set PLATFORMNAME=$(PlatformName)
-call "$(ProjectDir)buildbatch\postbuild.cmd"</PostBuildEvent>
-  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\PluginSDK\PluginSDK.csproj" />
+  </ItemGroup>
+
 </Project>

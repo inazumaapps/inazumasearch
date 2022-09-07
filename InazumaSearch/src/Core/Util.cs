@@ -1,8 +1,8 @@
-﻿using System;
+﻿using Alphaleonis.Win32.Filesystem;
+using System;
 using System.Security.Cryptography;
 using System.Text;
 using System.Windows.Forms;
-using Alphaleonis.Win32.Filesystem;
 
 namespace InazumaSearch.Core
 {

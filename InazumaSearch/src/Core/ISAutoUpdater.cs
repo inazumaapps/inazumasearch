@@ -1,6 +1,6 @@
-﻿using System;
-using AutoUpdaterDotNET;
+﻿using AutoUpdaterDotNET;
 using InazumaSearch.Core;
+using System;
 
 namespace InazumaSearch
 {

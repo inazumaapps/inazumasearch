@@ -1,16 +1,16 @@
-﻿using System;
+﻿using Alphaleonis.Win32.Filesystem;
+using CommandLine;
+using Hnx8.ReadJEnc;
+using InazumaSearch.Core.Crawl;
+using InazumaSearch.Forms;
+using MimeKit;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using Alphaleonis.Win32.Filesystem;
-using CommandLine;
-using Hnx8.ReadJEnc;
-using InazumaSearch.Core.Crawl;
-using InazumaSearch.Forms;
-using MimeKit;
 
 namespace InazumaSearch.Core
 {

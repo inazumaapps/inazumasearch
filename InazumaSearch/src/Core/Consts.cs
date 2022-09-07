@@ -1,4 +1,5 @@
-﻿namespace InazumaSearch.Core
+﻿
+namespace InazumaSearch.Core
 {
     public class Table
     {

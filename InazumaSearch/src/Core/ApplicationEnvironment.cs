@@ -1,6 +1,6 @@
-﻿using System;
-using Alphaleonis.Win32.Filesystem;
+﻿using Alphaleonis.Win32.Filesystem;
 using Semver;
+using System;
 
 namespace InazumaSearch.Core
 {
