@@ -7,6 +7,9 @@ using MessagePack;
 
 namespace InazumaSearch.Core
 {
+    /// <summary>
+    /// 動作ログ
+    /// </summary>
     [MessagePackObject(keyAsPropertyName: true)]
     public class OperationLog
     {
@@ -16,11 +19,11 @@ namespace InazumaSearch.Core
 
         public string Message { get; set; }
 
-        public double Timestamp { get; set; }
+        public DateTime Timestamp { get; set; }
 
         public OperationLog()
         {
-            Timestamp = Groonga.Util.ToUnixTime(DateTime.Now);
+            Timestamp = DateTime.Now;
         }
     }
 }
