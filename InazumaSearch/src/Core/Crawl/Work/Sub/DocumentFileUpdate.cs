@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using Alphaleonis.Win32.Filesystem;
@@ -106,6 +107,9 @@ namespace InazumaSearch.Core.Crawl.Work
             IProgress<ProgressState> progress = null
         )
         {
+            // 処理時間計測用のストップウォッチを生成
+            var sw = Stopwatch.StartNew();
+
             // 進捗を報告
             ReportProgressLimitedFrequency(
                 progress,
@@ -241,6 +245,10 @@ namespace InazumaSearch.Core.Crawl.Work
             }
 
             Logger.Debug("Update OK - {0}", FilePath);
+
+            // 動作ログ出力
+            sw.Stop();
+            OperationLog.Add(OperationLog.LogType.DocumentUpdate, filePath: FilePath, processTime: sw.Elapsed);
 
             // 登録成功
             return true;

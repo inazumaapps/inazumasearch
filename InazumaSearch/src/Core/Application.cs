@@ -10,7 +10,6 @@ using CommandLine;
 using Hnx8.ReadJEnc;
 using InazumaSearch.Core.Crawl;
 using InazumaSearch.Forms;
-using MessagePack;
 using MimeKit;
 
 namespace InazumaSearch.Core
@@ -50,6 +49,11 @@ namespace InazumaSearch.Core
         public NLog.Logger Logger { get; protected set; }
 
         /// <summary>
+        /// 動作ログ出力用オブジェクト
+        /// </summary>
+        public NLog.Logger OperationLogger { get; protected set; }
+
+        /// <summary>
         /// ユーザー設定
         /// </summary>
         public UserSetting.Store UserSettings { get; protected set; }
@@ -78,6 +82,11 @@ namespace InazumaSearch.Core
         /// ハッシュ生成を行うオブジェクト。サムネイル画像パスの生成に使用
         /// </summary>
         public HashAlgorithm HashProvider { get; set; } = new SHA1CryptoServiceProvider();
+
+        /// <summary>
+        /// セッションID。起動時にランダムで設定される
+        /// </summary>
+        public static ushort SessionId { get; set; } = 0;
 
         #region 特殊パスの取得
 
@@ -210,11 +219,22 @@ namespace InazumaSearch.Core
         /// <returns>正常に起動したかどうか。falseを返した場合はアプリケーションを終了</returns>
         public virtual bool Boot()
         {
+            // セッションIDをランダムに生成して割り当て
+            using (var rng = RandomNumberGenerator.Create())
+            {
+                var bs = new byte[2];
+                rng.GetBytes(bs);
+                SessionId = BitConverter.ToUInt16(bs, 0);
+            }
+
             // ロガー初期化
             Logger = NLog.LogManager.GetLogger("Application");
 
             // ログ出力
             Logger.Info("アプリケーション起動中...");
+
+            // 動作ログ出力
+            OperationLog.Add(OperationLog.LogType.Boot);
 
             // ユーザー設定の読み込み
             UserSettings = UserSetting.Store.Setup(UserSettingPath);
@@ -340,30 +360,6 @@ namespace InazumaSearch.Core
             {
                 Crawler.StartAlwaysCrawl();
             }
-
-            for (var i = 0; i < 10; i++)
-            {
-                var log = new OperationLog() { Message = "テストメッセージです", TypeCode = i };
-                using (var stream = Alphaleonis.Win32.Filesystem.File.Open("messagepack-test.dat", System.IO.FileMode.Create | System.IO.FileMode.Append))
-                {
-                    using (var writer = new System.IO.BinaryWriter(stream))
-                    {
-                        writer.Write(MessagePackSerializer.Serialize(log));
-                    }
-                }
-            }
-
-            using (var stream = File.Open("messagepack-test.dat", System.IO.FileMode.Open))
-            {
-                using (var reader = new System.IO.BinaryReader(stream))
-                {
-                    var deserialized = MessagePackSerializer.Deserialize<OperationLog[]>(stream);
-                }
-            }
-
-            
-            //var json = MessagePackSerializer.ToJson(bytes);
-            //System.Console.WriteLine(json);
 
             // 正常起動
             return true;
@@ -959,6 +955,9 @@ namespace InazumaSearch.Core
             {
                 NotifyIcon.Dispose();
             }
+
+            // 動作ログ出力
+            OperationLog.Add(OperationLog.LogType.ShutDown);
 
             System.Windows.Forms.Application.Exit();
 
