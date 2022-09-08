@@ -46,6 +46,9 @@ SRCS = FileList['InazumaSearch/**/*']
 SRCS.exclude('InazumaSearch/bin/**/*')
 SRCS.exclude('InazumaSearch/obj/**/*')
 
+OUTDIR = 'out'
+directory OUTDIR
+
 task :default => ['exe', 'zip:portable']
 
 desc "-"
@@ -105,7 +108,7 @@ PLATFORMS.each do |platform|
 	end
 	
 	ini_path = EXEPRESS_INIS[platform]
-	file ini_path => 'InazumaSearch_exepress_template.ini' do |task|
+	file ini_path => ['InazumaSearch_exepress_template.ini', OUTDIR] do |task|
 	    # ExePress用のiniファイルを作成
 	    express_enc = 'UTF-16LE'
 	    inibody = File.read('InazumaSearch_exepress_template.ini', encoding: express_enc, mode: 'rb')
