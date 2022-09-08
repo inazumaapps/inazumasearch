@@ -320,7 +320,9 @@ function addFolderToCrawlModal(path, label, fileCount, checked) {
     $newItem.find('.crawl-modal-folder-check').attr('data-path', path).prop('checked', checked);
     $newItem.find('.path').text(path);
     $newItem.find('.file-count').text(fileCount);
-    $newItem.find('.folder-label').text(label);
+    if (label) {
+        $newItem.find('.folder-label').text(`(${label})`);
+    }
 
     $('#CRAWL-FOLDER-LIST li.folder-item:last').after($newItem);
     $newItem.show();
