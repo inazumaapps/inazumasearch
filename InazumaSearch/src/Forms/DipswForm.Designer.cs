@@ -60,6 +60,7 @@
             this.NumDisplayPageSizeForListView = new System.Windows.Forms.NumericUpDown();
             this.NumDisplayPageSizeForNormalView = new System.Windows.Forms.NumericUpDown();
             this.BtnRebootDebugMode = new System.Windows.Forms.Button();
+            this.lnkDBBrowser = new System.Windows.Forms.LinkLabel();
             this.tblDebug.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.tableLayoutPanel2.SuspendLayout();
@@ -419,11 +420,23 @@
             this.BtnRebootDebugMode.UseVisualStyleBackColor = true;
             this.BtnRebootDebugMode.Click += new System.EventHandler(this.BtnRebootDebugMode_Click);
             // 
+            // lnkDBBrowser
+            // 
+            this.lnkDBBrowser.AutoSize = true;
+            this.lnkDBBrowser.Location = new System.Drawing.Point(16, 215);
+            this.lnkDBBrowser.Name = "lnkDBBrowser";
+            this.lnkDBBrowser.Size = new System.Drawing.Size(213, 12);
+            this.lnkDBBrowser.TabIndex = 33;
+            this.lnkDBBrowser.TabStop = true;
+            this.lnkDBBrowser.Text = "文書データベースの登録内容を表示（β版）";
+            this.lnkDBBrowser.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.lnkDBBrowser_LinkClicked);
+            // 
             // DipswForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(737, 404);
+            this.Controls.Add(this.lnkDBBrowser);
             this.Controls.Add(this.BtnRebootDebugMode);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.lnkOpenDataFolder);
@@ -488,6 +501,7 @@
         private System.Windows.Forms.NumericUpDown NumDisplayPageSizeForListView;
         private System.Windows.Forms.NumericUpDown NumDisplayPageSizeForNormalView;
         private System.Windows.Forms.Button BtnRebootDebugMode;
+        private System.Windows.Forms.LinkLabel lnkDBBrowser;
     }
 }
 

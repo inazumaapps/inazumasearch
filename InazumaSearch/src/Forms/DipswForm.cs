@@ -326,5 +326,11 @@ namespace InazumaSearch.Forms
         {
             Core.Application.Restart(forceDebug: true);
         }
+
+        private void lnkDBBrowser_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            var f2 = new DBBrowserForm(Application);
+            f2.Show(this);
+        }
     }
 }
