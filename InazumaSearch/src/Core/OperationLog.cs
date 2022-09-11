@@ -75,6 +75,15 @@ namespace InazumaSearch.Core
             /// <summary>手動クロールをキャンセルした</summary>
             public static LogType ManualCrawlCancel = new LogType(2003, "手動クロールを中断しました");
 
+            /// <summary>常駐クロールを開始した</summary>
+            public static LogType AlwaysCrawlStart = new LogType(2021, "常駐クロールを開始しました");
+
+            /// <summary>常駐クロールを終了した</summary>
+            public static LogType AlwaysCrawlEnd = new LogType(2022, "常駐クロールを終了しました");
+
+            /// <summary>常駐クロールがエラーにより強制終了した</summary>
+            public static LogType AlwaysCrawlAbort = new LogType(2039, "常駐クロールがシステムエラーにより強制終了した", level: LogLevel.Error);
+
             /// <summary>文書データ1件を更新した</summary>
             public static LogType DocumentUpdate = new LogType(2201, "文書を登録しました");
 
@@ -95,7 +104,7 @@ namespace InazumaSearch.Core
                 = new LogType(6401, "検索語の解析時にエラーが発生しました");
 
             /// <summary>システムエラー発生</summary>
-            public static LogType SystemErrorAbort = new LogType(9001, "システムエラーによりInazuma Searchを強制終了しました");
+            public static LogType SystemErrorAbort = new LogType(9001, "システムエラーによりInazuma Searchを強制終了しました", level: LogLevel.Error);
         }
 
         /// <summary>

@@ -105,8 +105,6 @@ namespace InazumaSearch.Core.Crawl
             // 手動クロールのメイン処理（別スレッドで実行）
             var t = Task.Run(() =>
             {
-                Logger.Info("手動クロール開始");
-
                 // 動作ログ出力
                 OperationLog.Add(OperationLog.LogType.ManualCrawlStart);
 
@@ -190,7 +188,8 @@ namespace InazumaSearch.Core.Crawl
             // 常駐クロールのメイン処理 (別スレッドで実行)
             var t = Task.Factory.StartNew(() =>
             {
-                Logger.Info("常駐クロール開始");
+                // 動作ログ出力
+                OperationLog.Add(OperationLog.LogType.AlwaysCrawlStart);
 
                 // 開始を報告
                 ((IProgress<ProgressState>)AlwaysCrawlProgress).Report(new ProgressState() { CurrentStep = ProgressState.Step.AlwaysCrawlBegin });
@@ -299,7 +298,9 @@ namespace InazumaSearch.Core.Crawl
                 {
                     // ファイル監視オブジェクトをすべて解放
                     fileWatcher.Stop();
-                    Logger.Info("常駐クロール終了");
+
+                    // 動作ログ出力
+                    OperationLog.Add(OperationLog.LogType.AlwaysCrawlEnd);
 
                     // 終了を報告
                     ((IProgress<ProgressState>)AlwaysCrawlProgress).Report(new ProgressState() { CurrentStep = ProgressState.Step.AlwaysCrawlEnd });
@@ -310,6 +311,9 @@ namespace InazumaSearch.Core.Crawl
                 {
                     Logger.Error("常駐クロール処理でエラーが発生しました");
                     Logger.Error(ex.ToString());
+
+                    // 動作ログ出力
+                    OperationLog.Add(OperationLog.LogType.AlwaysCrawlAbort);
                 }
             }, ctSource.Token, TaskCreationOptions.LongRunning, TaskScheduler.Default);
 

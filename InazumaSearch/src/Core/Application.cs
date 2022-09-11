@@ -230,12 +230,6 @@ namespace InazumaSearch.Core
             // ロガー初期化
             Logger = NLog.LogManager.GetLogger("Application");
 
-            // ログ出力
-            Logger.Info("アプリケーション起動中...");
-
-            // 動作ログ出力
-            OperationLog.Add(OperationLog.LogType.Boot);
-
             // ユーザー設定の読み込み
             UserSettings = UserSetting.Store.Setup(UserSettingPath);
 
@@ -352,14 +346,14 @@ namespace InazumaSearch.Core
             // 起動完了時の更新処理（最終起動バージョンの更新、プラグイン構成の保存）
             UserSettings.SaveOnAfterBoot(new Dictionary<string, int>(loadedPluginVersionNumbers));
 
-            // ログ出力
-            Logger.Info("アプリケーションを起動しました");
-
             // 常駐クロールモードがONであれば、クロールを開始する
             if (UserSettings.AlwaysCrawlMode)
             {
                 Crawler.StartAlwaysCrawl();
             }
+
+            // 動作ログ出力
+            OperationLog.Add(OperationLog.LogType.Boot);
 
             // 正常起動
             return true;

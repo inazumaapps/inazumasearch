@@ -64,7 +64,7 @@ namespace InazumaSearch.Core.Crawl.Work
             // 削除直前に、ファイルが存在しないことを再確認 (対象ファイルパスの特定から削除の実行までに時間差があるため)
             if (!File.Exists(FilePath))
             {
-                Logger.Info("文書ファイルデータ削除 - {0}", FilePath);
+                Logger.Debug("文書ファイルデータ削除 - {0}", FilePath);
 
                 // 進捗を報告
                 ReportProgressLimitedFrequency(
