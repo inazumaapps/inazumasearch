@@ -106,7 +106,8 @@ namespace InazumaSearch.Core.Crawl
             var t = Task.Run(() =>
             {
                 // 動作ログ出力
-                OperationLog.Add(OperationLog.LogType.ManualCrawlStart);
+                var pathCaption = "検索対象パス：\n" + string.Join("\n", targetDirPaths);
+                OperationLog.Add(OperationLog.LogType.ManualCrawlStart, additionalMessage: pathCaption);
 
                 try
                 {
