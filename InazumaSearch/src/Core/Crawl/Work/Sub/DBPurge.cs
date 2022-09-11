@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using Alphaleonis.Win32.Filesystem;
@@ -47,8 +48,10 @@ namespace InazumaSearch.Core.Crawl.Work
             IProgress<ProgressState> progress = null
         )
         {
-            Logger.Info("DB内の不要な文書データを一括削除");
             var lastCoolTimeEnd = DateTime.Now;
+
+            // 処理時間の計測を開始
+            var sw = Stopwatch.StartNew();
 
             // 進捗を報告
             progress?.Report(new ProgressState() { CurrentStep = ProgressState.Step.PurgeProcessBegin });
@@ -102,6 +105,9 @@ namespace InazumaSearch.Core.Crawl.Work
 
             // 進捗を報告
             progress?.Report(new ProgressState() { CurrentStep = ProgressState.Step.PurgeProcessEnd });
+
+            // 動作ログ出力
+            OperationLog.Add(OperationLog.LogType.DocumentsPurge, additionalMessage: $"削除件数={crawlResult.Deleted}", processTime: sw.Elapsed);
         }
     }
 }

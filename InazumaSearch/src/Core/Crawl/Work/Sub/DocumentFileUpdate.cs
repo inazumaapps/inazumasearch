@@ -107,7 +107,7 @@ namespace InazumaSearch.Core.Crawl.Work
             IProgress<ProgressState> progress = null
         )
         {
-            // 処理時間計測用のストップウォッチを生成
+            // 処理時間の計測を開始
             var sw = Stopwatch.StartNew();
 
             // 進捗を報告
@@ -125,6 +125,10 @@ namespace InazumaSearch.Core.Crawl.Work
             if (!File.Exists(FilePath))
             {
                 Logger.Debug($"Target file not found - {FilePath}");
+
+                // 動作ログ出力
+                OperationLog.Add(OperationLog.LogType.DocumentFileNotFoundOnCrawling, filePath: FilePath);
+
                 return false;
             }
 
@@ -187,6 +191,10 @@ namespace InazumaSearch.Core.Crawl.Work
                 // 例外発生時はスキップ
                 Logger.Warn("Crawl Extract Error - {0}", FilePath);
                 Logger.Warn(ex.ToString());
+
+                // 動作ログ出力
+                OperationLog.Add(OperationLog.LogType.DocumentBodyExtractFailed, filePath: FilePath, processTime: sw.Elapsed);
+
                 return false;
             }
 
@@ -247,7 +255,6 @@ namespace InazumaSearch.Core.Crawl.Work
             Logger.Debug("Update OK - {0}", FilePath);
 
             // 動作ログ出力
-            sw.Stop();
             OperationLog.Add(OperationLog.LogType.DocumentUpdate, filePath: FilePath, processTime: sw.Elapsed);
 
             // 登録成功
