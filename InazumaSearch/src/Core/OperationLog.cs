@@ -96,6 +96,9 @@ namespace InazumaSearch.Core
             /// <summary>文書データの更新時、文書ファイルが移動/削除されていて見つからなかった</summary>
             public static LogType DocumentFileNotFoundOnCrawling = new LogType(2402, "クロール対象の文書ファイルが移動または削除されています");
 
+            /// <summary>テキストファイルからの文書データの抽出時、</summary>
+            public static LogType TextFileEncodingUnidentified = new LogType(2403, "テキストファイルからの読み取り時、ファイル内のエンコーディングを正しく判定できませんでした。UTF-8として読み取ります", level: LogLevel.Warn);
+
             /// <summary>検索実行（正常終了）</summary>
             public static LogType Search = new LogType(6001, "検索しました");
 

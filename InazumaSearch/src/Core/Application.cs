@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Security.Cryptography;
+using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Alphaleonis.Win32.Filesystem;
@@ -445,6 +446,14 @@ namespace InazumaSearch.Core
                 var body = "";
                 var bytes = File.ReadAllBytes(path);
                 var charCode = ReadJEnc.JP.GetEncoding(bytes, bytes.Length, out body);
+
+                // エンコーディングが判別出来なかった場合は、操作ログに出力して、UTF-8とみなす
+                if (charCode == null)
+                {
+                    OperationLog.Add(OperationLog.LogType.TextFileEncodingUnidentified, filePath: path);
+                    body = Encoding.UTF8.GetString(bytes);
+                }
+
                 return new ExtractFileResult() { Body = body };
             }
             else

@@ -179,7 +179,8 @@ namespace InazumaSearch.Core.Crawl.Work
             try
             {
                 extRes = _app.ExtractFile(FilePath, textExtNames, pluginExtNames);
-                Logger.Debug($"Extract OK - {FilePath} (title: {extRes.Title}, body length: {extRes.Body.Length})");
+                var bodyLengthCaption = extRes.Body != null ? extRes.Body.Length.ToString() : "不明";
+                Logger.Debug($"Extract OK - {FilePath} (title: {extRes.Title}, body length: {bodyLengthCaption})");
             }
             catch (OperationCanceledException ex)
             {
