@@ -320,6 +320,9 @@ function addFolderToCrawlModal(path, label, fileCount, checked) {
     $newItem.find('.crawl-modal-folder-check').attr('data-path', path).prop('checked', checked);
     $newItem.find('.path').text(path);
     $newItem.find('.file-count').text(fileCount);
+    if (label) {
+        $newItem.find('.folder-label').text(`(${label})`);
+    }
 
     $('#CRAWL-FOLDER-LIST li.folder-item:last').after($newItem);
     $newItem.show();
@@ -348,6 +351,7 @@ function refreshCrawlDecideButtonEnabled() {
 
 // クロール実行前モーダルの対象フォルダ一覧を更新 (非同期に処理を行う)
 function updateFolderListOnCrawlModalAsync() {
+    $('#CRAWL-MODAL-ALL-CHECK-AREA').hide();
     $('#PROGRESS-BAR-IN-CRAWL-MODAL').show();
     $('.folder-item:not(.cloning-base)').remove(); // 既存行の削除
     refreshCrawlDecideButtonEnabled(); // クロール実行ボタンの表示を更新
@@ -361,6 +365,7 @@ function updateFolderListOnCrawlModalAsync() {
             }
         }
         $('#PROGRESS-BAR-IN-CRAWL-MODAL').hide();
+        $('#CRAWL-MODAL-ALL-CHECK-AREA').show();
 
         refreshCrawlModalAllCheck(); // 「全選択」チェックの表示を更新
         refreshCrawlDecideButtonEnabled(); // クロール実行ボタンの表示を更新

@@ -304,7 +304,7 @@
             <p>クロールを実行するフォルダを選択してください。</p>
         </div>
         <div class="modal-content">
-            <div>
+            <div id="CRAWL-MODAL-ALL-CHECK-AREA">
                 <label>
                     <input type="checkbox" class="filled-in" id="CRAWL-MODAL-ALL-CHECK" checked="checked" />
                     <span class="title path" style="color: black; height: 20px; line-height: 20px;">全選択</span>
@@ -314,10 +314,10 @@
                 <div class="indeterminate"></div>
             </div>
             <ul class="collection" id="CRAWL-FOLDER-LIST">
-                <li class="collection-item folder-item cloning-base">
+                <li class="collection-item folder-item cloning-base"  style="position: relative;">
                     <label>
                         <input type="checkbox" class="filled-in crawl-modal-folder-check" checked="checked" />
-                        <span class="title" style="height: 20px; line-height: 20px; color: black;"><span class="path"></span></span>
+                        <span class="title" style="height: 20px; line-height: 20px; color: black;"><span class="path"></span><span class="folder-label" style="color: silver; margin-left: 1.5rem; font-size: small;"></span></span>
                     </label>
 
                     <p style="font-size: smaller; color: gray">登録済み文書数: <span class="file-count">0</span></p>
