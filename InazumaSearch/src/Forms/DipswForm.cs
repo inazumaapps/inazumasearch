@@ -122,7 +122,7 @@ namespace InazumaSearch.Forms
         protected void UpdateLabels()
         {
             TxtDocumentDBDirPath.Text = Path.GetFullPath(Application.GM.DBDirPath);
-            lblDocumentDBSize.Text = Util.FormatFileSize(Application.GM.GetDBFileSizeTotal());
+            lblDocumentDBSize.Text = Util.FormatFileSize(Application.GM.GetDBDiskUsage());
         }
 
         private void BtnAddTextExt_Click(object sender, EventArgs e)

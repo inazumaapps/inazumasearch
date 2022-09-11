@@ -323,6 +323,20 @@ namespace InazumaSearch.Groonga
         }
 
         /// <summary>
+        /// オブジェクトを調査する
+        /// </summary>
+        /// <param name="name">調査対象のオブジェクト。省略時はDB全体を調査する</param>
+        /// <returns></returns>
+        public JObject ObjectInspect(string name = null)
+        {
+            var opts = new 
+            {
+                name = name
+            };
+            return (JObject)ExecuteCommand("object_inspect", opts);
+        }
+
+        /// <summary>
         /// プラグインを登録する
         /// </summary>
         public bool PluginRegister(

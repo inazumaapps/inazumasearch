@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using Alphaleonis.Win32.Filesystem;
 using InazumaSearch.Core;
+using Newtonsoft.Json.Linq;
 
 namespace InazumaSearch.Groonga
 {
@@ -164,17 +165,21 @@ namespace InazumaSearch.Groonga
         }
 
         /// <summary>
-        /// データベースのファイルサイズ合計を取得
+        /// データベースのディスク使用量を取得
         /// </summary>
         /// <returns></returns>
-        public virtual long GetDBFileSizeTotal()
+        public virtual long GetDBDiskUsage()
         {
-            long size = 0;
-            foreach (var path in GetDBFiles())
-            {
-                size += new FileInfo(path).Length;
-            }
-            return size;
+            // object_inspectコマンドで取得する
+            var inspectRes = ObjectInspect();
+            var diskUsage = (JValue)inspectRes["disk_usage"];
+            var inspectRes2 = ObjectInspect(Table.Documents);
+            var documentsUsage2 = (JValue)inspectRes2["disk_usage"];
+            var inspectRes3 = ObjectInspect(Table.DocumentsIndex);
+            var documentsUsage3 = (JValue)inspectRes3["disk_usage"];
+
+
+            return (long)diskUsage.Value;
         }
 
 
