@@ -948,7 +948,8 @@ namespace InazumaSearch.Core
         /// <summary>
         /// アプリケーションを終了
         /// </summary>
-        public static void Quit()
+        /// <param name="aborting">システムエラーにより強制終了した場合はtrue</param>
+        public static void Quit(bool aborting = false)
         {
             // 通知アイコンが存在していれば解放
             if (NotifyIcon != null)
@@ -957,10 +958,14 @@ namespace InazumaSearch.Core
             }
 
             // 動作ログ出力
-            OperationLog.Add(OperationLog.LogType.ShutDown);
+            if (aborting)
+            {
+                OperationLog.Add(OperationLog.LogType.SystemErrorAbort);
+            } else {
+                OperationLog.Add(OperationLog.LogType.ShutDown);
+            }
 
             System.Windows.Forms.Application.Exit();
-
         }
 
         /// <summary>

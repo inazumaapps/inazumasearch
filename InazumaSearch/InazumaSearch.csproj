@@ -236,7 +236,7 @@
     <Compile Include="src\Core\Crawl\Work\Sub\DirectoryCrawl.cs" />
     <Compile Include="src\Core\Crawl\Work\BackgroundDirectoryCrawl.cs" />
     <Compile Include="src\Core\Crawl\Work\TargetFileCount.cs" />
-    <Compile Include="src\Core\Crawl\Work\ManualCrawl.cs" />
+    <Compile Include="src\Core\Crawl\Work\FullCrawl.cs" />
     <Compile Include="src\Core\IPCReceiver.cs" />
     <Compile Include="src\Core\ISAutoUpdater.cs" />
     <Compile Include="src\Core\CommandLineOptions.cs" />

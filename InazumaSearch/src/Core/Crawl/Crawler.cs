@@ -107,6 +107,9 @@ namespace InazumaSearch.Core.Crawl
             {
                 Logger.Info("手動クロール開始");
 
+                // 動作ログ出力
+                OperationLog.Add(OperationLog.LogType.ManualCrawlStart);
+
                 try
                 {
                     // (1) 登録ファイル数の計測 (別スレッドで並列実行)
@@ -131,7 +134,7 @@ namespace InazumaSearch.Core.Crawl
                     // (2) メインクロール処理
                     {
                         var workStack = new Stack<IWork>();
-                        workStack.Push(new Work.ManualCrawl(App, isBackgroundCrawl: false, targetDirPaths: targetDirPaths));
+                        workStack.Push(new Work.FullCrawl(App, isBackgroundCrawl: false, targetDirPaths: targetDirPaths));
 
                         // ワークスタックが空になるまで順次実行
                         while (workStack.Count >= 1)
@@ -146,11 +149,15 @@ namespace InazumaSearch.Core.Crawl
                 }
                 catch (OperationCanceledException)
                 {
-                    Logger.Info("手動クロールをキャンセル");
+                    // 動作ログ出力
+                    OperationLog.Add(OperationLog.LogType.ManualCrawlCancel);
+
                     return;
                 }
 
-                Logger.Info("手動クロール完了");
+                // 動作ログ出力
+                var totalFileCountCaption = res.TotalTargetCount.HasValue ? res.TotalTargetCount.Value.ToString() : "不明";
+                OperationLog.Add(OperationLog.LogType.ManualCrawlFinish, additionalMessage: $"登録対象の総ファイル件数={totalFileCountCaption},更新件数={res.Updated},スキップ件数{res.Skipped},削除件数={res.Deleted}");
 
                 // 手動クロール処理完了を通知
                 ((IProgress<ProgressState>)progress).Report(new ProgressState() { CurrentStep = ProgressState.Step.Finish });
@@ -196,7 +203,7 @@ namespace InazumaSearch.Core.Crawl
                 var workStackSet = new HashSet<IWork>(); // 処理の重複を確認するためのセット
 
                 // 最初にフルクロールを実行
-                workStack.Push(new Work.ManualCrawl(App, isBackgroundCrawl: true));
+                workStack.Push(new Work.FullCrawl(App, isBackgroundCrawl: true));
 
                 // ファイル監視オブジェクト生成
                 var fileWatcher = new FileWatcher(Logger, App.UserSettings.TargetFolders.Select(f => f.Path).OrderBy(p => p).ToList());

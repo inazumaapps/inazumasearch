@@ -5,9 +5,9 @@ using System.Threading;
 namespace InazumaSearch.Core.Crawl.Work
 {
     /// <summary>
-    /// 手動クロール
+    /// 全体クロール
     /// </summary>
-    public class ManualCrawl : WorkBase
+    public class FullCrawl : WorkBase
     {
         /// <summary>
         /// クロール対象のフォルダパスリスト（nullの場合はすべての検索対象フォルダをクロールする）
@@ -17,7 +17,7 @@ namespace InazumaSearch.Core.Crawl.Work
         /// <summary>
         /// コンストラクタ
         /// </summary>
-        public ManualCrawl(Application app, bool isBackgroundCrawl, IEnumerable<string> targetDirPaths = null) : base(app, isBackgroundCrawl)
+        public FullCrawl(Application app, bool isBackgroundCrawl, IEnumerable<string> targetDirPaths = null) : base(app, isBackgroundCrawl)
         {
             TargetDirPaths = targetDirPaths;
         }
@@ -27,7 +27,7 @@ namespace InazumaSearch.Core.Crawl.Work
         /// </summary>
         public override bool Equals(IWork other)
         {
-            return (other is ManualCrawl);
+            return (other is FullCrawl);
         }
 
         /// <summary>

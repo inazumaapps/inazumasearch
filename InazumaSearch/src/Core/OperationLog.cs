@@ -13,54 +13,89 @@ namespace InazumaSearch.Core
         protected static NLog.Logger Logger = NLog.LogManager.GetLogger("OperationLog");
 
         /// <summary>
-        /// 動作ログのタイプ
+        /// ログレベル
         /// </summary>
-        public enum LogType
+        public enum LogLevel
         {
-            /// <summary>アプリケーションが起動した</summary>
-            Boot = 1001
-            ,
-            /// <summary>アプリケーションが終了した</summary>
-            ShutDown = 1002
-            ,
-            /// <summary>手動クロールを開始した</summary>
-            ManualCrawlStart = 2001
-            ,
-            /// <summary>手動クロールを完了した</summary>
-            ManualCrawlFinish = 2002
-            ,
-            /// <summary>手動クロールをキャンセルした</summary>
-            ManualCrawlCancel = 2003
-            ,
-            /// <summary>文書データを更新した</summary>
-            DocumentUpdate = 2201
-            ,
-            /// <summary>DBの不要な文書データを削除した</summary>
-            DocumentsPurge = 2281
-            ,
-            /// <summary>文書データの更新時、テキストの抽出に失敗した</summary>
-            DocumentBodyExtractFailed = 2401
-            ,
-            /// <summary>文書データの更新時、文書ファイルが移動/削除されていて見つからなかったしていた</summary>
-            DocumentFileNotFoundOnCrawling = 2402
-
+            /// <summary>エラー</summary>
+            Error
+                ,
+            /// <summary>警告</summary>
+            Warn
+                ,
+            /// <summary>情報</summary>
+            Info
         }
 
         /// <summary>
-        /// ログタイプに応じたメッセージを取得する
+        /// 動作ログのタイプ
         /// </summary>
-        public static string GetMessage(LogType type)
+        public class LogType
         {
-            if (type == LogType.Boot) return "Inazuma Searchが起動しました";
-            if (type == LogType.ShutDown) return "Inazuma Searchが終了しました";
-            if (type == LogType.ManualCrawlStart) return "手動クロールを開始しました";
-            if (type == LogType.ManualCrawlFinish) return "手動クロールを完了しました";
-            if (type == LogType.ManualCrawlCancel) return "手動クロールを中断しました";
-            if (type == LogType.DocumentUpdate) return "文書を登録しました";
-            if (type == LogType.DocumentsPurge) return "ファイルの移動・削除により不要になった文書データを削除しました";
-            if (type == LogType.DocumentBodyExtractFailed) return "文書ファイルからのテキスト抽出処理に失敗しました";
-            if (type == LogType.DocumentFileNotFoundOnCrawling) return "クロール対象の文書ファイルが移動または削除されています";
-            return "";
+            /// <summary>
+            /// タイプと対応するコード
+            /// </summary>
+            public int Code { get; protected set; }
+
+            /// <summary>
+            /// メッセージ
+            /// </summary>
+            public string Message { get; protected set; }
+
+            /// <summary>
+            /// ログレベル
+            /// </summary>
+            public LogLevel Level { get; protected set; }
+
+            /// <summary>
+            /// コンストラクタ
+            /// </summary>
+            /// <param name="code">ログタイプと対応するコード</param>
+            /// <param name="message">メッセージ</param>
+            /// <param name="level">ログレベル</param>
+            protected LogType(int code, string message, LogLevel level = LogLevel.Info)
+            {
+                this.Code = code;
+                this.Message = message;
+                this.Level = level;
+            }
+
+            /// <summary>アプリケーションが起動した</summary>
+            public static LogType Boot = new LogType(1001, "Inazuma Searchが起動しました");
+
+            /// <summary>アプリケーションが正常終了した</summary>
+            public static LogType ShutDown = new LogType(1002, "Inazuma Searchが終了しました");
+
+            /// <summary>手動クロールを開始した</summary>
+            public static LogType ManualCrawlStart = new LogType(2001, "手動クロールを開始しました");
+
+            /// <summary>手動クロールを完了した</summary>
+            public static LogType ManualCrawlFinish = new LogType(2002, "手動クロールを完了しました");
+
+            /// <summary>手動クロールをキャンセルした</summary>
+            public static LogType ManualCrawlCancel = new LogType(2003, "手動クロールを中断しました");
+
+            /// <summary>文書データ1件を更新した</summary>
+            public static LogType DocumentUpdate = new LogType(2201, "文書を登録しました");
+
+            /// <summary>DBの不要な文書データを削除した</summary>
+            public static LogType DocumentsPurge = new LogType(2281, "ファイルの移動・削除により不要になった文書データを削除しました");
+
+            /// <summary>文書データの更新時、テキストの抽出に失敗した</summary>
+            public static LogType DocumentBodyExtractFailed = new LogType(2401, "文書ファイルからのテキスト抽出処理に失敗しました", level: LogLevel.Error);
+
+            /// <summary>文書データの更新時、文書ファイルが移動/削除されていて見つからなかった</summary>
+            public static LogType DocumentFileNotFoundOnCrawling = new LogType(2402, "クロール対象の文書ファイルが移動または削除されています");
+
+            /// <summary>検索実行（正常終了）</summary>
+            public static LogType Search = new LogType(6001, "検索しました");
+
+            /// <summary>検索を実行したが、検索語を正しく解析できずエラー</summary>
+            public static LogType InvalidSearchQuery
+                = new LogType(6401, "検索語の解析時にエラーが発生しました");
+
+            /// <summary>システムエラー発生</summary>
+            public static LogType SystemErrorAbort = new LogType(9001, "システムエラーによりInazuma Searchを強制終了しました");
         }
 
         /// <summary>
@@ -69,12 +104,14 @@ namespace InazumaSearch.Core
         public static void Add(LogType type, string additionalMessage = null, string filePath = null, TimeSpan? processTime = null)
         {
             string processTimeValue = (processTime.HasValue ? ((decimal)processTime.Value.TotalMilliseconds / 1000m).ToString("N3") : null);
-            Logger.WithProperty("LogType", (int)type)
+            Logger
+                .WithProperty("Level", type.Level)
+                .WithProperty("LogType", type.Code)
                 .WithProperty("AdditionalMessage", additionalMessage)
                 .WithProperty("FilePath", filePath)
                 .WithProperty("SessionId", Application.SessionId)
                 .WithProperty("ProcessTime", processTimeValue)
-                .Info(GetMessage(type));
+                .Info(type.Message);
         }
     }
 }

@@ -43,7 +43,7 @@ namespace InazumaSearch_Debug
             // システムエラーダイアログ表示
             var f = new SystemErrorDialog(e.Exception);
             f.ShowDialog();
-            System.Windows.Forms.Application.Exit();
+            InazumaSearch.Core.Application.Quit(aborting: true);
         }
 
         private static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
@@ -53,7 +53,7 @@ namespace InazumaSearch_Debug
             // システムエラーダイアログ表示
             var f = new SystemErrorDialog(ex);
             f.ShowDialog();
-            System.Windows.Forms.Application.Exit();
+            InazumaSearch.Core.Application.Quit(aborting: true);
         }
     }
 

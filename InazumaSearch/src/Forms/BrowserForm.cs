@@ -532,6 +532,9 @@ namespace InazumaSearch.Forms
                         UserInputLogs.Clear();
                     }
 
+                    // 処理時間の計測を開始
+                    var sw = Stopwatch.StartNew();
+
                     // 全文検索の実行
                     var queryKeyword = (string)queryObject["keyword"];
                     var queryFileName = (string)queryObject["fileName"];
@@ -556,6 +559,10 @@ namespace InazumaSearch.Forms
                     {
                         if (!ignoreError)
                         {
+                            // 動作ログ出力
+                            OperationLog.Add(OperationLog.LogType.InvalidSearchQuery, additionalMessage: $"検索キーワード={queryKeyword}");
+
+                            // エラーダイアログ表示
                             OwnerForm.InvokeOnUIThread((f) => Util.ShowErrorMessage(f,
                                 "検索語の解析時にエラーが発生しました。\n単語をダブルクォート (\") で囲んで試してみてください。"
                             ));
@@ -563,6 +570,11 @@ namespace InazumaSearch.Forms
 
                         return null;
                     }
+
+
+                    // 動作ログ出力
+                    OperationLog.Add(OperationLog.LogType.Search, additionalMessage: $"検索キーワード={queryKeyword}", processTime: sw.Elapsed);
+
 
                     // 結果の返却
                     return JsonConvert.SerializeObject(ret);
@@ -1015,7 +1027,7 @@ namespace InazumaSearch.Forms
             // 常駐クロールモードでない場合は、全フォームを閉じたタイミングで終了
             if (!App.UserSettings.AlwaysCrawlMode && Core.Application.BootingBrowserForms.Count == 0)
             {
-                System.Windows.Forms.Application.Exit();
+                Core.Application.Quit();
             }
         }
 
