@@ -532,6 +532,9 @@ namespace InazumaSearch.Forms
                         UserInputLogs.Clear();
                     }
 
+                    // 処理時間の計測を開始
+                    var sw = Stopwatch.StartNew();
+
                     // 全文検索の実行
                     var queryKeyword = (string)queryObject["keyword"];
                     var queryFileName = (string)queryObject["fileName"];
@@ -563,6 +566,9 @@ namespace InazumaSearch.Forms
 
                         return null;
                     }
+
+                    // 処理時間を結果オブジェクトにセット
+                    ret.processTime = sw.Elapsed.TotalSeconds;
 
                     // 結果の返却
                     return JsonConvert.SerializeObject(ret);

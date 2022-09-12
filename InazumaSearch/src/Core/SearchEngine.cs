@@ -66,6 +66,12 @@ namespace InazumaSearch.Core
             /// 並び順の選択肢一覧
             /// </summary>
             public IList<OrderItem> orderList { get; set; }
+
+            /// <summary>
+            /// 検索時間（単位：秒）
+            /// </summary>
+            public double processTime { get; set; }
+
         }
         public class Record
         {
