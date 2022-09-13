@@ -163,7 +163,9 @@ namespace InazumaSearch.Forms
             // 実行中の手動クロール処理があればキャンセル
             if (App.Crawler.ManualCrawlIsRunning)
             {
-                await App.Crawler.StopManualCrawlIfRunningAsync();
+                var mainTask = App.Crawler.StopManualCrawlIfRunningAsync();
+                var f = new ProgressForm(mainTask, "クロール処理を中断しています...", 200);
+                f.ShowDialog();
             }
 
             // 常駐クロールモードであれば、常駐クロールを再開
