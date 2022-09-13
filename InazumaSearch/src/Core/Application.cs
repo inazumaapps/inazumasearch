@@ -436,7 +436,8 @@ namespace InazumaSearch.Core
             {
                 // 上記以外の場合はXDoc2Txtを使用
                 Logger.Trace($"Extract by xdoc2txt - {path}");
-                return new ExtractFileResult() { Body = XDoc2TxtApi.Extract(path) };
+                var body = XDoc2TxtApi.Extract(path);
+                return new ExtractFileResult() { Body = body };
             }
         }
 
