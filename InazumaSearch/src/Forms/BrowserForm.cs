@@ -197,7 +197,6 @@ namespace InazumaSearch.Forms
             {
                 App.ExecuteInExceptionCatcher(() =>
                 {
-
                     var folders = App.UserSettings.TargetFolders;
                     folders.Remove(folders.First(f => f.Path == path));
                     App.UserSettings.SaveTargetFolders(folders);
@@ -265,7 +264,7 @@ namespace InazumaSearch.Forms
                 OwnerForm.InvokeOnUIThread((f) =>
                 {
                     // クロール中の場合は停止してから処理
-                    App.InvokeWithSuspendingAlwaysCrawl(f, "DBのラベル情報を更新中...", () =>
+                    App.InvokeWithProgressFormWithoutAlwaysCrawl(f, "DBのラベル情報を更新中...", () =>
                     {
                         var folders = App.UserSettings.TargetFolders;
                         var folder = folders.First(f2 => f2.Path == path);

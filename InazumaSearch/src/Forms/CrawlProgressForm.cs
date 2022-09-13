@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using InazumaSearch.Core.Crawl;
 using Microsoft.WindowsAPICodePack.Taskbar;
@@ -35,7 +36,7 @@ namespace InazumaSearch.Forms
         }
 
 
-        private async void Form_Shown(object sender, EventArgs e)
+        private void Form_Shown(object sender, EventArgs e)
         {
             ProgressBar.Enabled = true;
             ProgressBar.Style = ProgressBarStyle.Marquee;
@@ -46,6 +47,16 @@ namespace InazumaSearch.Forms
             // 最終クロール情報を保存
             App.UserSettings.SaveOnCrawl(DateTime.Now, TargetDirPaths);
 
+            // 常駐クロールの自動再起動を無効化した状態で、クロールのメイン処理を実行
+            App.Crawler.DisableAlwaysCrawlAutoRebootAsync(ExecuteCrawl());
+        }
+
+        /// <summary>
+        /// クロールのメイン処理を実行
+        /// </summary>
+        /// <returns></returns>
+        private async Task ExecuteCrawl()
+        {
             // 常駐クロール中であれば、いったん常駐クロールを停止
             if (App.Crawler.AlwaysCrawlIsRunning)
             {
@@ -145,6 +156,7 @@ namespace InazumaSearch.Forms
 
             timeCounter.Stop();
             if (StoppedCallback != null) StoppedCallback.Invoke();
+
         }
 
         private void BtnCancel_Click(object sender, EventArgs e)
