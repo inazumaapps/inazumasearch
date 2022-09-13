@@ -569,19 +569,23 @@ namespace InazumaSearch.Core
         /// </summary>
         public virtual void InvokeAfterSuspendingCrawl(IWin32Window ownerForm, string caption, Action mainProc)
         {
-            // 進捗状況ダイアログを開いた上で実行する処理
-            var mainTask = Task.Run(async () =>
+            // 常駐クロールを一時停止
+            using (Crawler.SuspendAlwaysCrawl())
             {
-                // 常駐クロール実行中の場合、停止
-                await Crawler.StopAlwaysCrawlIfRunningAsync();
+                // 進捗状況ダイアログを開いた上で実行する処理
+                var mainTask = Task.Run(async () =>
+                {
+                    // 常駐クロール実行中の場合、停止
+                    await Crawler.StopAlwaysCrawlIfRunningAsync();
 
-                // メイン処理実行
-                mainProc.Invoke();
-            });
+                    // メイン処理実行
+                    mainProc.Invoke();
+                });
 
-            // 進捗状況ダイアログを開き、上記処理を実行
-            var pf = new ProgressForm(mainTask, caption);
-            pf.ShowDialog(ownerForm);
+                // 進捗状況ダイアログを開き、上記処理を実行
+                var pf = new ProgressForm(mainTask, caption);
+                pf.ShowDialog(ownerForm);
+            }
 
             // ユーザー設定で常駐クロールがONの場合、メイン処理完了後に常駐クロールを再開
             if (UserSettings.AlwaysCrawlMode)

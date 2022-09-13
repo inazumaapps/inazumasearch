@@ -63,6 +63,11 @@ namespace InazumaSearch.Core.Crawl
         public virtual bool AlwaysCrawlIsRunning { get { return AlwaysCrawlState != null && AlwaysCrawlState.Running; } }
 
         /// <summary>
+        /// 常駐クロールの一時中断中フラグ
+        /// </summary>
+        public virtual bool AlwaysCrawlSuspended { get; set; } = false;
+
+        /// <summary>
         /// 手動クロールの処理状態を表すオブジェクト（一度も実行していない場合はnull）
         /// </summary>
         protected virtual CrawlState ManualCrawlState { get; set; } = null;
@@ -338,6 +343,37 @@ namespace InazumaSearch.Core.Crawl
 
                 // キャンセルが完了するまで待機
                 await AlwaysCrawlState.Task;
+
+            }
+        }
+
+        /// <summary>
+        /// 一時的に常駐クロール処理を中断する。中断している間は一定時間ごとのクロール処理再起動も無効化される
+        /// </summary>
+        public virtual Suspender SuspendAlwaysCrawl()
+        {
+            AlwaysCrawlSuspended = true;
+            return new Suspender(this);
+        }
+
+        /// <summary>
+        /// クロール処理中断管理用クラス
+        /// </summary>
+        public class Suspender : IDisposable
+        {
+            protected Crawler _target;
+
+            /// <summary>
+            /// コンストラクタ
+            /// </summary>
+            public Suspender(Crawler target)
+            {
+                _target = target;
+            }
+
+            public void Dispose()
+            {
+                _target.AlwaysCrawlSuspended = false;
             }
         }
     }
