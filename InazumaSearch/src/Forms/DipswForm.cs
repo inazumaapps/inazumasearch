@@ -27,7 +27,7 @@ namespace InazumaSearch.Forms
         {
             if (Util.Confirm(this, "クロール時に収集した文書データと、文書のサムネイル画像をクリアします。\nよろしいですか？", defaultNo: true))
             {
-                Application.InvokeAfterSuspendingCrawl(this, "文書データをクリアしています...", () =>
+                Application.InvokeWithSuspendingAlwaysCrawl(this, "文書データをクリアしています...", () =>
                 {
                     Application.GM.Truncate(Table.Documents);
                     Application.GM.Truncate(Table.DocumentsIndex);

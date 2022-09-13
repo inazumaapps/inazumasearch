@@ -345,29 +345,5 @@ namespace InazumaSearch.Core.Crawl
                 await AlwaysCrawlState.Task;
             }
         }
-
-        /// <summary>
-        /// 常駐クロールが実行中であれば、一時的に常駐クロール処理を中断する。中断している間は一定時間ごとのクロール処理再起動も無効化される
-        /// </summary>
-        public async virtual Task SuspendAlwaysCrawlIfRunningAsync(Action mainProc)
-        {
-            // 一時停止フラグを立てる
-            AlwaysCrawlSuspended = true;
-
-            // 常駐クロール実行中の場合、停止
-            await StopAlwaysCrawlIfRunningAsync();
-
-            // メイン処理を実行
-            mainProc.Invoke();
-
-            // ユーザー設定で常駐クロールがONの場合、メイン処理完了後に常駐クロールを再開
-            if (App.UserSettings.AlwaysCrawlMode)
-            {
-                StartAlwaysCrawl();
-            }
-
-            // 一時停止フラグを元に戻す
-            AlwaysCrawlSuspended = false;
-        }
     }
 }
