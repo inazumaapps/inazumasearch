@@ -487,11 +487,11 @@ namespace InazumaSearch.Core
                 {
                     var mainTask = Task.Run(async () =>
                     {
-                    // 常駐クロール停止
-                    await Crawler.StopAlwaysCrawlIfRunningAsync(); // 停止完了まで待機
+                        // 常駐クロール停止
+                        await Crawler.StopAlwaysCrawlIfRunningAsync(); // 停止完了まで待機
 
-                    // 合わせてスタートアップ起動もオフ
-                    UserSettings.SaveStartUp(false);
+                        // 合わせてスタートアップ起動もオフ
+                        UserSettings.SaveStartUp(false);
                         if (File.Exists(StartupShortcutPath)) File.Delete(StartupShortcutPath);
                     });
 
