@@ -11,6 +11,7 @@ namespace InazumaSearch.Forms
     {
         protected DateTime StartingTime { get; set; }
         public Core.Application App { get; set; }
+        protected Action StopStartCallback { get; set; }
         protected Action StoppedCallback { get; set; }
 
         /// <summary>
@@ -23,9 +24,10 @@ namespace InazumaSearch.Forms
             InitializeComponent();
         }
 
-        public CrawlProgressForm(Core.Application app, Action stoppedCallback = null) : this()
+        public CrawlProgressForm(Core.Application app, Action stopStartCallback = null, Action stoppedCallback = null) : this()
         {
             App = app;
+            StopStartCallback = stopStartCallback;
             StoppedCallback = stoppedCallback;
         }
 
@@ -160,12 +162,13 @@ namespace InazumaSearch.Forms
 
         private async void Form_FormClosed(object sender, FormClosedEventArgs e)
         {
+            // ストップ開始時処理を実行
+            if (StopStartCallback != null) StopStartCallback.Invoke();
+
             // 実行中の手動クロール処理があればキャンセル
             if (App.Crawler.ManualCrawlIsRunning)
             {
-                var mainTask = App.Crawler.StopManualCrawlIfRunningAsync();
-                var f = new ProgressForm(mainTask, "クロール処理を中断しています...", 200);
-                f.ShowDialog();
+                await App.Crawler.StopManualCrawlIfRunningAsync();
             }
 
             // 常駐クロールモードであれば、常駐クロールを再開

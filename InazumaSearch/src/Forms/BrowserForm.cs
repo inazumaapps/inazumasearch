@@ -876,11 +876,14 @@ namespace InazumaSearch.Forms
                 }
             }
 
-            ChromeBrowser.EvaluateScriptAsync("$('#CRAWL-START').addClass('disabled'); $('#SETTING-LINK').addClass('disabled');");
+            ChromeBrowser.EvaluateScriptAsync("$('#CRAWL-START').addClass('disabled'); $('#SETTING-LINK').addClass('disabled'); refreshLastCrawlTimeCaption();");
 
-            var f = new CrawlProgressForm(App, () =>
+            var f = new CrawlProgressForm(App, stopStartCallback: () =>
             {
-                ChromeBrowser.EvaluateScriptAsync("$('#CRAWL-START').removeClass('disabled'); $('#SETTING-LINK').removeClass('disabled');");
+                ChromeBrowser.EvaluateScriptAsync("displayCrawlInterruptingMessageIfTakeLongTime();");
+            }, stoppedCallback: () =>
+            {
+                ChromeBrowser.EvaluateScriptAsync("$('#CRAWL-START').removeClass('disabled'); $('#SETTING-LINK').removeClass('disabled'); refreshLastCrawlTimeCaption();");
             })
             {
                 TargetDirPaths = targetDirPaths
