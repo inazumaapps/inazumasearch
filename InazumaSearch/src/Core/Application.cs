@@ -436,7 +436,8 @@ namespace InazumaSearch.Core
             {
                 // 上記以外の場合はXDoc2Txtを使用
                 Logger.Trace($"Extract by xdoc2txt - {path}");
-                return new ExtractFileResult() { Body = XDoc2TxtApi.Extract(path) };
+                var body = XDoc2TxtApi.Extract(path);
+                return new ExtractFileResult() { Body = body };
             }
         }
 
@@ -486,11 +487,11 @@ namespace InazumaSearch.Core
                 {
                     var mainTask = Task.Run(async () =>
                     {
-                        // 常駐クロール停止
-                        await Crawler.StopAlwaysCrawlIfRunningAsync(); // 停止完了まで待機
+                    // 常駐クロール停止
+                    await Crawler.StopAlwaysCrawlIfRunningAsync(); // 停止完了まで待機
 
-                        // 合わせてスタートアップ起動もオフ
-                        UserSettings.SaveStartUp(false);
+                    // 合わせてスタートアップ起動もオフ
+                    UserSettings.SaveStartUp(false);
                         if (File.Exists(StartupShortcutPath)) File.Delete(StartupShortcutPath);
                     });
 
@@ -575,27 +576,27 @@ namespace InazumaSearch.Core
         {
             // 常駐クロールの自動再起動を無効化
             Crawler.DisableAlwaysCrawlAutoReboot(() =>
+        {
+            // メイン処理
+            var mainTask = Task.Run(async () =>
             {
-                // メイン処理
-                var mainTask = Task.Run(async () =>
-                {
-                    // 常駐クロール実行中の場合、停止
-                    await Crawler.StopAlwaysCrawlIfRunningAsync();
+                // 常駐クロール実行中の場合、停止
+                await Crawler.StopAlwaysCrawlIfRunningAsync();
 
-                    // メイン処理を実行
-                    mainProc.Invoke();
-                });
-
-                // 進捗状況ダイアログを開き、メイン処理を実行
-                var pf = new ProgressForm(mainTask, caption);
-                pf.ShowDialog(ownerForm);
-
-                // ユーザー設定で常駐クロールがONの場合、メイン処理完了後に常駐クロールを再開
-                if (UserSettings.AlwaysCrawlMode)
-                {
-                    Crawler.StartAlwaysCrawl();
-                }
+                // メイン処理を実行
+                mainProc.Invoke();
             });
+
+            // 進捗状況ダイアログを開き、メイン処理を実行
+            var pf = new ProgressForm(mainTask, caption);
+            pf.ShowDialog(ownerForm);
+
+            // ユーザー設定で常駐クロールがONの場合、メイン処理完了後に常駐クロールを再開
+            if (UserSettings.AlwaysCrawlMode)
+            {
+                Crawler.StartAlwaysCrawl();
+            }
+        });
         }
 
         /// <summary>
