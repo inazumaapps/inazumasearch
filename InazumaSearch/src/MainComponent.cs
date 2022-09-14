@@ -14,6 +14,11 @@ namespace InazumaSearch
         protected bool MemoryOverflowWarningShowing { get; set; } = false;
         protected bool MemoryOverflowWarningSkipped { get; set; } = false;
 
+        /// <summary>
+        /// 前回のタイマーTick処理時に、「常駐クロールの再起動が必要である」と判定されたかどうか
+        /// </summary>
+        protected bool _requiredAlwaysCrawlRebootOnLastTick = false;
+
         public MainComponent()
         {
             InitializeComponent();
@@ -126,14 +131,30 @@ namespace InazumaSearch
 
             try
             {
-                // 常駐クロールONの設定で、常駐クロールのプロセスが終了しており、かつ中断フラグがOFFなら再起動
-                if (App.UserSettings.AlwaysCrawlMode
-                && !App.Crawler.AlwaysCrawlIsRunning
-                && !App.Crawler.AlwaysCrawlAutoRebootDisabled)
+                // 常駐クロールONの設定で、常駐クロールのプロセスが終了しており、かつ中断フラグがOFFなら再起動が必要
+                // 「再起動が必要」な状態が、少なくとも1 tick以上の期間続いていれば再起動する
+                var requiredReboot = (
+                    App.UserSettings.AlwaysCrawlMode
+                    && !App.Crawler.AlwaysCrawlIsRunning
+                    && !App.Crawler.AlwaysCrawlAutoRebootDisabled
+                );
+
+                if (requiredReboot)
                 {
-                    this.App.Logger.Warn("常駐クローラが終了しているため再起動します...");
-                    App.Crawler.StartAlwaysCrawl();
+                    if (_requiredAlwaysCrawlRebootOnLastTick)
+                    {
+                        // 前回tick時も再起動が必要だった
+                        this.App.Logger.Warn("常駐クローラが終了しているため再起動します...");
+                        App.Crawler.StartAlwaysCrawl();
+                    }
+                    else
+                    {
+                        // 前回tick時はまだ再起動が必要ではなかった（何もしない）
+                    }
                 }
+
+                // 前回実行時フラグの値を再設定
+                _requiredAlwaysCrawlRebootOnLastTick = requiredReboot;
             }
             catch (Exception ex)
             {

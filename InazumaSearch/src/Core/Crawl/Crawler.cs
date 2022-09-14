@@ -330,7 +330,6 @@ namespace InazumaSearch.Core.Crawl
             }
         }
 
-
         /// <summary>
         /// 常駐クロール処理が実行中であれば停止（実行中でなければ何もしない）
         /// </summary>

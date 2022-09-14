@@ -78,7 +78,7 @@
             // ProcessMonitoringTimer
             // 
             this.ProcessMonitoringTimer.Enabled = true;
-            this.ProcessMonitoringTimer.Interval = 10000;
+            this.ProcessMonitoringTimer.Interval = 5000;
             this.ProcessMonitoringTimer.Tick += new System.EventHandler(this.ProcessMonitoringTimer_Tick);
             this.TaskBarContextMenu.ResumeLayout(false);
 

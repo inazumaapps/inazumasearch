@@ -315,5 +315,17 @@ namespace InazumaSearch.Forms
             Util.ShowInformationMessage($"ファイルサイズ: {Util.FormatFileSize(oldSize)} -> {Util.FormatFileSize(newSize)} (差分: {Util.FormatFileSize(oldSize - newSize)})");
 
         }
+
+        private void BtnKillAlwaysCrawl_Click(object sender, EventArgs e)
+        {
+            if (Application.Crawler.AlwaysCrawlIsRunning)
+            {
+                var task = Application.Crawler.StopAlwaysCrawlIfRunningAsync();
+            }
+            else
+            {
+                MessageBox.Show("常駐クロールは起動していません。");
+            }
+        }
     }
 }
