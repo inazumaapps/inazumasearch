@@ -60,6 +60,11 @@
             this.NumDisplayPageSizeForListView = new System.Windows.Forms.NumericUpDown();
             this.NumDisplayPageSizeForNormalView = new System.Windows.Forms.NumericUpDown();
             this.BtnRebootDebugMode = new System.Windows.Forms.Button();
+            this.groupBox4 = new System.Windows.Forms.GroupBox();
+            this.NumDocumentExtractTimeout = new System.Windows.Forms.NumericUpDown();
+            this.label4 = new System.Windows.Forms.Label();
+            this.label5 = new System.Windows.Forms.Label();
+            this.label10 = new System.Windows.Forms.Label();
             this.tblDebug.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.tableLayoutPanel2.SuspendLayout();
@@ -67,6 +72,8 @@
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.NumDisplayPageSizeForListView)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.NumDisplayPageSizeForNormalView)).BeginInit();
+            this.groupBox4.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.NumDocumentExtractTimeout)).BeginInit();
             this.SuspendLayout();
             // 
             // BtnClearDocumentDB
@@ -82,7 +89,7 @@
             // BtnClose
             // 
             this.BtnClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.BtnClose.Location = new System.Drawing.Point(597, 356);
+            this.BtnClose.Location = new System.Drawing.Point(608, 356);
             this.BtnClose.Name = "BtnClose";
             this.BtnClose.Size = new System.Drawing.Size(110, 28);
             this.BtnClose.TabIndex = 4;
@@ -116,7 +123,7 @@
             this.tblDebug.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 38.53659F));
             this.tblDebug.Controls.Add(this.lblDocumentDBSize, 1, 0);
             this.tblDebug.Controls.Add(this.label6, 0, 0);
-            this.tblDebug.Location = new System.Drawing.Point(177, 215);
+            this.tblDebug.Location = new System.Drawing.Point(177, 324);
             this.tblDebug.Name = "tblDebug";
             this.tblDebug.RowCount = 1;
             this.tblDebug.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 47.76119F));
@@ -314,7 +321,7 @@
             // lnkOpenDataFolder
             // 
             this.lnkOpenDataFolder.AutoSize = true;
-            this.lnkOpenDataFolder.Location = new System.Drawing.Point(317, 254);
+            this.lnkOpenDataFolder.Location = new System.Drawing.Point(317, 363);
             this.lnkOpenDataFolder.Name = "lnkOpenDataFolder";
             this.lnkOpenDataFolder.Size = new System.Drawing.Size(95, 12);
             this.lnkOpenDataFolder.TabIndex = 24;
@@ -411,7 +418,7 @@
             // 
             // BtnRebootDebugMode
             // 
-            this.BtnRebootDebugMode.Location = new System.Drawing.Point(12, 321);
+            this.BtnRebootDebugMode.Location = new System.Drawing.Point(144, 361);
             this.BtnRebootDebugMode.Name = "BtnRebootDebugMode";
             this.BtnRebootDebugMode.Size = new System.Drawing.Size(268, 23);
             this.BtnRebootDebugMode.TabIndex = 32;
@@ -419,11 +426,79 @@
             this.BtnRebootDebugMode.UseVisualStyleBackColor = true;
             this.BtnRebootDebugMode.Click += new System.EventHandler(this.BtnRebootDebugMode_Click);
             // 
+            // groupBox4
+            // 
+            this.groupBox4.Controls.Add(this.label10);
+            this.groupBox4.Controls.Add(this.label5);
+            this.groupBox4.Controls.Add(this.label4);
+            this.groupBox4.Controls.Add(this.NumDocumentExtractTimeout);
+            this.groupBox4.Location = new System.Drawing.Point(14, 221);
+            this.groupBox4.Name = "groupBox4";
+            this.groupBox4.Size = new System.Drawing.Size(398, 59);
+            this.groupBox4.TabIndex = 32;
+            this.groupBox4.TabStop = false;
+            this.groupBox4.Text = "文書ファイル（Excel, Word, PDFなど）の内容抽出処理";
+            // 
+            // NumDocumentExtractTimeout
+            // 
+            this.NumDocumentExtractTimeout.Increment = new decimal(new int[] {
+            5,
+            0,
+            0,
+            0});
+            this.NumDocumentExtractTimeout.Location = new System.Drawing.Point(87, 25);
+            this.NumDocumentExtractTimeout.Maximum = new decimal(new int[] {
+            99999,
+            0,
+            0,
+            0});
+            this.NumDocumentExtractTimeout.Minimum = new decimal(new int[] {
+            5,
+            0,
+            0,
+            0});
+            this.NumDocumentExtractTimeout.Name = "NumDocumentExtractTimeout";
+            this.NumDocumentExtractTimeout.Size = new System.Drawing.Size(73, 19);
+            this.NumDocumentExtractTimeout.TabIndex = 1;
+            this.NumDocumentExtractTimeout.Value = new decimal(new int[] {
+            10,
+            0,
+            0,
+            0});
+            this.NumDocumentExtractTimeout.ValueChanged += new System.EventHandler(this.NumDocumentExtractTimeout_ValueChanged);
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(165, 27);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(164, 12);
+            this.label4.TabIndex = 31;
+            this.label4.Text = "秒経っても完了しなければスキップ";
+            // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Location = new System.Drawing.Point(14, 52);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(0, 12);
+            this.label5.TabIndex = 29;
+            // 
+            // label10
+            // 
+            this.label10.AutoSize = true;
+            this.label10.Location = new System.Drawing.Point(9, 27);
+            this.label10.Name = "label10";
+            this.label10.Size = new System.Drawing.Size(72, 12);
+            this.label10.TabIndex = 32;
+            this.label10.Text = "1ファイルあたり";
+            // 
             // DipswForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(737, 404);
+            this.ClientSize = new System.Drawing.Size(748, 404);
+            this.Controls.Add(this.groupBox4);
             this.Controls.Add(this.BtnRebootDebugMode);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.lnkOpenDataFolder);
@@ -451,6 +526,9 @@
             this.groupBox1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.NumDisplayPageSizeForListView)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.NumDisplayPageSizeForNormalView)).EndInit();
+            this.groupBox4.ResumeLayout(false);
+            this.groupBox4.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.NumDocumentExtractTimeout)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -488,6 +566,11 @@
         private System.Windows.Forms.NumericUpDown NumDisplayPageSizeForListView;
         private System.Windows.Forms.NumericUpDown NumDisplayPageSizeForNormalView;
         private System.Windows.Forms.Button BtnRebootDebugMode;
+        private System.Windows.Forms.GroupBox groupBox4;
+        private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.NumericUpDown NumDocumentExtractTimeout;
+        private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.Label label10;
     }
 }
 

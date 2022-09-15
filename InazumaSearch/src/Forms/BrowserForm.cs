@@ -265,7 +265,7 @@ namespace InazumaSearch.Forms
                 OwnerForm.InvokeOnUIThread((f) =>
                 {
                     // クロール中の場合は停止してから処理
-                    App.InvokeAfterSuspendingCrawl(f, "DBのラベル情報を更新中...", () =>
+                    App.InvokeWithProgressFormWithoutAlwaysCrawl(f, "DBのラベル情報を更新中...", () =>
                     {
                         var folders = App.UserSettings.TargetFolders;
                         var folder = folders.First(f2 => f2.Path == path);
@@ -882,11 +882,14 @@ namespace InazumaSearch.Forms
                 }
             }
 
-            ChromeBrowser.EvaluateScriptAsync("$('#CRAWL-START').addClass('disabled'); $('#SETTING-LINK').addClass('disabled');");
+            ChromeBrowser.EvaluateScriptAsync("$('#CRAWL-START').addClass('disabled'); $('#SETTING-LINK').addClass('disabled'); refreshLastCrawlTimeCaption();");
 
-            var f = new CrawlProgressForm(App, () =>
+            var f = new CrawlProgressForm(App, stopStartCallback: () =>
             {
-                ChromeBrowser.EvaluateScriptAsync("$('#CRAWL-START').removeClass('disabled'); $('#SETTING-LINK').removeClass('disabled');");
+                ChromeBrowser.EvaluateScriptAsync("displayCrawlInterruptingMessageIfTakeLongTime();");
+            }, stoppedCallback: () =>
+            {
+                ChromeBrowser.EvaluateScriptAsync("$('#CRAWL-START').removeClass('disabled'); $('#SETTING-LINK').removeClass('disabled'); refreshLastCrawlTimeCaption();");
             })
             {
                 TargetDirPaths = targetDirPaths

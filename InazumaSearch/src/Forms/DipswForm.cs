@@ -27,7 +27,7 @@ namespace InazumaSearch.Forms
         {
             if (Util.Confirm(this, "クロール時に収集した文書データと、文書のサムネイル画像をクリアします。\nよろしいですか？", defaultNo: true))
             {
-                Application.InvokeAfterSuspendingCrawl(this, "文書データをクリアしています...", () =>
+                Application.InvokeWithProgressFormWithoutAlwaysCrawl(this, "文書データをクリアしています...", () =>
                 {
                     Application.GM.Truncate(Table.Documents);
                     Application.GM.Truncate(Table.DocumentsIndex);
@@ -42,11 +42,9 @@ namespace InazumaSearch.Forms
         {
             if (Util.Confirm(this, "ユーザー設定を含む全てのデータを初期化します。\nこの操作は取り消せません。\n\nよろしいですか？", defaultNo: true))
             {
-                var t = Task.Run(async () =>
+                // 常駐クロール実行中の場合、中断した上で実行する
+                Application.InvokeWithProgressFormWithoutAlwaysCrawl(this, "全てのデータを初期化しています...", () =>
                 {
-                    // 常駐クロール実行中の場合、停止
-                    await Application.Crawler.StopAlwaysCrawlIfRunningAsync();
-
                     // Groongaを停止し、データをクリアして再起動
                     Application.GM.Shutdown();
                     CleanDBFiles();
@@ -59,9 +57,8 @@ namespace InazumaSearch.Forms
                     var newSetting = new UserSetting.Store(Application.UserSettings.SettingFilePath);
                     newSetting.Save();
                     Application.UserSettings.Load();
+
                 });
-                var f = new ProgressForm(t, "全てのデータを初期化しています...");
-                f.ShowDialog();
                 UpdateLabels();
             }
         }
@@ -113,6 +110,7 @@ namespace InazumaSearch.Forms
 
             NumDisplayPageSizeForNormalView.Value = Application.UserSettings.DisplayPageSizeForNormalView;
             NumDisplayPageSizeForListView.Value = Application.UserSettings.DisplayPageSizeForListView;
+            NumDocumentExtractTimeout.Value = Application.UserSettings.DocumentExtractTimeoutSecond;
 
             // 文書データベース保存先関連のボタン押下可否を更新
             DocumentDBDirOperationDisplayState();
@@ -322,9 +320,17 @@ namespace InazumaSearch.Forms
             Application.UserSettings.SaveDisplayPageSizeForListView((int)numControl.Value);
         }
 
+        private void NumDocumentExtractTimeout_ValueChanged(object sender, EventArgs e)
+        {
+            var numControl = (NumericUpDown)sender;
+            Application.UserSettings.SaveDocumentExtractTimeoutSecond((int)numControl.Value);
+
+        }
+
         private void BtnRebootDebugMode_Click(object sender, EventArgs e)
         {
             Core.Application.Restart(forceDebug: true);
         }
+
     }
 }

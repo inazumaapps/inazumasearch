@@ -373,6 +373,8 @@ function updateFolderListOnCrawlModalAsync() {
     });
 }
 
+let crawlInterruptingMessageHandler = null;
+
 // クロール開始
 function startCrawl(targetFolders = null) {
     // 警告エリアを非表示にする
@@ -380,19 +382,24 @@ function startCrawl(targetFolders = null) {
     $('.search-button').removeClass('disabled');
 
     api.crawlStart(JSON.stringify(targetFolders));
-
-    // 0.5秒後、1秒後、1.5秒後、2秒後にそれぞれ最終クロール日時の表示を更新
-    // （最終クロール日時の更新は別スレッドで実行されるため、いつ完了するかが分からない）
-    for (var delay = 500; delay <= 2000; delay += 500) {
-        setTimeout(function () {
-            refreshLastCrawlTimeCaption();
-        }, delay);
-    }
 }
 
 // 最終クロール日時の表示を更新
 function refreshLastCrawlTimeCaption() {
+    // クロール処理中断中メッセージの表示を予約しているならば、クリア
+    if (crawlInterruptingMessageHandler !== null) {
+        clearTimeout(crawlInterruptingMessageHandler);
+        crawlInterruptingMessageHandler = null;
+    }
+
     $('#LAST-CRAWL-TIME-CAPTION').text(api.getLastCrawlTimeCaption());
+}
+
+// 処理時間がかかるならば、クロール処理中断中メッセージを表示
+function displayCrawlInterruptingMessageIfTakeLongTime() {
+    crawlInterruptingMessageHandler = setTimeout(function () {
+        $('#LAST-CRAWL-TIME-CAPTION').text('クロール処理を中断しています...');
+    }, 500);
 }
 
 cols = document.querySelectorAll('.droppable');

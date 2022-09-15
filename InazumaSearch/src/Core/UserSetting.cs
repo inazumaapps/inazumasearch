@@ -53,6 +53,7 @@ namespace InazumaSearch.Core
             public virtual List<string> LastExcludingDirPaths { get; set; } = null;
             public virtual int DisplayPageSizeForNormalView { get; set; } = 20;
             public virtual int DisplayPageSizeForListView { get; set; } = 100;
+            public virtual int DocumentExtractTimeoutSecond { get; set; } = 15;
         }
 
         public class Store
@@ -250,6 +251,20 @@ namespace InazumaSearch.Core
             public void SaveDisplayPageSizeForListView(int value)
             {
                 PlainData.DisplayPageSizeForListView = value;
+                Save();
+            }
+
+            /// <summary>
+            /// 文書データ抽出処理のタイムアウト時間（秒）
+            /// </summary>
+            public int DocumentExtractTimeoutSecond { get { return PlainData.DocumentExtractTimeoutSecond; } }
+
+            /// <summary>
+            /// 文書データ抽出処理のタイムアウト時間を設定
+            /// </summary>
+            public void SaveDocumentExtractTimeoutSecond(int value)
+            {
+                PlainData.DocumentExtractTimeoutSecond = value;
                 Save();
             }
 

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using InazumaSearch.Core.Crawl;
 using Microsoft.WindowsAPICodePack.Taskbar;
@@ -11,6 +12,7 @@ namespace InazumaSearch.Forms
     {
         protected DateTime StartingTime { get; set; }
         public Core.Application App { get; set; }
+        protected Action StopStartCallback { get; set; }
         protected Action StoppedCallback { get; set; }
 
         /// <summary>
@@ -23,9 +25,10 @@ namespace InazumaSearch.Forms
             InitializeComponent();
         }
 
-        public CrawlProgressForm(Core.Application app, Action stoppedCallback = null) : this()
+        public CrawlProgressForm(Core.Application app, Action stopStartCallback = null, Action stoppedCallback = null) : this()
         {
             App = app;
+            StopStartCallback = stopStartCallback;
             StoppedCallback = stoppedCallback;
         }
 
@@ -35,7 +38,7 @@ namespace InazumaSearch.Forms
         }
 
 
-        private async void Form_Shown(object sender, EventArgs e)
+        private void Form_Shown(object sender, EventArgs e)
         {
             ProgressBar.Enabled = true;
             ProgressBar.Style = ProgressBarStyle.Marquee;
@@ -46,6 +49,16 @@ namespace InazumaSearch.Forms
             // 最終クロール情報を保存
             App.UserSettings.SaveOnCrawl(DateTime.Now, TargetDirPaths);
 
+            // 常駐クロールの自動再起動を無効化した状態で、クロールのメイン処理を実行
+            App.Crawler.DisableAlwaysCrawlAutoRebootAsync(ExecuteCrawl());
+        }
+
+        /// <summary>
+        /// クロールのメイン処理を実行
+        /// </summary>
+        /// <returns></returns>
+        private async Task ExecuteCrawl()
+        {
             // 常駐クロール中であれば、いったん常駐クロールを停止
             if (App.Crawler.AlwaysCrawlIsRunning)
             {
@@ -160,6 +173,9 @@ namespace InazumaSearch.Forms
 
         private async void Form_FormClosed(object sender, FormClosedEventArgs e)
         {
+            // ストップ開始時処理を実行
+            if (StopStartCallback != null) StopStartCallback.Invoke();
+
             // 実行中の手動クロール処理があればキャンセル
             if (App.Crawler.ManualCrawlIsRunning)
             {

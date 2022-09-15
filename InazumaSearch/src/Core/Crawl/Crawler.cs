@@ -63,6 +63,11 @@ namespace InazumaSearch.Core.Crawl
         public virtual bool AlwaysCrawlIsRunning { get { return AlwaysCrawlState != null && AlwaysCrawlState.Running; } }
 
         /// <summary>
+        /// 常駐クロールプロセスの自動再起動停止フラグ
+        /// </summary>
+        public virtual bool AlwaysCrawlAutoRebootDisabled { get; protected set; } = false;
+
+        /// <summary>
         /// 手動クロールの処理状態を表すオブジェクト（一度も実行していない場合はnull）
         /// </summary>
         protected virtual CrawlState ManualCrawlState { get; set; } = null;
@@ -325,7 +330,6 @@ namespace InazumaSearch.Core.Crawl
             }
         }
 
-
         /// <summary>
         /// 常駐クロール処理が実行中であれば停止（実行中でなければ何もしない）
         /// </summary>
@@ -338,6 +342,46 @@ namespace InazumaSearch.Core.Crawl
 
                 // キャンセルが完了するまで待機
                 await AlwaysCrawlState.Task;
+            }
+        }
+
+        /// <summary>
+        /// 常駐クロールプロセスの自動再起動を無効化した状態で指定処理を実行する
+        /// </summary>
+        /// <param name="mainProc">実行する処理</param>
+        public virtual void DisableAlwaysCrawlAutoReboot(Action mainProc)
+        {
+            var oldFlag = AlwaysCrawlAutoRebootDisabled;
+            try
+            {
+                Logger.Debug("常駐クロールプロセスの自動再起動を無効化");
+                AlwaysCrawlAutoRebootDisabled = true;
+                mainProc.Invoke();
+            }
+            finally
+            {
+                Logger.Debug("常駐クロールプロセスの自動再起動を復帰 (value = {0})", oldFlag);
+                AlwaysCrawlAutoRebootDisabled = oldFlag;
+            }
+        }
+
+        /// <summary>
+        /// 常駐クロールプロセスの自動再起動を無効化した状態で、指定した非同期処理を実行する
+        /// </summary>
+        /// <param name="mainProc">実行する処理</param>
+        public virtual async void DisableAlwaysCrawlAutoRebootAsync(Task mainProc)
+        {
+            var oldFlag = AlwaysCrawlAutoRebootDisabled;
+            try
+            {
+                Logger.Debug("常駐クロールプロセスの自動再起動を無効化");
+                AlwaysCrawlAutoRebootDisabled = true;
+                await mainProc;
+            }
+            finally
+            {
+                Logger.Debug("常駐クロールプロセスの自動再起動を復帰 (value = {0})", oldFlag);
+                AlwaysCrawlAutoRebootDisabled = oldFlag;
             }
         }
     }
