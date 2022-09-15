@@ -235,7 +235,7 @@ namespace InazumaSearch.Core
             UserSettings = UserSetting.Store.Setup(UserSettingPath);
 
             // Groongaの起動 (Groongaが存在しなければ終了)
-            GM = new Groonga.Manager(DBDirPath, LogDirPath);
+            GM = new Groonga.Manager(DBDirPath, LogDirPath, DebugMode);
             if (!File.Exists(GM.GroongaExePath))
             {
                 Util.ShowErrorMessage("groonga.exeが見つかりませんでした。");
@@ -460,7 +460,8 @@ namespace InazumaSearch.Core
             {
                 // 上記以外の場合はXDoc2Txtを使用
                 Logger.Trace($"Extract by xdoc2txt - {path}");
-                return new ExtractFileResult() { Body = XDoc2TxtApi.Extract(path) };
+                var body = XDoc2TxtApi.Extract(path, UserSettings.DocumentExtractTimeoutSecond);
+                return new ExtractFileResult() { Body = body };
             }
         }
 
@@ -491,6 +492,9 @@ namespace InazumaSearch.Core
         {
             UserSettings.SaveAlwaysCrawlMode(flag);
 
+            // 常駐クロールの自動再起動を無効化
+            Crawler.DisableAlwaysCrawlAutoReboot(() =>
+            {
             // 常駐クロールを起動or停止
             if (flag)
             {
@@ -525,6 +529,7 @@ namespace InazumaSearch.Core
                 }
 
             }
+            });
         }
 
         /// <summary>
@@ -587,23 +592,26 @@ namespace InazumaSearch.Core
         }
 
         /// <summary>
-        /// 指定処理の実行。
-        /// 現在実行中のクロール処理がある場合、そのクロールを停止したうえで指定処理を実行し、完了後に必要に応じて常駐クロールを再開する
+        /// 進捗フォームを表示した状態で、指定処理を実行。
+        /// 現在実行中の常駐クロール処理がある場合、その常駐クロールを停止したうえで指定処理を実行し、完了後に必要に応じて常駐クロールを再開する
         /// （DB全体に影響を与える更新操作などの実行時に使用）
         /// </summary>
-        public virtual void InvokeAfterSuspendingCrawl(IWin32Window ownerForm, string caption, Action mainProc)
+        public virtual void InvokeWithProgressFormWithoutAlwaysCrawl(IWin32Window ownerForm, string caption, Action mainProc)
         {
-            // 進捗状況ダイアログを開いた上で実行する処理
+            // 常駐クロールの自動再起動を無効化
+            Crawler.DisableAlwaysCrawlAutoReboot(() =>
+        {
+            // メイン処理
             var mainTask = Task.Run(async () =>
             {
                 // 常駐クロール実行中の場合、停止
                 await Crawler.StopAlwaysCrawlIfRunningAsync();
 
-                // メイン処理実行
+                // メイン処理を実行
                 mainProc.Invoke();
             });
 
-            // 進捗状況ダイアログを開き、上記処理を実行
+            // 進捗状況ダイアログを開き、メイン処理を実行
             var pf = new ProgressForm(mainTask, caption);
             pf.ShowDialog(ownerForm);
 
@@ -612,6 +620,7 @@ namespace InazumaSearch.Core
             {
                 Crawler.StartAlwaysCrawl();
             }
+        });
         }
 
         /// <summary>
@@ -625,6 +634,9 @@ namespace InazumaSearch.Core
                 // UI側スレッドで処理実行
                 ownerForm.Invoke((MethodInvoker)delegate
                 {
+                    // 常駐クロールの自動再起動を無効化
+                    Crawler.DisableAlwaysCrawlAutoReboot(() =>
+                    {
                     // 実行中の常駐クロール処理を中止
                     var stoppingTask = Crawler.StopAlwaysCrawlIfRunningAsync();
                     var pf = new ProgressForm(stoppingTask, "常駐クロールを再起動中...");
@@ -632,6 +644,7 @@ namespace InazumaSearch.Core
 
                     // 常駐クロール再開
                     Crawler.StartAlwaysCrawl();
+                });
                 });
             }
         }
@@ -990,7 +1003,7 @@ namespace InazumaSearch.Core
             //コマンドライン引数を作成する
             var cmd = "\"" + processId.ToString() + "\" " +
                 "\"" + waitTime.ToString() + "\" " +
-                Environment.CommandLine.Replace("InazumaSearch.exe", "InazumaSearch_Debug.exe");
+                (forceDebug ? Environment.CommandLine.Replace("InazumaSearch.exe", "InazumaSearch_Debug.exe") : Environment.CommandLine);
             //再起動用アプリケーションのパスを取得する
             var restartPath = Path.Combine(
                 System.Windows.Forms.Application.StartupPath, "restart.exe");

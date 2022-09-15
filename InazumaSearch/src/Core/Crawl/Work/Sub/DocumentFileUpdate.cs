@@ -182,6 +182,12 @@ namespace InazumaSearch.Core.Crawl.Work
                 var bodyLengthCaption = extRes.Body != null ? extRes.Body.Length.ToString() : "不明";
                 Logger.Debug($"Extract OK - {FilePath} (title: {extRes.Title}, body length: {bodyLengthCaption})");
             }
+            catch (TimeoutException ex)
+            {
+                // タイムアウト発生時はスキップ
+                Logger.Debug($"Extract Timeout - {FilePath}");
+                return false;
+            }
             catch (OperationCanceledException ex)
             {
                 // キャンセル操作の場合は外に投げる
@@ -190,7 +196,7 @@ namespace InazumaSearch.Core.Crawl.Work
             catch (Exception ex)
             {
                 // 例外発生時はスキップ
-                Logger.Warn("Crawl Extract Error - {0}", FilePath);
+                Logger.Warn($"Crawl Extract Error - {FilePath}");
                 Logger.Warn(ex.ToString());
 
                 // 動作ログ出力

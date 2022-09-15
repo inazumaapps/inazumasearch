@@ -131,7 +131,7 @@ namespace InazumaSearch.Forms
             var sw2 = new Stopwatch();
 
             sw1.Start();
-            var text1 = XDoc2TxtApi.Extract(TxtPath.Text);
+            var text1 = XDoc2TxtApi.Extract(TxtPath.Text, Application.UserSettings.DocumentExtractTimeoutSecond);
             sw1.Stop();
             sw2.Start();
             //var text2 = new ExcelTextExtractor().ExtractToString(TxtPath.Text);
@@ -314,6 +314,18 @@ namespace InazumaSearch.Forms
 
             Util.ShowInformationMessage($"ファイルサイズ: {Util.FormatFileSize(oldSize)} -> {Util.FormatFileSize(newSize)} (差分: {Util.FormatFileSize(oldSize - newSize)})");
 
+        }
+
+        private void BtnKillAlwaysCrawl_Click(object sender, EventArgs e)
+        {
+            if (Application.Crawler.AlwaysCrawlIsRunning)
+            {
+                var task = Application.Crawler.StopAlwaysCrawlIfRunningAsync();
+            }
+            else
+            {
+                MessageBox.Show("常駐クロールは起動していません。");
+            }
         }
     }
 }

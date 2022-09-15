@@ -41,14 +41,26 @@ namespace InazumaSearch.Groonga
         public string DBDirPath { get; set; }
         public string DBPath { get { return Path.Combine(DBDirPath, DB_NAME); } }
 
+        /// <summary>
+        /// デバッグ起動フラグ（通常はアプリケーションの値を引き継ぐ）
+        /// </summary>
+        public bool DebugMode { get; protected set; }
+
         public Process Proc { get; protected set; }
 
-        public Manager(string dbDirPath, string logDirPath)
+        /// <summary>
+        /// コンストラクタ
+        /// </summary>
+        /// <param name="dbDirPath">DBディレクトリパス</param>
+        /// <param name="logDirPath">ログディレクトリパス</param>
+        /// <param name="debugMode">デバッグ起動フラグ（通常はアプリケーションの値を引き継ぐ）</param>
+        public Manager(string dbDirPath, string logDirPath, bool debugMode)
         {
             Booting = false;
 
             DBDirPath = dbDirPath;
             LogDirPath = logDirPath;
+            DebugMode = debugMode;
 
             Logger = NLog.LogManager.GetLogger(Core.LoggerName.Groonga);
         }
@@ -80,11 +92,10 @@ namespace InazumaSearch.Groonga
             Proc = new Process();
 
             Proc.StartInfo.FileName = GroongaExePath;
-            Proc.StartInfo.Arguments = string.Format("--log-level debug --log-path \"{0}\" --log-level info --query-log-path \"{1}\" {2} \"{3}\""
-                                                   , Path.Combine(LogDirPath, "groonga.log")
-                                                   , Path.Combine(LogDirPath, "groonga_query.log")
-                                                   , (newMode ? "-n" : "")
-                                                   , DBPath);
+            var logPath = Path.Combine(LogDirPath, "groonga.log");
+            var queryLogPath = Path.Combine(LogDirPath, "groonga_query.log");
+            var debugOnlyOptions = (DebugMode ? $"--log-level debug --log-path \"{logPath}\" --query-log-path \"{queryLogPath}\" " : "");
+            Proc.StartInfo.Arguments = $"{debugOnlyOptions} {(newMode ? "-n" : "")} \"{DBPath}\"";
             Proc.StartInfo.UseShellExecute = false;
             Proc.StartInfo.StandardOutputEncoding = Encoding.UTF8;
             Proc.StartInfo.StandardErrorEncoding = Encoding.UTF8;

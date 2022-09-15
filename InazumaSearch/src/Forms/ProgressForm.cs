@@ -11,15 +11,21 @@ namespace InazumaSearch.Forms
         public Task MainTask { get; set; }
         public string Message { get; set; }
 
+        /// <summary>
+        /// 最小待機時間（単位：ms）。ここで指定した時間は待つ
+        /// </summary>
+        public int MinimumWait { get; set; }
+
         public ProgressForm()
         {
             InitializeComponent();
         }
 
-        public ProgressForm(Task mainTask, string message) : this()
+        public ProgressForm(Task mainTask, string message, int minimumWait = 1000) : this()
         {
             MainTask = mainTask;
             Message = message;
+            MinimumWait = minimumWait;
         }
 
 
@@ -35,7 +41,7 @@ namespace InazumaSearch.Forms
             StartingTime = DateTime.Now;
 
             await MainTask;
-            await Task.Run(() => Thread.Sleep(1000)); // 必ず1秒は待つ (ダイアログが一瞬で閉じることを避けるため
+            await Task.Run(() => Thread.Sleep(MinimumWait)); // 必ず指定時間は待つ (ダイアログが一瞬で閉じることを避けるため）
             Close();
         }
 
