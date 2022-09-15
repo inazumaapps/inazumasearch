@@ -219,7 +219,7 @@ namespace InazumaSearch.Core
             UserSettings = UserSetting.Store.Setup(UserSettingPath);
 
             // Groongaの起動 (Groongaが存在しなければ終了)
-            GM = new Groonga.Manager(DBDirPath, LogDirPath);
+            GM = new Groonga.Manager(DBDirPath, LogDirPath, DebugMode);
             if (!File.Exists(GM.GroongaExePath))
             {
                 Util.ShowErrorMessage("groonga.exeが見つかりませんでした。");
@@ -436,7 +436,7 @@ namespace InazumaSearch.Core
             {
                 // 上記以外の場合はXDoc2Txtを使用
                 Logger.Trace($"Extract by xdoc2txt - {path}");
-                var body = XDoc2TxtApi.Extract(path);
+                var body = XDoc2TxtApi.Extract(path, UserSettings.DocumentExtractTimeoutSecond);
                 return new ExtractFileResult() { Body = body };
             }
         }

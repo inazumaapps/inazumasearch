@@ -131,7 +131,7 @@ namespace InazumaSearch.Forms
             var sw2 = new Stopwatch();
 
             sw1.Start();
-            var text1 = XDoc2TxtApi.Extract(TxtPath.Text);
+            var text1 = XDoc2TxtApi.Extract(TxtPath.Text, Application.UserSettings.DocumentExtractTimeoutSecond);
             sw1.Stop();
             sw2.Start();
             //var text2 = new ExcelTextExtractor().ExtractToString(TxtPath.Text);

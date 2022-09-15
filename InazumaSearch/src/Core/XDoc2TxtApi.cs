@@ -13,9 +13,10 @@ namespace InazumaSearch.Core
         /// xdoc2txtを使って抽出する
         /// </summary>
         /// <param name="path">抽出対象のファイル</param>
+        /// <param name="timeoutSecond">タイムアウト時間（秒）</param>
         /// <returns>抽出結果の文字列</returns>
         /// <exception cref="TimeoutException">xdoc2txtの処理がタイムアウトした</exception>
-        public static string Extract(string path)
+        public static string Extract(string path, int timeoutSecond)
         {
             var buf = new StringBuilder();
 
@@ -33,8 +34,8 @@ namespace InazumaSearch.Core
                 p.Start();
                 p.BeginOutputReadLine(); // 子プロセスの出力読み込み開始
 
-                // 10秒間待つ
-                if (p.WaitForExit(10000))
+                // 指定秒数待つ
+                if (p.WaitForExit(timeoutSecond * 1000))
                 {
                     var output = buf.ToString();
                     return (output ?? "");

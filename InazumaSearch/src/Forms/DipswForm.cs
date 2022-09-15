@@ -110,6 +110,7 @@ namespace InazumaSearch.Forms
 
             NumDisplayPageSizeForNormalView.Value = Application.UserSettings.DisplayPageSizeForNormalView;
             NumDisplayPageSizeForListView.Value = Application.UserSettings.DisplayPageSizeForListView;
+            NumDocumentExtractTimeout.Value = Application.UserSettings.DocumentExtractTimeoutSecond;
 
             // 文書データベース保存先関連のボタン押下可否を更新
             DocumentDBDirOperationDisplayState();
@@ -319,9 +320,17 @@ namespace InazumaSearch.Forms
             Application.UserSettings.SaveDisplayPageSizeForListView((int)numControl.Value);
         }
 
+        private void NumDocumentExtractTimeout_ValueChanged(object sender, EventArgs e)
+        {
+            var numControl = (NumericUpDown)sender;
+            Application.UserSettings.SaveDocumentExtractTimeoutSecond((int)numControl.Value);
+
+        }
+
         private void BtnRebootDebugMode_Click(object sender, EventArgs e)
         {
             Core.Application.Restart(forceDebug: true);
         }
+
     }
 }
