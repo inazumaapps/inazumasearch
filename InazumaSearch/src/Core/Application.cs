@@ -971,7 +971,7 @@ namespace InazumaSearch.Core
             //コマンドライン引数を作成する
             var cmd = "\"" + processId.ToString() + "\" " +
                 "\"" + waitTime.ToString() + "\" " +
-                Environment.CommandLine.Replace("InazumaSearch.exe", "InazumaSearch_Debug.exe");
+                (forceDebug ? Environment.CommandLine.Replace("InazumaSearch.exe", "InazumaSearch_Debug.exe") : Environment.CommandLine);
             //再起動用アプリケーションのパスを取得する
             var restartPath = Path.Combine(
                 System.Windows.Forms.Application.StartupPath, "restart.exe");
