@@ -627,6 +627,16 @@ namespace InazumaSearch.Forms
                 });
             }
 
+            /// <summary>
+            /// 検索処理時間表示ON/OFFの変更
+            /// </summary>
+            /// <param name="checked">変更後の値</param>
+            public void ChangeDisplaySearchProcessTime(bool @checked)
+            {
+                App.UserSettings.SaveDisplaySearchProcessTime(@checked);
+            }
+
+
         }
 
         public void InitializeChromium(string htmlDirPath)
