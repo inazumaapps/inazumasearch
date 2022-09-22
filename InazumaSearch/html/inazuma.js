@@ -70,6 +70,9 @@ function executeSearch(
 
         $('#SEARCH-RESULT-MESSAGE').text(data.searchResultMessage);
         $('#SEARCH-RESULT-SUB-MESSAGE').text(data.searchResultSubMessage);
+        if (userSetting.DisplaySearchProcessTime) {
+            $('#SEARCH-PROCESS-TIME').text("(" + data.processTime.toFixed(2) + "秒)");
+        }
 
         // 全結果の表示が完了していれば、完了フラグを立てる
         if (data.nHits === 0 || data.pageSize >= data.nHits){

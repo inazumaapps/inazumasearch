@@ -54,6 +54,7 @@ namespace InazumaSearch.Core
             public virtual int DisplayPageSizeForNormalView { get; set; } = 20;
             public virtual int DisplayPageSizeForListView { get; set; } = 100;
             public virtual int DocumentExtractTimeoutSecond { get; set; } = 15;
+            public virtual bool DisplaySearchProcessTime { get; set; } = false;
         }
 
         public class Store
@@ -267,6 +268,21 @@ namespace InazumaSearch.Core
                 PlainData.DocumentExtractTimeoutSecond = value;
                 Save();
             }
+
+            /// <summary>
+            /// 検索処理時間の表示
+            /// </summary>
+            public bool DisplaySearchProcessTime { get { return PlainData.DisplaySearchProcessTime; } }
+
+            /// <summary>
+            /// 検索処理時間の表示ON/OFFの設定
+            /// </summary>
+            public void SaveDisplaySearchProcessTime(bool value)
+            {
+                PlainData.DisplaySearchProcessTime = value;
+                Save();
+            }
+
 
             #endregion
 

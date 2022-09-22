@@ -197,7 +197,6 @@ namespace InazumaSearch.Forms
             {
                 App.ExecuteInExceptionCatcher(() =>
                 {
-
                     var folders = App.UserSettings.TargetFolders;
                     folders.Remove(folders.First(f => f.Path == path));
                     App.UserSettings.SaveTargetFolders(folders);
@@ -571,10 +570,11 @@ namespace InazumaSearch.Forms
                         return null;
                     }
 
+                    // 処理時間を結果オブジェクトにセット
+                    ret.processTime = sw.Elapsed.TotalSeconds;
 
                     // 動作ログ出力
                     OperationLog.Add(OperationLog.LogType.Search, additionalMessage: $"検索キーワード={queryKeyword}", processTime: sw.Elapsed);
-
 
                     // 結果の返却
                     return JsonConvert.SerializeObject(ret);
@@ -632,6 +632,16 @@ namespace InazumaSearch.Forms
                     App.ChangeStartUp(f, @checked);
                 });
             }
+
+            /// <summary>
+            /// 検索処理時間表示ON/OFFの変更
+            /// </summary>
+            /// <param name="checked">変更後の値</param>
+            public void ChangeDisplaySearchProcessTime(bool @checked)
+            {
+                App.UserSettings.SaveDisplaySearchProcessTime(@checked);
+            }
+
 
         }
 

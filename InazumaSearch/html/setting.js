@@ -120,6 +120,7 @@ $(function () {
     $('#ALWAYS-CRAWL-MODE').prop('checked', userSettings.AlwaysCrawlMode);
     $('#STARTUP').prop('checked', userSettings.StartUp);
     updateStartUpEnabled();
+    $('#DISPLAY-SEARCH-PROCESS-TIME').prop('checked', userSettings.DisplaySearchProcessTime);
 
     // ポータブルモードならスタートアップ起動の設定は不可
     if (api.isPortableMode()) {
@@ -150,6 +151,9 @@ $(function () {
     });
     $('#STARTUP').on('change', function () {
         asyncApi.changeStartUp($(this).is(':checked'));
+    });
+    $('#DISPLAY-SEARCH-PROCESS-TIME').on('change', function () {
+        asyncApi.changeDisplaySearchProcessTime($(this).is(':checked'));
     });
 
     $('ul.collection').on('click', 'a.delete-link', function () {
