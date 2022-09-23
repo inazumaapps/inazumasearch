@@ -4,6 +4,7 @@ using System.Runtime.Remoting.Channels;
 using System.Runtime.Remoting.Channels.Ipc;
 using Alphaleonis.Win32.Filesystem;
 using InazumaSearch.Core;
+using InazumaSearch.Forms;
 using InazumaSearch.src.Forms;
 
 namespace InazumaSearch
@@ -32,6 +33,9 @@ namespace InazumaSearch
             var nlogConfPath =
                 Path.Combine(System.Windows.Forms.Application.StartupPath, "nlogconf", (app.DebugMode ? @"Debug.config" : @"Release.config"));
             NLog.LogManager.Configuration = new NLog.Config.XmlLoggingConfiguration(nlogConfPath);
+
+            var logForm = new LogForm();
+            logForm.Show();
 
             // Inazuma Searchアプリケーションクラスの起動
             var bootSuccess = app.Boot();
