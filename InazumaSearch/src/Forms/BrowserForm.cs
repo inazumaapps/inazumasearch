@@ -894,7 +894,7 @@ namespace InazumaSearch.Forms
 
             ChromeBrowser.EvaluateScriptAsync("$('#CRAWL-START').addClass('disabled'); $('#SETTING-LINK').addClass('disabled'); refreshLastCrawlTimeCaption();");
 
-            var f = new CrawlProgressForm(App, stopStartCallback: () =>
+            var f = new CrawlProgressForm(App, cancelRequestingCallback: () =>
             {
                 ChromeBrowser.EvaluateScriptAsync("displayCrawlInterruptingMessageIfTakeLongTime();");
             }, stoppedCallback: () =>

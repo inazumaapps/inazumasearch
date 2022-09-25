@@ -12,7 +12,15 @@ namespace InazumaSearch.Forms
     {
         protected DateTime StartingTime { get; set; }
         public Core.Application App { get; set; }
-        protected Action StopStartCallback { get; set; }
+
+        /// <summary>
+        /// 処理の中断を要求したときに実行する処理
+        /// </summary>
+        protected Action CancelRequestingCallback { get; set; }
+
+        /// <summary>
+        /// クロール処理が終了したときに実行する処理（完了 or キャンセルは問わない）
+        /// </summary>
         protected Action StoppedCallback { get; set; }
 
         /// <summary>
@@ -25,10 +33,16 @@ namespace InazumaSearch.Forms
             InitializeComponent();
         }
 
-        public CrawlProgressForm(Core.Application app, Action stopStartCallback = null, Action stoppedCallback = null) : this()
+        /// <summary>
+        /// コンストラクタ
+        /// </summary>
+        /// <param name="app"></param>
+        /// <param name="cancelRequestingCallback">処理の中断を要求したときに実行する処理</param>
+        /// <param name="stoppedCallback">クロール処理が終了したときに実行する処理（完了 or キャンセルは問わない）</param>
+        public CrawlProgressForm(Core.Application app, Action cancelRequestingCallback = null, Action stoppedCallback = null) : this()
         {
             App = app;
-            StopStartCallback = stopStartCallback;
+            CancelRequestingCallback = cancelRequestingCallback;
             StoppedCallback = stoppedCallback;
         }
 
@@ -173,12 +187,12 @@ namespace InazumaSearch.Forms
 
         private async void Form_FormClosed(object sender, FormClosedEventArgs e)
         {
-            // ストップ開始時処理を実行
-            if (StopStartCallback != null) StopStartCallback.Invoke();
-
             // 実行中の手動クロール処理があればキャンセル
             if (App.Crawler.ManualCrawlIsRunning)
             {
+                // キャンセル要求時処理を実行
+                if (CancelRequestingCallback != null) CancelRequestingCallback.Invoke();
+
                 await App.Crawler.StopManualCrawlIfRunningAsync();
             }
 
