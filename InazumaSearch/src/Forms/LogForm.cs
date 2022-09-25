@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Windows.Forms;
+using NLog.Windows.Forms;
 
 namespace InazumaSearch.Forms
 {
@@ -8,10 +9,8 @@ namespace InazumaSearch.Forms
         public LogForm()
         {
             InitializeComponent();
-        }
-        public LogForm(string body)
-        {
-            InitializeComponent();
+
+            RichTextBoxTarget.ReInitializeAllTextboxes(this);
         }
 
         private void BtnQuit_Click(object sender, EventArgs e)
