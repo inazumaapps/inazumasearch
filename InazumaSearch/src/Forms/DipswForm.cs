@@ -59,7 +59,9 @@ namespace InazumaSearch.Forms
                     Application.UserSettings.Load();
 
                 });
-                UpdateLabels();
+
+                // アプリケーションを再起動
+                Core.Application.Restart();
             }
         }
 
