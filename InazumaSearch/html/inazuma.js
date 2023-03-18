@@ -59,8 +59,11 @@ function executeSearch(
 
     // 検索実施
     $('#SEARCH-PROGRESS-BAR').css('opacity', '1');
+
+    const searchStartTime = performance.now();
     asyncApi.search(g_lastQueryObject, true, 0, g_lastSelectedFormatName, g_lastSelectedFolderLabel, g_lastSelectedOrder, g_lastSelectedView).then(function (resJson) {
-        var data = JSON.parse(resJson);
+        const renderingStartTime = performance.now();
+        const data = JSON.parse(resJson);
 
         // 検索中表示を消す
         $('#SEARCH-PROGRESS-BAR').css('opacity', '0');
@@ -70,9 +73,7 @@ function executeSearch(
 
         $('#SEARCH-RESULT-MESSAGE').text(data.searchResultMessage);
         $('#SEARCH-RESULT-SUB-MESSAGE').text(data.searchResultSubMessage);
-        if (userSetting.DisplaySearchProcessTime) {
-            $('#SEARCH-PROCESS-TIME').text("(" + data.processTime.toFixed(2) + "秒)");
-        }
+
 
         // 全結果の表示が完了していれば、完了フラグを立てる
         if (data.nHits === 0 || data.pageSize >= data.nHits){
@@ -140,6 +141,15 @@ function executeSearch(
 
         // 検索結果の各行を表示
         displayResultRows(data, g_lastSelectedView);
+
+        const renderingEndTime = performance.now();
+
+        // 検索時間を表示
+        if (userSetting.DisplaySearchProcessTime) {
+            const searchTimeSec = (renderingStartTime - searchStartTime) / 1000.0;
+            const renderingTimeSec = (renderingEndTime - renderingStartTime) / 1000.0;
+            $('#SEARCH-PROCESS-TIME').text("(検索実行:" + data.processTime.toFixed(2) + "秒、レンダリング:" + renderingTimeSec.toFixed(2) + "秒)");
+        }
     });
 }
 
