@@ -45,7 +45,7 @@ function executeSearch(
     $('#UPDATE-LINK').hide();
 
     // 既存の検索結果行を削除
-    $('.generated-search-result-row').remove();
+    $('.search-result-row').remove();
 
     // 検索結果部(見出)を隠す
     if (hideSearchResult) $header.css('opacity', '0');
@@ -209,6 +209,7 @@ function displayResultRows(getJsonData, selectedView, searchOffset = 0){
 
 }
 
+
 // 結果リストを表示する(通常モード)
 function displayResultRows_NormalView(getJsonData, searchOffset){
     // 通常表示用の結果エリアを表示
@@ -216,74 +217,72 @@ function displayResultRows_NormalView(getJsonData, searchOffset){
     // 一覧表示用の結果エリアを隠す
     $('#SEARCH-RESULT-LIST-VIEW-BODY').hide();
 
-    var $row_base = $('#RESULT-ROW-BASE');
     var htmlBuf = "";
     for(var i = 0; i < getJsonData.records.length; i++){
         var res = getJsonData.records[i];
-
-        var $new_row = $row_base.clone();
-        console.log($new_row);
 
         var title;
         if (res.title_snippets.length >= 1) {
             title = res.title_snippets[0];
         } else if (res.title !== null && res.title !== "") {
             title = res.title;
-        } else if(res.file_name_snippets.length >= 1) {
+        } else if (res.file_name_snippets.length >= 1) {
             title = res.file_name_snippets[0];
         } else {
             title = res.file_name;
         }
-        $new_row.find('.card-title a').html(title).attr('data-file-path', res.file_path);
-        var fileLinkHref = '#FILE:' + res.file_path ;
-        $new_row.find('.card-title a').attr('href', fileLinkHref);
-        $new_row.find('.card-action a.file-path').text(res.file_path).attr('href', fileLinkHref).attr('data-file-path', res.file_path);
-        $new_row.find('.card-action a.folder-open-link').attr('data-file-path', res.file_path);
-        if(res.body_snippets.length >= 1){
-            res.body_snippets.forEach(function(snip){
-                $new_row.find('.body-snippets').append('<div style="border: 1px solid #f0f0f0; margin: 1em 0; padding: 1em; font-size: small;">' + snip + '</div>');
-            });
-     
-        } else {
-            $new_row.find('.body-snippets').remove();
+
+        let rowHtml = "";
+        rowHtml += `
+<div id="RESULT-ROW-${searchOffset + i}" class="row search-result-row file-type-${res.ext}" style="position: relative; left: 200px;" data-key="${res.key}" data-file-path="${res.file_path}" data-search-offset="${searchOffset}">
+    <div class="col s12">
+        <div class="card z-depth-2">
+            <div class="card-content">
+                <div class="card-title"><span class="icon file-type-${res.ext}"></span><a href="#FILE:${res.file_path}" data-file-path="${res.file_path}" class="file-name-link file-open-link">${title}</a></div>
+                
+`
+
+        if (res.thumbnail_path != null) {
+            rowHtml += `<img src="${res.thumbnail_path}" class="thumbnail-image" />`
         }
 
-        $new_row.find('.document-information-size').text(res.size_caption);
-        $new_row.find('.document-information-file-updated').text(res.timestamp_updated_caption);
-        $new_row.find('.document-information-score').text(res.final_score);
-
-        $new_row.attr('data-key', res.key);
-        $new_row.find('.submenu-link').dropdown({ constrainWidth: false, container: $('#SEARCH-RESULT-BODY').get(0), alignment: 'right' });
-
-        // $new_row.find('.display-similar-documents').attr('data-key', res.key);
-
-        $new_row.addClass('file-type-' + res.ext);
-        $new_row.find('.icon').removeClass().addClass('icon').addClass('file-type-' + res.ext);
-        ///$new_row.find('.icon').html('<img src="' + res.icon_data_url + '" />');
-
-        //   $.get('internal://thumbnail/test2.png').then(function(data){
-        //     console.log('image loaded.');
-        //  });
-
-        if(res.thumbnail_path != null){
-            $new_row.find('.thumbnail-image').attr('src', res.thumbnail_path);
-        } else {
-            $new_row.find('.thumbnail-image').hide();
+        if (res.body_snippets.length >= 1) {
+            rowHtml += '<div class="body-snippets">'
+            for (let snip of res.body_snippets) {
+                rowHtml += `<div style="border: 1px solid #f0f0f0; margin: 1em 0; padding: 1em; font-size: small;">${snip}</div>`;
+            };
+            rowHtml += '</div>'
         }
 
-        $new_row.attr('data-file-path', res.file_path);
+        rowHtml += `
+                </div>
+                <div class="document-information-footer">
+                    >${res.size_caption} / 更新: ${res.timestamp_updated_caption}
+                    <span class="debug-mode-only">
+                        / スコア: ${res.final_score}
+                    </span>
+                </div>
+            </div><!-- / .card-content -->
+            <div class="card-action">
+                <a class="file-path file-open-link" href="#FILE:${res.file_path}" data-file-path="${res.file_path}">${res.file_path}</a>
+                <div class="right">
+                    <a href="#" data-file-path="${res.file_path}" class="after-tooltipped folder-open-link" title="フォルダを開く"><i class="tiny material-icons">folder</i></a>
+                    <a class='submenu-link release-mode-only' href='#' data-target='SEARCH-RESULT-SUBMENU' style="margin-right: 0.5rem;"><i class="tiny material-icons">more_horiz</i></a>
+                    <a class='submenu-link debug-mode-only' href='#' data-target='SEARCH-RESULT-SUBMENU-DEBUG' style="margin-right: 0.5rem;"><i class="tiny material-icons">more_horiz</i></a>
+                </div>
+            </div>
 
-        $new_row.show();
-        $new_row.attr('id', 'RESULT-ROW-' + (searchOffset + i)).addClass('generated-search-result-row');
-        //$('#SEARCH-RESULT-BODY').append($new_row);
-        $new_row.attr('data-search-offset', searchOffset);
-        $new_row.css('position', 'relative').css('left', '200px');
-        htmlBuf = htmlBuf.concat($new_row.html());
+        </div><!-- / .card -->
+    </div>
+</div>
+`
+        htmlBuf += rowHtml;
     }
     $('#SEARCH-RESULT-BODY').html(htmlBuf);
+    $('#SEARCH-RESULT-BODY').find('.submenu-link').dropdown({ constrainWidth: false, container: $('#SEARCH-RESULT-BODY').get(0), alignment: 'right' });
 
     // 一番下の要素と同じ縦位置に、スクロール補正用要素を移動
-    var $lastRow = $('.generated-search-result-row:last');
+    var $lastRow = $('.search-result-row:last');
     if($lastRow.length >= 1){
         $('#SCROLL-ADJUSTER').offset({top: $lastRow.offset().top + $lastRow.height()}).show();
     } else {
@@ -346,7 +345,7 @@ function displayResultRows_ListView(getJsonData, searchOffset){
     }
 
     // 一番下の要素と同じ縦位置に、スクロール補正用要素を移動
-    var $lastRow = $('.generated-search-result-row:last');
+    var $lastRow = $('.search-result-row:last');
     if($lastRow.length >= 1){
         $('#SCROLL-ADJUSTER').offset({top: $lastRow.offset().top + $lastRow.height()}).show();
     } else {
