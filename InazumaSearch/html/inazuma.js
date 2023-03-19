@@ -65,6 +65,8 @@ function executeSearch(
         const renderingStartTime = performance.now();
         const data = JSON.parse(resJson);
 
+        console.time('Step1');
+
         // 検索中表示を消す
         $('#SEARCH-PROGRESS-BAR').css('opacity', '0');
 
@@ -79,6 +81,9 @@ function executeSearch(
         if (data.nHits === 0 || data.pageSize >= data.nHits){
             g_searchFinished = true;
         }
+
+        console.timeEnd('Step1');
+        console.time('Step2');
 
         // ドリルダウン結果を表示
         // ただし、ドリルダウンの選択肢が1つだけで、かつ絞り込みしても文書数が変わらない場合は選択肢を表示しない
@@ -101,6 +106,8 @@ function executeSearch(
             $('#DRILLDOWN-RESULT-EXT').html("");
         }
 
+        console.timeEnd('Step2');
+        console.time('Step3');
 
         if (data.folderLabelDrilldownLinks.length >= 2
             || (data.folderLabelDrilldownLinks.length === 1 && data.folderLabelDrilldownLinks[0].nSubRecs < data.nHits)
@@ -121,6 +128,9 @@ function executeSearch(
             $('#DRILLDOWN-RESULT-FOLDER-LABEL').html("");
         }
 
+        console.timeEnd('Step3');
+        console.time('Step4');
+
         // 検索結果が1件以上であれば、並び順と表示形式の選択肢を表示
         if (data.nHits >= 1){
             var resHtml = '<div class="input-field inline" style="margin-top: 0;">';
@@ -139,8 +149,11 @@ function executeSearch(
             $('#DRILLDOWN-ORDER').html(resHtml);
         }
 
+        console.timeEnd('Step4');
+        console.time('Step5');
         // 検索結果の各行を表示
         displayResultRows(data, g_lastSelectedView);
+        console.timeEnd('Step5');
 
         const renderingEndTime = performance.now();
 
@@ -155,11 +168,15 @@ function executeSearch(
 
 // 結果リストを表示する
 function displayResultRows(getJsonData, selectedView, searchOffset = 0){
-    if (selectedView === 'list'){
+
+    console.time('Step5.1');
+    if (selectedView === 'list') {
         displayResultRows_ListView(getJsonData, searchOffset);
     } else {
         displayResultRows_NormalView(getJsonData, searchOffset);
     }
+    console.timeEnd('Step5.1');
+    console.time('Step5.2');
 
     // 残りの結果があるかどうかを判定し、ローディングアイコンを表示
     if(g_searchFinished){
@@ -167,20 +184,28 @@ function displayResultRows(getJsonData, selectedView, searchOffset = 0){
     } else {
         $('#SEARCH-RESULT-LOADING').show();
     }
+    console.timeEnd('Step5.2');
+    console.time('Step5.3');
 
     // イベントやプラグインの登録
     $('[data-search-offset=' + searchOffset + '] .after-tooltipped').tooltipster();
+    console.timeEnd('Step5.3');
+    console.time('Step5.4');
+
     $('[data-search-offset=' + searchOffset + '] a.file-open-link').click(function(){
         var path = $(this).attr('data-file-path');
         api.openFile(path);
         return false;
     });
+    console.timeEnd('Step5.4');
+    console.time('Step5.5');
 
     $('[data-search-offset=' + searchOffset + '] a.folder-open-link').click(function(){
         var path = $(this).attr('data-file-path');
         api.openFolder(path);
         return false;
     });
+    console.timeEnd('Step5.5');
 
 }
 
@@ -192,10 +217,12 @@ function displayResultRows_NormalView(getJsonData, searchOffset){
     $('#SEARCH-RESULT-LIST-VIEW-BODY').hide();
 
     var $row_base = $('#RESULT-ROW-BASE');
+    //var htmlBuf = "";
     for(var i = 0; i < getJsonData.records.length; i++){
         var res = getJsonData.records[i];
 
         var $new_row = $row_base.clone();
+        console.log($new_row);
 
         var title;
         if (res.title_snippets.length >= 1) {
@@ -251,8 +278,9 @@ function displayResultRows_NormalView(getJsonData, searchOffset){
         $('#SEARCH-RESULT-BODY').append($new_row);
         $new_row.attr('data-search-offset', searchOffset);
         $new_row.css('position', 'relative').css('left', '200px');
-    
+        //htmlBuf = htmlBuf.concat($new_row.html());
     }
+    //$('#SEARCH-RESULT-BODY').html(htmlBuf);
 
     // 一番下の要素と同じ縦位置に、スクロール補正用要素を移動
     var $lastRow = $('.generated-search-result-row:last');
