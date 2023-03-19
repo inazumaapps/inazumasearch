@@ -217,7 +217,7 @@ function displayResultRows_NormalView(getJsonData, searchOffset){
     $('#SEARCH-RESULT-LIST-VIEW-BODY').hide();
 
     var $row_base = $('#RESULT-ROW-BASE');
-    //var htmlBuf = "";
+    var htmlBuf = "";
     for(var i = 0; i < getJsonData.records.length; i++){
         var res = getJsonData.records[i];
 
@@ -275,12 +275,12 @@ function displayResultRows_NormalView(getJsonData, searchOffset){
 
         $new_row.show();
         $new_row.attr('id', 'RESULT-ROW-' + (searchOffset + i)).addClass('generated-search-result-row');
-        $('#SEARCH-RESULT-BODY').append($new_row);
+        //$('#SEARCH-RESULT-BODY').append($new_row);
         $new_row.attr('data-search-offset', searchOffset);
         $new_row.css('position', 'relative').css('left', '200px');
-        //htmlBuf = htmlBuf.concat($new_row.html());
+        htmlBuf = htmlBuf.concat($new_row.html());
     }
-    //$('#SEARCH-RESULT-BODY').html(htmlBuf);
+    $('#SEARCH-RESULT-BODY').html(htmlBuf);
 
     // 一番下の要素と同じ縦位置に、スクロール補正用要素を移動
     var $lastRow = $('.generated-search-result-row:last');
