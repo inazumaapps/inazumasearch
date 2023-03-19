@@ -255,7 +255,6 @@ function displayResultRows_NormalView(getJsonData, searchOffset){
         }
 
         rowHtml += `
-                </div>
                 <div class="document-information-footer">
                     >${res.size_caption} / 更新: ${res.timestamp_updated_caption}
                     <span class="debug-mode-only">
@@ -279,7 +278,7 @@ function displayResultRows_NormalView(getJsonData, searchOffset){
         htmlBuf += rowHtml;
     }
     $('#SEARCH-RESULT-BODY').html(htmlBuf);
-    $('#SEARCH-RESULT-BODY').find('.submenu-link').dropdown({ constrainWidth: false, container: $('#SEARCH-RESULT-BODY').get(0), alignment: 'right' });
+    $('#SEARCH-RESULT-BODY').find('.submenu-link').dropdown({ constrainWidth: false, container: $('#SEARCH-RESULT').get(0), alignment: 'right' });
 
     // 一番下の要素と同じ縦位置に、スクロール補正用要素を移動
     var $lastRow = $('.search-result-row:last');
