@@ -172,6 +172,12 @@ namespace InazumaSearch.Forms
 
             timeCounter.Stop();
             if (StoppedCallback != null) StoppedCallback.Invoke();
+
+            // 常駐クロールモードで、かつ常駐クロールが始まっていなければ、常駐クロールを再開
+            if (App.UserSettings.AlwaysCrawlMode && !App.Crawler.AlwaysCrawlIsRunning)
+            {
+                App.Crawler.StartAlwaysCrawl();
+            }
         }
 
         private void BtnCancel_Click(object sender, EventArgs e)
@@ -194,12 +200,12 @@ namespace InazumaSearch.Forms
                 if (CancelRequestingCallback != null) CancelRequestingCallback.Invoke();
 
                 await App.Crawler.StopManualCrawlIfRunningAsync();
-            }
 
-            // 常駐クロールモードであれば、常駐クロールを再開
-            if (App.UserSettings.AlwaysCrawlMode)
-            {
-                App.Crawler.StartAlwaysCrawl();
+                // 常駐クロールモードで、かつ常駐クロールが始まっていなければ、常駐クロールを再開
+                if (App.UserSettings.AlwaysCrawlMode && !App.Crawler.AlwaysCrawlIsRunning)
+                {
+                    App.Crawler.StartAlwaysCrawl();
+                }
             }
         }
     }
