@@ -12,8 +12,8 @@ unless asmLines
 	return
 end
 
-MSBUILD = 'C:\\Program Files (x86)\\MSBuild\\14.0\\Bin\\MSBuild.exe'
-EXEPRESS = 'C:\\Program Files (x86)\\Web Technology\\EXEpress 6\\EXEpress.exe'
+MSBUILD = 'C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\MSBuild\\Current\\Bin\\MSBuild.exe'
+EXEPRESS = 'C:\\Program Files (x86)\\OPTPiX\\EXEpress 6\\EXEpress.exe'
 
 PLATFORMS = ['x86', 'x64']
 
