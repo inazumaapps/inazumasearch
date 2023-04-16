@@ -648,6 +648,10 @@ namespace InazumaSearch.Forms
                     Locale = "ja-JP"
                 };
 
+                // レンダリングを最適化
+                // from <https://teratail.com/questions/136022>
+                settings.SetOffScreenRenderingBestPerformanceArgs();
+
                 // Initialize cef with the provided settings
                 Cef.Initialize(settings);
             }
