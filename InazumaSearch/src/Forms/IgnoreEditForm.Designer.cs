@@ -74,7 +74,7 @@
             this.lnkPatternHelp.AutoSize = true;
             this.lnkPatternHelp.Location = new System.Drawing.Point(574, 0);
             this.lnkPatternHelp.Name = "lnkPatternHelp";
-            this.lnkPatternHelp.Size = new System.Drawing.Size(115, 12);
+            this.lnkPatternHelp.Size = new System.Drawing.Size(123, 15);
             this.lnkPatternHelp.TabIndex = 9;
             this.lnkPatternHelp.TabStop = true;
             this.lnkPatternHelp.Text = "無視パターンの書き方...";
@@ -116,7 +116,7 @@
             this.LblSearching.BackColor = System.Drawing.Color.White;
             this.LblSearching.Location = new System.Drawing.Point(294, 125);
             this.LblSearching.Name = "LblSearching";
-            this.LblSearching.Size = new System.Drawing.Size(110, 12);
+            this.LblSearching.Size = new System.Drawing.Size(118, 15);
             this.LblSearching.TabIndex = 2;
             this.LblSearching.Text = "ファイルを検索中です...";
             this.LblSearching.Visible = false;
@@ -127,11 +127,11 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.LstPreview.FormattingEnabled = true;
-            this.LstPreview.ItemHeight = 12;
+            this.LstPreview.ItemHeight = 15;
             this.LstPreview.Location = new System.Drawing.Point(7, 18);
             this.LstPreview.Name = "LstPreview";
             this.LstPreview.ScrollAlwaysVisible = true;
-            this.LstPreview.Size = new System.Drawing.Size(686, 232);
+            this.LstPreview.Size = new System.Drawing.Size(686, 229);
             this.LstPreview.TabIndex = 0;
             // 
             // groupBox3
@@ -153,7 +153,7 @@
             this.TxtBaseDirPath.Enabled = false;
             this.TxtBaseDirPath.Location = new System.Drawing.Point(7, 19);
             this.TxtBaseDirPath.Name = "TxtBaseDirPath";
-            this.TxtBaseDirPath.Size = new System.Drawing.Size(686, 19);
+            this.TxtBaseDirPath.Size = new System.Drawing.Size(686, 23);
             this.TxtBaseDirPath.TabIndex = 0;
             // 
             // BtnSave
@@ -178,6 +178,7 @@
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.BtnCancel);
+            this.Font = new System.Drawing.Font("Meiryo UI", 9F);
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "IgnoreEditForm";

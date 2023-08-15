@@ -42,7 +42,7 @@
             // 
             this.TxtExtNames.Location = new System.Drawing.Point(15, 39);
             this.TxtExtNames.Name = "TxtExtNames";
-            this.TxtExtNames.Size = new System.Drawing.Size(482, 19);
+            this.TxtExtNames.Size = new System.Drawing.Size(482, 23);
             this.TxtExtNames.TabIndex = 0;
             this.TxtExtNames.TextChanged += new System.EventHandler(this.TxtPath_TextChanged);
             // 
@@ -51,7 +51,7 @@
             this.label1.AutoSize = true;
             this.label1.Location = new System.Drawing.Point(13, 14);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(353, 12);
+            this.label1.Size = new System.Drawing.Size(365, 15);
             this.label1.TabIndex = 1;
             this.label1.Text = "追加したい拡張子を、スペース区切りで入力してください。　例：「cs vb rb」";
             // 
@@ -89,7 +89,7 @@
             this.label2.AutoSize = true;
             this.label2.Location = new System.Drawing.Point(13, 84);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(269, 12);
+            this.label2.Size = new System.Drawing.Size(271, 15);
             this.label2.TabIndex = 6;
             this.label2.Text = "また、そのファイルの種類を表すラベルも入力してください。";
             // 
@@ -97,7 +97,7 @@
             // 
             this.TxtExtLabel.Location = new System.Drawing.Point(15, 125);
             this.TxtExtLabel.Name = "TxtExtLabel";
-            this.TxtExtLabel.Size = new System.Drawing.Size(161, 19);
+            this.TxtExtLabel.Size = new System.Drawing.Size(161, 23);
             this.TxtExtLabel.TabIndex = 5;
             // 
             // label3
@@ -105,7 +105,7 @@
             this.label3.AutoSize = true;
             this.label3.Location = new System.Drawing.Point(13, 99);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(157, 12);
+            this.label3.Size = new System.Drawing.Size(161, 15);
             this.label3.TabIndex = 7;
             this.label3.Text = "(検索結果画面で表示されます)";
             // 
@@ -123,6 +123,7 @@
             this.Controls.Add(this.BtnOK);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.TxtExtNames);
+            this.Font = new System.Drawing.Font("Meiryo UI", 9F);
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "ExtNameAddDialog";

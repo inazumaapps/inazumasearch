@@ -52,7 +52,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.TxtCommand.Location = new System.Drawing.Point(13, 13);
             this.TxtCommand.Name = "TxtCommand";
-            this.TxtCommand.Size = new System.Drawing.Size(765, 19);
+            this.TxtCommand.Size = new System.Drawing.Size(765, 23);
             this.TxtCommand.TabIndex = 2;
             // 
             // BtnRun
@@ -91,6 +91,7 @@
             this.Controls.Add(this.BtnRun);
             this.Controls.Add(this.TxtCommand);
             this.Controls.Add(this.BtnQuit);
+            this.Font = new System.Drawing.Font("Meiryo UI", 9F);
             this.MinimizeBox = false;
             this.Name = "GroongaDebugForm";
             this.ShowIcon = false;

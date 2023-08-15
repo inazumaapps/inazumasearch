@@ -66,6 +66,7 @@
             this.ClientSize = new System.Drawing.Size(1182, 642);
             this.Controls.Add(this.BrowserPanel);
             this.Controls.Add(this.StatusBar);
+            this.Font = new System.Drawing.Font("Meiryo UI", 9F);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "BrowserForm";
             this.Text = "Inazuma Search";

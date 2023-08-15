@@ -66,6 +66,7 @@
             this.ClientSize = new System.Drawing.Size(610, 336);
             this.Controls.Add(this.TxtBody);
             this.Controls.Add(this.BtnQuit);
+            this.Font = new System.Drawing.Font("Meiryo UI", 9F);
             this.Name = "SystemErrorReportBodyDialog";
             this.ShowIcon = false;
             this.Text = "レポートの内容";

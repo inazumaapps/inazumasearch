@@ -44,7 +44,7 @@
             this.mainBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.mainBox.Font = new System.Drawing.Font("ＭＳ ゴシック", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
+            this.mainBox.Font = new System.Drawing.Font("Meiryo UI", 9F);
             this.mainBox.Location = new System.Drawing.Point(12, 12);
             this.mainBox.Multiline = true;
             this.mainBox.Name = "mainBox";

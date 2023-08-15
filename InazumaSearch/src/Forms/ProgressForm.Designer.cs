@@ -90,7 +90,7 @@
             this.lblMessage.AutoSize = true;
             this.lblMessage.Location = new System.Drawing.Point(12, 19);
             this.lblMessage.Name = "lblMessage";
-            this.lblMessage.Size = new System.Drawing.Size(32, 12);
+            this.lblMessage.Size = new System.Drawing.Size(43, 15);
             this.lblMessage.TabIndex = 11;
             this.lblMessage.Text = "ＮＮＮ";
             // 
@@ -102,6 +102,7 @@
             this.Controls.Add(this.lblMessage);
             this.Controls.Add(this.statusStrip1);
             this.Controls.Add(this.ProgressBar);
+            this.Font = new System.Drawing.Font("Meiryo UI", 9F);
             this.MaximizeBox = false;
             this.Name = "ProgressForm";
             this.Text = "処理中...";

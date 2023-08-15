@@ -113,6 +113,7 @@
             this.Controls.Add(this.BtnRefresh);
             this.Controls.Add(this.TreeFolder);
             this.Controls.Add(this.BtnClose);
+            this.Font = new System.Drawing.Font("Meiryo UI", 9F);
             this.Name = "DBBrowserForm";
             this.Text = "データベースブラウザ";
             this.Load += new System.EventHandler(this.DBBrowserForm_Load);

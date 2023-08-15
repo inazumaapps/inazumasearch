@@ -86,6 +86,7 @@
             this.Controls.Add(this.label2);
             this.Controls.Add(this.BtnOK);
             this.Controls.Add(this.label1);
+            this.Font = new System.Drawing.Font("Meiryo UI", 9F);
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "IgnorePatternHelpDialog";

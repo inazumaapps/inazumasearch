@@ -36,6 +36,7 @@ namespace InazumaSearch.src.Forms
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.ClientSize = new System.Drawing.Size(314, 103);
+            this.Font = new System.Drawing.Font("Meiryo UI", 9F);
             this.Name = "BackgroundMainForm";
             this.ShowIcon = false;
             this.ShowInTaskbar = false;

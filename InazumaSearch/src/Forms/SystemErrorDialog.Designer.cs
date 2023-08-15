@@ -48,7 +48,7 @@
             this.label1.AutoSize = true;
             this.label1.Location = new System.Drawing.Point(71, 23);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(298, 72);
+            this.label1.Size = new System.Drawing.Size(315, 90);
             this.label1.TabIndex = 0;
             this.label1.Text = "システムエラーが発生したため、Inazuma Searchを終了します。\r\nご迷惑をおかけして申し訳ありません。\r\n\r\nよろしければ、エラーの情報を送信していただ" +
     "き\r\n不具合内容の改善にご協力ください。\r\n（文書ファイルの内容は送信されません）";
@@ -72,7 +72,7 @@
             this.ChkErrorReportSend.CheckState = System.Windows.Forms.CheckState.Checked;
             this.ChkErrorReportSend.Location = new System.Drawing.Point(28, 136);
             this.ChkErrorReportSend.Name = "ChkErrorReportSend";
-            this.ChkErrorReportSend.Size = new System.Drawing.Size(173, 16);
+            this.ChkErrorReportSend.Size = new System.Drawing.Size(175, 19);
             this.ChkErrorReportSend.TabIndex = 2;
             this.ChkErrorReportSend.Text = "エラー情報を開発者へ送信する";
             this.ChkErrorReportSend.UseVisualStyleBackColor = true;
@@ -124,7 +124,7 @@
             this.label2.AutoSize = true;
             this.label2.Location = new System.Drawing.Point(150, 353);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(293, 12);
+            this.label2.Size = new System.Drawing.Size(295, 15);
             this.label2.TabIndex = 7;
             this.label2.Text = "※返信が必要な場合は、下記公式サイトよりご連絡ください。";
             // 
@@ -146,7 +146,7 @@
             this.LblWebsiteUrl.LinkVisited = true;
             this.LblWebsiteUrl.Location = new System.Drawing.Point(225, 376);
             this.LblWebsiteUrl.Name = "LblWebsiteUrl";
-            this.LblWebsiteUrl.Size = new System.Drawing.Size(218, 12);
+            this.LblWebsiteUrl.Size = new System.Drawing.Size(252, 15);
             this.LblWebsiteUrl.TabIndex = 9;
             this.LblWebsiteUrl.TabStop = true;
             this.LblWebsiteUrl.Text = "https://inazumaapps.info/inazumasearch/";
@@ -177,6 +177,7 @@
             this.Controls.Add(this.ChkErrorReportSend);
             this.Controls.Add(this.BtnQuit);
             this.Controls.Add(this.label1);
+            this.Font = new System.Drawing.Font("Meiryo UI", 9F);
             this.Name = "SystemErrorDialog";
             this.ShowIcon = false;
             this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;

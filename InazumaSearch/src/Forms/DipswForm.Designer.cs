@@ -112,7 +112,7 @@
             this.label1.AutoSize = true;
             this.label1.Location = new System.Drawing.Point(12, 79);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(348, 12);
+            this.label1.Size = new System.Drawing.Size(350, 15);
             this.label1.TabIndex = 17;
             this.label1.Text = "※クロールした文書データと、ユーザーの設定情報をすべて初期化します。";
             // 
@@ -135,9 +135,9 @@
             // 
             this.lblDocumentDBSize.Anchor = System.Windows.Forms.AnchorStyles.Right;
             this.lblDocumentDBSize.AutoSize = true;
-            this.lblDocumentDBSize.Location = new System.Drawing.Point(180, 9);
+            this.lblDocumentDBSize.Location = new System.Drawing.Point(171, 8);
             this.lblDocumentDBSize.Name = "lblDocumentDBSize";
-            this.lblDocumentDBSize.Size = new System.Drawing.Size(52, 12);
+            this.lblDocumentDBSize.Size = new System.Drawing.Size(61, 15);
             this.lblDocumentDBSize.TabIndex = 1;
             this.lblDocumentDBSize.Text = "9,999 MB";
             // 
@@ -145,9 +145,9 @@
             // 
             this.label6.Anchor = System.Windows.Forms.AnchorStyles.Left;
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(3, 9);
+            this.label6.Location = new System.Drawing.Point(3, 8);
             this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(115, 12);
+            this.label6.Size = new System.Drawing.Size(117, 15);
             this.label6.TabIndex = 0;
             this.label6.Text = "文書データベースサイズ";
             // 
@@ -202,7 +202,7 @@
             this.TxtDocumentDBDirPath.Location = new System.Drawing.Point(7, 19);
             this.TxtDocumentDBDirPath.Name = "TxtDocumentDBDirPath";
             this.TxtDocumentDBDirPath.ReadOnly = true;
-            this.TxtDocumentDBDirPath.Size = new System.Drawing.Size(386, 19);
+            this.TxtDocumentDBDirPath.Size = new System.Drawing.Size(386, 23);
             this.TxtDocumentDBDirPath.TabIndex = 0;
             // 
             // tableLayoutPanel2
@@ -224,9 +224,9 @@
             // 
             this.lblVersion.Anchor = System.Windows.Forms.AnchorStyles.Left;
             this.lblVersion.AutoSize = true;
-            this.lblVersion.Location = new System.Drawing.Point(60, 6);
+            this.lblVersion.Location = new System.Drawing.Point(60, 5);
             this.lblVersion.Name = "lblVersion";
-            this.lblVersion.Size = new System.Drawing.Size(27, 12);
+            this.lblVersion.Size = new System.Drawing.Size(36, 15);
             this.lblVersion.TabIndex = 1;
             this.lblVersion.Text = "x.x.x";
             // 
@@ -234,9 +234,9 @@
             // 
             this.label8.Anchor = System.Windows.Forms.AnchorStyles.Left;
             this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(3, 6);
+            this.label8.Location = new System.Drawing.Point(3, 0);
             this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(50, 12);
+            this.label8.Size = new System.Drawing.Size(43, 25);
             this.label8.TabIndex = 0;
             this.label8.Text = "バージョン";
             // 
@@ -284,7 +284,7 @@
             this.label9.AutoSize = true;
             this.label9.Location = new System.Drawing.Point(17, 203);
             this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(214, 12);
+            this.label9.Size = new System.Drawing.Size(216, 15);
             this.label9.TabIndex = 28;
             this.label9.Text = "そのファイルも検索対象とすることができます。";
             // 
@@ -293,7 +293,7 @@
             this.label7.AutoSize = true;
             this.label7.Location = new System.Drawing.Point(17, 186);
             this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(210, 12);
+            this.label7.Size = new System.Drawing.Size(211, 15);
             this.label7.TabIndex = 25;
             this.label7.Text = "ソースファイルなどの拡張子を登録することで";
             // 
@@ -323,7 +323,7 @@
             this.lnkOpenDataFolder.AutoSize = true;
             this.lnkOpenDataFolder.Location = new System.Drawing.Point(317, 363);
             this.lnkOpenDataFolder.Name = "lnkOpenDataFolder";
-            this.lnkOpenDataFolder.Size = new System.Drawing.Size(95, 12);
+            this.lnkOpenDataFolder.Size = new System.Drawing.Size(97, 15);
             this.lnkOpenDataFolder.TabIndex = 24;
             this.lnkOpenDataFolder.TabStop = true;
             this.lnkOpenDataFolder.Text = "データフォルダを開く";
@@ -347,7 +347,7 @@
             this.label3.AutoSize = true;
             this.label3.Location = new System.Drawing.Point(16, 47);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(59, 12);
+            this.label3.Size = new System.Drawing.Size(67, 15);
             this.label3.TabIndex = 30;
             this.label3.Text = "一覧表示：";
             // 
@@ -356,7 +356,7 @@
             this.label2.AutoSize = true;
             this.label2.Location = new System.Drawing.Point(16, 20);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(59, 12);
+            this.label2.Size = new System.Drawing.Size(67, 15);
             this.label2.TabIndex = 29;
             this.label2.Text = "通常表示：";
             // 
@@ -379,7 +379,7 @@
             0,
             0});
             this.NumDisplayPageSizeForListView.Name = "NumDisplayPageSizeForListView";
-            this.NumDisplayPageSizeForListView.Size = new System.Drawing.Size(73, 19);
+            this.NumDisplayPageSizeForListView.Size = new System.Drawing.Size(73, 23);
             this.NumDisplayPageSizeForListView.TabIndex = 2;
             this.NumDisplayPageSizeForListView.Value = new decimal(new int[] {
             10,
@@ -407,7 +407,7 @@
             0,
             0});
             this.NumDisplayPageSizeForNormalView.Name = "NumDisplayPageSizeForNormalView";
-            this.NumDisplayPageSizeForNormalView.Size = new System.Drawing.Size(73, 19);
+            this.NumDisplayPageSizeForNormalView.Size = new System.Drawing.Size(73, 23);
             this.NumDisplayPageSizeForNormalView.TabIndex = 1;
             this.NumDisplayPageSizeForNormalView.Value = new decimal(new int[] {
             10,
@@ -444,7 +444,7 @@
             this.label10.AutoSize = true;
             this.label10.Location = new System.Drawing.Point(9, 27);
             this.label10.Name = "label10";
-            this.label10.Size = new System.Drawing.Size(72, 12);
+            this.label10.Size = new System.Drawing.Size(75, 15);
             this.label10.TabIndex = 32;
             this.label10.Text = "1ファイルあたり";
             // 
@@ -453,7 +453,7 @@
             this.label5.AutoSize = true;
             this.label5.Location = new System.Drawing.Point(14, 52);
             this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(0, 12);
+            this.label5.Size = new System.Drawing.Size(0, 15);
             this.label5.TabIndex = 29;
             // 
             // label4
@@ -461,7 +461,7 @@
             this.label4.AutoSize = true;
             this.label4.Location = new System.Drawing.Point(165, 27);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(164, 12);
+            this.label4.Size = new System.Drawing.Size(166, 15);
             this.label4.TabIndex = 31;
             this.label4.Text = "秒経っても完了しなければスキップ";
             // 
@@ -484,7 +484,7 @@
             0,
             0});
             this.NumDocumentExtractTimeout.Name = "NumDocumentExtractTimeout";
-            this.NumDocumentExtractTimeout.Size = new System.Drawing.Size(73, 19);
+            this.NumDocumentExtractTimeout.Size = new System.Drawing.Size(73, 23);
             this.NumDocumentExtractTimeout.TabIndex = 1;
             this.NumDocumentExtractTimeout.Value = new decimal(new int[] {
             10,
@@ -510,6 +510,7 @@
             this.Controls.Add(this.label1);
             this.Controls.Add(this.BtnClearAllData);
             this.Controls.Add(this.BtnClearDocumentDB);
+            this.Font = new System.Drawing.Font("Meiryo UI", 9F);
             this.Name = "DipswForm";
             this.ShowIcon = false;
             this.Text = "DIPSW";

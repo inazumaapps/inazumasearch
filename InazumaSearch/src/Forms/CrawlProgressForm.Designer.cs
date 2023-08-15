@@ -102,7 +102,7 @@
             this.label1.ForeColor = System.Drawing.SystemColors.GrayText;
             this.label1.Location = new System.Drawing.Point(12, 81);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(179, 12);
+            this.label1.Size = new System.Drawing.Size(181, 15);
             this.label1.TabIndex = 11;
             this.label1.Text = "※ クロール実行中も検索可能です。";
             // 
@@ -115,6 +115,7 @@
             this.Controls.Add(this.BtnCancel);
             this.Controls.Add(this.statusStrip1);
             this.Controls.Add(this.ProgressBar);
+            this.Font = new System.Drawing.Font("Meiryo UI", 9F);
             this.MaximizeBox = false;
             this.Name = "CrawlProgressForm";
             this.ShowIcon = false;

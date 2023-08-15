@@ -87,7 +87,7 @@
             // 
             this.TxtPath.Location = new System.Drawing.Point(174, 16);
             this.TxtPath.Name = "TxtPath";
-            this.TxtPath.Size = new System.Drawing.Size(375, 19);
+            this.TxtPath.Size = new System.Drawing.Size(375, 23);
             this.TxtPath.TabIndex = 15;
             this.TxtPath.TextChanged += new System.EventHandler(this.TxtIconFilePath_TextChanged);
             // 
@@ -122,7 +122,7 @@
             "ExtraLarge"});
             this.cmbFormat.Location = new System.Drawing.Point(598, 57);
             this.cmbFormat.Name = "cmbFormat";
-            this.cmbFormat.Size = new System.Drawing.Size(292, 20);
+            this.cmbFormat.Size = new System.Drawing.Size(292, 23);
             this.cmbFormat.TabIndex = 18;
             // 
             // ChkTransparent
@@ -132,7 +132,7 @@
             this.ChkTransparent.CheckState = System.Windows.Forms.CheckState.Checked;
             this.ChkTransparent.Location = new System.Drawing.Point(598, 84);
             this.ChkTransparent.Name = "ChkTransparent";
-            this.ChkTransparent.Size = new System.Drawing.Size(85, 16);
+            this.ChkTransparent.Size = new System.Drawing.Size(96, 19);
             this.ChkTransparent.TabIndex = 19;
             this.ChkTransparent.Text = "Transparent";
             this.ChkTransparent.UseVisualStyleBackColor = true;
@@ -186,7 +186,7 @@
             // 
             this.TxtIconPath.Location = new System.Drawing.Point(23, 377);
             this.TxtIconPath.Name = "TxtIconPath";
-            this.TxtIconPath.Size = new System.Drawing.Size(497, 19);
+            this.TxtIconPath.Size = new System.Drawing.Size(497, 23);
             this.TxtIconPath.TabIndex = 24;
             // 
             // BtnRaise
@@ -315,6 +315,7 @@
             this.Controls.Add(this.TxtPath);
             this.Controls.Add(this.button10);
             this.Controls.Add(this.statusStrip1);
+            this.Font = new System.Drawing.Font("Meiryo UI", 9F);
             this.Name = "DebugForm";
             this.Text = "Form1";
             this.Load += new System.EventHandler(this.DebugForm_Load);

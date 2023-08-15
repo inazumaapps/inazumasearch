@@ -67,6 +67,7 @@
             this.ClientSize = new System.Drawing.Size(784, 521);
             this.Controls.Add(this.TxtBody);
             this.Controls.Add(this.BtnQuit);
+            this.Font = new System.Drawing.Font("Meiryo UI", 9F);
             this.MinimizeBox = false;
             this.Name = "FileBodyViewDialog";
             this.ShowIcon = false;
