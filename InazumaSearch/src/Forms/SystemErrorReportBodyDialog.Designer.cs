@@ -61,8 +61,8 @@
             // SystemErrorReportBodyDialog
             // 
             this.AcceptButton = this.BtnQuit;
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.ClientSize = new System.Drawing.Size(610, 336);
             this.Controls.Add(this.TxtBody);
             this.Controls.Add(this.BtnQuit);

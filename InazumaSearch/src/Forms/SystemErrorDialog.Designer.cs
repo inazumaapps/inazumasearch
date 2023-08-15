@@ -164,8 +164,8 @@
             // 
             // SystemErrorDialog
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.ClientSize = new System.Drawing.Size(470, 467);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.LblWebsiteUrl);

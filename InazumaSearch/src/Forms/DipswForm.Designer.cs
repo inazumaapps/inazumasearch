@@ -61,10 +61,10 @@
             this.NumDisplayPageSizeForNormalView = new System.Windows.Forms.NumericUpDown();
             this.BtnRebootDebugMode = new System.Windows.Forms.Button();
             this.groupBox4 = new System.Windows.Forms.GroupBox();
-            this.NumDocumentExtractTimeout = new System.Windows.Forms.NumericUpDown();
-            this.label4 = new System.Windows.Forms.Label();
-            this.label5 = new System.Windows.Forms.Label();
             this.label10 = new System.Windows.Forms.Label();
+            this.label5 = new System.Windows.Forms.Label();
+            this.label4 = new System.Windows.Forms.Label();
+            this.NumDocumentExtractTimeout = new System.Windows.Forms.NumericUpDown();
             this.tblDebug.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.tableLayoutPanel2.SuspendLayout();
@@ -439,6 +439,32 @@
             this.groupBox4.TabStop = false;
             this.groupBox4.Text = "文書ファイル（Excel, Word, PDFなど）の内容抽出処理";
             // 
+            // label10
+            // 
+            this.label10.AutoSize = true;
+            this.label10.Location = new System.Drawing.Point(9, 27);
+            this.label10.Name = "label10";
+            this.label10.Size = new System.Drawing.Size(72, 12);
+            this.label10.TabIndex = 32;
+            this.label10.Text = "1ファイルあたり";
+            // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Location = new System.Drawing.Point(14, 52);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(0, 12);
+            this.label5.TabIndex = 29;
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(165, 27);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(164, 12);
+            this.label4.TabIndex = 31;
+            this.label4.Text = "秒経っても完了しなければスキップ";
+            // 
             // NumDocumentExtractTimeout
             // 
             this.NumDocumentExtractTimeout.Increment = new decimal(new int[] {
@@ -467,36 +493,10 @@
             0});
             this.NumDocumentExtractTimeout.ValueChanged += new System.EventHandler(this.NumDocumentExtractTimeout_ValueChanged);
             // 
-            // label4
-            // 
-            this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(165, 27);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(164, 12);
-            this.label4.TabIndex = 31;
-            this.label4.Text = "秒経っても完了しなければスキップ";
-            // 
-            // label5
-            // 
-            this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(14, 52);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(0, 12);
-            this.label5.TabIndex = 29;
-            // 
-            // label10
-            // 
-            this.label10.AutoSize = true;
-            this.label10.Location = new System.Drawing.Point(9, 27);
-            this.label10.Name = "label10";
-            this.label10.Size = new System.Drawing.Size(72, 12);
-            this.label10.TabIndex = 32;
-            this.label10.Text = "1ファイルあたり";
-            // 
             // DipswForm
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.ClientSize = new System.Drawing.Size(748, 404);
             this.Controls.Add(this.groupBox4);
             this.Controls.Add(this.BtnRebootDebugMode);

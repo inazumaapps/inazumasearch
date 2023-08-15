@@ -33,8 +33,8 @@ namespace InazumaSearch.src.Forms
             // 
             // BackgroundMainForm
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.ClientSize = new System.Drawing.Size(314, 103);
             this.Name = "BackgroundMainForm";
             this.ShowIcon = false;
