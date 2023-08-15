@@ -245,16 +245,16 @@
       <DependentUpon>BrowserForm.cs</DependentUpon>
     </Compile>
     <Compile Include="src\Core\ExcelTextExtractor.cs" />
-    <Compile Include="src\Forms\ProcessStatusForm.cs">
+    <Compile Include="src\Forms\Debug\ProcessStatusForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="src\Forms\ProcessStatusForm.Designer.cs">
+    <Compile Include="src\Forms\Debug\ProcessStatusForm.Designer.cs">
       <DependentUpon>ProcessStatusForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="src\Forms\GroongaDebugForm.cs">
+    <Compile Include="src\Forms\Debug\GroongaDebugForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="src\Forms\GroongaDebugForm.Designer.cs">
+    <Compile Include="src\Forms\Debug\GroongaDebugForm.Designer.cs">
       <DependentUpon>GroongaDebugForm.cs</DependentUpon>
     </Compile>
     <Compile Include="src\Forms\IgnoreEditForm.cs">
@@ -287,10 +287,10 @@
     <Compile Include="src\Forms\SystemErrorDialog.Designer.cs">
       <DependentUpon>SystemErrorDialog.cs</DependentUpon>
     </Compile>
-    <Compile Include="src\Forms\DebugForm.cs">
+    <Compile Include="src\Forms\Debug\DebugForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="src\Forms\DebugForm.Designer.cs">
+    <Compile Include="src\Forms\Debug\DebugForm.Designer.cs">
       <DependentUpon>DebugForm.cs</DependentUpon>
     </Compile>
     <Compile Include="src\Forms\DBBrowserForm.cs">
@@ -356,10 +356,10 @@
       <DependentUpon>BrowserForm.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="src\Forms\ProcessStatusForm.resx">
+    <EmbeddedResource Include="src\Forms\Debug\ProcessStatusForm.resx">
       <DependentUpon>ProcessStatusForm.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="src\Forms\GroongaDebugForm.resx">
+    <EmbeddedResource Include="src\Forms\Debug\GroongaDebugForm.resx">
       <DependentUpon>GroongaDebugForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="src\Forms\IgnoreEditForm.resx">
@@ -377,7 +377,7 @@
     <EmbeddedResource Include="src\Forms\SystemErrorDialog.resx">
       <DependentUpon>SystemErrorDialog.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="src\Forms\DebugForm.resx">
+    <EmbeddedResource Include="src\Forms\Debug\DebugForm.resx">
       <DependentUpon>DebugForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="src\Forms\DBBrowserForm.resx">
