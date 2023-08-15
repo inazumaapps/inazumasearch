@@ -36,9 +36,10 @@
             // 
             this.BtnQuit.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.BtnQuit.DialogResult = System.Windows.Forms.DialogResult.OK;
-            this.BtnQuit.Location = new System.Drawing.Point(516, 293);
+            this.BtnQuit.Location = new System.Drawing.Point(602, 366);
+            this.BtnQuit.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.BtnQuit.Name = "BtnQuit";
-            this.BtnQuit.Size = new System.Drawing.Size(82, 31);
+            this.BtnQuit.Size = new System.Drawing.Size(96, 39);
             this.BtnQuit.TabIndex = 1;
             this.BtnQuit.Text = "閉じる";
             this.BtnQuit.UseVisualStyleBackColor = true;
@@ -50,22 +51,25 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.TxtBody.Font = new System.Drawing.Font("ＭＳ ゴシック", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.TxtBody.Location = new System.Drawing.Point(13, 13);
+            this.TxtBody.Location = new System.Drawing.Point(15, 16);
+            this.TxtBody.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.TxtBody.Multiline = true;
             this.TxtBody.Name = "TxtBody";
             this.TxtBody.ReadOnly = true;
             this.TxtBody.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.TxtBody.Size = new System.Drawing.Size(585, 274);
+            this.TxtBody.Size = new System.Drawing.Size(682, 342);
             this.TxtBody.TabIndex = 2;
             // 
             // SystemErrorReportBodyDialog
             // 
             this.AcceptButton = this.BtnQuit;
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(610, 336);
+            this.ClientSize = new System.Drawing.Size(712, 420);
             this.Controls.Add(this.TxtBody);
             this.Controls.Add(this.BtnQuit);
+            this.Font = new System.Drawing.Font("Meiryo UI", 9F);
+            this.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.Name = "SystemErrorReportBodyDialog";
             this.ShowIcon = false;
             this.Text = "レポートの内容";

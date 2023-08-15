@@ -43,10 +43,11 @@
             // ProgressBar
             // 
             this.ProgressBar.Enabled = false;
-            this.ProgressBar.Location = new System.Drawing.Point(29, 46);
+            this.ProgressBar.Location = new System.Drawing.Point(34, 58);
+            this.ProgressBar.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.ProgressBar.MarqueeAnimationSpeed = 50;
             this.ProgressBar.Name = "ProgressBar";
-            this.ProgressBar.Size = new System.Drawing.Size(435, 23);
+            this.ProgressBar.Size = new System.Drawing.Size(507, 29);
             this.ProgressBar.Style = System.Windows.Forms.ProgressBarStyle.Marquee;
             this.ProgressBar.TabIndex = 8;
             // 
@@ -56,9 +57,10 @@
             this.statusText,
             this.toolStripStatusLabel1,
             this.statusTimeCount});
-            this.statusStrip1.Location = new System.Drawing.Point(0, 113);
+            this.statusStrip1.Location = new System.Drawing.Point(0, 147);
             this.statusStrip1.Name = "statusStrip1";
-            this.statusStrip1.Size = new System.Drawing.Size(500, 22);
+            this.statusStrip1.Padding = new System.Windows.Forms.Padding(1, 0, 16, 0);
+            this.statusStrip1.Size = new System.Drawing.Size(583, 22);
             this.statusStrip1.TabIndex = 9;
             this.statusStrip1.Text = "statusStrip1";
             // 
@@ -70,7 +72,7 @@
             // toolStripStatusLabel1
             // 
             this.toolStripStatusLabel1.Name = "toolStripStatusLabel1";
-            this.toolStripStatusLabel1.Size = new System.Drawing.Size(397, 17);
+            this.toolStripStatusLabel1.Size = new System.Drawing.Size(478, 17);
             this.toolStripStatusLabel1.Spring = true;
             // 
             // statusTimeCount
@@ -88,20 +90,23 @@
             // lblMessage
             // 
             this.lblMessage.AutoSize = true;
-            this.lblMessage.Location = new System.Drawing.Point(12, 19);
+            this.lblMessage.Location = new System.Drawing.Point(14, 24);
+            this.lblMessage.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.lblMessage.Name = "lblMessage";
-            this.lblMessage.Size = new System.Drawing.Size(32, 12);
+            this.lblMessage.Size = new System.Drawing.Size(43, 15);
             this.lblMessage.TabIndex = 11;
             this.lblMessage.Text = "ＮＮＮ";
             // 
             // ProgressForm
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(500, 135);
+            this.ClientSize = new System.Drawing.Size(583, 169);
             this.Controls.Add(this.lblMessage);
             this.Controls.Add(this.statusStrip1);
             this.Controls.Add(this.ProgressBar);
+            this.Font = new System.Drawing.Font("Meiryo UI", 9F);
+            this.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.MaximizeBox = false;
             this.Name = "ProgressForm";
             this.Text = "処理中...";

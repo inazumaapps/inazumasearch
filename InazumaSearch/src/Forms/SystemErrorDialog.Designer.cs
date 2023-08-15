@@ -46,9 +46,10 @@
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(71, 23);
+            this.label1.Location = new System.Drawing.Point(83, 29);
+            this.label1.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(298, 72);
+            this.label1.Size = new System.Drawing.Size(315, 90);
             this.label1.TabIndex = 0;
             this.label1.Text = "システムエラーが発生したため、Inazuma Searchを終了します。\r\nご迷惑をおかけして申し訳ありません。\r\n\r\nよろしければ、エラーの情報を送信していただ" +
     "き\r\n不具合内容の改善にご協力ください。\r\n（文書ファイルの内容は送信されません）";
@@ -57,9 +58,10 @@
             // 
             this.BtnQuit.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.BtnQuit.DialogResult = System.Windows.Forms.DialogResult.OK;
-            this.BtnQuit.Location = new System.Drawing.Point(276, 424);
+            this.BtnQuit.Location = new System.Drawing.Point(322, 530);
+            this.BtnQuit.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.BtnQuit.Name = "BtnQuit";
-            this.BtnQuit.Size = new System.Drawing.Size(71, 31);
+            this.BtnQuit.Size = new System.Drawing.Size(83, 39);
             this.BtnQuit.TabIndex = 1;
             this.BtnQuit.Text = "終了";
             this.BtnQuit.UseVisualStyleBackColor = true;
@@ -70,9 +72,10 @@
             this.ChkErrorReportSend.AutoSize = true;
             this.ChkErrorReportSend.Checked = true;
             this.ChkErrorReportSend.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.ChkErrorReportSend.Location = new System.Drawing.Point(28, 136);
+            this.ChkErrorReportSend.Location = new System.Drawing.Point(33, 170);
+            this.ChkErrorReportSend.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.ChkErrorReportSend.Name = "ChkErrorReportSend";
-            this.ChkErrorReportSend.Size = new System.Drawing.Size(173, 16);
+            this.ChkErrorReportSend.Size = new System.Drawing.Size(175, 19);
             this.ChkErrorReportSend.TabIndex = 2;
             this.ChkErrorReportSend.Text = "エラー情報を開発者へ送信する";
             this.ChkErrorReportSend.UseVisualStyleBackColor = true;
@@ -80,9 +83,10 @@
             // 
             // BtnShowReportBody
             // 
-            this.BtnShowReportBody.Location = new System.Drawing.Point(322, 132);
+            this.BtnShowReportBody.Location = new System.Drawing.Point(376, 165);
+            this.BtnShowReportBody.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.BtnShowReportBody.Name = "BtnShowReportBody";
-            this.BtnShowReportBody.Size = new System.Drawing.Size(121, 23);
+            this.BtnShowReportBody.Size = new System.Drawing.Size(141, 29);
             this.BtnShowReportBody.TabIndex = 3;
             this.BtnShowReportBody.Text = "送信内容の表示";
             this.BtnShowReportBody.UseVisualStyleBackColor = true;
@@ -93,38 +97,42 @@
             this.TxtErrorComment.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.TxtErrorComment.Location = new System.Drawing.Point(11, 23);
+            this.TxtErrorComment.Location = new System.Drawing.Point(13, 29);
+            this.TxtErrorComment.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.TxtErrorComment.Multiline = true;
             this.TxtErrorComment.Name = "TxtErrorComment";
             this.TxtErrorComment.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.TxtErrorComment.Size = new System.Drawing.Size(393, 126);
+            this.TxtErrorComment.Size = new System.Drawing.Size(458, 156);
             this.TxtErrorComment.TabIndex = 4;
             // 
             // groupBox1
             // 
             this.groupBox1.Controls.Add(this.TxtErrorComment);
-            this.groupBox1.Location = new System.Drawing.Point(28, 170);
+            this.groupBox1.Location = new System.Drawing.Point(33, 212);
+            this.groupBox1.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Padding = new System.Windows.Forms.Padding(8);
-            this.groupBox1.Size = new System.Drawing.Size(415, 164);
+            this.groupBox1.Padding = new System.Windows.Forms.Padding(9, 10, 9, 10);
+            this.groupBox1.Size = new System.Drawing.Size(484, 205);
             this.groupBox1.TabIndex = 5;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "エラーの再現手順、条件などがあれば補足をお願いいたします (空欄可)";
             // 
             // PicErrorIcon
             // 
-            this.PicErrorIcon.Location = new System.Drawing.Point(28, 23);
+            this.PicErrorIcon.Location = new System.Drawing.Point(33, 29);
+            this.PicErrorIcon.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.PicErrorIcon.Name = "PicErrorIcon";
-            this.PicErrorIcon.Size = new System.Drawing.Size(32, 32);
+            this.PicErrorIcon.Size = new System.Drawing.Size(37, 40);
             this.PicErrorIcon.TabIndex = 6;
             this.PicErrorIcon.TabStop = false;
             // 
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(150, 353);
+            this.label2.Location = new System.Drawing.Point(175, 441);
+            this.label2.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(293, 12);
+            this.label2.Size = new System.Drawing.Size(295, 15);
             this.label2.TabIndex = 7;
             this.label2.Text = "※返信が必要な場合は、下記公式サイトよりご連絡ください。";
             // 
@@ -132,9 +140,10 @@
             // 
             this.BtnQuitAndRestart.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.BtnQuitAndRestart.DialogResult = System.Windows.Forms.DialogResult.OK;
-            this.BtnQuitAndRestart.Location = new System.Drawing.Point(101, 424);
+            this.BtnQuitAndRestart.Location = new System.Drawing.Point(118, 530);
+            this.BtnQuitAndRestart.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.BtnQuitAndRestart.Name = "BtnQuitAndRestart";
-            this.BtnQuitAndRestart.Size = new System.Drawing.Size(134, 31);
+            this.BtnQuitAndRestart.Size = new System.Drawing.Size(156, 39);
             this.BtnQuitAndRestart.TabIndex = 8;
             this.BtnQuitAndRestart.Text = "終了して再起動";
             this.BtnQuitAndRestart.UseVisualStyleBackColor = true;
@@ -144,9 +153,10 @@
             // 
             this.LblWebsiteUrl.AutoSize = true;
             this.LblWebsiteUrl.LinkVisited = true;
-            this.LblWebsiteUrl.Location = new System.Drawing.Point(225, 376);
+            this.LblWebsiteUrl.Location = new System.Drawing.Point(262, 470);
+            this.LblWebsiteUrl.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.LblWebsiteUrl.Name = "LblWebsiteUrl";
-            this.LblWebsiteUrl.Size = new System.Drawing.Size(218, 12);
+            this.LblWebsiteUrl.Size = new System.Drawing.Size(252, 15);
             this.LblWebsiteUrl.TabIndex = 9;
             this.LblWebsiteUrl.TabStop = true;
             this.LblWebsiteUrl.Text = "https://inazumaapps.info/inazumasearch/";
@@ -157,16 +167,17 @@
             this.label3.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.label3.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.label3.Location = new System.Drawing.Point(10, 410);
+            this.label3.Location = new System.Drawing.Point(12, 512);
+            this.label3.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(448, 2);
+            this.label3.Size = new System.Drawing.Size(523, 2);
             this.label3.TabIndex = 10;
             // 
             // SystemErrorDialog
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(470, 467);
+            this.ClientSize = new System.Drawing.Size(548, 584);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.LblWebsiteUrl);
             this.Controls.Add(this.BtnQuitAndRestart);
@@ -177,6 +188,8 @@
             this.Controls.Add(this.ChkErrorReportSend);
             this.Controls.Add(this.BtnQuit);
             this.Controls.Add(this.label1);
+            this.Font = new System.Drawing.Font("Meiryo UI", 9F);
+            this.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.Name = "SystemErrorDialog";
             this.ShowIcon = false;
             this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;

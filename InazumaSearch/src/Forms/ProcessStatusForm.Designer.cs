@@ -45,20 +45,23 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.mainBox.Font = new System.Drawing.Font("ＭＳ ゴシック", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.mainBox.Location = new System.Drawing.Point(12, 12);
+            this.mainBox.Location = new System.Drawing.Point(14, 15);
+            this.mainBox.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.mainBox.Multiline = true;
             this.mainBox.Name = "mainBox";
             this.mainBox.ReadOnly = true;
             this.mainBox.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.mainBox.Size = new System.Drawing.Size(458, 290);
+            this.mainBox.Size = new System.Drawing.Size(534, 362);
             this.mainBox.TabIndex = 0;
             // 
             // ProcessStatusForm
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(482, 314);
+            this.ClientSize = new System.Drawing.Size(562, 392);
             this.Controls.Add(this.mainBox);
+            this.Font = new System.Drawing.Font("Meiryo UI", 9F);
+            this.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "ProcessStatusForm";

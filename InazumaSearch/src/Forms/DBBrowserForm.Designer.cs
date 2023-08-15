@@ -42,9 +42,10 @@
             // 
             // BtnClose
             // 
-            this.BtnClose.Location = new System.Drawing.Point(829, 355);
+            this.BtnClose.Location = new System.Drawing.Point(967, 444);
+            this.BtnClose.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.BtnClose.Name = "BtnClose";
-            this.BtnClose.Size = new System.Drawing.Size(75, 23);
+            this.BtnClose.Size = new System.Drawing.Size(88, 29);
             this.BtnClose.TabIndex = 15;
             this.BtnClose.Text = "閉じる";
             this.BtnClose.UseVisualStyleBackColor = true;
@@ -52,17 +53,19 @@
             // 
             // TreeFolder
             // 
-            this.TreeFolder.Location = new System.Drawing.Point(22, 54);
+            this.TreeFolder.Location = new System.Drawing.Point(26, 68);
+            this.TreeFolder.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.TreeFolder.Name = "TreeFolder";
-            this.TreeFolder.Size = new System.Drawing.Size(288, 295);
+            this.TreeFolder.Size = new System.Drawing.Size(335, 368);
             this.TreeFolder.TabIndex = 16;
             this.TreeFolder.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.TreeFolder_AfterSelect);
             // 
             // BtnRefresh
             // 
-            this.BtnRefresh.Location = new System.Drawing.Point(785, 12);
+            this.BtnRefresh.Location = new System.Drawing.Point(916, 15);
+            this.BtnRefresh.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.BtnRefresh.Name = "BtnRefresh";
-            this.BtnRefresh.Size = new System.Drawing.Size(119, 23);
+            this.BtnRefresh.Size = new System.Drawing.Size(139, 29);
             this.BtnRefresh.TabIndex = 17;
             this.BtnRefresh.Text = "最新の表示に更新";
             this.BtnRefresh.UseVisualStyleBackColor = true;
@@ -80,9 +83,10 @@
             this.FileUpdated,
             this.FileSize});
             this.LstFile.HideSelection = false;
-            this.LstFile.Location = new System.Drawing.Point(316, 54);
+            this.LstFile.Location = new System.Drawing.Point(369, 68);
+            this.LstFile.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.LstFile.Name = "LstFile";
-            this.LstFile.Size = new System.Drawing.Size(588, 295);
+            this.LstFile.Size = new System.Drawing.Size(685, 368);
             this.LstFile.TabIndex = 18;
             this.LstFile.UseCompatibleStateImageBehavior = false;
             this.LstFile.View = System.Windows.Forms.View.Details;
@@ -106,13 +110,15 @@
             // 
             // DBBrowserForm
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(916, 390);
+            this.ClientSize = new System.Drawing.Size(1069, 488);
             this.Controls.Add(this.LstFile);
             this.Controls.Add(this.BtnRefresh);
             this.Controls.Add(this.TreeFolder);
             this.Controls.Add(this.BtnClose);
+            this.Font = new System.Drawing.Font("Meiryo UI", 9F);
+            this.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.Name = "DBBrowserForm";
             this.Text = "データベースブラウザ";
             this.Load += new System.EventHandler(this.DBBrowserForm_Load);

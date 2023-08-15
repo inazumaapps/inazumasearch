@@ -33,9 +33,11 @@ namespace InazumaSearch.src.Forms
             // 
             // BackgroundMainForm
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(314, 103);
+            this.ClientSize = new System.Drawing.Size(366, 129);
+            this.Font = new System.Drawing.Font("Meiryo UI", 9F);
+            this.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.Name = "BackgroundMainForm";
             this.ShowIcon = false;
             this.ShowInTaskbar = false;

@@ -61,9 +61,10 @@
             // 
             this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.StatusText});
-            this.statusStrip1.Location = new System.Drawing.Point(0, 541);
+            this.statusStrip1.Location = new System.Drawing.Point(0, 682);
             this.statusStrip1.Name = "statusStrip1";
-            this.statusStrip1.Size = new System.Drawing.Size(1163, 22);
+            this.statusStrip1.Padding = new System.Windows.Forms.Padding(1, 0, 16, 0);
+            this.statusStrip1.Size = new System.Drawing.Size(1357, 22);
             this.statusStrip1.TabIndex = 9;
             this.statusStrip1.Text = "statusStrip1";
             // 
@@ -75,9 +76,10 @@
             // 
             // button10
             // 
-            this.button10.Location = new System.Drawing.Point(12, 12);
+            this.button10.Location = new System.Drawing.Point(14, 15);
+            this.button10.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.button10.Name = "button10";
-            this.button10.Size = new System.Drawing.Size(75, 23);
+            this.button10.Size = new System.Drawing.Size(88, 29);
             this.button10.TabIndex = 14;
             this.button10.Text = "DB削除";
             this.button10.UseVisualStyleBackColor = true;
@@ -85,9 +87,10 @@
             // 
             // TxtPath
             // 
-            this.TxtPath.Location = new System.Drawing.Point(174, 16);
+            this.TxtPath.Location = new System.Drawing.Point(203, 20);
+            this.TxtPath.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.TxtPath.Name = "TxtPath";
-            this.TxtPath.Size = new System.Drawing.Size(375, 19);
+            this.TxtPath.Size = new System.Drawing.Size(437, 23);
             this.TxtPath.TabIndex = 15;
             this.TxtPath.TextChanged += new System.EventHandler(this.TxtIconFilePath_TextChanged);
             // 
@@ -95,17 +98,19 @@
             // 
             this.pictureBox1.BackColor = System.Drawing.Color.White;
             this.pictureBox1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.pictureBox1.Location = new System.Drawing.Point(174, 41);
+            this.pictureBox1.Location = new System.Drawing.Point(203, 51);
+            this.pictureBox1.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(394, 283);
+            this.pictureBox1.Size = new System.Drawing.Size(459, 353);
             this.pictureBox1.TabIndex = 16;
             this.pictureBox1.TabStop = false;
             // 
             // BtnGetThumbnail
             // 
-            this.BtnGetThumbnail.Location = new System.Drawing.Point(555, 16);
+            this.BtnGetThumbnail.Location = new System.Drawing.Point(648, 20);
+            this.BtnGetThumbnail.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.BtnGetThumbnail.Name = "BtnGetThumbnail";
-            this.BtnGetThumbnail.Size = new System.Drawing.Size(189, 23);
+            this.BtnGetThumbnail.Size = new System.Drawing.Size(220, 29);
             this.BtnGetThumbnail.TabIndex = 17;
             this.BtnGetThumbnail.Text = "アイコン/サムネイル取得";
             this.BtnGetThumbnail.UseVisualStyleBackColor = true;
@@ -120,9 +125,10 @@
             "Medium",
             "Large",
             "ExtraLarge"});
-            this.cmbFormat.Location = new System.Drawing.Point(598, 57);
+            this.cmbFormat.Location = new System.Drawing.Point(698, 71);
+            this.cmbFormat.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.cmbFormat.Name = "cmbFormat";
-            this.cmbFormat.Size = new System.Drawing.Size(292, 20);
+            this.cmbFormat.Size = new System.Drawing.Size(340, 23);
             this.cmbFormat.TabIndex = 18;
             // 
             // ChkTransparent
@@ -130,18 +136,20 @@
             this.ChkTransparent.AutoSize = true;
             this.ChkTransparent.Checked = true;
             this.ChkTransparent.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.ChkTransparent.Location = new System.Drawing.Point(598, 84);
+            this.ChkTransparent.Location = new System.Drawing.Point(698, 105);
+            this.ChkTransparent.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.ChkTransparent.Name = "ChkTransparent";
-            this.ChkTransparent.Size = new System.Drawing.Size(85, 16);
+            this.ChkTransparent.Size = new System.Drawing.Size(96, 19);
             this.ChkTransparent.TabIndex = 19;
             this.ChkTransparent.Text = "Transparent";
             this.ChkTransparent.UseVisualStyleBackColor = true;
             // 
             // BtnGetExcelText
             // 
-            this.BtnGetExcelText.Location = new System.Drawing.Point(750, 16);
+            this.BtnGetExcelText.Location = new System.Drawing.Point(875, 20);
+            this.BtnGetExcelText.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.BtnGetExcelText.Name = "BtnGetExcelText";
-            this.BtnGetExcelText.Size = new System.Drawing.Size(189, 23);
+            this.BtnGetExcelText.Size = new System.Drawing.Size(220, 29);
             this.BtnGetExcelText.TabIndex = 20;
             this.BtnGetExcelText.Text = "Excelの内容を各フィルタで取得";
             this.BtnGetExcelText.UseVisualStyleBackColor = true;
@@ -154,9 +162,10 @@
             this.ObjSize});
             this.LsvObjectList.GridLines = true;
             this.LsvObjectList.HideSelection = false;
-            this.LsvObjectList.Location = new System.Drawing.Point(750, 138);
+            this.LsvObjectList.Location = new System.Drawing.Point(875, 172);
+            this.LsvObjectList.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.LsvObjectList.Name = "LsvObjectList";
-            this.LsvObjectList.Size = new System.Drawing.Size(401, 275);
+            this.LsvObjectList.Size = new System.Drawing.Size(467, 343);
             this.LsvObjectList.Sorting = System.Windows.Forms.SortOrder.Ascending;
             this.LsvObjectList.TabIndex = 23;
             this.LsvObjectList.UseCompatibleStateImageBehavior = false;
@@ -174,9 +183,10 @@
             // 
             // BtnGetSmallIco
             // 
-            this.BtnGetSmallIco.Location = new System.Drawing.Point(526, 375);
+            this.BtnGetSmallIco.Location = new System.Drawing.Point(614, 469);
+            this.BtnGetSmallIco.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.BtnGetSmallIco.Name = "BtnGetSmallIco";
-            this.BtnGetSmallIco.Size = new System.Drawing.Size(189, 23);
+            this.BtnGetSmallIco.Size = new System.Drawing.Size(220, 29);
             this.BtnGetSmallIco.TabIndex = 25;
             this.BtnGetSmallIco.Text = "通常のアイコン取得";
             this.BtnGetSmallIco.UseVisualStyleBackColor = true;
@@ -184,16 +194,18 @@
             // 
             // TxtIconPath
             // 
-            this.TxtIconPath.Location = new System.Drawing.Point(23, 377);
+            this.TxtIconPath.Location = new System.Drawing.Point(27, 471);
+            this.TxtIconPath.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.TxtIconPath.Name = "TxtIconPath";
-            this.TxtIconPath.Size = new System.Drawing.Size(497, 19);
+            this.TxtIconPath.Size = new System.Drawing.Size(579, 23);
             this.TxtIconPath.TabIndex = 24;
             // 
             // BtnRaise
             // 
-            this.BtnRaise.Location = new System.Drawing.Point(12, 57);
+            this.BtnRaise.Location = new System.Drawing.Point(14, 71);
+            this.BtnRaise.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.BtnRaise.Name = "BtnRaise";
-            this.BtnRaise.Size = new System.Drawing.Size(120, 23);
+            this.BtnRaise.Size = new System.Drawing.Size(140, 29);
             this.BtnRaise.TabIndex = 26;
             this.BtnRaise.Text = "例外を発生";
             this.BtnRaise.UseVisualStyleBackColor = true;
@@ -201,9 +213,10 @@
             // 
             // BtnRestart
             // 
-            this.BtnRestart.Location = new System.Drawing.Point(12, 326);
+            this.BtnRestart.Location = new System.Drawing.Point(14, 408);
+            this.BtnRestart.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.BtnRestart.Name = "BtnRestart";
-            this.BtnRestart.Size = new System.Drawing.Size(120, 23);
+            this.BtnRestart.Size = new System.Drawing.Size(140, 29);
             this.BtnRestart.TabIndex = 28;
             this.BtnRestart.Text = "再起動";
             this.BtnRestart.UseVisualStyleBackColor = true;
@@ -211,9 +224,10 @@
             // 
             // BtnGetSmallSystemIco
             // 
-            this.BtnGetSmallSystemIco.Location = new System.Drawing.Point(526, 404);
+            this.BtnGetSmallSystemIco.Location = new System.Drawing.Point(614, 505);
+            this.BtnGetSmallSystemIco.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.BtnGetSmallSystemIco.Name = "BtnGetSmallSystemIco";
-            this.BtnGetSmallSystemIco.Size = new System.Drawing.Size(189, 23);
+            this.BtnGetSmallSystemIco.Size = new System.Drawing.Size(220, 29);
             this.BtnGetSmallSystemIco.TabIndex = 29;
             this.BtnGetSmallSystemIco.Text = "システムアイコン取得";
             this.BtnGetSmallSystemIco.UseVisualStyleBackColor = true;
@@ -222,18 +236,20 @@
             // LstIcons
             // 
             this.LstIcons.HideSelection = false;
-            this.LstIcons.Location = new System.Drawing.Point(23, 402);
+            this.LstIcons.Location = new System.Drawing.Point(27, 502);
+            this.LstIcons.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.LstIcons.Name = "LstIcons";
-            this.LstIcons.Size = new System.Drawing.Size(497, 97);
+            this.LstIcons.Size = new System.Drawing.Size(579, 120);
             this.LstIcons.TabIndex = 30;
             this.LstIcons.UseCompatibleStateImageBehavior = false;
             this.LstIcons.View = System.Windows.Forms.View.SmallIcon;
             // 
             // BtnOpenExcelFile
             // 
-            this.BtnOpenExcelFile.Location = new System.Drawing.Point(945, 57);
+            this.BtnOpenExcelFile.Location = new System.Drawing.Point(1102, 71);
+            this.BtnOpenExcelFile.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.BtnOpenExcelFile.Name = "BtnOpenExcelFile";
-            this.BtnOpenExcelFile.Size = new System.Drawing.Size(189, 23);
+            this.BtnOpenExcelFile.Size = new System.Drawing.Size(220, 29);
             this.BtnOpenExcelFile.TabIndex = 31;
             this.BtnOpenExcelFile.Text = "Excelファイルを開く";
             this.BtnOpenExcelFile.UseVisualStyleBackColor = true;
@@ -241,9 +257,10 @@
             // 
             // BtnUpdateDocumentFolderLabels
             // 
-            this.BtnUpdateDocumentFolderLabels.Location = new System.Drawing.Point(750, 476);
+            this.BtnUpdateDocumentFolderLabels.Location = new System.Drawing.Point(875, 595);
+            this.BtnUpdateDocumentFolderLabels.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.BtnUpdateDocumentFolderLabels.Name = "BtnUpdateDocumentFolderLabels";
-            this.BtnUpdateDocumentFolderLabels.Size = new System.Drawing.Size(120, 23);
+            this.BtnUpdateDocumentFolderLabels.Size = new System.Drawing.Size(140, 29);
             this.BtnUpdateDocumentFolderLabels.TabIndex = 32;
             this.BtnUpdateDocumentFolderLabels.Text = "フォルダラベル更新";
             this.BtnUpdateDocumentFolderLabels.UseVisualStyleBackColor = true;
@@ -251,9 +268,10 @@
             // 
             // BtnShowProcessStatus
             // 
-            this.BtnShowProcessStatus.Location = new System.Drawing.Point(12, 112);
+            this.BtnShowProcessStatus.Location = new System.Drawing.Point(14, 140);
+            this.BtnShowProcessStatus.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.BtnShowProcessStatus.Name = "BtnShowProcessStatus";
-            this.BtnShowProcessStatus.Size = new System.Drawing.Size(137, 23);
+            this.BtnShowProcessStatus.Size = new System.Drawing.Size(160, 29);
             this.BtnShowProcessStatus.TabIndex = 33;
             this.BtnShowProcessStatus.Text = "プロセス状態表示";
             this.BtnShowProcessStatus.UseVisualStyleBackColor = true;
@@ -261,9 +279,10 @@
             // 
             // BtnParseMBox
             // 
-            this.BtnParseMBox.Location = new System.Drawing.Point(945, 16);
+            this.BtnParseMBox.Location = new System.Drawing.Point(1102, 20);
+            this.BtnParseMBox.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.BtnParseMBox.Name = "BtnParseMBox";
-            this.BtnParseMBox.Size = new System.Drawing.Size(114, 23);
+            this.BtnParseMBox.Size = new System.Drawing.Size(133, 29);
             this.BtnParseMBox.TabIndex = 34;
             this.BtnParseMBox.Text = "mboxパース";
             this.BtnParseMBox.UseVisualStyleBackColor = true;
@@ -271,9 +290,10 @@
             // 
             // BtnDBDefrag
             // 
-            this.BtnDBDefrag.Location = new System.Drawing.Point(12, 158);
+            this.BtnDBDefrag.Location = new System.Drawing.Point(14, 198);
+            this.BtnDBDefrag.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.BtnDBDefrag.Name = "BtnDBDefrag";
-            this.BtnDBDefrag.Size = new System.Drawing.Size(120, 23);
+            this.BtnDBDefrag.Size = new System.Drawing.Size(140, 29);
             this.BtnDBDefrag.TabIndex = 35;
             this.BtnDBDefrag.Text = "DBデフラグ";
             this.BtnDBDefrag.UseVisualStyleBackColor = true;
@@ -281,9 +301,10 @@
             // 
             // BtnKillAlwaysCrawl
             // 
-            this.BtnKillAlwaysCrawl.Location = new System.Drawing.Point(781, 97);
+            this.BtnKillAlwaysCrawl.Location = new System.Drawing.Point(911, 121);
+            this.BtnKillAlwaysCrawl.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.BtnKillAlwaysCrawl.Name = "BtnKillAlwaysCrawl";
-            this.BtnKillAlwaysCrawl.Size = new System.Drawing.Size(192, 23);
+            this.BtnKillAlwaysCrawl.Size = new System.Drawing.Size(224, 29);
             this.BtnKillAlwaysCrawl.TabIndex = 36;
             this.BtnKillAlwaysCrawl.Text = "常駐クロール処理を中断";
             this.BtnKillAlwaysCrawl.UseVisualStyleBackColor = true;
@@ -291,9 +312,9 @@
             // 
             // DebugForm
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1163, 563);
+            this.ClientSize = new System.Drawing.Size(1357, 704);
             this.Controls.Add(this.BtnKillAlwaysCrawl);
             this.Controls.Add(this.BtnDBDefrag);
             this.Controls.Add(this.BtnParseMBox);
@@ -315,6 +336,8 @@
             this.Controls.Add(this.TxtPath);
             this.Controls.Add(this.button10);
             this.Controls.Add(this.statusStrip1);
+            this.Font = new System.Drawing.Font("Meiryo UI", 9F);
+            this.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.Name = "DebugForm";
             this.Text = "Form1";
             this.Load += new System.EventHandler(this.DebugForm_Load);
