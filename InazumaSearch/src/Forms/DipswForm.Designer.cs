@@ -259,7 +259,6 @@
             this.lsvTextExtensions.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.columnHeader1,
             this.columnHeader2});
-            this.lsvTextExtensions.Font = new System.Drawing.Font("ＭＳ ゴシック", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
             this.lsvTextExtensions.FullRowSelect = true;
             this.lsvTextExtensions.HideSelection = false;
             this.lsvTextExtensions.Location = new System.Drawing.Point(19, 18);
@@ -273,11 +272,12 @@
             // columnHeader1
             // 
             this.columnHeader1.Text = "拡張子";
+            this.columnHeader1.Width = 80;
             // 
             // columnHeader2
             // 
             this.columnHeader2.Text = "ラベル";
-            this.columnHeader2.Width = 121;
+            this.columnHeader2.Width = 150;
             // 
             // label9
             // 
