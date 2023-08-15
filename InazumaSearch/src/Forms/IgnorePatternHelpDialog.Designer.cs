@@ -38,17 +38,16 @@
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Font = new System.Drawing.Font("ＭＳ ゴシック", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
             this.label1.Location = new System.Drawing.Point(13, 13);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(587, 252);
+            this.label1.Size = new System.Drawing.Size(528, 315);
             this.label1.TabIndex = 0;
             this.label1.Text = resources.GetString("label1.Text");
             // 
             // BtnOK
             // 
             this.BtnOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.BtnOK.Location = new System.Drawing.Point(262, 375);
+            this.BtnOK.Location = new System.Drawing.Point(262, 428);
             this.BtnOK.Name = "BtnOK";
             this.BtnOK.Size = new System.Drawing.Size(115, 33);
             this.BtnOK.TabIndex = 1;
@@ -58,21 +57,21 @@
             // 
             // label3
             // 
+            this.label3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.label3.AutoSize = true;
-            this.label3.Font = new System.Drawing.Font("ＭＳ ゴシック", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.label3.Location = new System.Drawing.Point(178, 336);
+            this.label3.Location = new System.Drawing.Point(209, 381);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(269, 12);
+            this.label3.Size = new System.Drawing.Size(232, 15);
             this.label3.TabIndex = 3;
             this.label3.Text = "※ Gitの .gitignore の書き方に準じています。";
             // 
             // label2
             // 
+            this.label2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.label2.AutoSize = true;
-            this.label2.Font = new System.Drawing.Font("ＭＳ ゴシック", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.label2.Location = new System.Drawing.Point(178, 316);
+            this.label2.Location = new System.Drawing.Point(209, 361);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(449, 12);
+            this.label2.Size = new System.Drawing.Size(393, 15);
             this.label2.TabIndex = 2;
             this.label2.Text = "※ \\ の代わりに / を使うことも可能です。（例：/folder1/folder2/file1.doc）";
             // 
@@ -81,7 +80,7 @@
             this.AcceptButton = this.BtnOK;
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
-            this.ClientSize = new System.Drawing.Size(639, 420);
+            this.ClientSize = new System.Drawing.Size(639, 473);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.BtnOK);
