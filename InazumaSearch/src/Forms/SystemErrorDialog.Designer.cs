@@ -121,6 +121,7 @@
             // 
             // label2
             // 
+            this.label2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.label2.AutoSize = true;
             this.label2.Location = new System.Drawing.Point(150, 353);
             this.label2.Name = "label2";
@@ -142,9 +143,10 @@
             // 
             // LblWebsiteUrl
             // 
+            this.LblWebsiteUrl.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.LblWebsiteUrl.AutoSize = true;
             this.LblWebsiteUrl.LinkVisited = true;
-            this.LblWebsiteUrl.Location = new System.Drawing.Point(225, 376);
+            this.LblWebsiteUrl.Location = new System.Drawing.Point(193, 378);
             this.LblWebsiteUrl.Name = "LblWebsiteUrl";
             this.LblWebsiteUrl.Size = new System.Drawing.Size(252, 15);
             this.LblWebsiteUrl.TabIndex = 9;
