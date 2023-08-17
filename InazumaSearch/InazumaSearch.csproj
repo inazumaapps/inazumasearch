@@ -23,7 +23,7 @@
     <UseWindowsForms>true</UseWindowsForms>
     <UseWPF>False</UseWPF>
     <ImportWindowsDesktopTargets>true</ImportWindowsDesktopTargets>
-    <StartArguments>--html-path ../../../html</StartArguments>
+    <Platforms>x64;x86</Platforms>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
     <OutputPath>bin\Debug\x86\</OutputPath>
@@ -60,6 +60,12 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release %28Portable%29|x64'">
+    <OutputPath>bin\Release_Portable\x64\program\</OutputPath>
+    <Optimize>true</Optimize>
+    <DefineConstants>PORTABLE</DefineConstants>
+    <DebugSymbols>true</DebugSymbols>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release %28Portable%29|AnyCPU'">
     <OutputPath>bin\Release_Portable\x64\program\</OutputPath>
     <Optimize>true</Optimize>
     <DefineConstants>PORTABLE</DefineConstants>
@@ -114,9 +120,11 @@
     <PackageReference Include="Autoupdater.NET.Official">
       <Version>1.8.3</Version>
     </PackageReference>
+    <PackageReference Include="CefSharp.WinForms.NETCore" Version="115.3.130" />
     <PackageReference Include="CommandLineParser">
       <Version>2.9.1</Version>
     </PackageReference>
+    <PackageReference Include="Microsoft-WindowsAPICodePack-Shell" Version="1.1.5" />
     <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
     <PackageReference Include="MimeKitLite">
       <Version>4.1.0.1</Version>
@@ -144,11 +152,8 @@
     <PackageReference Include="System.ServiceModel.Security" Version="6.0.0" />
     <PackageReference Include="System.ServiceModel.Federation" Version="6.0.0" />
   </ItemGroup>
-  <PropertyGroup>
-    <PostBuildEvent>set TARGETDIR=$(TargetDir)
-set PROJECTDIR=$(ProjectDir)
-set PROJECTDIR=$(ProjectDir)
-set PLATFORMNAME=$(PlatformName)
-call "$(ProjectDir)buildbatch\postbuild.cmd"</PostBuildEvent>
-  </PropertyGroup>
+  <PropertyGroup />
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Exec Command="set TARGETDIR=$(TargetDir)&#xD;&#xA;set PROJECTDIR=$(ProjectDir)&#xD;&#xA;set PLATFORMNAME=$(PlatformName)&#xD;&#xA;call &quot;$(ProjectDir)buildbatch\postbuild.cmd&quot;" />
+  </Target>
 </Project>

@@ -4,6 +4,7 @@
     <OutputType>WinExe</OutputType>
     <LangVersion>6</LangVersion>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <Platforms>x64;x86</Platforms>
   </PropertyGroup>
   <PropertyGroup>
     <StartupObject />
@@ -12,6 +13,21 @@
     <ApplicationIcon>icon\inazumasearch-icon.ico</ApplicationIcon>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release %28Portable%29|AnyCPU'">
+    <OutputPath>..\InazumaSearch\bin\Release_Portable\anycpu\</OutputPath>
+    <Optimize>true</Optimize>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release %28Portable%29|x86'">
+    <OutputPath>..\InazumaSearch\bin\Release_Portable\anycpu\</OutputPath>
+    <Optimize>true</Optimize>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release %28Portable%29|x64'">
+    <OutputPath>..\InazumaSearch\bin\Release_Portable\anycpu\</OutputPath>
+    <Optimize>true</Optimize>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release %28Portable%29|AnyCPU'">
     <OutputPath>..\InazumaSearch\bin\Release_Portable\anycpu\</OutputPath>
     <Optimize>true</Optimize>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>

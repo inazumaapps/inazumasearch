@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "InazumaSearch": {
+      "commandName": "Project",
+      "commandLineArgs": "--html-path $(ProjectDir)\\html"
+    }
+  }
+}

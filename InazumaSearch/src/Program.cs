@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Runtime.Remoting.Channels;
-using System.Runtime.Remoting.Channels.Ipc;
-using System.Threading;
 using Alphaleonis.Win32.Filesystem;
-using InazumaSearch.Core;
 using InazumaSearch.Forms;
 
 namespace InazumaSearch
@@ -21,25 +17,26 @@ namespace InazumaSearch
             System.Windows.Forms.Application.SetUnhandledExceptionMode(System.Windows.Forms.UnhandledExceptionMode.CatchException);
             System.AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
 
-            // Mutex名
-            const string mutexName = "inazumaapps.info/InazumaSearch";
+            // TODO:二重起動防止処理の修正が必要
+            //// Mutex名
+            //const string mutexName = "inazumaapps.info/InazumaSearch";
 
-            // Mutexオブジェクトを作成する
-            bool createdNew;
-            var mutex = new Mutex(true, mutexName, out createdNew);
+            //// Mutexオブジェクトを作成する
+            //bool createdNew;
+            //var mutex = new Mutex(true, mutexName, out createdNew);
 
-            //ミューテックスの初期所有権が付与されたか調べる
-            if (!createdNew)
-            {
-                // 初期所有権が付与されなかった場合は二重起動とみなし
-                // すでに起動中のプロセスに対して、プロセス間通信で接続し、新しいウインドウを開かせてそのまま終了
-                var client = new IpcClientChannel();
-                ChannelServices.RegisterChannel(client, true);
-                var ipcReceiver = (IPCReceiver)Activator.GetObject(typeof(IPCReceiver), $"ipc://{IPCReceiver.GetIPCPortName()}/{IPCReceiver.UriName}");
-                ipcReceiver.OnDoubleBoot();
+            ////ミューテックスの初期所有権が付与されたか調べる
+            //if (!createdNew)
+            //{
+            //    // 初期所有権が付与されなかった場合は二重起動とみなし
+            //    // すでに起動中のプロセスに対して、プロセス間通信で接続し、新しいウインドウを開かせてそのまま終了
+            //    var client = new IpcClientChannel();
+            //    ChannelServices.RegisterChannel(client, true);
+            //    var ipcReceiver = (IPCReceiver)Activator.GetObject(typeof(IPCReceiver), $"ipc://{IPCReceiver.GetIPCPortName()}/{IPCReceiver.UriName}");
+            //    ipcReceiver.OnDoubleBoot();
 
-                return;
-            }
+            //    return;
+            //}
 
             try
             {
@@ -77,9 +74,10 @@ namespace InazumaSearch
             }
             finally
             {
-                //ミューテックスを解放する
-                mutex.ReleaseMutex();
-                mutex.Close();
+                // TODO:二重起動防止処理の修正が必要
+                ////ミューテックスを解放する
+                //mutex.ReleaseMutex();
+                //mutex.Close();
             }
 
         }
