@@ -5,20 +5,20 @@ VisualStudioVersion = 16.0.30223.230
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "InazumaSearch", "InazumaSearch\InazumaSearch.csproj", "{E5C67D6E-D69E-41FC-84A3-17AB964F243C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InazumaSearch_Debug", "InazumaSearch_Debug\InazumaSearch_Debug.csproj", "{57725953-D6FB-4C4A-8E83-9F80B9185A56}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "InazumaSearch_Debug", "InazumaSearch_Debug\InazumaSearch_Debug.csproj", "{57725953-D6FB-4C4A-8E83-9F80B9185A56}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "restart", "restarter\restart.csproj", "{B33751A6-1854-4803-A443-FE41FA7C8F10}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "restart", "restarter\restart.csproj", "{B33751A6-1854-4803-A443-FE41FA7C8F10}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PluginSDK", "PluginSDK\PluginSDK.csproj", "{6B771D8D-254A-4F55-8E21-DDA644FF9266}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PluginSDK", "PluginSDK\PluginSDK.csproj", "{6B771D8D-254A-4F55-8E21-DDA644FF9266}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "portableLaunch", "portableLaunch\portableLaunch.csproj", "{2734C56C-682D-4B89-9004-223F16F48261}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "portableLaunch", "portableLaunch\portableLaunch.csproj", "{2734C56C-682D-4B89-9004-223F16F48261}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{E9D5E1B1-C412-4C43-BB60-26F033BC91C0}"
 	ProjectSection(SolutionItems) = preProject
 		.editorconfig = .editorconfig
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InazumaSearchUnitTest", "InazumaSearchUnitTest\InazumaSearchUnitTest.csproj", "{6D3F8C8D-CF0A-4B81-B885-13539E16E9D0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "InazumaSearchUnitTest", "InazumaSearchUnitTest\InazumaSearchUnitTest.csproj", "{6D3F8C8D-CF0A-4B81-B885-13539E16E9D0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
