@@ -11,6 +11,7 @@ using Hnx8.ReadJEnc;
 using InazumaSearch.Core.Crawl;
 using InazumaSearch.Forms;
 using MimeKit;
+using Semver;
 
 namespace InazumaSearch.Core
 {
@@ -240,6 +241,7 @@ namespace InazumaSearch.Core
 
             // 現在DBのスキーマバージョンを取得 (DBが存在しない場合は0)
             var schemaVer = GM.GetSchemaVersion();
+            var firstBoot = schemaVer == 0;
 
             // 現在DBのスキーマバージョンが、アプリケーションが要求するスキーマバージョンより高い場合はエラーとして終了
             if (schemaVer > Groonga.Manager.AppSchemaVersion)
@@ -258,7 +260,7 @@ namespace InazumaSearch.Core
                 {
                     GM.SetupSchema(schemaVer, out reCrawlRequired);
                 });
-                var msg = (schemaVer == 0 ? "データベースを作成しています。しばらくお待ちください..." : "データベースを更新しています。しばらくお待ちください...");
+                var msg = (firstBoot ? "データベースを作成しています。しばらくお待ちください..." : "データベースを更新しています。しばらくお待ちください...");
                 var f = new ProgressForm(t, msg);
                 f.ShowDialog();
 
@@ -296,19 +298,8 @@ namespace InazumaSearch.Core
                 }
             }
 
-            // 前回の最終起動バージョンが0.17.0よりも前であれば、フォルダラベルの更新を実行
-            if (UserSettings.LastBootVersion == null)
-            {
-                var t = Task.Run(() =>
-                {
-                    UpdateDocumentFolderLabels();
-                });
-                var f = new ProgressForm(t, "データベースを更新しています。しばらくお待ちください...");
-                f.ShowDialog();
-            }
-
-            // 前回の最終起動バージョンが0.21.0よりも前であれば、再クロールを促す
-            if (UserSettings.LastBootVersion != null && UserSettings.LastBootVersion <= "0.21.0")
+            // DBがすでに存在しており、かつ前回の最終起動バージョンが0.21.0よりも前であれば、再クロールを促す
+            if (!firstBoot && (UserSettings.LastBootVersion == null || UserSettings.LastBootVersion != null && UserSettings.LastBootVersion <= new SemVersion(0, 21, 0)))
             {
                 if (Util.Confirm("【バージョンアップに伴うお知らせ】\nver 0.21.0以前のInazuma Searchをお使いいただいていた場合は、不具合により、Inazuma Searchが保持するクロール済み文書情報の一部が破損していた可能性があります。\nこれまでのバージョンで、クロール時や検索時にシステムエラーが多発していた方は、ご迷惑をおかけして申し訳ありませんが、クロール済み文書情報を一度削除していただいた上で、再度のクロール実行をお願いいたします。\n\nInazuma Searchが保持している、クロール済み文書情報を削除してもよろしいですか？\n（文書ファイルや設定情報は削除されません）"))
                 {

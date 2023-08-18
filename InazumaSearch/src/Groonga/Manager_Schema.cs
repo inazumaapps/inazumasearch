@@ -36,7 +36,7 @@ namespace InazumaSearch.Groonga
                 UpgradeSchemaTo(nextVer);
 
                 // 大きく変更が入る場合、再クロールが必要 (DBの新規作成時は除く)
-                if (!newMode && nextVer == 7)
+                if (!newMode)
                 {
                     reCrawlRequired = true;
                 }
