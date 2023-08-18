@@ -78,6 +78,8 @@ PLATFORMS.each do |platform|
 	file DEST_EXES[platform] => [EXEPRESS_INIS[platform], DEST_CABS[platform]] do |task|
 		# Exepressでexeを作成
 		sh %Q|"#{EXEPRESS}" "#{EXEPRESS_INIS[platform]}"|
+
+		notify "#{task} を作成しました。"
 	end
 	
 	file DEST_CABS[platform] => [DEST_ZIPS[platform]] do |task|
@@ -252,4 +254,8 @@ def make_portable_zip(conf_type, platform, dest_zip_path)
     	rescue
     	end
     end
+end
+
+def notify(msg)
+	sh %Q|powershell -File "./notify.ps1" "rake (InazumaSearch)" "#{msg}" |
 end
