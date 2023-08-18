@@ -149,6 +149,11 @@ PLATFORMS.each do |platform|
 	end
 end
 
+def rmdir_if_exists(path)
+    if Dir.exist?(path) then
+    	rm_r path
+    end
+end
 
 desc "-"
 task :clean do
@@ -167,10 +172,21 @@ task :clean do
 
 	end
 
-    if Dir.exist?("out/content") then
-    	rm_r "out/content"
-    end
-    
+	rmdir_if_exists 'out/content'
+	rmdir_if_exists 'InazumaSearch/bin'
+    rmdir_if_exists 'InazumaSearch/obj'
+	rmdir_if_exists 'InazumaSearch_Debug/bin'
+    rmdir_if_exists 'InazumaSearch_Debug/obj'
+	rmdir_if_exists 'InazumaSearchUnitTest/bin'
+    rmdir_if_exists 'InazumaSearchUnitTest/obj'
+	rmdir_if_exists 'PluginSDK/bin'
+    rmdir_if_exists 'PluginSDK/obj'
+	rmdir_if_exists 'portableLaunch/bin'
+    rmdir_if_exists 'portableLaunch/obj'
+	rmdir_if_exists 'restarter/bin'
+    rmdir_if_exists 'restarter/obj'
+
+
     EXEPRESS_INIS.values.each do |ini_path|
     	rm ini_path if File.exist?(ini_path)
     end
