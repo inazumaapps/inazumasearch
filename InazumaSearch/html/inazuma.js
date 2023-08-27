@@ -320,7 +320,7 @@ function displayResultRows_ListView(getJsonData, searchOffset){
 // クロール実行前モーダルにフォルダ表示を追加
 function addFolderToCrawlModal(path, label, fileCount, checked) {
     var $newItem = $('.folder-item.cloning-base').clone().removeClass('cloning-base');
-    $newItem.find('.crawl-modal-folder-check').attr('data-path', path).prop('checked', checked);
+    $newItem.find('.FOLDER-SELECT-MODAL-folder-check').attr('data-path', path).prop('checked', checked);
     $newItem.find('.path').text(path);
     $newItem.find('.file-count').text(fileCount);
     if (label) {
@@ -335,27 +335,27 @@ function addFolderToCrawlModal(path, label, fileCount, checked) {
 // クロールダイアログ内、「全選択」チェックの表示更新
 function refreshCrawlModalAllCheck() {
     // 全フォルダを選択していれば、「全選択」のチェックをON
-    if ($('.crawl-modal-folder-check[data-path]').not(':checked').length === 0) {
-        $('#CRAWL-MODAL-ALL-CHECK').prop('checked', true);
+    if ($('.FOLDER-SELECT-MODAL-folder-check[data-path]').not(':checked').length === 0) {
+        $('#FOLDER-SELECT-MODAL-ALL-CHECK').prop('checked', true);
     } else {
-        $('#CRAWL-MODAL-ALL-CHECK').prop('checked', false);
+        $('#FOLDER-SELECT-MODAL-ALL-CHECK').prop('checked', false);
     }
 }
 
 // クロール実行ボタンの表示更新
 function refreshCrawlDecideButtonEnabled() {
     // 1つ以上のフォルダを選択していればクロール実行可能
-    if ($('.crawl-modal-folder-check[data-path]:checked').length >= 1) {
-        $('#CRAWL-MODAL-DECIDE').removeClass('disabled');
+    if ($('.FOLDER-SELECT-MODAL-folder-check[data-path]:checked').length >= 1) {
+        $('#FOLDER-SELECT-MODAL-DECIDE').removeClass('disabled');
     } else {
-        $('#CRAWL-MODAL-DECIDE').addClass('disabled');
+        $('#FOLDER-SELECT-MODAL-DECIDE').addClass('disabled');
     }
 };
 
 // クロール実行前モーダルの対象フォルダ一覧を更新 (非同期に処理を行う)
 function updateFolderListOnCrawlModalAsync() {
-    $('#CRAWL-MODAL-ALL-CHECK-AREA').hide();
-    $('#PROGRESS-BAR-IN-CRAWL-MODAL').show();
+    $('#FOLDER-SELECT-MODAL-ALL-CHECK-AREA').hide();
+    $('#PROGRESS-BAR-IN-FOLDER-SELECT-MODAL').show();
     $('.folder-item:not(.cloning-base)').remove(); // 既存行の削除
     refreshCrawlDecideButtonEnabled(); // クロール実行ボタンの表示を更新
 
@@ -367,8 +367,8 @@ function updateFolderListOnCrawlModalAsync() {
                 addFolderToCrawlModal(dir.Path, dir.Label, data.fileCounts[dir.Path], !data.excludingFlags[dir.Path]);
             }
         }
-        $('#PROGRESS-BAR-IN-CRAWL-MODAL').hide();
-        $('#CRAWL-MODAL-ALL-CHECK-AREA').show();
+        $('#PROGRESS-BAR-IN-FOLDER-SELECT-MODAL').hide();
+        $('#FOLDER-SELECT-MODAL-ALL-CHECK-AREA').show();
 
         refreshCrawlModalAllCheck(); // 「全選択」チェックの表示を更新
         refreshCrawlDecideButtonEnabled(); // クロール実行ボタンの表示を更新
@@ -413,6 +413,8 @@ cols = document.querySelectorAll('.droppable');
     col.addEventListener('drop', handleDrop, false);
     //col.addEventListener('dragend', handleDragEnd, false);
 });
+
+let folderSelectModalDecideCallback = null;
 
 
 $(async function () {
@@ -489,16 +491,17 @@ $(async function () {
 
     $('#DISPLAY-HIGHLIGHT-MODAL').modal();
     $('#QUERY-GUIDE-MODAL').modal();
-    $('#CRAWL-MODAL').modal({
+    $('#FOLDER-SELECT-MODAL').modal({
         onCloseEnd: function () {
             // クロール実行ボタンを押していればクロール処理
-            if ($('#CRAWL-MODAL').attr('data-decide-flag') === '1') {
+            if ($('#FOLDER-SELECT-MODAL').attr('data-decide-flag') === '1') {
                 // チェックしているフォルダのパスを取得
                 var targetFolders = [];
-                $('.crawl-modal-folder-check:checked[data-path]').each(function () {
+                $('.FOLDER-SELECT-MODAL-folder-check:checked[data-path]').each(function () {
                     targetFolders.push($(this).attr('data-path'));
                 });
-                startCrawl(targetFolders);
+
+                folderSelectModalDecideCallback(targetFolders);
             }
         }
     });
@@ -579,13 +582,34 @@ $(async function () {
     $('select').formSelect();
     $('.tooltipped').tooltipster();
 
+    $('#SEARCH-FOLDER-SELECT-BUTTON').click(function () {
+        // 検索対象フォルダの絞り込み
+        updateFolderListOnCrawlModalAsync(); // フォルダリスト更新
+        $('#FOLDER-SELECT-MODAL').removeAttr('data-decide-flag'); // 確定フラグ初期化
+        $('#FOLDER-SELECT-MODAL-DECIDE').text('OK');
+        $('#FOLDER-SELECT-MODAL-MESSAGE').text("検索対象とするフォルダを選択してください。");
+        folderSelectModalDecideCallback = function(targetFolders){
+            $('#SEARCH-FOLDER-TARGETS').html(targetFolders.join("<br>"));
+        }
+
+        var modal = M.Modal.getInstance($('#FOLDER-SELECT-MODAL')[0]);
+        modal.open();
+        return false;
+    });
+
     $('#CRAWL-START').click(function () {
         // 検索対象フォルダが2件以上かどうかで処理を分岐
         if (dbState.targetFolderCount >= 2) {
             // 2件以上ならダイアログを開いて、クロールするフォルダを選択
             updateFolderListOnCrawlModalAsync(); // フォルダリスト更新
-            $('#CRAWL-MODAL').removeAttr('data-decide-flag'); // 確定フラグ初期化
-            var modal = M.Modal.getInstance($('#CRAWL-MODAL')[0]);
+            $('#FOLDER-SELECT-MODAL').removeAttr('data-decide-flag'); // 確定フラグ初期化
+            $('#FOLDER-SELECT-MODAL-DECIDE').text('クロール実行');
+            $('#FOLDER-SELECT-MODAL-MESSAGE').text("クロールを実行するフォルダを選択してください。");
+            folderSelectModalDecideCallback = function(targetFolders){
+                startCrawl(targetFolders);
+            }
+
+            var modal = M.Modal.getInstance($('#FOLDER-SELECT-MODAL')[0]);
             modal.open();
         } else {
             // 1件ならそのままクロール実行
@@ -594,25 +618,25 @@ $(async function () {
     });
 
     // クロールダイアログで「全選択」ボタンを押下
-    $('#CRAWL-MODAL-ALL-CHECK').click(function (e) {
+    $('#FOLDER-SELECT-MODAL-ALL-CHECK').click(function (e) {
         if ($(this).prop('checked')) {
-            $('.crawl-modal-folder-check[data-path]').prop('checked', true);
+            $('.FOLDER-SELECT-MODAL-folder-check[data-path]').prop('checked', true);
         } else {
-            $('.crawl-modal-folder-check[data-path]').prop('checked', false);
+            $('.FOLDER-SELECT-MODAL-folder-check[data-path]').prop('checked', false);
         }
 
         refreshCrawlDecideButtonEnabled(); // クロール実行ボタンの表示を更新
     });
     // クロールダイアログで、各フォルダのチェックボックスを変更
-    $('#CRAWL-MODAL').on('click', '.crawl-modal-folder-check', function (e) {
+    $('#FOLDER-SELECT-MODAL').on('click', '.FOLDER-SELECT-MODAL-folder-check', function (e) {
         refreshCrawlModalAllCheck(); // 「全選択」チェックの表示を更新
         refreshCrawlDecideButtonEnabled(); // クロール実行ボタンの表示を更新
     });
 
-    // クロールダイアログで「クロール実行」ボタンを押下
-    $('#CRAWL-MODAL-DECIDE').click(function () {
-        $('#CRAWL-MODAL').attr('data-decide-flag', '1');
-        $('#CRAWL-MODAL').modal('close');
+    // フォルダ選択ダイアログで決定ボタンを押下
+    $('#FOLDER-SELECT-MODAL-DECIDE').click(function () {
+        $('#FOLDER-SELECT-MODAL').attr('data-decide-flag', '1');
+        $('#FOLDER-SELECT-MODAL').modal('close');
     });
 
     $('#TEST-NOTIFY').click(function(){

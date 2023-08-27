@@ -113,6 +113,19 @@
                         <label>更新日付</label>
                     </div>
                 </div><!-- /.row -->
+                <div class="row">
+                    <div class="input-field col s6">
+                        <button class="btn waves-effect waves-light light-blue darken-1" id="SEARCH-FOLDER-SELECT-BUTTON">
+                        <i class="material-icons left">folder</i>
+                            検索対象フォルダの絞り込み
+                            <i class="mdi-action-search right"></i>
+                        </button>
+                    </div>
+                    
+                    <div class="input-field col s6">
+                        <div id="SEARCH-FOLDER-TARGETS" style="scroll-y: scroll;"></div>
+                    </div>
+                </div><!-- /.row -->
             </form>
         </div><!-- /.section -->
         <div class="progress" id="SEARCH-PROGRESS-BAR" style="opacity: 0;">
@@ -301,25 +314,24 @@
         </div>
     </div>
 
-    <!-- Modal Structure -->
-    <div id="CRAWL-MODAL" class="modal modal-fixed-footer" style="width: 96% !important; height: 96% !important;">
+    <div id="FOLDER-SELECT-MODAL" class="modal modal-fixed-footer" style="width: 96% !important; height: 96% !important;">
         <div class="modal-header" style="padding-left: 24px;">
-            <p>クロールを実行するフォルダを選択してください。</p>
+            <p id="FOLDER-SELECT-MODAL-MESSAGE"></p>
         </div>
         <div class="modal-content">
-            <div id="CRAWL-MODAL-ALL-CHECK-AREA">
+            <div id="FOLDER-SELECT-MODAL-ALL-CHECK-AREA">
                 <label>
-                    <input type="checkbox" class="filled-in" id="CRAWL-MODAL-ALL-CHECK" checked="checked" />
+                    <input type="checkbox" class="filled-in" id="FOLDER-SELECT-MODAL-ALL-CHECK" checked="checked" />
                     <span class="title path" style="color: black; height: 20px; line-height: 20px;">全選択</span>
                 </label>
             </div>
-            <div class="progress" id="PROGRESS-BAR-IN-CRAWL-MODAL">
+            <div class="progress" id="PROGRESS-BAR-IN-FOLDER-SELECT-MODAL">
                 <div class="indeterminate"></div>
             </div>
             <ul class="collection" id="CRAWL-FOLDER-LIST">
                 <li class="collection-item folder-item cloning-base"  style="position: relative;">
                     <label>
-                        <input type="checkbox" class="filled-in crawl-modal-folder-check" checked="checked" />
+                        <input type="checkbox" class="filled-in FOLDER-SELECT-MODAL-folder-check" checked="checked" />
                         <span class="title" style="height: 20px; line-height: 20px; color: black;"><span class="path"></span><span class="folder-label" style="color: silver; margin-left: 1.5rem; font-size: small;"></span></span>
                     </label>
 
@@ -328,7 +340,7 @@
             </ul>
         </div>
         <div class="modal-footer">
-            <a href="#!" class="modal-action waves-effect btn" id="CRAWL-MODAL-DECIDE">クロール実行</a>
+            <a href="#!" class="modal-action waves-effect btn" id="FOLDER-SELECT-MODAL-DECIDE">クロール実行</a>
             <a href="#!" class="modal-action modal-close waves-effect btn-flat">キャンセル</a>
         </div>
     </div>
