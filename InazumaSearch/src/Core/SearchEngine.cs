@@ -453,7 +453,7 @@ namespace InazumaSearch.Core
             //var imgConv = new ImageConverter();
 
             var cryptProvider = new SHA1CryptoServiceProvider();
-            var thumbnailDirPath = App.ThumbnailDirPath;
+            var thumbnailDirPath = ApplicationEnvironment.ThumbnailDirPath;
 
             foreach (var selectRec in searchResult.Records)
             {

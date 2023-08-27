@@ -233,7 +233,7 @@ namespace InazumaSearch.Core.Crawl.Work
 
                 var bmp = sh.Thumbnail.Bitmap;
                 var thumbnailName = Util.HexDigest(_app.HashProvider, key) + ".png";
-                bmp.Save(Path.Combine(_app.ThumbnailDirPath, thumbnailName));
+                bmp.Save(Path.Combine(ApplicationEnvironment.ThumbnailDirPath, thumbnailName));
             }
             catch (OperationCanceledException ex)
             {

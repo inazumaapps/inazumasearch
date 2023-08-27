@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Reflection;
 using Alphaleonis.Win32.Filesystem;
 using Semver;
 
@@ -22,7 +23,26 @@ namespace InazumaSearch.Core
                 }
                 else
                 {
-                    return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), @"Inazuma Search\db");
+                    return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), @"Inazuma Search dev-2.0\db");
+                }
+            }
+        }
+
+
+        /// <summary>
+        /// サムネイルディレクトリのパス
+        /// </summary>
+        public static string ThumbnailDirPath
+        {
+            get
+            {
+                if (ApplicationEnvironment.IsPortableMode())
+                {
+                    return Path.Combine(System.Windows.Forms.Application.StartupPath, @"..\data\thumbnail");
+                }
+                else
+                {
+                    return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), @"Inazuma Search dev-2.0\thumbnail");
                 }
             }
         }
@@ -36,11 +56,11 @@ namespace InazumaSearch.Core
             {
                 if (IsPortableMode())
                 {
-                    return Path.Combine(System.Windows.Forms.Application.StartupPath, @"..\data\db");
+                    return Path.Combine(System.Windows.Forms.Application.StartupPath, @"..\data\log");
                 }
                 else
                 {
-                    return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), @"Inazuma Search\db");
+                    return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), @"Inazuma Search dev-2.0\log");
                 }
             }
         }
@@ -54,11 +74,11 @@ namespace InazumaSearch.Core
             {
                 if (IsPortableMode())
                 {
-                    return Path.Combine(System.Windows.Forms.Application.StartupPath, @"..\data\db");
+                    return Path.Combine(System.Windows.Forms.Application.StartupPath, @"..\data");
                 }
                 else
                 {
-                    return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), @"Inazuma Search\db");
+                    return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), @"Inazuma Search dev-2.0");
                 }
             }
         }
@@ -79,12 +99,12 @@ namespace InazumaSearch.Core
         /// </summary>
         public static SemVersion GetVersion()
         {
-            // アセンブリバージョンを取得
+            // 製品バージョンを取得し、SemVerとして処理
             var asm = System.Reflection.Assembly.GetExecutingAssembly();
-            var asmVer = asm.GetName().Version;
+            var infoVer = asm.GetCustomAttribute<AssemblyInformationalVersionAttribute>().InformationalVersion;
 
             // アセンブリバージョンをSemVer形式とする
-            return new SemVersion(asmVer.Major, asmVer.Minor, asmVer.Build, SystemConst.PreReleaseVersion);
+            return SemVersion.Parse(infoVer, strict: true);
         }
 
         /// <summary>

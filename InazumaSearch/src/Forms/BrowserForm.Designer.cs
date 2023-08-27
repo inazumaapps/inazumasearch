@@ -69,7 +69,7 @@
             this.Font = new System.Drawing.Font("Meiryo UI", 9F);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "BrowserForm";
-            this.Text = "Inazuma Search";
+            this.Text = "Inazuma Search 次期開発版";
             this.TopMost = true;
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.BrowserForm_FormClosed);
             this.Load += new System.EventHandler(this.BrowserForm_Load);

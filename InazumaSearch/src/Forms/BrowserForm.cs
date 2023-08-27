@@ -1015,7 +1015,7 @@ namespace InazumaSearch.Forms
         {
             if (App.DebugMode)
             {
-                Text = $"Inazuma Search {ApplicationEnvironment.GetVersionCaption()} [Debug Mode]";
+                Text += $" {ApplicationEnvironment.GetVersionCaption()} [Debug Mode]";
             }
             App.Crawler.AlwaysCrawlProgress.ProgressChanged += AlwaysCrawlProgress_ProgressChanged;
         }

@@ -4,11 +4,11 @@ using System.Runtime.InteropServices;
 // アセンブリに関する一般情報は以下の属性セットをとおして制御されます。
 // アセンブリに関連付けられている情報を変更するには、
 // これらの属性値を変更してください。
-[assembly: AssemblyTitle("InazumaSearch_Debug")]
+[assembly: AssemblyTitle("InazumaSearch_Debug 次期開発版")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("InazumaSearch_Debug")]
+[assembly: AssemblyProduct("InazumaSearch_Debug 次期開発版")]
 [assembly: AssemblyCopyright("Copyright ©  2017-2020")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]

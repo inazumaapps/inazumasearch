@@ -186,7 +186,7 @@ namespace InazumaSearch.Forms
 
         private void lnkOpenDataFolder_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
-            Process.Start("explorer.exe", $"\"{Application.UserSettingDirPath}\"");
+            Process.Start("explorer.exe", $"\"{ApplicationEnvironment.UserSettingDirPath}\"");
         }
 
         /// <summary>

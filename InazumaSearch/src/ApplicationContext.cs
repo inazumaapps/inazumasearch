@@ -27,7 +27,7 @@ namespace InazumaSearch
             };
 
             // ロガー用にログディレクトリパスを設定
-            NLog.GlobalDiagnosticsContext.Set("LogDirPath", app.LogDirPath);
+            NLog.GlobalDiagnosticsContext.Set("LogDirPath", ApplicationEnvironment.LogDirPath);
             // ログパスを設定
             var nlogConfPath =
                 Path.Combine(System.Windows.Forms.Application.StartupPath, "nlogconf", (app.DebugMode ? @"Debug.config" : @"Release.config"));

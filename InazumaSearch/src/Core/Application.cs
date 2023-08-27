@@ -100,67 +100,9 @@ namespace InazumaSearch.Core
         }
 
         /// <summary>
-        /// サムネイルディレクトリのパス
-        /// </summary>
-        public virtual string ThumbnailDirPath
-        {
-            get
-            {
-                if (ApplicationEnvironment.IsPortableMode())
-                {
-                    return Path.Combine(System.Windows.Forms.Application.StartupPath, @"..\data\thumbnail");
-                }
-                else
-                {
-                    return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), @"Inazuma Search\thumbnail");
-                }
-            }
-        }
-        /// <summary>
-        /// ログディレクトリのパス
-        /// </summary>
-        public virtual string LogDirPath
-        {
-            get
-            {
-                if (ApplicationEnvironment.IsPortableMode())
-                {
-                    return Path.Combine(System.Windows.Forms.Application.StartupPath, @"..\data\log");
-                }
-                else
-                {
-                    return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), @"Inazuma Search\log");
-                }
-            }
-        }
-
-        /// <summary>
-        /// ユーザー設定ファイルディレクトリのパス
-        /// </summary>
-        public virtual string UserSettingDirPath
-        {
-            get
-            {
-                if (ApplicationEnvironment.IsPortableMode())
-                {
-                    return Path.Combine(System.Windows.Forms.Application.StartupPath, @"..\data");
-                }
-                else
-                {
-                    return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), @"Inazuma Search");
-                }
-            }
-        }
-
-        /// <summary>
-        /// ユーザー設定ファイルのパス
-        /// </summary>
-        public virtual string UserSettingPath { get { return Path.Combine(UserSettingDirPath, @"UserSettings.json"); } }
-
-        /// <summary>
         /// スタートアップフォルダに配置するショートカットのパス
         /// </summary>
-        public virtual string StartupShortcutPath { get { return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Startup), @"Inazuma Search.lnk"); } }
+        public virtual string StartupShortcutPath { get { return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Startup), @"Inazuma Search  dev-2.0.lnk"); } }
 
         #endregion
 
@@ -217,10 +159,10 @@ namespace InazumaSearch.Core
             Logger.Info("アプリケーション起動中...");
 
             // ユーザー設定の読み込み
-            UserSettings = UserSetting.Store.Setup(UserSettingPath);
+            UserSettings = UserSetting.Store.Setup(ApplicationEnvironment.UserSettingPath);
 
             // Groongaの起動 (Groongaが存在しなければ終了)
-            GM = new Groonga.Manager(DBDirPath, LogDirPath, DebugMode);
+            GM = new Groonga.Manager(DBDirPath, ApplicationEnvironment.LogDirPath, DebugMode);
             if (!File.Exists(GM.GroongaExePath))
             {
                 Util.ShowErrorMessage("groonga.exeが見つかりませんでした。");
@@ -317,7 +259,7 @@ namespace InazumaSearch.Core
             }
 
             // サムネイルフォルダが存在しなければ作成
-            Directory.CreateDirectory(ThumbnailDirPath);
+            Directory.CreateDirectory(ApplicationEnvironment.ThumbnailDirPath);
 
             // 起動完了時の更新処理（最終起動バージョンの更新、プラグイン構成の保存）
             UserSettings.SaveOnAfterBoot(new Dictionary<string, int>(loadedPluginVersionNumbers));
@@ -722,8 +664,8 @@ namespace InazumaSearch.Core
         /// </summary>
         public virtual void DeleteAllThumbnailFiles()
         {
-            if (!Directory.Exists(ThumbnailDirPath)) return;
-            foreach (var path in Directory.GetFiles(ThumbnailDirPath, "*.png"))
+            if (!Directory.Exists(ApplicationEnvironment.ThumbnailDirPath)) return;
+            foreach (var path in Directory.GetFiles(ApplicationEnvironment.ThumbnailDirPath, "*.png"))
             {
                 File.Delete(path);
             }

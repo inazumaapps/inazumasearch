@@ -2,7 +2,7 @@
 asmLines = File.readlines('InazumaSearch/Properties/AssemblyInfo.cs', encoding: 'utf-8')
 version = nil
 asmLines.each do |line|
-	if line =~ /\[assembly\: AssemblyVersion\("(\d+\.\d+\.\d+)\.0"\)\]/ then
+	if line =~ /\[assembly\: AssemblyInformationalVersion\("(.+?)"\)\]/ then
 		version = $1
 	end
 end
