@@ -104,7 +104,7 @@ namespace InazumaSearch.Core
             var infoVer = asm.GetCustomAttribute<AssemblyInformationalVersionAttribute>().InformationalVersion;
 
             // アセンブリバージョンをSemVer形式とする
-            return SemVersion.Parse(infoVer, strict: true);
+            return SemVersion.Parse(infoVer, SemVersionStyles.Strict);
         }
 
         /// <summary>
