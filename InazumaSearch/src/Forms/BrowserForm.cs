@@ -497,6 +497,7 @@ namespace InazumaSearch.Forms
                 , bool learning = false
                 , int offset = 0
                 , string selectedFormat = null
+                , string selectedFolderPath = null
                 , string selectedFolderLabel = null
                 , string selectedOrder = null
                 , string selectedView = null
@@ -549,6 +550,7 @@ namespace InazumaSearch.Forms
                         , queryUpdated
                         , offset
                         , selectedFormat
+                        , selectedFolderPath
                         , selectedFolderLabel
                         , selectedOrder
                         , selectedView

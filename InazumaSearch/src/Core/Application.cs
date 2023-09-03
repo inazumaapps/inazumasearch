@@ -253,6 +253,9 @@ namespace InazumaSearch.Core
 
             // 現在DBのスキーマバージョンが、アプリケーションが要求するスキーマバージョンより低い場合は
             // DBの新規作成orアップグレード処理を実行
+
+
+            GM.UpdateFolderPaths();
             if (schemaVer < Groonga.Manager.AppSchemaVersion)
             {
                 var reCrawlRequired = false;
@@ -649,6 +652,7 @@ namespace InazumaSearch.Core
 
             GM.Load(table: Table.Documents, values: values);
         }
+
 
         /// <summary>
         /// 無視対象のファイル情報 (GetIgnoredDocumentRecordsで取得)
