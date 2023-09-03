@@ -36,7 +36,6 @@
             this.TxtTarget = new System.Windows.Forms.TextBox();
             this.BtnDecide = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
-            this.ChkCrawlFolderOnly = new System.Windows.Forms.CheckBox();
             this.SuspendLayout();
             // 
             // BtnCancel
@@ -95,23 +94,11 @@
             this.label1.TabIndex = 19;
             this.label1.Text = "ツリー内のフォルダをダブルクリックして、検索対象とするフォルダを選択してください。";
             // 
-            // ChkCrawlFolderOnly
-            // 
-            this.ChkCrawlFolderOnly.AutoSize = true;
-            this.ChkCrawlFolderOnly.Location = new System.Drawing.Point(37, 510);
-            this.ChkCrawlFolderOnly.Name = "ChkCrawlFolderOnly";
-            this.ChkCrawlFolderOnly.Size = new System.Drawing.Size(261, 27);
-            this.ChkCrawlFolderOnly.TabIndex = 20;
-            this.ChkCrawlFolderOnly.Text = "クロール対象のフォルダのみ表示";
-            this.ChkCrawlFolderOnly.UseVisualStyleBackColor = true;
-            this.ChkCrawlFolderOnly.CheckedChanged += new System.EventHandler(this.ChkCrawlFolderOnly_CheckedChanged);
-            // 
             // SearchFolderSelectForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(144F, 144F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.ClientSize = new System.Drawing.Size(1374, 612);
-            this.Controls.Add(this.ChkCrawlFolderOnly);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.BtnDecide);
             this.Controls.Add(this.TxtTarget);
@@ -135,7 +122,6 @@
         private System.Windows.Forms.TextBox TxtTarget;
         private System.Windows.Forms.Button BtnDecide;
         private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.CheckBox ChkCrawlFolderOnly;
     }
 }
 

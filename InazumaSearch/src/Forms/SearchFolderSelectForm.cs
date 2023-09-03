@@ -54,16 +54,9 @@ namespace InazumaSearch.Forms
                 , sortKeys: new[] { Column.Documents.FILE_PATH }
                 , limit: -1
             );
-            if (ChkCrawlFolderOnly.Checked)
-            {
-                DirPaths = Application.UserSettings.TargetFolders.Select(f => f.Path).ToList();
-            }
-            else
-            {
-                DirPaths = selectRes.SearchResult.Records.Where(r => !string.IsNullOrWhiteSpace(r.GetTextValue(Column.Documents.FILE_PATH)))
-                                                                     .Select(r => Path.GetDirectoryName(r.GetTextValue(Column.Documents.FILE_PATH)))
-                                                                     .Distinct().ToList();
-            }
+            DirPaths = selectRes.SearchResult.Records.Where(r => !string.IsNullOrWhiteSpace(r.GetTextValue(Column.Documents.FILE_PATH)))
+                                                                 .Select(r => Path.GetDirectoryName(r.GetTextValue(Column.Documents.FILE_PATH)))
+                                                                 .Distinct().ToList();
 
             // フォルダパス1件ごとに処理
             foreach (var dirPath in DirPaths)
