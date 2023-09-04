@@ -207,6 +207,7 @@ namespace InazumaSearch.Core.Crawl.Work
                                 { Column.Documents.TITLE, extRes.Title },
                                 { Column.Documents.BODY, extRes.Body },
                                 { Column.Documents.FILE_NAME, Path.GetFileName(FilePath) },
+                                { Column.Documents.FOLDER_PATH, Path.GetDirectoryName(FilePath) },
                                 { Column.Documents.FILE_PATH, FilePath },
                                 { Column.Documents.FILE_UPDATED_AT, Groonga.Util.ToUnixTime(fileUpdated) },
                                 { Column.Documents.FILE_UPDATED_YEAR, fileUpdated.Year },
