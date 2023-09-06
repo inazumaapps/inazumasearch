@@ -341,15 +341,6 @@ namespace InazumaSearch.Forms
                 });
             }
 
-            public string GetSimilarDocuments(string key)
-            {
-                return App.ExecuteInExceptionCatcher<string>(() =>
-                {
-                    var searchEngine = new SearchEngine(App);
-                    return JsonConvert.SerializeObject(searchEngine.SearchSimilarDocuments(key));
-                });
-            }
-
             public string GetHighlightedBody(string key, string queryKeyword, string queryBody)
             {
                 return App.ExecuteInExceptionCatcher<string>(() =>
@@ -555,6 +546,16 @@ namespace InazumaSearch.Forms
                         , selectedOrder
                         , selectedView
                     );
+
+                    var allFolderPaths = searchEngine.SearchAllFolderPath(
+                        queryKeyword
+                        , queryFileName
+                        , queryBody
+                        , queryUpdated
+                        , selectedFormat
+                        , selectedFolderPath
+                        , selectedFolderLabel
+                     );
 
                     // 失敗した場合はエラーダイアログを表示して終了
                     if (!ret.success)
