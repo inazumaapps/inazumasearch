@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Windows.Forms;
-using Alphaleonis.Win32.Filesystem;
 using InazumaSearch.Core;
 
 namespace InazumaSearch.Forms
@@ -10,16 +8,38 @@ namespace InazumaSearch.Forms
     public partial class SearchFolderSelectForm : Form
     {
         public Core.Application Application { get; set; }
+        public string QueryKeyword { get; set; }
+        public string QueryFileName { get; set; }
+        public string QueryBody { get; set; }
+        public string QueryUpdated { get; set; }
+        public string SelectedFormat { get; set; }
+        public string SelectedFolderPath { get; set; }
+        public string SelectedFolderLabel { get; set; }
         public IList<string> DirPaths { get; set; }
 
         public SearchFolderSelectForm()
         {
             InitializeComponent();
         }
-        public SearchFolderSelectForm(Core.Application app)
+        public SearchFolderSelectForm(
+              Core.Application app
+            , string queryKeyword
+            , string queryFileName
+            , string queryBody
+            , string queryUpdated
+            , string selectedFormat
+            , string selectedFolderPath
+            , string selectedFolderLabel)
         {
             InitializeComponent();
             Application = app;
+            QueryKeyword = queryKeyword;
+            QueryFileName = queryFileName;
+            QueryBody = queryBody;
+            QueryUpdated = queryUpdated;
+            SelectedFormat = selectedFormat;
+            SelectedFolderPath = selectedFolderPath;
+            SelectedFolderLabel = selectedFolderLabel;
         }
 
         private void BtnDecide_Click(object sender, EventArgs e)
@@ -45,27 +65,29 @@ namespace InazumaSearch.Forms
         {
             // ツリーを一度初期化
             TreeFolder.Nodes.Clear();
+            var allNodes = new List<TreeNode>();
             var systemImgListHandle = IntPtr.Zero;
 
-            // 全文書のファイルパス一覧を取得
-            var selectRes = Application.GM.Select(
-                table: Table.Documents
-                , outputColumns: new[] { Column.Documents.KEY, Column.Documents.FILE_PATH, Column.Documents.FILE_UPDATED_AT, Column.Documents.SIZE }
-                , sortKeys: new[] { Column.Documents.FILE_PATH }
-                , limit: -1
-            );
-            DirPaths = selectRes.SearchResult.Records.Where(r => !string.IsNullOrWhiteSpace(r.GetTextValue(Column.Documents.FILE_PATH)))
-                                                                 .Select(r => Path.GetDirectoryName(r.GetTextValue(Column.Documents.FILE_PATH)))
-                                                                 .Distinct().ToList();
+            // 検索条件に合致するフォルダパス情報を取得
+            var searchEngine = new SearchEngine(Application);
+            var folderPaths = searchEngine.SearchAllFolderPath(QueryKeyword, QueryFileName, QueryBody, QueryUpdated, SelectedFormat, SelectedFolderPath, SelectedFolderLabel);
 
             // フォルダパス1件ごとに処理
-            foreach (var dirPath in DirPaths)
+            foreach (var pair in folderPaths)
             {
-                if (string.IsNullOrEmpty(dirPath)) continue;
+                var folderPath = pair.Key;
+                var docCount = pair.Value;
+                if (string.IsNullOrEmpty(folderPath)) continue;
 
                 var addTargetNodes = TreeFolder.Nodes;
                 string currentPath = null;
-                foreach (var pathItem in dirPath.Split(new char[] { '\\' }))
+                var pathItems = folderPath.Split(new char[] { '\\' });
+
+                // 経路上にあるノード（親→子の順で追加）
+                var nodesOnPathRoute = new List<TreeNode>();
+
+                // パス要素1つごとに処理
+                foreach (var pathItem in pathItems)
                 {
                     var nodeAddFlag = true;
                     currentPath = (currentPath == null ? pathItem : currentPath += (@"\" + pathItem));
@@ -73,21 +95,22 @@ namespace InazumaSearch.Forms
                     // 現在の対象ノードの子に、同じ名前を持つノードがいるかどうかを探索
                     foreach (TreeNode node in addTargetNodes)
                     {
-                        if (node.Text == pathItem)
+                        var tag = (FolderNodeTag)node.Tag;
+                        if (tag.FolderName == pathItem)
                         {
                             // 同じ名前を持つノードがいれば、新ノードの追加はしない
                             addTargetNodes = node.Nodes;
                             nodeAddFlag = false;
+                            nodesOnPathRoute.Add(node);
                         }
-
                     }
 
                     // 新ノードの追加を行う場合
                     if (nodeAddFlag)
                     {
-                        var newNode = new TreeNode(pathItem)
+                        var newNode = new TreeNode()
                         {
-                            Tag = currentPath
+                            Tag = new FolderNodeTag() { DocumentCount = 0, Path = folderPath, FolderName = pathItem }
                         };
                         int iconImageIndex;
                         addTargetNodes.Add(newNode);
@@ -98,9 +121,28 @@ namespace InazumaSearch.Forms
                             newNode.ImageIndex = iconImageIndex;
                             newNode.SelectedImageIndex = iconImageIndex;
                         };
+
+                        nodesOnPathRoute.Add(newNode);
+                        allNodes.Add(newNode);
                     }
                 }
+
+                // 経路上の全ノードに対して、文書カウントを追加
+                foreach (var node in nodesOnPathRoute)
+                {
+                    var tag = (FolderNodeTag)node.Tag;
+                    tag.DocumentCount += docCount;
+                }
+
             }
+
+            // 表示文字列の指定
+            foreach (TreeNode node in allNodes)
+            {
+                var tag = (FolderNodeTag)node.Tag;
+                node.Text = $"{tag.FolderName} ({tag.DocumentCount})";
+            }
+
 
             IconFetcher.SetImageListToTreeView(TreeFolder, systemImgListHandle);
         }
@@ -118,14 +160,16 @@ namespace InazumaSearch.Forms
 
         private void TreeFolder_DoubleClick(object sender, EventArgs e)
         {
-            var selectedFolderPath = (string)TreeFolder.SelectedNode.Tag;
+            var folderNodeTag = (FolderNodeTag)TreeFolder.SelectedNode.Tag;
 
-            TxtTarget.Text = TxtTarget.Text.TrimEnd() + "\r\n" + selectedFolderPath + @"\";
+            TxtTarget.Text = TxtTarget.Text.TrimEnd() + "\r\n" + folderNodeTag.Path + @"\";
         }
+    }
 
-        private void ChkCrawlFolderOnly_CheckedChanged(object sender, EventArgs e)
-        {
-            UpdateFolderTree();
-        }
+    public class FolderNodeTag
+    {
+        public string Path { get; set; }
+        public string FolderName { get; set; }
+        public long DocumentCount { get; set; }
     }
 }

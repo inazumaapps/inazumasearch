@@ -564,12 +564,12 @@ namespace InazumaSearch.Core
         /// <returns>フォルダパス、ヒット件数を格納したDictionary</returns>
         public Dictionary<string, long> SearchAllFolderPath(
               string queryKeyword
-            , string queryFileName = null
-            , string queryBody = null
-            , string queryUpdated = null
-            , string selectedFormat = null
-            , string selectedFolderPath = null
-            , string selectedFolderLabel = null
+            , string queryFileName
+            , string queryBody
+            , string queryUpdated
+            , string selectedFormat
+            , string selectedFolderPath
+            , string selectedFolderLabel
         )
         {
             // 検索条件を解析

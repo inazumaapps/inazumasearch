@@ -132,6 +132,14 @@ namespace InazumaSearch.Forms
 
             }
 
+            public void OpenSearchFolderSelectDialog(IDictionary<string, object> queryObject)
+            {
+                OwnerForm.InvokeOnUIThread((f) =>
+                {
+                    var dialog = new SearchFolderSelectForm(App, null, null, null, null, null, null, null);
+                    dialog.ShowDialog(f);
+                });
+            }
 
 
             public void CrawlStart(string targetFoldersJSON = null)
@@ -716,7 +724,6 @@ namespace InazumaSearch.Forms
             public Core.Application Application { get; set; }
             private const int ShowDevTools = 26501;
             private const int ShowDBBrowser = 26505;
-            private const int ShowFolderSelect = 26509;
             private const int GroongaDebug = 26506;
             private const int ShowDebugForm = 26502;
             private const int OpenFile = 26503;
@@ -759,7 +766,6 @@ namespace InazumaSearch.Forms
                     {
                         model.AddItem((CefMenuCommand)ShowDevTools, "開発ツール");
                         model.AddItem((CefMenuCommand)ShowDBBrowser, "DBブラウザー(β版)");
-                        model.AddItem((CefMenuCommand)ShowFolderSelect, "フォルダ選択");
                         model.AddItem((CefMenuCommand)GroongaDebug, "Groongaコマンド実行");
                         model.AddItem((CefMenuCommand)ShowDebugForm, "デバッグウインドウを開く");
                         model.AddSeparator();
@@ -806,15 +812,6 @@ namespace InazumaSearch.Forms
                         OwnerForm.InvokeOnUIThread((f) =>
                         {
                             var f2 = new DBBrowserForm(Application);
-                            f2.Show(f);
-                        });
-                    }
-
-                    if ((int)commandId == ShowFolderSelect)
-                    {
-                        OwnerForm.InvokeOnUIThread((f) =>
-                        {
-                            var f2 = new SearchFolderSelectForm(Application);
                             f2.Show(f);
                         });
                     }

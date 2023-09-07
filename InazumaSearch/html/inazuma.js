@@ -104,24 +104,8 @@ function executeSearch(
         }
 
 
-        if (data.folderPathDrilldownLinks.length >= 2
-            || (data.folderPathDrilldownLinks.length === 1 && data.folderPathDrilldownLinks[0].nSubRecs < data.nHits)
-            || g_lastSelectedFolderPath) {
-            var resHtmlfolderPath = "フォルダパスで絞り込む: ";
-            for(var link of data.folderPathDrilldownLinks){
-                if (g_lastSelectedFolderPath === link.folderPath) { // 現在選択中の絞り込み
-                    resHtml += '<span class="selected-drilldown">[' + link.caption + ']</span> ';
-                } else if (!g_lastSelectedFolderPath) { // 絞り込みを行っていない場合のみ、選択肢を表示
-                    resHtmlfolderPath += '<a href="#" class="drilldown-folder-path-link" data-value="' + link.folderPath + '">' + link.folderPath + '(' + link.nSubRecs + ')</a> ';
-                }
-            }
-            if(g_lastSelectedFolderPath !== null){
-                resHtmlfolderPath += '<a href="#" class="drilldown-folder-path-link" data-value="">解除</a> ';
-            }
-            $('#DRILLDOWN-RESULT-FOLDER-PATH').html(resHtmlfolderPath);
-        } else {
-            $('#DRILLDOWN-RESULT-FOLDER-PATH').html("");
-        }
+        var resHtmlfolderPath = '<a href="#" class="drilldown-folder-path-link">フォルダ絞り込み</a>';
+        $('#DRILLDOWN-RESULT-FOLDER-PATH').html(resHtmlfolderPath);
 
         if (data.folderLabelDrilldownLinks.length >= 2
             || (data.folderLabelDrilldownLinks.length === 1 && data.folderLabelDrilldownLinks[0].nSubRecs < data.nHits)
@@ -694,6 +678,14 @@ $(async function () {
 
         return false;
 
+    });
+
+    // フォルダ絞り込み
+    $('#SEARCH-RESULT-HEADER').on('click', '.drilldown-folder-path-link', function(){
+        // フォルダ絞り込みダイアログを開く
+        api.openSearchFolderSelectDialog(g_lastQueryObject);
+
+        return false;
     });
 
     // ドリルダウンクリック
