@@ -552,6 +552,15 @@ namespace InazumaSearch.Core
         }
 
         /// <summary>
+        /// 全レコードのフォルダパスと、フォルダパスごとのヒット件数を取得
+        /// </summary>
+        /// <returns>フォルダパス、ヒット件数を格納したDictionary</returns>
+        public Dictionary<string, long> GetAllFolderPath()
+        {
+            return SearchAllFolderPath(null, null, null, null, null, null, null);
+        }
+
+        /// <summary>
         /// 検索結果に合致する全レコードのフォルダパスと、フォルダパスごとのヒット件数を取得
         /// </summary>
         /// <param name="queryKeyword">キーワード</param>
@@ -563,14 +572,14 @@ namespace InazumaSearch.Core
         /// <param name="selectedFolderLabel">ドリルダウンで選択したフォルダラベル</param>
         /// <returns>フォルダパス、ヒット件数を格納したDictionary</returns>
         public Dictionary<string, long> SearchAllFolderPath(
-              string queryKeyword
-            , string queryFileName
-            , string queryBody
-            , string queryUpdated
-            , string selectedFormat
-            , string selectedFolderPath
-            , string selectedFolderLabel
-        )
+          string queryKeyword
+        , string queryFileName
+        , string queryBody
+        , string queryUpdated
+        , string selectedFormat
+        , string selectedFolderPath
+        , string selectedFolderLabel
+    )
         {
             // 検索条件を解析
             var queryParseResult = parseQuery(queryKeyword, queryFileName, queryBody, queryUpdated, selectedFormat, selectedFolderPath, selectedFolderLabel);

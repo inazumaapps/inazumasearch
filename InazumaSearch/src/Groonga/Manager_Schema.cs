@@ -10,7 +10,7 @@ namespace InazumaSearch.Groonga
         /// <summary>
         /// アプリケーションが要求するスキーマバージョン
         /// </summary>
-        public const int AppSchemaVersion = 5;
+        public const int AppSchemaVersion = 4;
 
         /// <summary>
         /// スキーマのセットアップ(新規作成 or アップグレード)を実行

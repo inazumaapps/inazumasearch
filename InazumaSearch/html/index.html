@@ -92,6 +92,16 @@
 
             <form id="DETAIL-SEARCH" style="display: none">
                 <div class="row">
+                    <div class="input-field col s12">
+                        <i class="material-icons prefix orange-text text-lighten-2">folder</i>
+                        <input id="ADVSEARCH-FOLDER-PATH" name="folder_path" type="text" class="validate">
+                        <label for="ADVSEARCH-FOLDER-PATH">フォルダ</label>
+                        <a class="btn waves-effect waves-light " style="position: absolute;top: 0.5rem;height: 2rem;width: 2rem;padding: 0;right: 1rem;" id="ADVSEARCH-FOLDER-PATH-SELECT-BUTTON">...</a>
+                        <span class="helper-text" >※指定したフォルダ以下の文書ファイルのみを検索します。</span>
+                    </div>
+                </div><!-- /.row -->
+
+                <div class="row">
                     <div class="input-field col s4">
                         <input id="ADVSEARCH-FILE-NAME" name="file_name" type="text" class="validate">
                         <label for="ADVSEARCH-FILE-NAME">ファイル名</label>

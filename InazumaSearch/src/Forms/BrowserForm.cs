@@ -132,11 +132,26 @@ namespace InazumaSearch.Forms
 
             }
 
-            public void OpenSearchFolderSelectDialog(IDictionary<string, object> queryObject)
+            public void OpenSearchFolderSelectForm(string inputFolderPath)
+            {
+                OwnerForm.InvokeOnUIThread((owner) =>
+                {
+                    var dialog = new SearchFolderSelectForm(App, inputFolderPath);
+                    var res = dialog.ShowDialog(owner);
+
+                    if (res == DialogResult.OK)
+                    {
+                        owner.SetSelectedFolderPath(dialog.SelectedFolderPath);
+                    }
+                });
+            }
+
+
+            public void OpenSearchFolderDrilldownForm(IDictionary<string, object> queryObject)
             {
                 OwnerForm.InvokeOnUIThread((f) =>
                 {
-                    var dialog = new SearchFolderSelectForm(App, null, null, null, null, null, null, null);
+                    var dialog = new SearchFolderDrilldownForm(App, null, null, null, null, null, null, null);
                     dialog.ShowDialog(f);
                 });
             }
@@ -867,6 +882,10 @@ namespace InazumaSearch.Forms
             InitializeChromium(htmlDirPath);
         }
 
+        protected virtual void SetSelectedFolderPath(string path)
+        {
+            ChromeBrowser.EvaluateScriptAsync($"$('#ADVSEARCH-FOLDER-PATH').val('{path.Replace("\\", "\\\\")}'); M.updateTextFields();");
+        }
 
         protected virtual void CrawlStart(IEnumerable<string> targetDirPaths = null)
         {

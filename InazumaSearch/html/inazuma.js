@@ -680,10 +680,19 @@ $(async function () {
 
     });
 
+    // 検索対象フォルダ選択
+    $('#ADVSEARCH-FOLDER-PATH-SELECT-BUTTON').click(function(){
+        // フォルダ選択ダイアログを開く
+        api.openSearchFolderSelectForm($('#ADVSEARCH-FOLDER-PATH').val());
+
+        return false;
+    });
+
+
     // フォルダ絞り込み
     $('#SEARCH-RESULT-HEADER').on('click', '.drilldown-folder-path-link', function(){
         // フォルダ絞り込みダイアログを開く
-        api.openSearchFolderSelectDialog(g_lastQueryObject);
+        api.openSearchFolderDrilldownForm(g_lastQueryObject);
 
         return false;
     });

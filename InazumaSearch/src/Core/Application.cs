@@ -255,7 +255,6 @@ namespace InazumaSearch.Core
             // DBの新規作成orアップグレード処理を実行
 
 
-            GM.UpdateFolderPaths();
             if (schemaVer < Groonga.Manager.AppSchemaVersion)
             {
                 var reCrawlRequired = false;

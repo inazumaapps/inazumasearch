@@ -5,29 +5,41 @@ using InazumaSearch.Core;
 
 namespace InazumaSearch.Forms
 {
-    /// <summary>
-    /// 検索対象を選択するダイアログ
-    /// </summary>
-    public partial class SearchFolderSelectForm : Form
+    public partial class SearchFolderDrilldownForm : Form
     {
         public Core.Application Application { get; set; }
-        public string InputFolderPath { get; set; }
+        public string QueryKeyword { get; set; }
+        public string QueryFileName { get; set; }
+        public string QueryBody { get; set; }
+        public string QueryUpdated { get; set; }
+        public string SelectedFormat { get; set; }
+        public string SelectedFolderPath { get; set; }
+        public string SelectedFolderLabel { get; set; }
         public IList<string> DirPaths { get; set; }
 
-        /// <summary>
-        /// 選択されたフォルダのパス。外部からの取得時に使用
-        /// </summary>
-        public string SelectedFolderPath { get; set; }
-
-        public SearchFolderSelectForm()
+        public SearchFolderDrilldownForm()
         {
             InitializeComponent();
         }
-        public SearchFolderSelectForm(Core.Application app, string inputFolderPath)
+        public SearchFolderDrilldownForm(
+              Core.Application app
+            , string queryKeyword
+            , string queryFileName
+            , string queryBody
+            , string queryUpdated
+            , string selectedFormat
+            , string selectedFolderPath
+            , string selectedFolderLabel)
         {
             InitializeComponent();
             Application = app;
-            InputFolderPath = inputFolderPath;
+            QueryKeyword = queryKeyword;
+            QueryFileName = queryFileName;
+            QueryBody = queryBody;
+            QueryUpdated = queryUpdated;
+            SelectedFormat = selectedFormat;
+            SelectedFolderPath = selectedFolderPath;
+            SelectedFolderLabel = selectedFolderLabel;
         }
 
         private void BtnDecide_Click(object sender, EventArgs e)
@@ -59,7 +71,7 @@ namespace InazumaSearch.Forms
 
             // 検索条件に合致するフォルダパス情報を取得
             var searchEngine = new SearchEngine(Application);
-            var folderPaths = searchEngine.GetAllFolderPath();
+            var folderPaths = searchEngine.SearchAllFolderPath(QueryKeyword, QueryFileName, QueryBody, QueryUpdated, SelectedFormat, SelectedFolderPath, SelectedFolderLabel);
 
             // フォルダパス1件ごとに処理
             foreach (var pair in folderPaths)
@@ -99,7 +111,7 @@ namespace InazumaSearch.Forms
                     {
                         var newNode = new TreeNode()
                         {
-                            Tag = new FolderNodeTag() { DocumentCount = 0, Path = currentPath, FolderName = pathItem }
+                            Tag = new FolderNodeTag() { DocumentCount = 0, Path = folderPath, FolderName = pathItem }
                         };
                         int iconImageIndex;
                         addTargetNodes.Add(newNode);
@@ -125,24 +137,13 @@ namespace InazumaSearch.Forms
 
             }
 
-            // 全ノード処理
+            // 表示文字列の指定
             foreach (TreeNode node in allNodes)
             {
                 var tag = (FolderNodeTag)node.Tag;
-
-                // 表示文字列の指定
-                node.Text = $"{tag.FolderName}";
-
-                // 入力パスと同じであれば選択・展開
-                if (InputFolderPath != null && tag.Path == InputFolderPath.TrimEnd('\\'))
-                {
-                    node.Parent?.Expand();
-                    TreeFolder.SelectedNode = node;
-                }
+                node.Text = $"{tag.FolderName} ({tag.DocumentCount})";
             }
 
-            // ツリービューを選択（これを行わないと、選択ノードが反転表示にならない）
-            TreeFolder.Focus();
 
             IconFetcher.SetImageListToTreeView(TreeFolder, systemImgListHandle);
         }
@@ -155,12 +156,14 @@ namespace InazumaSearch.Forms
 
         private void TreeFolder_AfterSelect(object sender, TreeViewEventArgs e)
         {
-            var tag = (FolderNodeTag)e.Node.Tag;
-            SelectedFolderPath = tag.Path;
+
         }
 
         private void TreeFolder_DoubleClick(object sender, EventArgs e)
         {
+            var folderNodeTag = (FolderNodeTag)TreeFolder.SelectedNode.Tag;
+
+            TxtTarget.Text = TxtTarget.Text.TrimEnd() + "\r\n" + folderNodeTag.Path + @"\";
         }
 
         public class FolderNodeTag
@@ -170,5 +173,4 @@ namespace InazumaSearch.Forms
             public long DocumentCount { get; set; }
         }
     }
-
 }
