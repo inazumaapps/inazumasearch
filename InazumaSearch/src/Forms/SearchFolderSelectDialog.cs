@@ -8,7 +8,7 @@ namespace InazumaSearch.Forms
     /// <summary>
     /// 検索対象を選択するダイアログ
     /// </summary>
-    public partial class SearchFolderSelectForm : Form
+    public partial class SearchFolderSelectDialog : Form
     {
         public Core.Application Application { get; set; }
         public string InputFolderPath { get; set; }
@@ -19,11 +19,11 @@ namespace InazumaSearch.Forms
         /// </summary>
         public string SelectedFolderPath { get; set; }
 
-        public SearchFolderSelectForm()
+        public SearchFolderSelectDialog()
         {
             InitializeComponent();
         }
-        public SearchFolderSelectForm(Core.Application app, string inputFolderPath)
+        public SearchFolderSelectDialog(Core.Application app, string inputFolderPath)
         {
             InitializeComponent();
             Application = app;

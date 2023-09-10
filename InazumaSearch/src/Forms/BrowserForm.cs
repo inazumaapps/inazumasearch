@@ -136,7 +136,7 @@ namespace InazumaSearch.Forms
             {
                 OwnerForm.InvokeOnUIThread((owner) =>
                 {
-                    var dialog = new SearchFolderSelectForm(App, inputFolderPath);
+                    var dialog = new SearchFolderSelectDialog(App, inputFolderPath);
                     var res = dialog.ShowDialog(owner);
 
                     if (res == DialogResult.OK)
@@ -151,7 +151,7 @@ namespace InazumaSearch.Forms
             {
                 OwnerForm.InvokeOnUIThread((f) =>
                 {
-                    var dialog = new SearchFolderDrilldownForm(App, null, null, null, null, null, null, null);
+                    var dialog = new SearchFolderDrilldownDialog(App, null, null, null, null, null, null, null);
                     dialog.ShowDialog(f);
                 });
             }

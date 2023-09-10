@@ -245,17 +245,17 @@
       <DependentUpon>BrowserForm.cs</DependentUpon>
     </Compile>
     <Compile Include="src\Core\ExcelTextExtractor.cs" />
-    <Compile Include="src\Forms\SearchFolderDrilldownForm.cs">
+    <Compile Include="src\Forms\SearchFolderDrilldownDialog.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="src\Forms\SearchFolderDrilldownForm.Designer.cs">
-      <DependentUpon>SearchFolderDrilldownForm.cs</DependentUpon>
+    <Compile Include="src\Forms\SearchFolderDrilldownDialog.Designer.cs">
+      <DependentUpon>SearchFolderDrilldownDialog.cs</DependentUpon>
     </Compile>
-    <Compile Include="src\Forms\SearchFolderSelectForm.cs">
+    <Compile Include="src\Forms\SearchFolderSelectDialog.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="src\Forms\SearchFolderSelectForm.Designer.cs">
-      <DependentUpon>SearchFolderSelectForm.cs</DependentUpon>
+    <Compile Include="src\Forms\SearchFolderSelectDialog.Designer.cs">
+      <DependentUpon>SearchFolderSelectDialog.cs</DependentUpon>
     </Compile>
     <Compile Include="src\Forms\Debug\ProcessStatusForm.cs">
       <SubType>Form</SubType>
@@ -368,11 +368,11 @@
       <DependentUpon>BrowserForm.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="src\Forms\SearchFolderDrilldownForm.resx">
-      <DependentUpon>SearchFolderDrilldownForm.cs</DependentUpon>
+    <EmbeddedResource Include="src\Forms\SearchFolderDrilldownDialog.resx">
+      <DependentUpon>SearchFolderDrilldownDialog.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="src\Forms\SearchFolderSelectForm.resx">
-      <DependentUpon>SearchFolderSelectForm.cs</DependentUpon>
+    <EmbeddedResource Include="src\Forms\SearchFolderSelectDialog.resx">
+      <DependentUpon>SearchFolderSelectDialog.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="src\Forms\Debug\ProcessStatusForm.resx">
       <DependentUpon>ProcessStatusForm.cs</DependentUpon>

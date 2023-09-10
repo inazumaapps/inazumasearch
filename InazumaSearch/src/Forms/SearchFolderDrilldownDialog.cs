@@ -5,7 +5,7 @@ using InazumaSearch.Core;
 
 namespace InazumaSearch.Forms
 {
-    public partial class SearchFolderDrilldownForm : Form
+    public partial class SearchFolderDrilldownDialog : Form
     {
         public Core.Application Application { get; set; }
         public string QueryKeyword { get; set; }
@@ -17,11 +17,11 @@ namespace InazumaSearch.Forms
         public string SelectedFolderLabel { get; set; }
         public IList<string> DirPaths { get; set; }
 
-        public SearchFolderDrilldownForm()
+        public SearchFolderDrilldownDialog()
         {
             InitializeComponent();
         }
-        public SearchFolderDrilldownForm(
+        public SearchFolderDrilldownDialog(
               Core.Application app
             , string queryKeyword
             , string queryFileName
