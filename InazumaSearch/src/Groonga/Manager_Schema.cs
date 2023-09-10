@@ -252,6 +252,16 @@ namespace InazumaSearch.Groonga
                     , DataType.ShortText
                 );
 
+                // インデックスにファイルパスのインデックスをセット
+                ColumnCreate(
+                      Table.DocumentsIndex
+                    , "documents_file_path"
+                    , new[] { ColumnCreateFlag.COLUMN_INDEX } // 全文検索対象とはしないので、WITH_POSITIONは不要
+                    , type: Table.Documents
+                    , source: Column.Documents.FILE_PATH
+                );
+
+                // 既存レコードのフォルダパスをセット
                 UpdateFolderPaths();
             }
 
