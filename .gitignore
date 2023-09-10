@@ -9,3 +9,6 @@ obj
 *.csproj.user
 packages
 /InazumaSearchUnitTest/bin/
+
+/Tools/bin/
+/Tools/obj/
