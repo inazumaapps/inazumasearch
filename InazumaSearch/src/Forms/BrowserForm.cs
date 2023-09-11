@@ -151,7 +151,7 @@ namespace InazumaSearch.Forms
             {
                 OwnerForm.InvokeOnUIThread((f) =>
                 {
-                    var dialog = new SearchFolderDrilldownDialog(App, null, null, null, null, null, null, null);
+                    var dialog = new SearchFolderDrilldownDialog(App, null, null, null, null, null, null, null, null);
                     dialog.ShowDialog(f);
                 });
             }
@@ -552,6 +552,7 @@ namespace InazumaSearch.Forms
 
                     // 全文検索の実行
                     var queryKeyword = (string)queryObject["keyword"];
+                    var queryFolderPath = (string)queryObject["folderPath"];
                     var queryFileName = (string)queryObject["fileName"];
                     var queryBody = (string)queryObject["body"];
                     var queryUpdated = (string)queryObject["updated"];
@@ -559,6 +560,7 @@ namespace InazumaSearch.Forms
                     var searchEngine = new SearchEngine(App);
                     var ret = searchEngine.Search(
                         queryKeyword
+                        , queryFolderPath
                         , queryFileName
                         , queryBody
                         , queryUpdated
@@ -569,16 +571,6 @@ namespace InazumaSearch.Forms
                         , selectedOrder
                         , selectedView
                     );
-
-                    var allFolderPaths = searchEngine.SearchAllFolderPath(
-                        queryKeyword
-                        , queryFileName
-                        , queryBody
-                        , queryUpdated
-                        , selectedFormat
-                        , selectedFolderPath
-                        , selectedFolderLabel
-                     );
 
                     // 失敗した場合はエラーダイアログを表示して終了
                     if (!ret.success)

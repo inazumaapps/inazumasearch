@@ -467,10 +467,10 @@ $(async function () {
                     // 検索リクエストを実行
                     var queryObject = {
                         keyword: value
+                        , filePath: ''
                         , fileName: ''
                         , body: ''
                         , updated: ''
-                        , tfIdf: ''
                     }
 
                     asyncApi.search(queryObject, false, 0, null, null, null, null, true).then(function (resJson) {
@@ -642,22 +642,24 @@ $(async function () {
 
     // 検索ボタンクリック
     $('.search-button').click(function(){
-        // キーワード、ファイル名、本文の入力値取得。空であれば何もしない
+        // 検索条件取得
         var keyword = $('input[name=keyword]').val();
-        var file_name = $('input[name=file_name]').val();
+        var folderPath = $('input[name=folder_path]').val();
+        var fileName = $('input[name=file_name]').val();
         var body = $('input[name=body]').val();
         var updated = $('select[name=updated]').val();
 
         // 詳細検索OFFの場合はキーワード以外を反映しない
         var detailSearchFlag = $('#DETAIL-SEARCH-SWITCH input:checkbox').is(':checked');
         if(!detailSearchFlag){
-            file_name = '';
+            fileName = '';
+            folderPath = '';
             body = '';
             updated = '';
         }
 
         // 検索語が入力されていなければエラー
-        if(keyword === '' && file_name === '' && body === ''){
+        if(keyword === '' && fileName === '' && body === ''){
             api.showErrorMessage(detailSearchFlag ? '検索キーワード、ファイル名、本文のいずれかを入力してください。' : '検索キーワードを入力してください。');
             return false;
         }
@@ -665,10 +667,10 @@ $(async function () {
         // 検索リクエストを実行
         var queryObject = {
             keyword: keyword
-            , fileName: file_name
+            , folderPath: folderPath
+            , fileName: fileName
             , body: body
             , updated: updated
-            , tfIdf: $('input:checkbox[name=tf_idf]').is(':checked')
         }
         executeSearch(queryObject);
 

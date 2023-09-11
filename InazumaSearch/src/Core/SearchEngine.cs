@@ -217,6 +217,7 @@ namespace InazumaSearch.Core
         /// 全文検索の実行
         /// </summary>
         /// <param name="queryKeyword">キーワード</param>
+        /// <param name="queryFolderPath">フォルダパス条件</param>
         /// <param name="queryFileName">ファイル名条件</param>
         /// <param name="queryBody">本文条件</param>
         /// <param name="queryUpdated">更新日時条件</param>
@@ -229,6 +230,7 @@ namespace InazumaSearch.Core
         /// <returns>検索結果（レコードリスト）</returns>
         public Result Search(
               string queryKeyword
+            , string queryFolderPath = null
             , string queryFileName = null
             , string queryBody = null
             , string queryUpdated = null
@@ -241,7 +243,7 @@ namespace InazumaSearch.Core
         )
         {
             // 検索条件を解析
-            var queryParseResult = parseQuery(queryKeyword, queryFileName, queryBody, queryUpdated, selectedFormat, selectedFolderPath, selectedFolderLabel);
+            var queryParseResult = parseQuery(queryKeyword, queryFolderPath, queryFileName, queryBody, queryUpdated, selectedFormat, selectedFolderPath, selectedFolderLabel);
 
             var matchColumns = new[] {
                 Column.Documents.FILE_NAME + " * 1000"
@@ -557,13 +559,14 @@ namespace InazumaSearch.Core
         /// <returns>フォルダパス、ヒット件数を格納したDictionary</returns>
         public Dictionary<string, long> GetAllFolderPath()
         {
-            return SearchAllFolderPath(null, null, null, null, null, null, null);
+            return SearchAllFolderPath(null, null, null, null, null, null, null, null);
         }
 
         /// <summary>
         /// 検索結果に合致する全レコードのフォルダパスと、フォルダパスごとのヒット件数を取得
         /// </summary>
         /// <param name="queryKeyword">キーワード</param>
+        /// <param name="queryFolderPath">フォルダパス条件</param>
         /// <param name="queryFileName">ファイル名条件</param>
         /// <param name="queryBody">本文条件</param>
         /// <param name="queryUpdated">更新日時条件</param>
@@ -573,6 +576,7 @@ namespace InazumaSearch.Core
         /// <returns>フォルダパス、ヒット件数を格納したDictionary</returns>
         public Dictionary<string, long> SearchAllFolderPath(
           string queryKeyword
+        , string queryFolderPath
         , string queryFileName
         , string queryBody
         , string queryUpdated
@@ -582,7 +586,7 @@ namespace InazumaSearch.Core
     )
         {
             // 検索条件を解析
-            var queryParseResult = parseQuery(queryKeyword, queryFileName, queryBody, queryUpdated, selectedFormat, selectedFolderPath, selectedFolderLabel);
+            var queryParseResult = parseQuery(queryKeyword, queryFolderPath, queryFileName, queryBody, queryUpdated, selectedFormat, selectedFolderPath, selectedFolderLabel);
 
             // SELECT実行
             var joinedQuery = string.Join(" ", queryParseResult.GroongaQueries.Select(q => "(" + q + ")"));
@@ -629,6 +633,7 @@ namespace InazumaSearch.Core
         /// 検索条件を解析し、Groongaに渡せるクエリ・フィルタ構文に変換
         /// </summary>
         /// <param name="queryKeyword">キーワード</param>
+        /// <param name="queryFolderPath">フォルダパス条件</param>
         /// <param name="queryFileName">ファイル名条件</param>
         /// <param name="queryBody">本文条件</param>
         /// <param name="queryUpdated">更新日時条件</param>
@@ -638,6 +643,7 @@ namespace InazumaSearch.Core
         /// <returns>解析結果</returns>
         protected QueryParseResult parseQuery(
               string queryKeyword
+            , string queryFolderPath
             , string queryFileName
             , string queryBody
             , string queryUpdated
@@ -659,6 +665,15 @@ namespace InazumaSearch.Core
                                     .Replace("'", @"\'")
                                     .Replace(":", @"\:")
                                     .Replace("+", @"\+"));
+            }
+            if (!string.IsNullOrWhiteSpace(queryFolderPath))
+            {
+                // 最後に\マークが付いた状態にする
+                var folderPath = queryFolderPath.Trim('\\') + "\\";
+                res.GroongaQueries.Add(string.Format("{0}:^{1}"
+                                                , Column.Documents.FOLDER_PATH
+                                                , Groonga.Util.EscapeForQuery(folderPath)));
+                res.SubMessages.Add(string.Format("フォルダパス: {0}", queryFolderPath));
             }
             if (!string.IsNullOrWhiteSpace(queryFileName))
             {

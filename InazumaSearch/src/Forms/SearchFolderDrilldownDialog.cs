@@ -9,6 +9,7 @@ namespace InazumaSearch.Forms
     {
         public Core.Application Application { get; set; }
         public string QueryKeyword { get; set; }
+        public string QueryFolderPath { get; set; }
         public string QueryFileName { get; set; }
         public string QueryBody { get; set; }
         public string QueryUpdated { get; set; }
@@ -24,6 +25,7 @@ namespace InazumaSearch.Forms
         public SearchFolderDrilldownDialog(
               Core.Application app
             , string queryKeyword
+            , string queryFolderPath
             , string queryFileName
             , string queryBody
             , string queryUpdated
@@ -33,6 +35,7 @@ namespace InazumaSearch.Forms
         {
             InitializeComponent();
             Application = app;
+            QueryFolderPath = queryFolderPath;
             QueryKeyword = queryKeyword;
             QueryFileName = queryFileName;
             QueryBody = queryBody;
@@ -71,7 +74,7 @@ namespace InazumaSearch.Forms
 
             // 検索条件に合致するフォルダパス情報を取得
             var searchEngine = new SearchEngine(Application);
-            var folderPaths = searchEngine.SearchAllFolderPath(QueryKeyword, QueryFileName, QueryBody, QueryUpdated, SelectedFormat, SelectedFolderPath, SelectedFolderLabel);
+            var folderPaths = searchEngine.SearchAllFolderPath(QueryKeyword, QueryFolderPath, QueryFileName, QueryBody, QueryUpdated, SelectedFormat, SelectedFolderPath, SelectedFolderLabel);
 
             // フォルダパス1件ごとに処理
             foreach (var pair in folderPaths)
