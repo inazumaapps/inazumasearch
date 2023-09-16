@@ -1,7 +1,6 @@
 // persistent variables
 var g_lastQueryObject = null;
 var g_lastSelectedFormatName = null;
-var g_lastSelectedFolderPath = null;
 var g_lastSelectedFolderLabel = null;
 var g_lastSelectedOrder = null;
 var g_lastSelectedView = null;
@@ -31,7 +30,6 @@ function executeSearch(
     queryObject
     , hideSearchResult = true
     , selectedFormatName = null
-    , selectedFolderPath = null
     , selectedFolderLabel = null
     , selectedOrder = null
     , selectedView = null
@@ -55,14 +53,13 @@ function executeSearch(
     // 現在のクエリ、選択されたファイル形式とフォルダラベル、次のオフセットを記憶
     g_lastQueryObject = queryObject;
     g_lastSelectedFormatName = selectedFormatName;
-    g_lastSelectedFolderPath = selectedFolderPath;
     g_lastSelectedFolderLabel = selectedFolderLabel;
     g_lastSelectedOrder = selectedOrder || g_lastSelectedOrder; // 再検索時、並び順は前回と同じ
     g_lastSelectedView = selectedView || g_lastSelectedView; // 再検索時、表示形式は前回と同じ
 
     // 検索実施
     $('#SEARCH-PROGRESS-BAR').css('opacity', '1');
-    asyncApi.search(g_lastQueryObject, true, 0, g_lastSelectedFormatName, g_lastSelectedFolderPath, g_lastSelectedFolderLabel, g_lastSelectedOrder, g_lastSelectedView).then(function (resJson) {
+    asyncApi.search(g_lastQueryObject, true, 0, g_lastSelectedFormatName, g_lastSelectedFolderLabel, g_lastSelectedOrder, g_lastSelectedView).then(function (resJson) {
         var data = JSON.parse(resJson);
 
         // 検索中表示を消す
@@ -103,10 +100,14 @@ function executeSearch(
             $('#DRILLDOWN-RESULT-EXT').html("");
         }
 
-
-        var resHtmlfolderPath = '<a href="#" class="drilldown-folder-path-link">フォルダ絞り込み</a>';
-        $('#DRILLDOWN-RESULT-FOLDER-PATH').html(resHtmlfolderPath);
-
+        if(g_lastQueryObject.folderPath){
+            var resHtmlfolderPath = '<a href="#" class="drilldown-folder-path-link"><i class="tiny material-icons">folder</i>フォルダパス：<span class="path-value"></span></a>';
+            $('#DRILLDOWN-RESULT-FOLDER-PATH').html(resHtmlfolderPath);
+            $('#DRILLDOWN-RESULT-FOLDER-PATH .path-value').text(g_lastQueryObject.folderPath);
+        } else {
+            var resHtmlfolderPath = '<a href="#" class="drilldown-folder-path-link"><i class="tiny material-icons">folder</i>フォルダ絞り込み</a>';
+            $('#DRILLDOWN-RESULT-FOLDER-PATH').html(resHtmlfolderPath);
+        }
         if (data.folderLabelDrilldownLinks.length >= 2
             || (data.folderLabelDrilldownLinks.length === 1 && data.folderLabelDrilldownLinks[0].nSubRecs < data.nHits)
             || g_lastSelectedFolderLabel) {
@@ -467,7 +468,7 @@ $(async function () {
                     // 検索リクエストを実行
                     var queryObject = {
                         keyword: value
-                        , filePath: ''
+                        , folderPath: ''
                         , fileName: ''
                         , body: ''
                         , updated: ''
@@ -694,7 +695,7 @@ $(async function () {
     // フォルダ絞り込み
     $('#SEARCH-RESULT-HEADER').on('click', '.drilldown-folder-path-link', function(){
         // フォルダ絞り込みダイアログを開く
-        api.openSearchFolderDrilldownForm(g_lastQueryObject);
+        api.openSearchFolderDrilldownForm(g_lastQueryObject, g_lastSelectedFormatName || null, g_lastSelectedFolderLabel || null);
 
         return false;
     });
@@ -705,7 +706,7 @@ $(async function () {
         if (formatName === '') formatName = null; // 解除
 
         // 再検索
-        executeSearch(g_lastQueryObject, true, formatName, g_lastSelectedFolderPath || null, g_lastSelectedFolderLabel || null, g_lastSelectedOrder || null, g_lastSelectedView || null);
+        executeSearch(g_lastQueryObject, true, formatName, g_lastSelectedFolderLabel || null, g_lastSelectedOrder || null, g_lastSelectedView || null);
 
         return false;
     });
@@ -715,7 +716,7 @@ $(async function () {
         if (folderLabel === '') folderLabel = null; // 解除
 
         // 再検索
-        executeSearch(g_lastQueryObject, true, g_lastSelectedFormatName || null, g_lastSelectedFolderPath || null, folderLabel, g_lastSelectedOrder || null, g_lastSelectedView || null);
+        executeSearch(g_lastQueryObject, true, g_lastSelectedFormatName || null, folderLabel, g_lastSelectedOrder || null, g_lastSelectedView || null);
 
         return false;
     });
@@ -723,7 +724,7 @@ $(async function () {
     $('#DRILLDOWN-ORDER').on('change', '.sort-select', function () {
         var orderType = $(this).val();
         // 再検索 (検索結果見出部は非表示にしない)
-        executeSearch(g_lastQueryObject, false, g_lastSelectedFormatName || null, g_lastSelectedFolderPath || null, g_lastSelectedFolderLabel || null, orderType, g_lastSelectedView || null);
+        executeSearch(g_lastQueryObject, false, g_lastSelectedFormatName || null, g_lastSelectedFolderLabel || null, orderType, g_lastSelectedView || null);
 
         return false;
     });
@@ -731,7 +732,7 @@ $(async function () {
     $('#DRILLDOWN-ORDER').on('change', '.view-select', function () {
         var viewType = $(this).val();
         // 再検索 (検索結果見出部は非表示にしない)
-        executeSearch(g_lastQueryObject, false, g_lastSelectedFormatName || null, g_lastSelectedFolderPath || null, g_lastSelectedFolderLabel || null, g_lastSelectedOrder || null, viewType);
+        executeSearch(g_lastQueryObject, false, g_lastSelectedFormatName || null, g_lastSelectedFolderLabel || null, g_lastSelectedOrder || null, viewType);
 
         return false;
     });
@@ -775,7 +776,7 @@ $(async function () {
                 if (offset > g_lastSearchOffset && !g_searchFinished) {
                     g_lastSearchOffset = offset;
 
-                    asyncApi.search(g_lastQueryObject, false, offset, g_lastSelectedFormatName, g_lastSelectedFolderPath, g_lastSelectedFolderLabel, g_lastSelectedOrder, g_lastSelectedView).then(function (resJson) {
+                    asyncApi.search(g_lastQueryObject, false, offset, g_lastSelectedFormatName, g_lastSelectedFolderLabel, g_lastSelectedOrder, g_lastSelectedView).then(function (resJson) {
                         var data = JSON.parse(resJson);
 
                         // 全結果の表示が完了していれば、完了フラグを立てる

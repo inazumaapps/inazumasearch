@@ -223,8 +223,6 @@ namespace InazumaSearch.Core
         /// <param name="queryUpdated">更新日時条件</param>
         /// <param name="offset">オフセット（検索開始位置）</param>
         /// <param name="selectedFormat">ドリルダウンで選択したファイル形式</param>
-        /// <param name="selectedFolderPath">ドリルダウンで選択したフォルダパス</param>
-        /// <param name="selectedFolderLabel">ドリルダウンで選択したフォルダラベル</param>
         /// <param name="selectedOrderType">並び順タイプ</param>
         /// <param name="selectedView">表示形式</param>
         /// <returns>検索結果（レコードリスト）</returns>
@@ -236,14 +234,13 @@ namespace InazumaSearch.Core
             , string queryUpdated = null
             , int offset = 0
             , string selectedFormat = null
-            , string selectedFolderPath = null
             , string selectedFolderLabel = null
             , string selectedOrderType = null
             , string selectedView = null
         )
         {
             // 検索条件を解析
-            var queryParseResult = parseQuery(queryKeyword, queryFolderPath, queryFileName, queryBody, queryUpdated, selectedFormat, selectedFolderPath, selectedFolderLabel);
+            var queryParseResult = parseQuery(queryKeyword, queryFolderPath, queryFileName, queryBody, queryUpdated, selectedFormat, selectedFolderLabel);
 
             var matchColumns = new[] {
                 Column.Documents.FILE_NAME + " * 1000"
@@ -559,7 +556,7 @@ namespace InazumaSearch.Core
         /// <returns>フォルダパス、ヒット件数を格納したDictionary</returns>
         public Dictionary<string, long> GetAllFolderPath()
         {
-            return SearchAllFolderPath(null, null, null, null, null, null, null, null);
+            return SearchAllFolderPath(null, null, null, null, null, null, null);
         }
 
         /// <summary>
@@ -571,7 +568,6 @@ namespace InazumaSearch.Core
         /// <param name="queryBody">本文条件</param>
         /// <param name="queryUpdated">更新日時条件</param>
         /// <param name="selectedFormat">ドリルダウンで選択したファイル形式</param>
-        /// <param name="selectedFolderPath">ドリルダウンで選択したフォルダパス</param>
         /// <param name="selectedFolderLabel">ドリルダウンで選択したフォルダラベル</param>
         /// <returns>フォルダパス、ヒット件数を格納したDictionary</returns>
         public Dictionary<string, long> SearchAllFolderPath(
@@ -581,12 +577,11 @@ namespace InazumaSearch.Core
         , string queryBody
         , string queryUpdated
         , string selectedFormat
-        , string selectedFolderPath
         , string selectedFolderLabel
     )
         {
             // 検索条件を解析
-            var queryParseResult = parseQuery(queryKeyword, queryFolderPath, queryFileName, queryBody, queryUpdated, selectedFormat, selectedFolderPath, selectedFolderLabel);
+            var queryParseResult = parseQuery(queryKeyword, queryFolderPath, queryFileName, queryBody, queryUpdated, selectedFormat, selectedFolderLabel);
 
             // SELECT実行
             var joinedQuery = string.Join(" ", queryParseResult.GroongaQueries.Select(q => "(" + q + ")"));
@@ -638,7 +633,6 @@ namespace InazumaSearch.Core
         /// <param name="queryBody">本文条件</param>
         /// <param name="queryUpdated">更新日時条件</param>
         /// <param name="selectedFormat">ドリルダウンで選択したファイル形式</param>
-        /// <param name="selectedFolderPath">ドリルダウンで選択したフォルダパス</param>
         /// <param name="selectedFolderLabel">ドリルダウンで選択したフォルダラベル</param>
         /// <returns>解析結果</returns>
         protected QueryParseResult parseQuery(
@@ -648,7 +642,6 @@ namespace InazumaSearch.Core
             , string queryBody
             , string queryUpdated
             , string selectedFormat
-            , string selectedFolderPath
             , string selectedFolderLabel
         )
         {
@@ -728,16 +721,6 @@ namespace InazumaSearch.Core
 
                 }
             }
-
-            // フォルダパスでの絞り込みを追加
-            if (selectedFolderPath != null)
-            {
-                res.GroongaQueries.Add(string.Format("{0}:{1}"
-                                                , Column.Documents.FOLDER_PATH
-                                                , Groonga.Util.EscapeForQuery(selectedFolderPath)));
-                res.SubMessages.Add(string.Format("フォルダパス: {0}", selectedFolderPath));
-            }
-
             // フォルダラベルでの絞り込みを追加
             if (selectedFolderLabel != null)
             {

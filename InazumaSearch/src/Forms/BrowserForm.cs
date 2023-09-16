@@ -132,6 +132,10 @@ namespace InazumaSearch.Forms
 
             }
 
+            /// <summary>
+            /// 検索フォルダ選択ダイアログを開く
+            /// </summary>
+            /// <param name="inputFolderPath"></param>
             public void OpenSearchFolderSelectForm(string inputFolderPath)
             {
                 OwnerForm.InvokeOnUIThread((owner) =>
@@ -146,13 +150,26 @@ namespace InazumaSearch.Forms
                 });
             }
 
-
-            public void OpenSearchFolderDrilldownForm(IDictionary<string, object> queryObject)
+            /// <summary>
+            /// 検索フォルダ絞り込みダイアログを開く
+            /// </summary>
+            /// <param name="inputFolderPath"></param>
+            public void OpenSearchFolderDrilldownForm(
+                IDictionary<string, object> queryObject
+                , string selectedFormat = null
+                , string selectedFolderLabel = null
+            )
             {
-                OwnerForm.InvokeOnUIThread((f) =>
+                var queryFolderPath = (string)queryObject["folderPath"];
+                OwnerForm.InvokeOnUIThread((owner) =>
                 {
-                    var dialog = new SearchFolderDrilldownDialog(App, null, null, null, null, null, null, null, null);
-                    dialog.ShowDialog(f);
+                    var dialog = new SearchFolderSelectDialog(App, queryFolderPath);
+                    var res = dialog.ShowDialog(owner);
+
+                    if (res == DialogResult.OK)
+                    {
+                        owner.SetSelectedFolderPath(dialog.SelectedFolderPath);
+                    }
                 });
             }
 
@@ -511,7 +528,6 @@ namespace InazumaSearch.Forms
                 , bool learning = false
                 , int offset = 0
                 , string selectedFormat = null
-                , string selectedFolderPath = null
                 , string selectedFolderLabel = null
                 , string selectedOrder = null
                 , string selectedView = null
@@ -566,7 +582,6 @@ namespace InazumaSearch.Forms
                         , queryUpdated
                         , offset
                         , selectedFormat
-                        , selectedFolderPath
                         , selectedFolderLabel
                         , selectedOrder
                         , selectedView
