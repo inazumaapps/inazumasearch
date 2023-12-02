@@ -187,6 +187,8 @@ task :clean do
     rmdir_if_exists 'portableLaunch/obj'
 	rmdir_if_exists 'restarter/bin'
     rmdir_if_exists 'restarter/obj'
+	rmdir_if_exists 'Tools/bin'
+    rmdir_if_exists 'Tools/obj'
 
 
     EXEPRESS_INIS.values.each do |ini_path|

@@ -168,11 +168,10 @@ namespace InazumaSearch.Forms
 
                     if (res == DialogResult.OK)
                     {
-                        owner.SetSelectedFolderPath(dialog.SelectedFolderPath);
+                        owner.FolderDrilldown(dialog.SelectedFolderPath);
                     }
                 });
             }
-
 
             public void CrawlStart(string targetFoldersJSON = null)
             {
@@ -891,7 +890,12 @@ namespace InazumaSearch.Forms
 
         protected virtual void SetSelectedFolderPath(string path)
         {
-            ChromeBrowser.EvaluateScriptAsync($"$('#ADVSEARCH-FOLDER-PATH').val('{path.Replace("\\", "\\\\")}'); M.updateTextFields();");
+            TryEvaluateJavaScriptAsync($"$('#ADVSEARCH-FOLDER-PATH').val('{path.Replace("\\", "\\\\")}'); M.updateTextFields();");
+        }
+
+        protected virtual void FolderDrilldown(string path)
+        {
+            TryEvaluateJavaScriptAsync($"console.log('calling...'); folderDrilldown('{path.Replace("\\", "\\\\")}');");
         }
 
         protected virtual void CrawlStart(IEnumerable<string> targetDirPaths = null)
@@ -1044,6 +1048,23 @@ namespace InazumaSearch.Forms
                     act.Invoke(this);
                 });
             });
+        }
+
+        /// <summary>
+        /// 指定したJavaScriptを非同期に実行する（CefSharpが実行可能と判断した場合のみ）
+        /// </summary>
+        /// <returns>実行成功...true / 実行失敗...false</returns>
+        public bool TryEvaluateJavaScriptAsync(string script)
+        {
+            if (ChromeBrowser.CanExecuteJavascriptInMainFrame)
+            {
+                ChromeBrowser.EvaluateScriptAsync(script);
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
 
         #region フォームイベント

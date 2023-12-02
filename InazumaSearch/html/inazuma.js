@@ -25,6 +25,10 @@ function handleDrop(e) {
     return false;
 }
 
+function folderDrilldown(folderPath){
+    console.warn("folderDrilldown called.", {folderPath});
+}
+
 // 検索実行
 function executeSearch(
     queryObject
@@ -101,11 +105,11 @@ function executeSearch(
         }
 
         if(g_lastQueryObject.folderPath){
-            var resHtmlfolderPath = '<a href="#" class="drilldown-folder-path-link"><i class="tiny material-icons">folder</i>フォルダパス：<span class="path-value"></span></a>';
+            var resHtmlfolderPath = '<a href="#" class="drilldown-folder-path-link"><i class="tiny material-icons" style="vertical-align: middle">folder</i>フォルダパス：<span class="path-value"></span></a>　（<a href="#" class="drilldown-folder-path-reset-link">解除</a>）';
             $('#DRILLDOWN-RESULT-FOLDER-PATH').html(resHtmlfolderPath);
             $('#DRILLDOWN-RESULT-FOLDER-PATH .path-value').text(g_lastQueryObject.folderPath);
         } else {
-            var resHtmlfolderPath = '<a href="#" class="drilldown-folder-path-link"><i class="tiny material-icons">folder</i>フォルダ絞り込み</a>';
+            var resHtmlfolderPath = '<a href="#" class="drilldown-folder-path-link"><i class="tiny material-icons" style="vertical-align: middle">folder</i>フォルダで絞り込む</a>';
             $('#DRILLDOWN-RESULT-FOLDER-PATH').html(resHtmlfolderPath);
         }
         if (data.folderLabelDrilldownLinks.length >= 2
@@ -699,6 +703,21 @@ $(async function () {
 
         return false;
     });
+
+
+    // フォルダ絞り込み解除
+    $('#SEARCH-RESULT-HEADER').on('click', '.drilldown-folder-path-reset-link', function(){
+        // 詳細検索欄のパスをクリア
+        $('#ADVSEARCH-FOLDER-PATH').val('');
+        M.updateTextFields(); // Materializeに入力フィールドの更新を反映
+
+        // フォルダパスの絞り込みを解除して再検索
+        g_lastQueryObject.folderPath = null;
+        executeSearch(g_lastQueryObject, true, g_lastSelectedFormatName || null, g_lastSelectedFolderLabel || null, g_lastSelectedOrder || null, g_lastSelectedView || null);
+
+        return false;
+    });
+
 
     // ドリルダウンクリック
     $('#SEARCH-RESULT-HEADER').on('click', '.drilldown-ext-link', function(){
