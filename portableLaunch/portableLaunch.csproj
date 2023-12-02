@@ -20,7 +20,7 @@
   <PropertyGroup>
     <ApplicationIcon>icon\inazumasearch-icon.ico</ApplicationIcon>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release %28Portable%29|AnyCPU'">
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'old_Release %28Portable%29|AnyCPU' ">
     <OutputPath>..\InazumaSearch\bin\Release_Portable\anycpu\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <Optimize>true</Optimize>
