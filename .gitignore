@@ -12,3 +12,6 @@ packages
 
 /Tools/bin/
 /Tools/obj/
+/InazumaSearch_Debug/bin
+/portableLaunch/bin/
+/restarter/bin/
