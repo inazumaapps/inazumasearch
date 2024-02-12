@@ -132,6 +132,11 @@ namespace InazumaSearch.Core
             public const string FILE_UPDATED_DESC = "file_updated_desc";
 
             /// <summary>
+            /// ファイルの更新日が古い順
+            /// </summary>
+            public const string FILE_UPDATED_ASC = "file_updated_asc";
+
+            /// <summary>
             /// ファイルパス順
             /// </summary>
             public const string FILE_PATH = "file_path";
@@ -175,6 +180,7 @@ namespace InazumaSearch.Core
 
             OrderList.Add(new OrderItem { Type = OrderType.SCORE, Caption = "関連度順" });
             OrderList.Add(new OrderItem { Type = OrderType.FILE_UPDATED_DESC, Caption = "更新日が新しい順" });
+            OrderList.Add(new OrderItem { Type = OrderType.FILE_UPDATED_ASC, Caption = "更新日が古い順" });
             OrderList.Add(new OrderItem { Type = OrderType.FILE_PATH, Caption = "ファイルパス順" });
         }
 
@@ -372,6 +378,9 @@ namespace InazumaSearch.Core
                     break;
                 case OrderType.FILE_UPDATED_DESC:
                     sortKeys.Add("-" + Column.Documents.FILE_UPDATED_AT);
+                    break;
+                case OrderType.FILE_UPDATED_ASC:
+                    sortKeys.Add(Column.Documents.FILE_UPDATED_AT);
                     break;
             }
             // 標準では最終スコア(関連度+鮮度)が高い順に並べる
