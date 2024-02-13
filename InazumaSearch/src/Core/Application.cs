@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Security.Cryptography;
+using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Alphaleonis.Win32.Filesystem;
@@ -419,9 +420,56 @@ namespace InazumaSearch.Core
                 // テキストの拡張子として登録されている場合は、テキストファイルとして読み込み
                 Logger.Trace($"Extract as text file - {path}");
                 var body = "";
-                var bytes = File.ReadAllBytes(path);
-                var charCode = ReadJEnc.JP.GetEncoding(bytes, bytes.Length, out body);
-                return new ExtractFileResult() { Body = body };
+
+                // ファイルサイズを取得
+                var fileSize = File.GetSize(path);
+
+                // LongTextの最大サイズを超える場合は登録不可
+                if (fileSize > Groonga.DataTypeMaxLength.LongText)
+                {
+                    throw new Exception("ファイルサイズが登録可能な最大サイズを超えています。");
+                }
+
+                // 10MBを超えるかどうかで処理を分岐
+                var bufferSize = 1024 * 1024 * 10;
+                if (fileSize > bufferSize)
+                {
+                    // 10MBを超える場合は、まず最初の10MB分からエンコーディングを判定
+                    CharCode charCode;
+                    using (var sourceStream = new System.IO.FileStream(path, System.IO.FileMode.Open, System.IO.FileAccess.Read))
+                    {
+                        var byteBuffer = new byte[bufferSize];
+                        int bytesRead;
+                        bytesRead = sourceStream.Read(byteBuffer, 0, byteBuffer.Length);
+                        {
+                            string _dummy;
+                            charCode = ReadJEnc.JP.GetEncoding(byteBuffer, bytesRead, out _dummy);
+                        }
+                    }
+
+                    // その後に3,000,000文字ずつ読み込む
+                    var readCharCount = 3000000; // 一度に読み込む文字数
+                    var builder = new StringBuilder();
+                    var enc = (charCode != null ? charCode.GetEncoding() : Encoding.UTF8); // エンコーディング。判別に失敗した場合はUTF-8と仮定する
+                    using (System.IO.StreamReader reader = new System.IO.StreamReader(path, enc))
+                    {
+                        var charBuffer = new char[readCharCount];
+                        int charRead;
+
+                        while ((charRead = reader.Read(charBuffer, 0, charBuffer.Length)) > 0)
+                        {
+                            builder.Append(charBuffer);
+                        }
+                    }
+                    return new ExtractFileResult() { Body = builder.ToString() };
+                }
+                else
+                {
+                    // 10MB未満の場合は、すべてまとめて読み込む
+                    var bytes = File.ReadAllBytes(path);
+                    var charCode = ReadJEnc.JP.GetEncoding(bytes, bytes.Length, out body);
+                    return new ExtractFileResult() { Body = body };
+                }
             }
             else
             {

@@ -29,6 +29,14 @@
         public const string WGS84GeoPoint = "WGS84GeoPoint";
     }
 
+    public class DataTypeMaxLength
+    {
+        /// <summary>
+        /// LongText型の最大サイズ
+        /// </summary>
+        public const long LongText = 2147483647;
+    }
+
     public class ColumnCreateFlag
     {
         public const string COLUMN_SCALAR = "COLUMN_SCALAR";
