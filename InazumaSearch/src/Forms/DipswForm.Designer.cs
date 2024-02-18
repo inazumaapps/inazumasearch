@@ -66,6 +66,10 @@
             this.label4 = new System.Windows.Forms.Label();
             this.NumDocumentExtractTimeout = new System.Windows.Forms.NumericUpDown();
             this.lnlEventLogForm = new System.Windows.Forms.LinkLabel();
+            this.groupBox5 = new System.Windows.Forms.GroupBox();
+            this.label12 = new System.Windows.Forms.Label();
+            this.label13 = new System.Windows.Forms.Label();
+            this.NumTextFileMaxSizeByMB = new System.Windows.Forms.NumericUpDown();
             this.tblDebug.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.tableLayoutPanel2.SuspendLayout();
@@ -75,6 +79,8 @@
             ((System.ComponentModel.ISupportInitialize)(this.NumDisplayPageSizeForNormalView)).BeginInit();
             this.groupBox4.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.NumDocumentExtractTimeout)).BeginInit();
+            this.groupBox5.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.NumTextFileMaxSizeByMB)).BeginInit();
             this.SuspendLayout();
             // 
             // BtnClearDocumentDB
@@ -91,7 +97,7 @@
             // BtnClose
             // 
             this.BtnClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.BtnClose.Location = new System.Drawing.Point(1070, 662);
+            this.BtnClose.Location = new System.Drawing.Point(1070, 766);
             this.BtnClose.Margin = new System.Windows.Forms.Padding(4);
             this.BtnClose.Name = "BtnClose";
             this.BtnClose.Size = new System.Drawing.Size(165, 42);
@@ -227,7 +233,7 @@
             this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 67.20234F));
             this.tableLayoutPanel2.Controls.Add(this.lblVersion, 1, 0);
             this.tableLayoutPanel2.Controls.Add(this.label8, 0, 0);
-            this.tableLayoutPanel2.Location = new System.Drawing.Point(20, 662);
+            this.tableLayoutPanel2.Location = new System.Drawing.Point(20, 766);
             this.tableLayoutPanel2.Margin = new System.Windows.Forms.Padding(4);
             this.tableLayoutPanel2.Name = "tableLayoutPanel2";
             this.tableLayoutPanel2.RowCount = 1;
@@ -346,7 +352,7 @@
             // 
             this.lnkOpenDataFolder.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.lnkOpenDataFolder.AutoSize = true;
-            this.lnkOpenDataFolder.Location = new System.Drawing.Point(18, 572);
+            this.lnkOpenDataFolder.Location = new System.Drawing.Point(18, 676);
             this.lnkOpenDataFolder.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.lnkOpenDataFolder.Name = "lnkOpenDataFolder";
             this.lnkOpenDataFolder.Size = new System.Drawing.Size(145, 23);
@@ -451,7 +457,7 @@
             // BtnRebootDebugMode
             // 
             this.BtnRebootDebugMode.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.BtnRebootDebugMode.Location = new System.Drawing.Point(577, 662);
+            this.BtnRebootDebugMode.Location = new System.Drawing.Point(577, 766);
             this.BtnRebootDebugMode.Margin = new System.Windows.Forms.Padding(4);
             this.BtnRebootDebugMode.Name = "BtnRebootDebugMode";
             this.BtnRebootDebugMode.Size = new System.Drawing.Size(402, 42);
@@ -473,7 +479,7 @@
             this.groupBox4.Size = new System.Drawing.Size(573, 88);
             this.groupBox4.TabIndex = 32;
             this.groupBox4.TabStop = false;
-            this.groupBox4.Text = "文書ファイル（Excel, Word, PDFなど）の内容抽出処理";
+            this.groupBox4.Text = "文書ファイル（Excel, Word, PDFなど）の登録処理";
             // 
             // label10
             // 
@@ -500,9 +506,9 @@
             this.label4.Location = new System.Drawing.Point(248, 40);
             this.label4.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(248, 23);
+            this.label4.Size = new System.Drawing.Size(307, 23);
             this.label4.TabIndex = 31;
-            this.label4.Text = "秒経っても完了しなければスキップ";
+            this.label4.Text = "秒経っても完了しなければ登録失敗とする";
             // 
             // NumDocumentExtractTimeout
             // 
@@ -537,7 +543,7 @@
             // 
             this.lnlEventLogForm.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.lnlEventLogForm.AutoSize = true;
-            this.lnlEventLogForm.Location = new System.Drawing.Point(18, 609);
+            this.lnlEventLogForm.Location = new System.Drawing.Point(18, 713);
             this.lnlEventLogForm.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.lnlEventLogForm.Name = "lnlEventLogForm";
             this.lnlEventLogForm.Size = new System.Drawing.Size(317, 23);
@@ -546,11 +552,74 @@
             this.lnlEventLogForm.Text = "イベントログ（文書登録エラーなどの確認）";
             this.lnlEventLogForm.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.lnlEventLogForm_LinkClicked);
             // 
+            // groupBox5
+            // 
+            this.groupBox5.Controls.Add(this.label12);
+            this.groupBox5.Controls.Add(this.label13);
+            this.groupBox5.Controls.Add(this.NumTextFileMaxSizeByMB);
+            this.groupBox5.Location = new System.Drawing.Point(662, 622);
+            this.groupBox5.Margin = new System.Windows.Forms.Padding(4);
+            this.groupBox5.Name = "groupBox5";
+            this.groupBox5.Padding = new System.Windows.Forms.Padding(4);
+            this.groupBox5.Size = new System.Drawing.Size(573, 88);
+            this.groupBox5.TabIndex = 33;
+            this.groupBox5.TabStop = false;
+            this.groupBox5.Text = "テキストファイルの登録処理";
+            // 
+            // label12
+            // 
+            this.label12.AutoSize = true;
+            this.label12.Location = new System.Drawing.Point(21, 78);
+            this.label12.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label12.Name = "label12";
+            this.label12.Size = new System.Drawing.Size(0, 23);
+            this.label12.TabIndex = 29;
+            // 
+            // label13
+            // 
+            this.label13.AutoSize = true;
+            this.label13.Location = new System.Drawing.Point(142, 36);
+            this.label13.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label13.Name = "label13";
+            this.label13.Size = new System.Drawing.Size(322, 23);
+            this.label13.TabIndex = 31;
+            this.label13.Text = "MB以上のテキストファイルは登録失敗とする";
+            // 
+            // NumTextFileMaxSizeByMB
+            // 
+            this.NumTextFileMaxSizeByMB.Increment = new decimal(new int[] {
+            10,
+            0,
+            0,
+            0});
+            this.NumTextFileMaxSizeByMB.Location = new System.Drawing.Point(24, 34);
+            this.NumTextFileMaxSizeByMB.Margin = new System.Windows.Forms.Padding(4);
+            this.NumTextFileMaxSizeByMB.Maximum = new decimal(new int[] {
+            1999,
+            0,
+            0,
+            0});
+            this.NumTextFileMaxSizeByMB.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.NumTextFileMaxSizeByMB.Name = "NumTextFileMaxSizeByMB";
+            this.NumTextFileMaxSizeByMB.Size = new System.Drawing.Size(110, 30);
+            this.NumTextFileMaxSizeByMB.TabIndex = 1;
+            this.NumTextFileMaxSizeByMB.Value = new decimal(new int[] {
+            200,
+            0,
+            0,
+            0});
+            this.NumTextFileMaxSizeByMB.ValueChanged += new System.EventHandler(this.NumTextFileMaxSizeByMB_ValueChanged);
+            // 
             // DipswForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(144F, 144F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
-            this.ClientSize = new System.Drawing.Size(1262, 730);
+            this.ClientSize = new System.Drawing.Size(1262, 834);
+            this.Controls.Add(this.groupBox5);
             this.Controls.Add(this.lnlEventLogForm);
             this.Controls.Add(this.groupBox4);
             this.Controls.Add(this.BtnRebootDebugMode);
@@ -585,6 +654,9 @@
             this.groupBox4.ResumeLayout(false);
             this.groupBox4.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.NumDocumentExtractTimeout)).EndInit();
+            this.groupBox5.ResumeLayout(false);
+            this.groupBox5.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.NumTextFileMaxSizeByMB)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -628,6 +700,10 @@
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.Label label10;
         private System.Windows.Forms.LinkLabel lnlEventLogForm;
+        private System.Windows.Forms.GroupBox groupBox5;
+        private System.Windows.Forms.Label label12;
+        private System.Windows.Forms.Label label13;
+        private System.Windows.Forms.NumericUpDown NumTextFileMaxSizeByMB;
     }
 }
 

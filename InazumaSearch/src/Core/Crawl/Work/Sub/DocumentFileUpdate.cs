@@ -253,14 +253,31 @@ namespace InazumaSearch.Core.Crawl.Work
             // 進捗を報告
             progress?.Report(new ProgressState() { CurrentStep = ProgressState.Step.RecordUpdateBegin, CurrentValue = crawlResult.UpdateProcessed, TotalValue = crawlResult.TotalTargetCount, Path = FilePath });
 
-            // データの登録
-            Application.ExtractFileResult extRes;
+            // データの登録処理
+            Application.ExtractFileSuccess extResSuccess;
 
             // 拡張子に応じてテキストを抽出する
             try
             {
-                extRes = _app.ExtractFile(FilePath, textExtNames, pluginExtNames);
-                Logger.Debug($"Extract OK - {FilePath} (title: {extRes.Title}, body length: {extRes.Body.Length})");
+                var extRes = _app.ExtractFile(FilePath, textExtNames, pluginExtNames);
+                if (extRes is Application.ExtractFileSuccess)
+                {
+                    extResSuccess = (Application.ExtractFileSuccess)extRes;
+                    Logger.Debug($"Extract OK - {FilePath} (title: {extResSuccess.Title}, body length: {extResSuccess.Body.Length})");
+                }
+                else
+                {
+                    // テキスト抽出失敗
+                    var extResFailed = (Application.ExtractFileFailed)extRes;
+                    Logger.Debug($"Extract Failed - {FilePath} (message: {extResFailed.ErrorMessage}, size: {fileSize})");
+
+                    return new UpdateResult(UpdateResult.ResultType.Failed)
+                    {
+                        ErrorMessage = extResFailed.ErrorMessage,
+                        ErrorFilePath = FilePath,
+                        ErrorFileSize = fileSize
+                    };
+                }
             }
             catch (TimeoutException ex)
             {
@@ -315,8 +332,8 @@ namespace InazumaSearch.Core.Crawl.Work
             var obj = new Dictionary<string, object>
                             {
                                 { Column.Documents.KEY, key },
-                                { Column.Documents.TITLE, extRes.Title },
-                                { Column.Documents.BODY, extRes.Body },
+                                { Column.Documents.TITLE, extResSuccess.Title },
+                                { Column.Documents.BODY, extResSuccess.Body },
                                 { Column.Documents.FILE_NAME, Path.GetFileName(FilePath) },
                                 { Column.Documents.FILE_PATH, FilePath },
                                 { Column.Documents.FILE_UPDATED_AT, Groonga.Util.ToUnixTime(fileUpdated) },

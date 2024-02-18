@@ -460,11 +460,19 @@ namespace InazumaSearch.Forms
                         var pluginExtNames = App.GetPluginExtNames();
                         var extRes = App.ExtractFile(filePath, textExtNames, pluginExtNames);
 
-                        var dialog = new FileBodyViewDialog
+                        if (extRes is Core.Application.ExtractFileSuccess)
                         {
-                            Body = extRes.Body
-                        };
-                        dialog.ShowDialog(f);
+                            var dialog = new FileBodyViewDialog
+                            {
+                                Body = ((Core.Application.ExtractFileSuccess)extRes).Body
+                            };
+                            dialog.ShowDialog(f);
+                        }
+                        else
+                        {
+                            Util.ShowErrorMessage(((Core.Application.ExtractFileFailed)extRes).ErrorMessage);
+                        }
+
                     });
                 });
 

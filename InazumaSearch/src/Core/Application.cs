@@ -390,19 +390,34 @@ namespace InazumaSearch.Core
         }
 
         /// <summary>
-        /// <see cref="ExtractFile(string, IEnumerable{string}, IEnumerable{string})"で抽出した結果です。 />
+        /// <see cref="ExtractFile(string, IEnumerable{string}, IEnumerable{string})" />で抽出した結果を表すクラスです。
         /// </summary>
-        public class ExtractFileResult
+        public abstract class ExtractFileResult
+        {
+        }
+
+        /// <summary>
+        /// <see cref="ExtractFile(string, IEnumerable{string}, IEnumerable{string})" />で抽出した結果（成功）を表すクラスです。
+        /// </summary>
+        public class ExtractFileSuccess : ExtractFileResult
         {
             public string Title { get; set; }
             public string Body { get; set; }
         }
 
         /// <summary>
+        /// <see cref="ExtractFile(string, IEnumerable{string}, IEnumerable{string})" />で抽出した結果（失敗）を表すクラスです。
+        /// </summary>
+        public class ExtractFileFailed : ExtractFileResult
+        {
+            public string ErrorMessage { get; set; }
+        }
+
+        /// <summary>
         /// 拡張子に応じて、指定した文書ファイルの情報（件名、本文テキスト）を抽出
         /// </summary>
         /// <param name="path">文書ファイルパス</param>
-        /// <returns>ファイル本文</returns>
+        /// <returns>登録結果</returns>
         public virtual ExtractFileResult ExtractFile(
             string path
             , IEnumerable<string> textExtNames
@@ -415,7 +430,7 @@ namespace InazumaSearch.Core
             {
                 // プラグインが対応している場合は、プラグインを使用してテキスト抽出
                 Logger.Trace($"Extract by plugin - {path}");
-                return new ExtractFileResult() { Body = PluginManager.ExtractText(path) };
+                return new ExtractFileSuccess() { Body = PluginManager.ExtractText(path) };
             }
             else if (ext == "eml")
             {
@@ -427,11 +442,11 @@ namespace InazumaSearch.Core
                     while (!parser.IsEndOfStream)
                     {
                         var message = parser.ParseMessage();
-                        return new ExtractFileResult() { Title = message.Subject, Body = message.TextBody ?? message.HtmlBody ?? "" };
+                        return new ExtractFileSuccess() { Title = message.Subject, Body = message.TextBody ?? message.HtmlBody ?? "" };
                     }
 
                     // 1件もメールがなければ空文書とする
-                    return new ExtractFileResult() { Body = "" };
+                    return new ExtractFileSuccess() { Body = "" };
                 }
             }
             else if (textExtNames.Contains(ext))
@@ -443,10 +458,13 @@ namespace InazumaSearch.Core
                 // ファイルサイズを取得
                 var fileSize = File.GetSize(path);
 
-                // LongTextの最大サイズを超える場合は登録不可
-                if (fileSize > Groonga.DataTypeMaxLength.LongText)
+                // 最大サイズを超える場合は登録不可
+                if (fileSize * 1024 * 1024 > UserSettings.TextFileMaxSizeByMB)
                 {
-                    throw new Exception("ファイルサイズが登録可能な最大サイズを超えています。");
+                    return new ExtractFileFailed
+                    {
+                        ErrorMessage = $"テキストファイルのサイズが、登録可能な最大サイズ（{UserSettings.TextFileMaxSizeByMB:#,0}MB）を超えています。　※最大サイズは詳細設定より変更可能です",
+                    };
                 }
 
                 // 10MBを超えるかどうかで処理を分岐
@@ -480,14 +498,14 @@ namespace InazumaSearch.Core
                             builder.Append(charBuffer);
                         }
                     }
-                    return new ExtractFileResult() { Body = builder.ToString() };
+                    return new ExtractFileSuccess() { Body = builder.ToString() };
                 }
                 else
                 {
                     // 10MB未満の場合は、すべてまとめて読み込む
                     var bytes = File.ReadAllBytes(path);
                     var charCode = ReadJEnc.JP.GetEncoding(bytes, bytes.Length, out body);
-                    return new ExtractFileResult() { Body = body };
+                    return new ExtractFileSuccess() { Body = body };
                 }
             }
             else
@@ -495,7 +513,7 @@ namespace InazumaSearch.Core
                 // 上記以外の場合はXDoc2Txtを使用
                 Logger.Trace($"Extract by xdoc2txt - {path}");
                 var body = XDoc2TxtApi.Extract(path, UserSettings.DocumentExtractTimeoutSecond);
-                return new ExtractFileResult() { Body = body };
+                return new ExtractFileSuccess() { Body = body };
             }
         }
 
