@@ -33,6 +33,15 @@ namespace InazumaSearch.src.Forms
         private void EventLogForm_Load(object sender, EventArgs e)
         {
             UpdateLogList();
+
+            // 高DPI対応
+            // ListView (Detailsスタイル) には高DPIに合わせた列幅の自動調整が行われない不具合があるため、手動で調整
+            var widthScale = this.CurrentAutoScaleDimensions.Width / 96; // テキストズーム100%＝96dpi
+
+            foreach (ColumnHeader col in lsvLogList.Columns)
+            {
+                col.Width = (int)Math.Round(col.Width * widthScale);
+            }
         }
 
         /// <summary>
