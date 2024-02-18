@@ -37,7 +37,8 @@
             this.folderBrowserDialog1 = new System.Windows.Forms.FolderBrowserDialog();
             this.BtnCancel = new System.Windows.Forms.Button();
             this.timeCounter = new System.Windows.Forms.Timer(this.components);
-            this.label1 = new System.Windows.Forms.Label();
+            this.lblInfo = new System.Windows.Forms.Label();
+            this.lnkShowEventLog = new System.Windows.Forms.LinkLabel();
             this.statusStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -53,6 +54,7 @@
             // 
             // statusStrip1
             // 
+            this.statusStrip1.ImageScalingSize = new System.Drawing.Size(24, 24);
             this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.statusText,
             this.toolStripStatusLabel1,
@@ -96,22 +98,36 @@
             this.timeCounter.Interval = 1000;
             this.timeCounter.Tick += new System.EventHandler(this.timeCounter_Tick);
             // 
-            // label1
+            // lblInfo
             // 
-            this.label1.AutoSize = true;
-            this.label1.ForeColor = System.Drawing.SystemColors.GrayText;
-            this.label1.Location = new System.Drawing.Point(12, 81);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(181, 15);
-            this.label1.TabIndex = 11;
-            this.label1.Text = "※ クロール実行中も検索可能です。";
+            this.lblInfo.AutoSize = true;
+            this.lblInfo.ForeColor = System.Drawing.SystemColors.GrayText;
+            this.lblInfo.Location = new System.Drawing.Point(12, 81);
+            this.lblInfo.Name = "lblInfo";
+            this.lblInfo.Size = new System.Drawing.Size(181, 15);
+            this.lblInfo.TabIndex = 11;
+            this.lblInfo.Text = "※ クロール実行中も検索可能です。";
+            // 
+            // lnkShowEventLog
+            // 
+            this.lnkShowEventLog.AutoSize = true;
+            this.lnkShowEventLog.Location = new System.Drawing.Point(12, 81);
+            this.lnkShowEventLog.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.lnkShowEventLog.Name = "lnkShowEventLog";
+            this.lnkShowEventLog.Size = new System.Drawing.Size(219, 15);
+            this.lnkShowEventLog.TabIndex = 12;
+            this.lnkShowEventLog.TabStop = true;
+            this.lnkShowEventLog.Text = "登録失敗の詳細を確認する（イベントログ）";
+            this.lnkShowEventLog.Visible = false;
+            this.lnkShowEventLog.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.lnkShowEventLog_LinkClicked);
             // 
             // CrawlProgressForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.ClientSize = new System.Drawing.Size(500, 135);
-            this.Controls.Add(this.label1);
+            this.Controls.Add(this.lnkShowEventLog);
+            this.Controls.Add(this.lblInfo);
             this.Controls.Add(this.BtnCancel);
             this.Controls.Add(this.statusStrip1);
             this.Controls.Add(this.ProgressBar);
@@ -139,7 +155,8 @@
         private System.Windows.Forms.ToolStripStatusLabel statusTimeCount;
         private System.Windows.Forms.Timer timeCounter;
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel1;
-        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Label lblInfo;
+        private System.Windows.Forms.LinkLabel lnkShowEventLog;
     }
 }
 
