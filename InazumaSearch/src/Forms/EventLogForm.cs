@@ -67,23 +67,27 @@ namespace InazumaSearch.src.Forms
             // 初期化
             lsvLogList.Items.Clear();
 
-            // アイテム追加
-            foreach (var log in App.EventLogs)
+            // 常駐クロール側と同時に触らないようにロック
+            lock (App.EventLogs)
             {
-                var item = new ListViewItem(new string[] { log.Timestamp.ToString("yyyy/MM/dd HH:mm"), EventLog.LogTypeToCaption(log.Type), log.TargetPath, log.TargetFileSize != null ? Util.FormatFileSize(log.TargetFileSize.Value) : "" }); ;
-                item.Tag = log;
-                lsvLogList.Items.Add(item);
-            }
+                // アイテム追加
+                foreach (var log in App.EventLogs)
+                {
+                    var item = new ListViewItem(new string[] { log.Timestamp.ToString("yyyy/MM/dd HH:mm"), EventLog.LogTypeToCaption(log.Type), log.TargetPath, log.TargetFileSize != null ? Util.FormatFileSize(log.TargetFileSize.Value) : "" }); ;
+                    item.Tag = log;
+                    lsvLogList.Items.Add(item);
+                }
 
-            // 末尾のログを選択
-            if (lsvLogList.Items.Count >= 1)
-            {
-                lsvLogList.Items[lsvLogList.Items.Count - 1].Selected = true;
-            }
-            lsvLogList.Focus();
+                // 末尾のログを選択
+                if (lsvLogList.Items.Count >= 1)
+                {
+                    lsvLogList.Items[lsvLogList.Items.Count - 1].Selected = true;
+                }
+                lsvLogList.Focus();
 
-            // 出力ボタンの有効/無効切り替え
-            BtnExport.Enabled = lsvLogList.Items.Count >= 1;
+                // 出力ボタンの有効/無効切り替え
+                BtnExport.Enabled = lsvLogList.Items.Count >= 1;
+            }
         }
 
         /// <summary>
@@ -114,6 +118,11 @@ namespace InazumaSearch.src.Forms
 
                 System.Diagnostics.Process.Start("explorer.exe", $"/select,\"{path}\"");
             }
+        }
+
+        private void BtnUpdate_Click(object sender, EventArgs e)
+        {
+            UpdateLogList();
         }
     }
 }

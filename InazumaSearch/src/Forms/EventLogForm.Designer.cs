@@ -28,7 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.ListViewItem listViewItem1 = new System.Windows.Forms.ListViewItem("9999/99/99 99:99");
+            System.Windows.Forms.ListViewItem listViewItem2 = new System.Windows.Forms.ListViewItem("9999/99/99 99:99");
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.TxtMessage = new System.Windows.Forms.TextBox();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
@@ -42,6 +42,7 @@
             this.FileSize = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.label1 = new System.Windows.Forms.Label();
             this.dlgExport = new System.Windows.Forms.SaveFileDialog();
+            this.BtnUpdate = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.SuspendLayout();
@@ -134,7 +135,7 @@
             this.lsvLogList.FullRowSelect = true;
             this.lsvLogList.HideSelection = false;
             this.lsvLogList.Items.AddRange(new System.Windows.Forms.ListViewItem[] {
-            listViewItem1});
+            listViewItem2});
             this.lsvLogList.Location = new System.Drawing.Point(9, 10);
             this.lsvLogList.Margin = new System.Windows.Forms.Padding(2, 3, 2, 3);
             this.lsvLogList.Name = "lsvLogList";
@@ -180,11 +181,24 @@
             this.dlgExport.Filter = "すべてのファイル|*.*";
             this.dlgExport.Title = "出力先の選択";
             // 
+            // BtnUpdate
+            // 
+            this.BtnUpdate.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.BtnUpdate.Location = new System.Drawing.Point(929, 281);
+            this.BtnUpdate.Margin = new System.Windows.Forms.Padding(2, 3, 2, 3);
+            this.BtnUpdate.Name = "BtnUpdate";
+            this.BtnUpdate.Size = new System.Drawing.Size(67, 26);
+            this.BtnUpdate.TabIndex = 19;
+            this.BtnUpdate.Text = "更新";
+            this.BtnUpdate.UseVisualStyleBackColor = true;
+            this.BtnUpdate.Click += new System.EventHandler(this.BtnUpdate_Click);
+            // 
             // EventLogForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.ClientSize = new System.Drawing.Size(1008, 507);
+            this.Controls.Add(this.BtnUpdate);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.lsvLogList);
             this.Controls.Add(this.BtnExport);
@@ -219,5 +233,6 @@
         private System.Windows.Forms.ColumnHeader FileSize;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.SaveFileDialog dlgExport;
+        private System.Windows.Forms.Button BtnUpdate;
     }
 }

@@ -175,12 +175,16 @@ namespace InazumaSearch.Core
         /// </summary>
         public virtual void AddEventLog(EventLog log)
         {
-            EventLogs.Add(log);
-
-            // 1,000件を超えた場合は古いものを切り捨てる
-            if (EventLogs.Count > 1000)
+            // イベントログ表示側と同時に触らないようにロック
+            lock (EventLogs)
             {
-                EventLogs.RemoveAt(0);
+                EventLogs.Add(log);
+
+                // 1,000件を超えた場合は古いものを切り捨てる
+                if (EventLogs.Count > 1000)
+                {
+                    EventLogs.RemoveAt(0);
+                }
             }
         }
 
@@ -459,7 +463,7 @@ namespace InazumaSearch.Core
                 var fileSize = File.GetSize(path);
 
                 // 最大サイズを超える場合は登録不可
-                if (fileSize * 1024 * 1024 > UserSettings.TextFileMaxSizeByMB)
+                if (fileSize > UserSettings.TextFileMaxSizeByMB * 1024 * 1024)
                 {
                     return new ExtractFileFailed
                     {
