@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using Alphaleonis.Win32.Filesystem;
 using InazumaSearch.Core;
+using InazumaSearch.src.Forms;
 using Microsoft.WindowsAPICodePack.Dialogs;
 
 namespace InazumaSearch.Forms
@@ -334,5 +335,10 @@ namespace InazumaSearch.Forms
             Core.Application.Restart(forceDebug: true);
         }
 
+        private void lnlEventLogForm_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            var f = new EventLogForm(Application);
+            f.ShowDialog(this);
+        }
     }
 }

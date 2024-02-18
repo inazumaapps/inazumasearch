@@ -157,15 +157,19 @@ namespace InazumaSearch.Forms
             if (res.Finished)
             {
                 BtnCancel.Text = "閉じる";
+
+                var status = $"完了 (更新: {res.Updated}, スキップ: {res.Skipped}";
+                if (res.UpdateFailed > 0)
+                {
+                    status += $", 更新失敗: {res.UpdateFailed}";
+                }
                 if (res.Deleted > 0)
                 {
-                    statusText.Text = string.Format("完了 (更新: {0}, スキップ: {1}, 削除: {2})", res.Updated, res.Skipped, res.Deleted);
+                    status += $", 削除: {res.Deleted}";
                 }
-                else
-                {
-                    statusText.Text = string.Format("完了 (更新: {0}, スキップ: {1})", res.Updated, res.Skipped);
+                status += ")";
+                statusText.Text = status;
 
-                }
                 statusTimeCount.ForeColor = SystemColors.ControlText;
                 Text = "クロール完了";
             }

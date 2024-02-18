@@ -80,6 +80,11 @@ namespace InazumaSearch.Core
         /// </summary>
         public HashAlgorithm HashProvider { get; set; } = new SHA1CryptoServiceProvider();
 
+        /// <summary>
+        /// イベントログ（新しいログほど後ろに追加されている）
+        /// </summary>
+        public List<EventLog> EventLogs { get; protected set; } = new List<EventLog>();
+
         #region 特殊パスの取得
 
         /// <summary>
@@ -164,6 +169,20 @@ namespace InazumaSearch.Core
         public virtual string StartupShortcutPath { get { return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Startup), @"Inazuma Search.lnk"); } }
 
         #endregion
+
+        /// <summary>
+        /// イベントログを追加
+        /// </summary>
+        public virtual void AddEventLog(EventLog log)
+        {
+            EventLogs.Add(log);
+
+            // 1,000件を超えた場合は古いものを切り捨てる
+            if (EventLogs.Count > 1000)
+            {
+                EventLogs.RemoveAt(0);
+            }
+        }
 
         /// <summary>
         /// 対応している拡張子のリストを取得 ("txt" 形式で取得する)
@@ -974,6 +993,24 @@ namespace InazumaSearch.Core
             // 結果の返却
             errorMessage = innerErrorMessage;
             return res;
+        }
+
+        /// <summary>
+        /// ファイルサイズを取得。失敗した場合はnullを返す
+        /// </summary>
+        /// <param name="path">ファイルパス</param>
+        /// <returns>成功...ファイルサイズ / 失敗...null</returns>
+        public long? TryGetFileSize(string path)
+        {
+            try
+            {
+                return File.GetSize(path);
+            }
+            catch (Exception ex)
+            {
+                Logger.Warn(ex);
+                return null;
+            }
         }
 
         /// <summary>
