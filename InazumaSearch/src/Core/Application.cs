@@ -473,7 +473,12 @@ namespace InazumaSearch.Core
 
                 // 10MBを超えるかどうかで処理を分岐
                 var bufferSize = 1024 * 1024 * 10;
-                if (fileSize > bufferSize)
+                if (fileSize == 0)
+                {
+                    // 空テキストの場合の特殊処理
+                    return new ExtractFileSuccess() { Body = string.Empty };
+                }
+                else if (fileSize > bufferSize)
                 {
                     // 10MBを超える場合は、まず最初の10MB分からエンコーディングを判定
                     CharCode charCode;
@@ -509,7 +514,21 @@ namespace InazumaSearch.Core
                     // 10MB未満の場合は、すべてまとめて読み込む
                     var bytes = File.ReadAllBytes(path);
                     var charCode = ReadJEnc.JP.GetEncoding(bytes, bytes.Length, out body);
-                    return new ExtractFileSuccess() { Body = body };
+
+                    if (body == null)
+                    {
+                        // 判別できなかった場合
+                        return new ExtractFileFailed
+                        {
+                            ErrorMessage = $"テキストファイルの読み込みに失敗しました。エンコーディングが不正なテキストファイルの可能性があります。",
+                        };
+                    }
+                    else
+                    {
+                        return new ExtractFileSuccess() { Body = body };
+                    }
+
+
                 }
             }
             else
