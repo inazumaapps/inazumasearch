@@ -520,7 +520,7 @@ namespace InazumaSearch.Core
                         // 判別できなかった場合
                         return new ExtractFileFailed
                         {
-                            ErrorMessage = $"テキストファイルの読み込みに失敗しました。エンコーディングが不正なテキストファイルの可能性があります。",
+                            ErrorMessage = $"テキストファイルの読み込みに失敗しました。Inazuma Searchが取り扱えないエンコーディングのテキストか、もしくはテキストファイルではない可能性があります。",
                         };
                     }
                     else
