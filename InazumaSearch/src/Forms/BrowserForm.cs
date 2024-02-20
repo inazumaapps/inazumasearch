@@ -517,27 +517,37 @@ namespace InazumaSearch.Forms
                     // 学習
                     if (learning)
                     {
-                        var learnData = new List<Dictionary<string, object>>();
-                        foreach (var log in UserInputLogs)
+                        try
                         {
-                            var data = new Dictionary<string, object>
+                            var learnData = new List<Dictionary<string, object>>();
+                            foreach (var log in UserInputLogs)
+                            {
+                                var data = new Dictionary<string, object>
+                                {
+                                    ["sequence"] = "1",
+                                    ["time"] = Groonga.Util.ToUnixTime(log.Item1),
+                                    ["item"] = log.Item2
+                                };
+                                learnData.Add(data);
+                            }
+                            var submitData = new Dictionary<string, object>
                             {
                                 ["sequence"] = "1",
-                                ["time"] = Groonga.Util.ToUnixTime(log.Item1),
-                                ["item"] = log.Item2
+                                ["time"] = Groonga.Util.ToUnixTime(DateTime.Now),
+                                ["item"] = (string)queryObject["keyword"],
+                                ["type"] = "submit"
                             };
-                            learnData.Add(data);
+                            learnData.Add(submitData);
+                            App.GM.Load(table: "event_query", each: "suggest_preparer(_id, type, item, sequence, time, pair_query)", values: learnData);
+                            UserInputLogs.Clear();
+
+                            throw (new InazumaSearch.Groonga.Exceptions.GroongaCommandError("test", 1, "testmessage"));
                         }
-                        var submitData = new Dictionary<string, object>
+                        catch (Exception ex)
                         {
-                            ["sequence"] = "1",
-                            ["time"] = Groonga.Util.ToUnixTime(DateTime.Now),
-                            ["item"] = (string)queryObject["keyword"],
-                            ["type"] = "submit"
-                        };
-                        learnData.Add(submitData);
-                        App.GM.Load(table: "event_query", each: "suggest_preparer(_id, type, item, sequence, time, pair_query)", values: learnData);
-                        UserInputLogs.Clear();
+                            // 学習処理失敗時は、例外の詳細をログに出力して続行
+                            App.Logger.Warn(ex);
+                        }
                     }
 
                     // 処理時間の計測を開始
