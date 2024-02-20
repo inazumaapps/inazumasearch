@@ -540,8 +540,6 @@ namespace InazumaSearch.Forms
                             learnData.Add(submitData);
                             App.GM.Load(table: "event_query", each: "suggest_preparer(_id, type, item, sequence, time, pair_query)", values: learnData);
                             UserInputLogs.Clear();
-
-                            throw (new InazumaSearch.Groonga.Exceptions.GroongaCommandError("test", 1, "testmessage"));
                         }
                         catch (Exception ex)
                         {
