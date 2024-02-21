@@ -28,10 +28,11 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.ListViewItem listViewItem2 = new System.Windows.Forms.ListViewItem("9999/99/99 99:99");
+            System.Windows.Forms.ListViewItem listViewItem3 = new System.Windows.Forms.ListViewItem("9999/99/99 99:99");
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.TxtMessage = new System.Windows.Forms.TextBox();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.lnkOpenExplorer = new System.Windows.Forms.LinkLabel();
             this.TxtTargetPath = new System.Windows.Forms.TextBox();
             this.BtnClose = new System.Windows.Forms.Button();
             this.BtnExport = new System.Windows.Forms.Button();
@@ -77,6 +78,7 @@
             // 
             this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox2.Controls.Add(this.lnkOpenExplorer);
             this.groupBox2.Controls.Add(this.TxtTargetPath);
             this.groupBox2.Location = new System.Drawing.Point(12, 371);
             this.groupBox2.Margin = new System.Windows.Forms.Padding(2, 3, 2, 3);
@@ -87,6 +89,19 @@
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "対象ファイル";
             // 
+            // lnkOpenExplorer
+            // 
+            this.lnkOpenExplorer.AutoSize = true;
+            this.lnkOpenExplorer.Location = new System.Drawing.Point(875, 24);
+            this.lnkOpenExplorer.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.lnkOpenExplorer.Name = "lnkOpenExplorer";
+            this.lnkOpenExplorer.Size = new System.Drawing.Size(97, 15);
+            this.lnkOpenExplorer.TabIndex = 3;
+            this.lnkOpenExplorer.TabStop = true;
+            this.lnkOpenExplorer.Text = "エクスプローラで開く";
+            this.lnkOpenExplorer.Visible = false;
+            this.lnkOpenExplorer.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.lnkOpenExplorer_LinkClicked);
+            // 
             // TxtTargetPath
             // 
             this.TxtTargetPath.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
@@ -95,7 +110,7 @@
             this.TxtTargetPath.Margin = new System.Windows.Forms.Padding(2, 3, 2, 3);
             this.TxtTargetPath.Name = "TxtTargetPath";
             this.TxtTargetPath.ReadOnly = true;
-            this.TxtTargetPath.Size = new System.Drawing.Size(971, 23);
+            this.TxtTargetPath.Size = new System.Drawing.Size(859, 23);
             this.TxtTargetPath.TabIndex = 2;
             this.TxtTargetPath.TabStop = false;
             // 
@@ -135,7 +150,7 @@
             this.lsvLogList.FullRowSelect = true;
             this.lsvLogList.HideSelection = false;
             this.lsvLogList.Items.AddRange(new System.Windows.Forms.ListViewItem[] {
-            listViewItem2});
+            listViewItem3});
             this.lsvLogList.Location = new System.Drawing.Point(9, 10);
             this.lsvLogList.Margin = new System.Windows.Forms.Padding(2, 3, 2, 3);
             this.lsvLogList.Name = "lsvLogList";
@@ -234,5 +249,6 @@
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.SaveFileDialog dlgExport;
         private System.Windows.Forms.Button BtnUpdate;
+        private System.Windows.Forms.LinkLabel lnkOpenExplorer;
     }
 }

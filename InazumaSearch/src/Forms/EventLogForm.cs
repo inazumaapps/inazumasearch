@@ -56,6 +56,8 @@ namespace InazumaSearch.src.Forms
 
                 TxtMessage.Text = log.Message;
                 TxtTargetPath.Text = log.TargetPath;
+
+                lnkOpenExplorer.Visible = !string.IsNullOrWhiteSpace(TxtTargetPath.Text);
             }
         }
 
@@ -123,6 +125,11 @@ namespace InazumaSearch.src.Forms
         private void BtnUpdate_Click(object sender, EventArgs e)
         {
             UpdateLogList();
+        }
+
+        private void lnkOpenExplorer_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            System.Diagnostics.Process.Start("explorer.exe", $"/select,\"{TxtTargetPath.Text}\"");
         }
     }
 }
