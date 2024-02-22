@@ -15,6 +15,13 @@ namespace Tools
         private void DummyDocumentGenerator_Load(object sender, EventArgs e)
         {
             // TxtOutputFolderPath.Text = System.Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+            var baseDir = Path.GetDirectoryName(Application.ExecutablePath);
+            foreach (var dir in Directory.GetDirectories(Path.Combine(Path.Combine(baseDir, "dummyDoc"))))
+            {
+                var dirBaseName = Path.GetFileName(dir);
+                cmbDocumentType.Items.Add(dirBaseName);
+            }
+
         }
 
         private void BtnExecute_Click(object sender, EventArgs e)
@@ -39,7 +46,8 @@ namespace Tools
         {
             // ダミーファイルのリストを取得
             var baseDir = Path.GetDirectoryName(Application.ExecutablePath);
-            var dummyFiles = new List<string>(Directory.GetFiles(Path.Combine(baseDir, "dummyText")));
+            var dummyDocDir = Path.Combine(baseDir, "dummyDoc", (string)cmbDocumentType.SelectedItem.ToString());
+            var dummyFiles = new List<string>(Directory.GetFiles(dummyDocDir));
 
             // 出力先フォルダを作る
             Directory.CreateDirectory(destDir);
