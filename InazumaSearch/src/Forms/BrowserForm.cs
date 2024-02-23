@@ -1044,7 +1044,7 @@ namespace InazumaSearch.Forms
         {
             if (ChromeBrowser.CanExecuteJavascriptInMainFrame)
             {
-                ChromeBrowser.EvaluateScriptAsync("updateCountsAsync();");
+                ChromeBrowser.EvaluateScriptAsync(script);
                 return true;
             }
             else
