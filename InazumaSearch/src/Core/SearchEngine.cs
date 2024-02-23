@@ -97,7 +97,7 @@ namespace InazumaSearch.Core
                 if (!string.IsNullOrWhiteSpace(FolderPath))
                 {
                     // スラッシュは\に置き換え、最後に\マークが付いた状態にする
-                    var folderPath = FolderPath.Replace('/', '\\').Trim('\\') + "\\";
+                    var folderPath = FolderPath.Replace('/', '\\').TrimEnd('\\') + "\\";
                     res.GroongaQueries.Add(string.Format("{0}:^{1}"
                                                     , Column.Documents.FOLDER_PATH
                                                     , Groonga.Util.EscapeForQuery(folderPath)));
@@ -202,6 +202,14 @@ namespace InazumaSearch.Core
                 }
 
                 return res;
+            }
+
+            /// <summary>
+            /// 検索条件を複製します。
+            /// </summary>
+            public Condition Clone()
+            {
+                return (Condition)MemberwiseClone();
             }
         }
 

@@ -41,6 +41,7 @@
             // BtnCancel
             // 
             this.BtnCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.BtnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
             this.BtnCancel.Location = new System.Drawing.Point(337, 385);
             this.BtnCancel.Name = "BtnCancel";
             this.BtnCancel.Size = new System.Drawing.Size(89, 33);
@@ -68,7 +69,8 @@
             // BtnDecide
             // 
             this.BtnDecide.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.BtnDecide.Location = new System.Drawing.Point(206, 385);
+            this.BtnDecide.DialogResult = System.Windows.Forms.DialogResult.OK;
+            this.BtnDecide.Location = new System.Drawing.Point(207, 385);
             this.BtnDecide.Name = "BtnDecide";
             this.BtnDecide.Size = new System.Drawing.Size(105, 33);
             this.BtnDecide.TabIndex = 18;
@@ -100,8 +102,10 @@
             // 
             // SearchFolderSelectDialog
             // 
+            this.AcceptButton = this.BtnDecide;
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
+            this.CancelButton = this.BtnCancel;
             this.ClientSize = new System.Drawing.Size(438, 431);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
@@ -114,7 +118,6 @@
             this.Name = "SearchFolderSelectDialog";
             this.ShowIcon = false;
             this.Text = "フォルダ選択";
-            this.Load += new System.EventHandler(this.SearchFolderSelectDialog_Load);
             this.ResumeLayout(false);
             this.PerformLayout();
 

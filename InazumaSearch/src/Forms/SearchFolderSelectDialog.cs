@@ -109,6 +109,9 @@ namespace InazumaSearch.Forms
             SearchCondition = cond;
         }
 
+        /// <summary>
+        /// 確定ボタンクリック
+        /// </summary>
         private void BtnDecide_Click(object sender, EventArgs e)
         {
             this.DialogResult = DialogResult.OK;
@@ -120,15 +123,13 @@ namespace InazumaSearch.Forms
             Close();
         }
 
+        /// <summary>
+        /// 閉じるボタンクリック
+        /// </summary>
         private void BtnClose_Click(object sender, EventArgs e)
         {
             this.DialogResult = DialogResult.Cancel;
             Close();
-        }
-
-        private void SearchFolderSelectDialog_Load(object sender, EventArgs e)
-        {
-
         }
 
         /// <summary>
@@ -142,8 +143,15 @@ namespace InazumaSearch.Forms
             var systemImgListHandle = IntPtr.Zero;
 
             // 検索条件に合致するフォルダパス情報を取得
+            // ただし、この時フォルダパスの絞り込みは行わない
             var searchEngine = new SearchEngine(Application);
-            var folderPaths = searchEngine.SearchAllFolderPath();
+            SearchEngine.Condition usingCond = null;
+            if (SearchCondition != null)
+            {
+                usingCond = SearchCondition.Clone();
+                usingCond.FolderPath = null;
+            }
+            var folderPaths = searchEngine.SearchAllFolderPath(usingCond);
 
             // フォルダパス1件ごとに処理
             foreach (var pair in folderPaths)
@@ -154,7 +162,19 @@ namespace InazumaSearch.Forms
 
                 var addTargetNodes = TreeFolder.Nodes;
                 string currentPath = null;
-                var pathItems = folderPath.TrimEnd('\\').Split(new char[] { '\\' });
+
+                // パス要素を分割
+                // 「\\」から始まる共有パスは特別扱いする
+                string[] pathItems = null;
+                if (folderPath.StartsWith(@"\\"))
+                {
+                    pathItems = folderPath.TrimStart('\\').TrimEnd('\\').Split(new char[] { '\\' });
+                    pathItems[0] = $@"\\{pathItems[0]}";
+                }
+                else
+                {
+                    pathItems = folderPath.TrimEnd('\\').Split(new char[] { '\\' });
+                }
 
                 // 経路上にあるノード（親→子の順で追加）
                 var nodesOnPathRoute = new List<TreeNode>();
@@ -218,9 +238,16 @@ namespace InazumaSearch.Forms
                 var tag = (FolderNodeTag)node.Tag;
 
                 // 表示文字列の指定
-                node.Text = $"{tag.FolderName}";
+                if (Mode == SelectMode.DRILLDOWN)
+                {
+                    node.Text = $"{tag.FolderName} ({tag.DocumentCount})";
+                }
+                else
+                {
+                    node.Text = $"{tag.FolderName}";
+                }
 
-                // 入力パスと同じであれば選択・展開
+                // 初期パスと一致すれば選択・展開
                 if (defaultFolderPath != null && tag.Path == defaultFolderPath.TrimEnd('\\'))
                 {
                     node.Expand();
