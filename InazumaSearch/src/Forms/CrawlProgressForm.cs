@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using InazumaSearch.Core.Crawl;
+using InazumaSearch.src.Forms;
 using Microsoft.WindowsAPICodePack.Taskbar;
 
 namespace InazumaSearch.Forms
@@ -157,15 +158,23 @@ namespace InazumaSearch.Forms
             if (res.Finished)
             {
                 BtnCancel.Text = "閉じる";
+
+                var status = $"完了 (登録: {res.Updated}, スキップ: {res.Skipped}";
+                if (res.UpdateFailed > 0)
+                {
+                    status += $", 登録失敗: {res.UpdateFailed}";
+
+                    // 登録失敗がある場合、イベントログの表示を促す
+                    lblInfo.Visible = false;
+                    lnkShowEventLog.Visible = true;
+                }
                 if (res.Deleted > 0)
                 {
-                    statusText.Text = string.Format("完了 (更新: {0}, スキップ: {1}, 削除: {2})", res.Updated, res.Skipped, res.Deleted);
+                    status += $", 削除: {res.Deleted}";
                 }
-                else
-                {
-                    statusText.Text = string.Format("完了 (更新: {0}, スキップ: {1})", res.Updated, res.Skipped);
+                status += ")";
+                statusText.Text = status;
 
-                }
                 statusTimeCount.ForeColor = SystemColors.ControlText;
                 Text = "クロール完了";
             }
@@ -207,6 +216,12 @@ namespace InazumaSearch.Forms
                     App.Crawler.StartAlwaysCrawl();
                 }
             }
+        }
+
+        private void lnkShowEventLog_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            var f = new EventLogForm(App);
+            f.ShowDialog(this);
         }
     }
 }

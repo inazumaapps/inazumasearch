@@ -7,7 +7,7 @@ namespace InazumaSearch.Groonga.Exceptions
         public virtual int ReturnCode { get; set; }
         public virtual string CommandErrorMessage { get; set; }
 
-        public GroongaCommandError(string message, int returnCode, string commandErrorMessage) : base(message)
+        public GroongaCommandError(int returnCode, string commandErrorMessage) : base($"Groongaコマンドエラー : returnCode={returnCode}, message={commandErrorMessage}")
         {
             ReturnCode = returnCode;
             CommandErrorMessage = CommandErrorMessage;

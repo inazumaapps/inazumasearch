@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using Alphaleonis.Win32.Filesystem;
 using InazumaSearch.Core;
+using InazumaSearch.src.Forms;
 using Microsoft.WindowsAPICodePack.Dialogs;
 
 namespace InazumaSearch.Forms
@@ -23,6 +24,22 @@ namespace InazumaSearch.Forms
             InitializeComponent();
             Application = app;
         }
+
+        /// <summary>
+        /// 設定画面を表示中の状態であれば、文書カウント表示を更新する
+        /// </summary>
+        private void UpdateBrowserFormCounts()
+        {
+            foreach (var browserForm in Core.Application.BootingBrowserForms)
+            {
+                if (browserForm.SettingScreenShowing)
+                {
+                    browserForm.TryEvaluateJavaScriptAsync("updateCountsAsync();");
+                }
+            }
+        }
+
+
         private void BtnClearCrawledData_Click(object sender, EventArgs e)
         {
             if (Util.Confirm(this, "クロール時に収集した文書データと、文書のサムネイル画像をクリアします。\nよろしいですか？", defaultNo: true))
@@ -35,6 +52,9 @@ namespace InazumaSearch.Forms
 
                 });
                 UpdateLabels();
+
+                // 設定画面の文書カウント表示更新
+                UpdateBrowserFormCounts();
             }
         }
 
@@ -113,6 +133,7 @@ namespace InazumaSearch.Forms
             NumDisplayPageSizeForNormalView.Value = Application.UserSettings.DisplayPageSizeForNormalView;
             NumDisplayPageSizeForListView.Value = Application.UserSettings.DisplayPageSizeForListView;
             NumDocumentExtractTimeout.Value = Application.UserSettings.DocumentExtractTimeoutSecond;
+            NumTextFileMaxSizeByMB.Value = Application.UserSettings.TextFileMaxSizeByMB;
 
             // 文書データベース保存先関連のボタン押下可否を更新
             DocumentDBDirOperationDisplayState();
@@ -326,7 +347,6 @@ namespace InazumaSearch.Forms
         {
             var numControl = (NumericUpDown)sender;
             Application.UserSettings.SaveDocumentExtractTimeoutSecond((int)numControl.Value);
-
         }
 
         private void BtnRebootDebugMode_Click(object sender, EventArgs e)
@@ -334,5 +354,21 @@ namespace InazumaSearch.Forms
             Core.Application.Restart(forceDebug: true);
         }
 
+        private void lnlEventLogForm_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            var f = new EventLogForm(Application);
+            f.ShowDialog(this);
+        }
+
+        /// <summary>
+        /// テキストファイルの最大ファイルサイズ(MB)を変更
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void NumTextFileMaxSizeByMB_ValueChanged(object sender, EventArgs e)
+        {
+            var numControl = (NumericUpDown)sender;
+            Application.UserSettings.SaveTextFileMaxSizeByMB((int)numControl.Value);
+        }
     }
 }

@@ -54,6 +54,7 @@ namespace InazumaSearch.Core
             public virtual int DisplayPageSizeForNormalView { get; set; } = 20;
             public virtual int DisplayPageSizeForListView { get; set; } = 100;
             public virtual int DocumentExtractTimeoutSecond { get; set; } = 15;
+            public virtual int TextFileMaxSizeByMB { get; set; } = 200;
             public virtual bool DisplaySearchProcessTime { get; set; } = false;
         }
 
@@ -266,6 +267,20 @@ namespace InazumaSearch.Core
             public void SaveDocumentExtractTimeoutSecond(int value)
             {
                 PlainData.DocumentExtractTimeoutSecond = value;
+                Save();
+            }
+
+            /// <summary>
+            /// テキストファイルの最大登録可能サイズ（MB）
+            /// </summary>
+            public int TextFileMaxSizeByMB { get { return PlainData.TextFileMaxSizeByMB; } }
+
+            /// <summary>
+            /// テキストファイルの最大登録可能サイズ（MB）を設定
+            /// </summary>
+            public void SaveTextFileMaxSizeByMB(int value)
+            {
+                PlainData.TextFileMaxSizeByMB = value;
                 Save();
             }
 

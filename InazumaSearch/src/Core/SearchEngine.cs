@@ -97,8 +97,8 @@ namespace InazumaSearch.Core
             /// 検索時間（単位：秒）
             /// </summary>
             public double processTime { get; set; }
-        }
 
+        }
         public class Record
         {
             public string key { get; set; }
@@ -163,6 +163,11 @@ namespace InazumaSearch.Core
             public const string FILE_UPDATED_DESC = "file_updated_desc";
 
             /// <summary>
+            /// ファイルの更新日が古い順
+            /// </summary>
+            public const string FILE_UPDATED_ASC = "file_updated_asc";
+
+            /// <summary>
             /// ファイルパス順
             /// </summary>
             public const string FILE_PATH = "file_path";
@@ -206,6 +211,7 @@ namespace InazumaSearch.Core
 
             OrderList.Add(new OrderItem { Type = OrderType.SCORE, Caption = "関連度順" });
             OrderList.Add(new OrderItem { Type = OrderType.FILE_UPDATED_DESC, Caption = "更新日が新しい順" });
+            OrderList.Add(new OrderItem { Type = OrderType.FILE_UPDATED_ASC, Caption = "更新日が古い順" });
             OrderList.Add(new OrderItem { Type = OrderType.FILE_PATH, Caption = "ファイルパス順" });
         }
 
@@ -299,6 +305,9 @@ namespace InazumaSearch.Core
                     break;
                 case OrderType.FILE_UPDATED_DESC:
                     sortKeys.Add("-" + Column.Documents.FILE_UPDATED_AT);
+                    break;
+                case OrderType.FILE_UPDATED_ASC:
+                    sortKeys.Add(Column.Documents.FILE_UPDATED_AT);
                     break;
             }
             // 標準では最終スコア(関連度+鮮度)が高い順に並べる
@@ -578,7 +587,7 @@ namespace InazumaSearch.Core
         , string queryUpdated
         , string selectedFormat
         , string selectedFolderLabel
-    )
+        )
         {
             // 検索条件を解析
             var queryParseResult = parseQuery(queryKeyword, queryFolderPath, queryFileName, queryBody, queryUpdated, selectedFormat, selectedFolderLabel);
@@ -595,7 +604,7 @@ namespace InazumaSearch.Core
             try
             {
                 selectRes = App.GM.Select(
-                      Table.Documents
+                  Table.Documents
                     , query: joinedQuery
                     , filter: joinedFilter
                     , limit: 1
@@ -605,7 +614,7 @@ namespace InazumaSearch.Core
                     , outputColumns: new string[] {
                         Groonga.VColumn.KEY
                     }
-                );
+            );
             }
             catch (GroongaCommandError ex)
             {
@@ -699,11 +708,11 @@ namespace InazumaSearch.Core
                     res.GroongaFilters.Add(string.Format("!in_values({0},{1})"
                                                     , Column.Documents.EXT
                                                     , string.Join(", ", strings))
-                                        );
+            );
                     res.SubMessages.Add("ファイル形式: その他");
 
 
-                }
+        }
                 else
                 {
                     var targetExtNames = new List<string>();

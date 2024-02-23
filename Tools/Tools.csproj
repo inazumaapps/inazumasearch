@@ -96,18 +96,22 @@
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
-    <Content Include="dummyText\aozora_1935.html">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    <Content Include="dummyDoc\01_standard\aozora_1935.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="dummyText\aozora_43015.html">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    <Content Include="dummyDoc\01_standard\aozora_43015.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="dummyText\ChatGPT_02.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    <Content Include="dummyDoc\01_standard\ChatGPT_01.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="dummyText\ChatGPT_01.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    <Content Include="dummyDoc\01_standard\ChatGPT_02.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="dummyDoc\02_100MBText\aozora_1935.html" />
+    <Content Include="dummyDoc\02_100MBText\aozora_43015.html" />
+    <Content Include="dummyDoc\02_100MBText\ChatGPT_01.txt" />
+    <Content Include="dummyDoc\02_100MBText\ChatGPT_02.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

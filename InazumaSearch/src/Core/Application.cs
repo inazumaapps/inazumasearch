@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Security.Cryptography;
+using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Alphaleonis.Win32.Filesystem;
@@ -78,6 +79,11 @@ namespace InazumaSearch.Core
         /// ハッシュ生成を行うオブジェクト。サムネイル画像パスの生成に使用
         /// </summary>
         public HashAlgorithm HashProvider { get; set; } = new SHA1CryptoServiceProvider();
+
+        /// <summary>
+        /// イベントログ（新しいログほど後ろに追加されている）
+        /// </summary>
+        public List<EventLog> EventLogs { get; protected set; } = new List<EventLog>();
 
         #region 特殊パスの取得
 
@@ -163,6 +169,24 @@ namespace InazumaSearch.Core
         public virtual string StartupShortcutPath { get { return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Startup), @"Inazuma Search.lnk"); } }
 
         #endregion
+
+        /// <summary>
+        /// イベントログを追加
+        /// </summary>
+        public virtual void AddEventLog(EventLog log)
+        {
+            // イベントログ表示側と同時に触らないようにロック
+            lock (EventLogs)
+            {
+                EventLogs.Add(log);
+
+                // 1,000件を超えた場合は古いものを切り捨てる
+                if (EventLogs.Count > 1000)
+                {
+                    EventLogs.RemoveAt(0);
+                }
+            }
+        }
 
         /// <summary>
         /// 対応している拡張子のリストを取得 ("txt" 形式で取得する)
@@ -372,19 +396,34 @@ namespace InazumaSearch.Core
         }
 
         /// <summary>
-        /// <see cref="ExtractFile(string, IEnumerable{string}, IEnumerable{string})"で抽出した結果です。 />
+        /// <see cref="ExtractFile(string, IEnumerable{string}, IEnumerable{string})" />で抽出した結果を表すクラスです。
         /// </summary>
-        public class ExtractFileResult
+        public abstract class ExtractFileResult
+        {
+        }
+
+        /// <summary>
+        /// <see cref="ExtractFile(string, IEnumerable{string}, IEnumerable{string})" />で抽出した結果（成功）を表すクラスです。
+        /// </summary>
+        public class ExtractFileSuccess : ExtractFileResult
         {
             public string Title { get; set; }
             public string Body { get; set; }
         }
 
         /// <summary>
+        /// <see cref="ExtractFile(string, IEnumerable{string}, IEnumerable{string})" />で抽出した結果（失敗）を表すクラスです。
+        /// </summary>
+        public class ExtractFileFailed : ExtractFileResult
+        {
+            public string ErrorMessage { get; set; }
+        }
+
+        /// <summary>
         /// 拡張子に応じて、指定した文書ファイルの情報（件名、本文テキスト）を抽出
         /// </summary>
         /// <param name="path">文書ファイルパス</param>
-        /// <returns>ファイル本文</returns>
+        /// <returns>登録結果</returns>
         public virtual ExtractFileResult ExtractFile(
             string path
             , IEnumerable<string> textExtNames
@@ -397,7 +436,7 @@ namespace InazumaSearch.Core
             {
                 // プラグインが対応している場合は、プラグインを使用してテキスト抽出
                 Logger.Trace($"Extract by plugin - {path}");
-                return new ExtractFileResult() { Body = PluginManager.ExtractText(path) };
+                return new ExtractFileSuccess() { Body = PluginManager.ExtractText(path) };
             }
             else if (ext == "eml")
             {
@@ -409,11 +448,11 @@ namespace InazumaSearch.Core
                     while (!parser.IsEndOfStream)
                     {
                         var message = parser.ParseMessage();
-                        return new ExtractFileResult() { Title = message.Subject, Body = message.TextBody ?? message.HtmlBody ?? "" };
+                        return new ExtractFileSuccess() { Title = message.Subject, Body = message.TextBody ?? message.HtmlBody ?? "" };
                     }
 
                     // 1件もメールがなければ空文書とする
-                    return new ExtractFileResult() { Body = "" };
+                    return new ExtractFileSuccess() { Body = "" };
                 }
             }
             else if (textExtNames.Contains(ext))
@@ -421,16 +460,85 @@ namespace InazumaSearch.Core
                 // テキストの拡張子として登録されている場合は、テキストファイルとして読み込み
                 Logger.Trace($"Extract as text file - {path}");
                 var body = "";
-                var bytes = File.ReadAllBytes(path);
-                var charCode = ReadJEnc.JP.GetEncoding(bytes, bytes.Length, out body);
-                return new ExtractFileResult() { Body = body };
+
+                // ファイルサイズを取得
+                var fileSize = File.GetSize(path);
+
+                // 最大サイズを超える場合は登録不可
+                if (fileSize > UserSettings.TextFileMaxSizeByMB * 1024 * 1024)
+                {
+                    return new ExtractFileFailed
+                    {
+                        ErrorMessage = $"テキストファイルのサイズが、登録可能な最大サイズ（{UserSettings.TextFileMaxSizeByMB:#,0}MB）を超えています。　※最大サイズは詳細設定より変更可能です",
+                    };
+                }
+
+                // 10MBを超えるかどうかで処理を分岐
+                var bufferSize = 1024 * 1024 * 10;
+                if (fileSize == 0)
+                {
+                    // 空テキストの場合の特殊処理
+                    return new ExtractFileSuccess() { Body = string.Empty };
+                }
+                else if (fileSize > bufferSize)
+                {
+                    // 10MBを超える場合は、まず最初の10MB分からエンコーディングを判定
+                    CharCode charCode;
+                    using (var sourceStream = new System.IO.FileStream(path, System.IO.FileMode.Open, System.IO.FileAccess.Read))
+                    {
+                        var byteBuffer = new byte[bufferSize];
+                        int bytesRead;
+                        bytesRead = sourceStream.Read(byteBuffer, 0, byteBuffer.Length);
+                        {
+                            string _dummy;
+                            charCode = ReadJEnc.JP.GetEncoding(byteBuffer, bytesRead, out _dummy);
+                        }
+                    }
+
+                    // その後に3,000,000文字ずつ読み込む
+                    var readCharCount = 3000000; // 一度に読み込む文字数
+                    var builder = new StringBuilder();
+                    var enc = (charCode != null ? charCode.GetEncoding() : Encoding.UTF8); // エンコーディング。判別に失敗した場合はUTF-8と仮定する
+                    using (System.IO.StreamReader reader = new System.IO.StreamReader(path, enc))
+                    {
+                        var charBuffer = new char[readCharCount];
+                        int charRead;
+
+                        while ((charRead = reader.Read(charBuffer, 0, charBuffer.Length)) > 0)
+                        {
+                            builder.Append(charBuffer);
+                        }
+                    }
+                    return new ExtractFileSuccess() { Body = builder.ToString() };
+                }
+                else
+                {
+                    // 10MB未満の場合は、すべてまとめて読み込む
+                    var bytes = File.ReadAllBytes(path);
+                    var charCode = ReadJEnc.JP.GetEncoding(bytes, bytes.Length, out body);
+
+                    if (body == null)
+                    {
+                        // 判別できなかった場合
+                        return new ExtractFileFailed
+                        {
+                            ErrorMessage = $"テキストファイルの読み込みに失敗しました。Inazuma Searchが取り扱えないエンコーディングのテキストか、もしくはテキストファイルではない可能性があります。",
+                        };
+                    }
+                    else
+                    {
+                        return new ExtractFileSuccess() { Body = body };
+                    }
+
+
+                }
             }
             else
             {
                 // 上記以外の場合はXDoc2Txtを使用
                 Logger.Trace($"Extract by xdoc2txt - {path}");
                 var body = XDoc2TxtApi.Extract(path, UserSettings.DocumentExtractTimeoutSecond);
-                return new ExtractFileResult() { Body = body };
+                return new ExtractFileSuccess() { Body = body };
             }
         }
 
@@ -929,6 +1037,24 @@ namespace InazumaSearch.Core
             // 結果の返却
             errorMessage = innerErrorMessage;
             return res;
+        }
+
+        /// <summary>
+        /// ファイルサイズを取得。失敗した場合はnullを返す
+        /// </summary>
+        /// <param name="path">ファイルパス</param>
+        /// <returns>成功...ファイルサイズ / 失敗...null</returns>
+        public long? TryGetFileSize(string path)
+        {
+            try
+            {
+                return File.GetSize(path);
+            }
+            catch (Exception ex)
+            {
+                Logger.Warn(ex);
+                return null;
+            }
         }
 
         /// <summary>

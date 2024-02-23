@@ -210,6 +210,7 @@
     <Compile Include="src\ApplicationContext.cs" />
     <Compile Include="src\Core\ApplicationEnvironment.cs" />
     <Compile Include="src\Core\Application.cs" />
+    <Compile Include="src\Core\EventLog.cs" />
     <Compile Include="src\Core\Crawl\FileSystemEvent.cs" />
     <Compile Include="src\Core\Crawl\FileWatcher.cs" />
     <Compile Include="src\Core\ProgressGuageState.cs" />
@@ -262,6 +263,12 @@
     </Compile>
     <Compile Include="src\Forms\Debug\GroongaDebugForm.Designer.cs">
       <DependentUpon>GroongaDebugForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="src\Forms\EventLogForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="src\Forms\EventLogForm.Designer.cs">
+      <DependentUpon>EventLogForm.cs</DependentUpon>
     </Compile>
     <Compile Include="src\Forms\IgnoreEditForm.cs">
       <SubType>Form</SubType>
@@ -370,6 +377,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="src\Forms\Debug\GroongaDebugForm.resx">
       <DependentUpon>GroongaDebugForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="src\Forms\EventLogForm.resx">
+      <DependentUpon>EventLogForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="src\Forms\IgnoreEditForm.resx">
       <DependentUpon>IgnoreEditForm.cs</DependentUpon>

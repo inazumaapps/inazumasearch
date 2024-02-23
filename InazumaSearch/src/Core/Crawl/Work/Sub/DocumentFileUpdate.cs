@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using Alphaleonis.Win32.Filesystem;
+using InazumaSearch.Groonga.Exceptions;
 using Microsoft.WindowsAPICodePack.Shell;
 
 namespace InazumaSearch.Core.Crawl.Work
@@ -12,6 +13,83 @@ namespace InazumaSearch.Core.Crawl.Work
     /// </summary>
     public class DocumentFileUpdate : WorkBase
     {
+        /// <summary>
+        /// 登録結果
+        /// </summary>
+        public class UpdateResult
+        {
+            /// <summary>
+            /// 結果タイプを表す列挙体
+            /// </summary>
+            public enum ResultType
+            {
+                /// <summary>
+                /// 成功
+                /// </summary>
+                Success,
+
+                /// <summary>
+                /// 失敗
+                /// </summary>
+                Failed,
+
+                /// <summary>
+                /// スキップ
+                /// </summary>
+                Skipped
+            }
+
+            /// <summary>
+            /// 結果タイプ
+            /// </summary>
+            public ResultType Type;
+
+            /// <summary>
+            /// エラー発生時の時刻
+            /// </summary>
+            public DateTime ErrorRaisedAt;
+
+            /// <summary>
+            /// エラーメッセージ
+            /// </summary>
+            public string ErrorMessage;
+
+            /// <summary>
+            /// エラーになったファイルのパス
+            /// </summary>
+            public string ErrorFilePath;
+
+            /// <summary>
+            /// エラーになったファイルのファイルサイズ
+            /// </summary>
+            public long? ErrorFileSize;
+
+            /// <summary>
+            /// 例外オブジェクト
+            /// </summary>
+            public Exception InnerException;
+
+            public UpdateResult(ResultType type)
+            {
+                this.Type = type;
+                if (type == ResultType.Failed)
+                {
+                    ErrorRaisedAt = DateTime.Now;
+                }
+            }
+
+            /// <summary>
+            /// 「成功」を表す定数
+            /// </summary>
+            public static UpdateResult SUCCESS = new UpdateResult(ResultType.Success);
+
+            /// <summary>
+            /// 「スキップ」を表す定数
+            /// </summary>
+            public static UpdateResult SKIPPED = new UpdateResult(ResultType.Skipped);
+        }
+
+
         /// <summary>
         /// 登録対象のファイルパス
         /// </summary>
@@ -71,15 +149,16 @@ namespace InazumaSearch.Core.Crawl.Work
         )
         {
             // 登録メイン処理を実行
-            var success = UpdateMain(crawlResult, progress);
+            var result = UpdateMain(crawlResult, progress);
 
             // 結果をカウント
-            if (success)
+            if (result.Type == UpdateResult.ResultType.Success)
             {
+                // 成功時
                 crawlResult.Updated++;
 
                 // 進捗を報告
-                progress?.Report(new ProgressState() { CurrentStep = ProgressState.Step.RecordUpdateEnd, CurrentValue = crawlResult.Updated + crawlResult.Skipped, TotalValue = crawlResult.TotalTargetCount, Path = FilePath });
+                progress?.Report(new ProgressState() { CurrentStep = ProgressState.Step.RecordUpdateEnd, CurrentValue = crawlResult.UpdateProcessed, TotalValue = crawlResult.TotalTargetCount, Path = FilePath });
 
                 // 登録件数が200件を超えるごとにGroongaを再起動
                 // (Groongaプロセスを立ち上げてパイプを接続したまま大量データを登録すると、システムエラーが発生する場合があるため)
@@ -89,9 +168,19 @@ namespace InazumaSearch.Core.Crawl.Work
                     _app.GM.Reboot();
                 }
             }
+            else if (result.Type == UpdateResult.ResultType.Skipped)
+            {
+                // スキップ時
+                crawlResult.Skipped++;
+            }
             else
             {
-                crawlResult.Skipped++;
+                // 失敗時
+                crawlResult.UpdateFailed++;
+
+                // イベントログ追加
+                var log = new EventLog(EventLog.LogType.DOCUMENT_UPDATE_FAILED, result.ErrorMessage, result.ErrorRaisedAt) { TargetPath = result.ErrorFilePath, TargetFileSize = result.ErrorFileSize, InnerException = result.InnerException };
+                _app.AddEventLog(log);
             }
 
             // 常駐クロールの場合はクールタイムを挟む (処理の経過時間×3, 最低0.05秒)
@@ -101,7 +190,7 @@ namespace InazumaSearch.Core.Crawl.Work
         /// <summary>
         /// 登録メイン処理
         /// </summary>
-        protected virtual bool UpdateMain(
+        protected virtual UpdateResult UpdateMain(
             Result crawlResult,
             IProgress<ProgressState> progress = null
         )
@@ -109,7 +198,7 @@ namespace InazumaSearch.Core.Crawl.Work
             // 進捗を報告
             ReportProgressLimitedFrequency(
                 progress,
-                new ProgressState() { CurrentStep = ProgressState.Step.RecordUpdateCheckBegin, CurrentValue = crawlResult.Updated + crawlResult.Skipped, TotalValue = crawlResult.TotalTargetCount, Path = FilePath },
+                new ProgressState() { CurrentStep = ProgressState.Step.RecordUpdateCheckBegin, CurrentValue = crawlResult.UpdateProcessed, TotalValue = crawlResult.TotalTargetCount, Path = FilePath },
                 crawlResult
             );
 
@@ -121,7 +210,7 @@ namespace InazumaSearch.Core.Crawl.Work
             if (!File.Exists(FilePath))
             {
                 Logger.Debug($"Target file not found - {FilePath}");
-                return false;
+                return UpdateResult.SKIPPED;
             }
 
             // ファイルが削除されていない場合、見つかった対象ファイルとして登録（DBからの文書削除時に使用）
@@ -156,28 +245,51 @@ namespace InazumaSearch.Core.Crawl.Work
                     {
                         Logger.Debug("Skip - {0}", FilePath);
 
-                        return false;
+                        return UpdateResult.SKIPPED;
                     }
                 }
             }
 
             // 進捗を報告
-            progress?.Report(new ProgressState() { CurrentStep = ProgressState.Step.RecordUpdateBegin, CurrentValue = crawlResult.Updated + crawlResult.Skipped, TotalValue = crawlResult.TotalTargetCount, Path = FilePath });
+            progress?.Report(new ProgressState() { CurrentStep = ProgressState.Step.RecordUpdateBegin, CurrentValue = crawlResult.UpdateProcessed, TotalValue = crawlResult.TotalTargetCount, Path = FilePath });
 
-            // データの登録
-            Application.ExtractFileResult extRes;
+            // データの登録処理
+            Application.ExtractFileSuccess extResSuccess;
 
             // 拡張子に応じてテキストを抽出する
             try
             {
-                extRes = _app.ExtractFile(FilePath, textExtNames, pluginExtNames);
-                Logger.Debug($"Extract OK - {FilePath} (title: {extRes.Title}, body length: {extRes.Body.Length})");
+                var extRes = _app.ExtractFile(FilePath, textExtNames, pluginExtNames);
+                if (extRes is Application.ExtractFileSuccess)
+                {
+                    extResSuccess = (Application.ExtractFileSuccess)extRes;
+                    Logger.Debug($"Extract OK - {FilePath} (title: {extResSuccess.Title}, body length: {extResSuccess.Body.Length})");
+                }
+                else
+                {
+                    // テキスト抽出失敗
+                    var extResFailed = (Application.ExtractFileFailed)extRes;
+                    Logger.Debug($"Extract Failed - {FilePath} (message: {extResFailed.ErrorMessage}, size: {fileSize})");
+
+                    return new UpdateResult(UpdateResult.ResultType.Failed)
+                    {
+                        ErrorMessage = extResFailed.ErrorMessage,
+                        ErrorFilePath = FilePath,
+                        ErrorFileSize = fileSize
+                    };
+                }
             }
             catch (TimeoutException ex)
             {
-                // タイムアウト発生時はスキップ
+                // タイムアウト発生時はエラー扱い
+                Logger.Warn(ex.ToString());
                 Logger.Debug($"Extract Timeout - {FilePath}");
-                return false;
+                return new UpdateResult(UpdateResult.ResultType.Failed)
+                {
+                    ErrorMessage = $"ファイルの解析処理で、処理時間が{_app.UserSettings.DocumentExtractTimeoutSecond}秒を超えたためにタイムアウトしました。",
+                    ErrorFilePath = FilePath,
+                    ErrorFileSize = _app.TryGetFileSize(FilePath)
+                };
             }
             catch (OperationCanceledException ex)
             {
@@ -186,10 +298,26 @@ namespace InazumaSearch.Core.Crawl.Work
             }
             catch (Exception ex)
             {
-                // 例外発生時はスキップ
+                // 上記以外の例外発生時
                 Logger.Warn($"Crawl Extract Error - {FilePath}");
                 Logger.Warn(ex.ToString());
-                return false;
+
+                string errorMessage;
+                if (ex is OutOfMemoryException)
+                {
+                    errorMessage = $"ファイルの解析処理でメモリ不足エラーが発生しました。対象のファイルサイズが大きすぎる可能性があります。";
+                }
+                else
+                {
+                    errorMessage = $"ファイルの解析処理でエラーが発生しました。";
+                }
+                return new UpdateResult(UpdateResult.ResultType.Failed)
+                {
+                    ErrorMessage = errorMessage,
+                    ErrorFilePath = FilePath,
+                    ErrorFileSize = _app.TryGetFileSize(FilePath),
+                    InnerException = ex
+                };
             }
 
             Thread.Sleep(0); // 他のスレッドに処理を渡す
@@ -204,8 +332,8 @@ namespace InazumaSearch.Core.Crawl.Work
             var obj = new Dictionary<string, object>
                             {
                                 { Column.Documents.KEY, key },
-                                { Column.Documents.TITLE, extRes.Title },
-                                { Column.Documents.BODY, extRes.Body },
+                                { Column.Documents.TITLE, extResSuccess.Title },
+                                { Column.Documents.BODY, extResSuccess.Body },
                                 { Column.Documents.FILE_NAME, Path.GetFileName(FilePath) },
                                 { Column.Documents.FOLDER_PATH, Path.GetDirectoryName(FilePath) },
                                 { Column.Documents.FILE_PATH, FilePath },
@@ -221,7 +349,47 @@ namespace InazumaSearch.Core.Crawl.Work
                             };
 
             Logger.Trace($"Store to groonga DB");
+            try
+            {
+                try
+                {
+                    _app.GM.Load(new[] { obj }, Table.Documents);
+                }
+                catch (GroongaCommandError ex)
+                {
+
+                    if (ex.ReturnCode == Groonga.CommandReturnCode.GRN_NO_MEMORY_AVAILABLE)
+                    {
+                        // メモリ不足の場合、Groongaを再起動してもう一度取込を試みる
+                        // それでも同じエラーが発生した場合は改めてスロー
+                        Logger.Warn(ex);
+                        Logger.Debug("Groonga Reboot");
+                        _app.GM.Reboot();
             _app.GM.Load(new[] { obj }, Table.Documents);
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.Warn(ex);
+
+                // 例外が発生した場合は、その文書の削除を試みる
+                _app.GM.Delete(Table.Documents, key);
+
+                // 登録失敗
+                return new UpdateResult(UpdateResult.ResultType.Failed)
+                {
+                    ErrorMessage = $"ファイルの文書DB登録処理でエラーが発生しました。",
+                    ErrorFilePath = FilePath,
+                    ErrorFileSize = _app.TryGetFileSize(FilePath),
+                    InnerException = ex
+                };
+
+            }
 
             Thread.Sleep(0); // 他のスレッドに処理を渡す
 
@@ -250,7 +418,7 @@ namespace InazumaSearch.Core.Crawl.Work
             Logger.Debug("Update OK - {0}", FilePath);
 
             // 登録成功
-            return true;
+            return UpdateResult.SUCCESS;
         }
     }
 }

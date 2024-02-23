@@ -36,6 +36,8 @@
             this.TxtOutputFolderPath = new System.Windows.Forms.TextBox();
             this.label3 = new System.Windows.Forms.Label();
             this.ChkMakeTimestampSubFolder = new System.Windows.Forms.CheckBox();
+            this.cmbDocumentType = new System.Windows.Forms.ComboBox();
+            this.label4 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.NumSeed)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.NumDocCount)).BeginInit();
             this.SuspendLayout();
@@ -99,7 +101,7 @@
             // 
             // TxtOutputFolderPath
             // 
-            this.TxtOutputFolderPath.Location = new System.Drawing.Point(165, 99);
+            this.TxtOutputFolderPath.Location = new System.Drawing.Point(165, 173);
             this.TxtOutputFolderPath.Name = "TxtOutputFolderPath";
             this.TxtOutputFolderPath.Size = new System.Drawing.Size(632, 30);
             this.TxtOutputFolderPath.TabIndex = 6;
@@ -107,7 +109,7 @@
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(29, 99);
+            this.label3.Location = new System.Drawing.Point(29, 173);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(116, 23);
             this.label3.TabIndex = 7;
@@ -116,18 +118,38 @@
             // ChkMakeTimestampSubFolder
             // 
             this.ChkMakeTimestampSubFolder.AutoSize = true;
-            this.ChkMakeTimestampSubFolder.Location = new System.Drawing.Point(179, 136);
+            this.ChkMakeTimestampSubFolder.Location = new System.Drawing.Point(179, 210);
             this.ChkMakeTimestampSubFolder.Name = "ChkMakeTimestampSubFolder";
             this.ChkMakeTimestampSubFolder.Size = new System.Drawing.Size(627, 27);
             this.ChkMakeTimestampSubFolder.TabIndex = 8;
             this.ChkMakeTimestampSubFolder.Text = "実行日時でサブフォルダを作る（例：C:\\Documents\\20230910_102533）";
             this.ChkMakeTimestampSubFolder.UseVisualStyleBackColor = true;
             // 
+            // cmbDocumentType
+            // 
+            this.cmbDocumentType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbDocumentType.FormattingEnabled = true;
+            this.cmbDocumentType.Location = new System.Drawing.Point(145, 93);
+            this.cmbDocumentType.Name = "cmbDocumentType";
+            this.cmbDocumentType.Size = new System.Drawing.Size(287, 31);
+            this.cmbDocumentType.TabIndex = 9;
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(29, 96);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(85, 23);
+            this.label4.TabIndex = 10;
+            this.label4.Text = "文書タイプ";
+            // 
             // DummyDocumentGenerator
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(144F, 144F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.ClientSize = new System.Drawing.Size(895, 350);
+            this.Controls.Add(this.label4);
+            this.Controls.Add(this.cmbDocumentType);
             this.Controls.Add(this.ChkMakeTimestampSubFolder);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.TxtOutputFolderPath);
@@ -157,5 +179,7 @@
         private System.Windows.Forms.TextBox TxtOutputFolderPath;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.CheckBox ChkMakeTimestampSubFolder;
+        private System.Windows.Forms.ComboBox cmbDocumentType;
+        private System.Windows.Forms.Label label4;
     }
 }

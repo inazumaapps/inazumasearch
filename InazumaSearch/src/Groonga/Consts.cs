@@ -29,6 +29,14 @@
         public const string WGS84GeoPoint = "WGS84GeoPoint";
     }
 
+    public class DataTypeMaxLength
+    {
+        /// <summary>
+        /// LongText型の最大サイズ
+        /// </summary>
+        public const long LongText = 2147483647;
+    }
+
     public class ColumnCreateFlag
     {
         public const string COLUMN_SCALAR = "COLUMN_SCALAR";
@@ -84,6 +92,7 @@
     {
         public const int GRN_SUCCESS = 0;
         public const int GRN_INVALID_ARGUMENT = -22;
+        public const int GRN_NO_MEMORY_AVAILABLE = -35;
         public const int GRN_SYNTAX_ERROR = -63;
     }
 

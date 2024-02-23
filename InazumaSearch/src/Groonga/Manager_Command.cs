@@ -114,7 +114,7 @@ namespace InazumaSearch.Groonga
                     var errorLocation = header[4];
                 }
                 // 失敗
-                throw new GroongaCommandError($"Groongaコマンドエラー : {errorMessage}", returnCode, errorMessage);
+                throw new GroongaCommandError(returnCode, errorMessage);
             }
 
         }

@@ -27,6 +27,16 @@ namespace InazumaSearch.Core.Crawl
         public int Skipped { get; set; } = 0;
 
         /// <summary>
+        /// 登録失敗した文書件数
+        /// </summary>
+        public int UpdateFailed { get; set; } = 0;
+
+        /// <summary>
+        /// 登録処理を行った件数（成功＋スキップ＋失敗）
+        /// </summary>
+        public int UpdateProcessed { get { return Updated + Skipped + UpdateFailed; } }
+
+        /// <summary>
         /// 削除した文書件数
         /// </summary>
         public int Deleted { get; set; } = 0;

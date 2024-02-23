@@ -490,11 +490,19 @@ namespace InazumaSearch.Forms
                         var pluginExtNames = App.GetPluginExtNames();
                         var extRes = App.ExtractFile(filePath, textExtNames, pluginExtNames);
 
-                        var dialog = new FileBodyViewDialog
+                        if (extRes is Core.Application.ExtractFileSuccess)
                         {
-                            Body = extRes.Body
-                        };
-                        dialog.ShowDialog(f);
+                            var dialog = new FileBodyViewDialog
+                            {
+                                Body = ((Core.Application.ExtractFileSuccess)extRes).Body
+                            };
+                            dialog.ShowDialog(f);
+                        }
+                        else
+                        {
+                            Util.ShowErrorMessage(((Core.Application.ExtractFileFailed)extRes).ErrorMessage);
+                        }
+
                     });
                 });
 
@@ -539,27 +547,35 @@ namespace InazumaSearch.Forms
                     // 学習
                     if (learning)
                     {
-                        var learnData = new List<Dictionary<string, object>>();
-                        foreach (var log in UserInputLogs)
+                        try
                         {
-                            var data = new Dictionary<string, object>
+                            var learnData = new List<Dictionary<string, object>>();
+                            foreach (var log in UserInputLogs)
+                            {
+                                var data = new Dictionary<string, object>
+                                {
+                                    ["sequence"] = "1",
+                                    ["time"] = Groonga.Util.ToUnixTime(log.Item1),
+                                    ["item"] = log.Item2
+                                };
+                                learnData.Add(data);
+                            }
+                            var submitData = new Dictionary<string, object>
                             {
                                 ["sequence"] = "1",
-                                ["time"] = Groonga.Util.ToUnixTime(log.Item1),
-                                ["item"] = log.Item2
+                                ["time"] = Groonga.Util.ToUnixTime(DateTime.Now),
+                                ["item"] = (string)queryObject["keyword"],
+                                ["type"] = "submit"
                             };
-                            learnData.Add(data);
+                            learnData.Add(submitData);
+                            App.GM.Load(table: "event_query", each: "suggest_preparer(_id, type, item, sequence, time, pair_query)", values: learnData);
+                            UserInputLogs.Clear();
                         }
-                        var submitData = new Dictionary<string, object>
+                        catch (Exception ex)
                         {
-                            ["sequence"] = "1",
-                            ["time"] = Groonga.Util.ToUnixTime(DateTime.Now),
-                            ["item"] = (string)queryObject["keyword"],
-                            ["type"] = "submit"
-                        };
-                        learnData.Add(submitData);
-                        App.GM.Load(table: "event_query", each: "suggest_preparer(_id, type, item, sequence, time, pair_query)", values: learnData);
-                        UserInputLogs.Clear();
+                            // 学習処理失敗時は、例外の詳細をログに出力して続行
+                            App.Logger.Warn(ex);
+                        }
                     }
 
                     // 処理時間の計測を開始
@@ -721,7 +737,7 @@ namespace InazumaSearch.Forms
                 ISAutoUpdater.Check(ApplicationEnvironment.IsPortableMode(), (args) =>
                 {
                     var msg = $"新しいバージョン ({args.CurrentVersion.TrimEnd('0').TrimEnd('.')}) に更新可能です";
-                    ChromeBrowser.EvaluateScriptAsync($"$('#UPDATE-LINK .message').text('{msg}'); $('#UPDATE-LINK').show();");
+                    TryEvaluateJavaScriptAsync($"$('#UPDATE-LINK .message').text('{msg}'); $('#UPDATE-LINK').show();");
                 });
             }
         }
@@ -937,14 +953,14 @@ namespace InazumaSearch.Forms
                 }
             }
 
-            ChromeBrowser.EvaluateScriptAsync("$('#CRAWL-START').addClass('disabled'); $('#SETTING-LINK').addClass('disabled'); refreshLastCrawlTimeCaption();");
+            TryEvaluateJavaScriptAsync("$('#CRAWL-START').addClass('disabled'); $('#SETTING-LINK').addClass('disabled'); refreshLastCrawlTimeCaption();");
 
             var f = new CrawlProgressForm(App, cancelRequestingCallback: () =>
             {
-                ChromeBrowser.EvaluateScriptAsync("displayCrawlInterruptingMessageIfTakeLongTime();");
+                TryEvaluateJavaScriptAsync("displayCrawlInterruptingMessageIfTakeLongTime();");
             }, stoppedCallback: () =>
             {
-                ChromeBrowser.EvaluateScriptAsync("$('#CRAWL-START').removeClass('disabled'); $('#SETTING-LINK').removeClass('disabled'); refreshLastCrawlTimeCaption();");
+                TryEvaluateJavaScriptAsync("$('#CRAWL-START').removeClass('disabled'); $('#SETTING-LINK').removeClass('disabled'); refreshLastCrawlTimeCaption();");
             })
             {
                 TargetDirPaths = targetDirPaths
@@ -1067,6 +1083,17 @@ namespace InazumaSearch.Forms
             }
         }
 
+        /// <summary>
+        /// 設定画面を表示中かどうか
+        /// </summary>
+        public bool SettingScreenShowing
+        {
+            get
+            {
+                return ChromeBrowser.Address.EndsWith("setting.html");
+            }
+        }
+
         #region フォームイベント
 
         private void BrowserForm_Load(object sender, EventArgs e)
@@ -1108,7 +1135,7 @@ namespace InazumaSearch.Forms
             if (AlwaysCrawlProgressTick >= AlwaysCrawlProgressTickEnd) AlwaysCrawlProgressTick = 0;
 
             // 設定画面を表示中の場合、一部ステップ時にカウント表示を更新
-            if (ChromeBrowser.Address.EndsWith("setting.html"))
+            if (SettingScreenShowing)
             {
                 switch (state.CurrentStep)
                 {
@@ -1118,10 +1145,7 @@ namespace InazumaSearch.Forms
                         // 前回から1秒以上経っている場合のみ更新
                         if (LastUpdatedCountDataInSettingPage == null || (DateTime.Now - LastUpdatedCountDataInSettingPage.Value).TotalMilliseconds >= 1000)
                         {
-                            if (ChromeBrowser.CanExecuteJavascriptInMainFrame)
-                            {
-                                ChromeBrowser.EvaluateScriptAsync("updateCountsAsync();");
-                            }
+                            TryEvaluateJavaScriptAsync("updateCountsAsync();");
                             LastUpdatedCountDataInSettingPage = DateTime.Now;
                         }
                         break;
