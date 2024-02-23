@@ -70,7 +70,7 @@ namespace InazumaSearch.Forms
 
                 var addTargetNodes = TreeFolder.Nodes;
                 string currentPath = null;
-                var pathItems = folderPath.Split(new char[] { '\\' });
+                var pathItems = folderPath.TrimEnd('\\').Split(new char[] { '\\' });
 
                 // 経路上にあるノード（親→子の順で追加）
                 var nodesOnPathRoute = new List<TreeNode>();

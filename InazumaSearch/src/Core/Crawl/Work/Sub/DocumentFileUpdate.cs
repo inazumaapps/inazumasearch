@@ -335,7 +335,7 @@ namespace InazumaSearch.Core.Crawl.Work
                                 { Column.Documents.TITLE, extResSuccess.Title },
                                 { Column.Documents.BODY, extResSuccess.Body },
                                 { Column.Documents.FILE_NAME, Path.GetFileName(FilePath) },
-                                { Column.Documents.FOLDER_PATH, Path.GetDirectoryName(FilePath) },
+                                { Column.Documents.FOLDER_PATH, $"{Path.GetDirectoryName(FilePath)}\\" }, // 末尾に\をつける
                                 { Column.Documents.FILE_PATH, FilePath },
                                 { Column.Documents.FILE_UPDATED_AT, Groonga.Util.ToUnixTime(fileUpdated) },
                                 { Column.Documents.FILE_UPDATED_YEAR, fileUpdated.Year },
@@ -365,7 +365,7 @@ namespace InazumaSearch.Core.Crawl.Work
                         Logger.Warn(ex);
                         Logger.Debug("Groonga Reboot");
                         _app.GM.Reboot();
-            _app.GM.Load(new[] { obj }, Table.Documents);
+                        _app.GM.Load(new[] { obj }, Table.Documents);
                     }
                     else
                     {
