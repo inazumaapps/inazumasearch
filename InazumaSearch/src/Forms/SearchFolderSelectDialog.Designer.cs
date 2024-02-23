@@ -60,7 +60,6 @@
             this.TreeFolder.Size = new System.Drawing.Size(578, 413);
             this.TreeFolder.TabIndex = 16;
             this.TreeFolder.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.TreeFolder_AfterSelect);
-            this.TreeFolder.DoubleClick += new System.EventHandler(this.TreeFolder_DoubleClick);
             // 
             // delayTimer
             // 

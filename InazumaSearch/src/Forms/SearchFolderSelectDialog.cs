@@ -19,10 +19,29 @@ namespace InazumaSearch.Forms
         /// </summary>
         public string SelectedFolderPath { get; set; }
 
+        /// <summary>
+        /// 初期選択フォルダ
+        /// </summary>
+        protected string DefaultSelectedFolderPath
+        {
+            get
+            {
+                if (string.IsNullOrWhiteSpace(InputFolderPath))
+                {
+                    return Application.UserSettings.LastSelectedSearchTargetDirPath;
+                }
+                else
+                {
+                    return InputFolderPath;
+                }
+            }
+        }
+
         public SearchFolderSelectDialog()
         {
             InitializeComponent();
         }
+
         public SearchFolderSelectDialog(Core.Application app, string inputFolderPath)
         {
             InitializeComponent();
@@ -33,6 +52,7 @@ namespace InazumaSearch.Forms
         private void BtnDecide_Click(object sender, EventArgs e)
         {
             this.DialogResult = DialogResult.OK;
+            Application.UserSettings.SaveLastSelectedSearchTargetDirPath(SelectedFolderPath);
             Close();
         }
 
@@ -125,6 +145,9 @@ namespace InazumaSearch.Forms
 
             }
 
+            // 初期選択フォルダパスを取得
+            var defaultFolderPath = DefaultSelectedFolderPath;
+
             // 全ノード処理
             foreach (TreeNode node in allNodes)
             {
@@ -134,9 +157,9 @@ namespace InazumaSearch.Forms
                 node.Text = $"{tag.FolderName}";
 
                 // 入力パスと同じであれば選択・展開
-                if (InputFolderPath != null && tag.Path == InputFolderPath.TrimEnd('\\'))
+                if (defaultFolderPath != null && tag.Path == defaultFolderPath.TrimEnd('\\'))
                 {
-                    node.Parent?.Expand();
+                    node.Expand();
                     TreeFolder.SelectedNode = node;
                 }
             }
@@ -157,10 +180,6 @@ namespace InazumaSearch.Forms
         {
             var tag = (FolderNodeTag)e.Node.Tag;
             SelectedFolderPath = tag.Path;
-        }
-
-        private void TreeFolder_DoubleClick(object sender, EventArgs e)
-        {
         }
 
         public class FolderNodeTag

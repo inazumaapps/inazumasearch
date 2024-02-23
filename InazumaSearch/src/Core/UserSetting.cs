@@ -50,6 +50,7 @@ namespace InazumaSearch.Core
             public virtual Dictionary<string, int> LastLoadedPluginVersionNumbers { get; set; } = new Dictionary<string, int>();
             public virtual List<Extension> TextExtensions { get; set; } = new List<Extension>();
             public virtual string DocumentDBDirPath { get; set; } = null;
+            public virtual string LastSelectedSearchTargetDirPath { get; set; } = null;
             public virtual List<string> LastExcludingDirPaths { get; set; } = null;
             public virtual int DisplayPageSizeForNormalView { get; set; } = 20;
             public virtual int DisplayPageSizeForListView { get; set; } = 100;
@@ -217,11 +218,24 @@ namespace InazumaSearch.Core
                 Save();
             }
 
-
             /// <summary>
             /// ユーザー識別用ID
             /// </summary>
             public string UserUuid { get { return PlainData.UserUuid; } }
+
+            /// <summary>
+            /// 最後に選択した検索対象フォルダパス
+            /// </summary>
+            public string LastSelectedSearchTargetDirPath { get { return PlainData.LastSelectedSearchTargetDirPath; } }
+
+            /// <summary>
+            /// 最後に選択した検索対象フォルダパスを設定する
+            /// </summary>
+            public void SaveLastSelectedSearchTargetDirPath(string value)
+            {
+                PlainData.LastSelectedSearchTargetDirPath = value;
+                Save();
+            }
 
             /// <summary>
             /// 最後にクロールした時、選択から除外した検索対象フォルダ一覧。指定なし時（設定された検索対象フォルダが1件しかない場合含む）はnull
