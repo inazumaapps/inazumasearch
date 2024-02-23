@@ -28,7 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.ListViewItem listViewItem3 = new System.Windows.Forms.ListViewItem("9999/99/99 99:99");
+            System.Windows.Forms.ListViewItem listViewItem1 = new System.Windows.Forms.ListViewItem("9999/99/99 99:99");
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.TxtMessage = new System.Windows.Forms.TextBox();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
@@ -91,6 +91,7 @@
             // 
             // lnkOpenExplorer
             // 
+            this.lnkOpenExplorer.Anchor = System.Windows.Forms.AnchorStyles.Right;
             this.lnkOpenExplorer.AutoSize = true;
             this.lnkOpenExplorer.Location = new System.Drawing.Point(875, 24);
             this.lnkOpenExplorer.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
@@ -150,7 +151,7 @@
             this.lsvLogList.FullRowSelect = true;
             this.lsvLogList.HideSelection = false;
             this.lsvLogList.Items.AddRange(new System.Windows.Forms.ListViewItem[] {
-            listViewItem3});
+            listViewItem1});
             this.lsvLogList.Location = new System.Drawing.Point(9, 10);
             this.lsvLogList.Margin = new System.Windows.Forms.Padding(2, 3, 2, 3);
             this.lsvLogList.Name = "lsvLogList";
