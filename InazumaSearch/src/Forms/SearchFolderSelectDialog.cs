@@ -62,7 +62,7 @@ namespace InazumaSearch.Forms
             Close();
         }
 
-        private void SearchFolderSelectForm_Load(object sender, EventArgs e)
+        private void SearchFolderSelectDialog_Load(object sender, EventArgs e)
         {
 
         }

@@ -25,8 +25,12 @@ function handleDrop(e) {
     return false;
 }
 
+// フォルダドリルダウン（対象フォルダを変更して再検索）
 function folderDrilldown(folderPath){
-    console.warn("folderDrilldown called.", {folderPath});
+    g_lastQueryObject.folderPath = folderPath;
+
+    // 再検索
+    executeSearch(g_lastQueryObject, true, g_lastSelectedFormatName || null, g_lastSelectedFolderLabel || null, g_lastSelectedOrder || null, g_lastSelectedView || null);
 }
 
 // 検索実行
@@ -719,7 +723,7 @@ $(async function () {
     });
 
 
-    // ドリルダウンクリック
+    // 拡張子ドリルダウン
     $('#SEARCH-RESULT-HEADER').on('click', '.drilldown-ext-link', function(){
         var formatName = $(this).attr('data-value');
         if (formatName === '') formatName = null; // 解除
@@ -730,6 +734,7 @@ $(async function () {
         return false;
     });
 
+    // フォルダラベルドリルダウン
     $('#SEARCH-RESULT-HEADER').on('click', '.drilldown-folder-label-link', function(){
         var folderLabel = $(this).attr('data-value');
         if (folderLabel === '') folderLabel = null; // 解除

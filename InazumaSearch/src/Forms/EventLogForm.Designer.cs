@@ -224,6 +224,7 @@
             this.Font = new System.Drawing.Font("Meiryo UI", 9F);
             this.Margin = new System.Windows.Forms.Padding(2, 3, 2, 3);
             this.Name = "EventLogForm";
+            this.ShowIcon = false;
             this.Text = "イベントログ";
             this.Load += new System.EventHandler(this.EventLogForm_Load);
             this.groupBox1.ResumeLayout(false);

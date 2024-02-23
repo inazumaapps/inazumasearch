@@ -135,7 +135,7 @@ namespace InazumaSearch.Forms
             /// <summary>
             /// 検索フォルダ選択ダイアログを開く
             /// </summary>
-            /// <param name="inputFolderPath"></param>
+            /// <param name="inputFolderPath">入力されているフォルダパス</param>
             public void OpenSearchFolderSelectForm(string inputFolderPath)
             {
                 OwnerForm.InvokeOnUIThread((owner) =>
@@ -153,7 +153,7 @@ namespace InazumaSearch.Forms
             /// <summary>
             /// 検索フォルダ絞り込みダイアログを開く
             /// </summary>
-            /// <param name="inputFolderPath"></param>
+            /// <param name="queryObject">最後の検索パラメータ</param>
             public void OpenSearchFolderDrilldownForm(
                 IDictionary<string, object> queryObject
                 , string selectedFormat = null
@@ -911,7 +911,7 @@ namespace InazumaSearch.Forms
 
         protected virtual void FolderDrilldown(string path)
         {
-            TryEvaluateJavaScriptAsync($"console.log('calling...'); folderDrilldown('{path.Replace("\\", "\\\\")}');");
+            TryEvaluateJavaScriptAsync($"folderDrilldown('{path.Replace("\\", "\\\\")}');");
         }
 
         protected virtual void CrawlStart(IEnumerable<string> targetDirPaths = null)
