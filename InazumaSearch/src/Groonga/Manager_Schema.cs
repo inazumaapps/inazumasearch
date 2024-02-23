@@ -298,7 +298,7 @@ namespace InazumaSearch.Groonga
 
                 if (!string.IsNullOrEmpty(filePath))
                 {
-                    valueDict[Column.Documents.FOLDER_PATH] = Path.GetDirectoryName(filePath);
+                    valueDict[Column.Documents.FOLDER_PATH] = $"{Path.GetDirectoryName(filePath)}\\"; // 末尾に\をつける
                 }
 
                 values.Add(valueDict);
