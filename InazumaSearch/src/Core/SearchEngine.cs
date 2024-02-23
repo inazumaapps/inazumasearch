@@ -670,12 +670,12 @@ namespace InazumaSearch.Core
             }
             if (!string.IsNullOrWhiteSpace(queryFolderPath))
             {
-                // 最後に\マークが付いた状態にする
-                var folderPath = queryFolderPath.Trim('\\') + "\\";
+                // スラッシュは\に置き換え、最後に\マークが付いた状態にする
+                var folderPath = queryFolderPath.Replace('/', '\\').Trim('\\') + "\\";
                 res.GroongaQueries.Add(string.Format("{0}:^{1}"
                                                 , Column.Documents.FOLDER_PATH
                                                 , Groonga.Util.EscapeForQuery(folderPath)));
-                res.SubMessages.Add(string.Format("フォルダパス: {0}", queryFolderPath));
+                res.SubMessages.Add(string.Format("フォルダ: {0}", queryFolderPath));
             }
             if (!string.IsNullOrWhiteSpace(queryFileName))
             {
@@ -712,7 +712,7 @@ namespace InazumaSearch.Core
                     res.SubMessages.Add("ファイル形式: その他");
 
 
-        }
+                }
                 else
                 {
                     var targetExtNames = new List<string>();
