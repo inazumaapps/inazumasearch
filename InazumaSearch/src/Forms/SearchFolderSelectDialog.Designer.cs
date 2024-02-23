@@ -110,6 +110,7 @@
             this.Controls.Add(this.BtnCancel);
             this.Font = new System.Drawing.Font("Meiryo UI", 9F);
             this.MaximizeBox = false;
+            this.MinimizeBox = false;
             this.Name = "SearchFolderSelectDialog";
             this.ShowIcon = false;
             this.Text = "フォルダ選択";

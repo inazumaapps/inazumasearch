@@ -109,7 +109,7 @@ function executeSearch(
         }
 
         if(g_lastQueryObject.folderPath){
-            var resHtmlfolderPath = 'フォルダで絞り込む: <span class="selected-drilldown"><span class="path-value"></span></span> <a href="#" class="drilldown-folder-path-reset-link">解除</a>';
+            var resHtmlfolderPath = 'フォルダで絞り込む: <span class="selected-drilldown"><span class="path-value"></span></span> <a href="#" class="drilldown-folder-path-link">変更</a> <a href="#" class="drilldown-folder-path-reset-link">解除</a>';
             $('#DRILLDOWN-RESULT-FOLDER-PATH').html(resHtmlfolderPath);
             $('#DRILLDOWN-RESULT-FOLDER-PATH .path-value').text(g_lastQueryObject.folderPath);
         } else {
@@ -707,7 +707,6 @@ $(async function () {
 
         return false;
     });
-
 
     // フォルダ絞り込み解除
     $('#SEARCH-RESULT-HEADER').on('click', '.drilldown-folder-path-reset-link', function(){

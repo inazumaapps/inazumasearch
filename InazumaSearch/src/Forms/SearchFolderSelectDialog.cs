@@ -10,9 +10,31 @@ namespace InazumaSearch.Forms
     /// </summary>
     public partial class SearchFolderSelectDialog : Form
     {
+        /// <summary>
+        /// 選択モードの値
+        /// </summary>
+        public enum SelectMode
+        {
+            /// <summary>
+            /// 検索条件の入力時に選択
+            /// </summary>
+            CONDITION = 1,
+
+            /// <summary>
+            /// ドリルダウン選択（検索結果に対する絞り込みを行う）
+            /// </summary>
+            DRILLDOWN = 2,
+        }
+
         public Core.Application Application { get; set; }
         public string InputFolderPath { get; set; }
         public IList<string> DirPaths { get; set; }
+        public SearchEngine.Condition SearchCondition { get; set; }
+
+        /// <summary>
+        /// 選択モード
+        /// </summary>
+        public SelectMode Mode { get; set; }
 
         /// <summary>
         /// 選択されたフォルダのパス。外部からの取得時に使用
@@ -26,33 +48,75 @@ namespace InazumaSearch.Forms
         {
             get
             {
-                if (string.IsNullOrWhiteSpace(InputFolderPath))
+
+                if (Mode == SelectMode.CONDITION)
                 {
-                    return Application.UserSettings.LastSelectedSearchTargetDirPath;
+                    // 検索条件入力時は、フォルダパス入力済であればその値を初期値とする
+                    // 入力済みでなければ前回選択したパスを使う
+                    if (!string.IsNullOrWhiteSpace(InputFolderPath))
+                    {
+                        return InputFolderPath;
+                    }
+                    else
+                    {
+                        return Application.UserSettings.LastSelectedSearchTargetDirPath;
+                    }
                 }
                 else
                 {
-                    return InputFolderPath;
+                    // ドリルダウン時は、現在絞り込みに使用しているパスを使用
+                    return SearchCondition.FolderPath;
                 }
             }
         }
 
+        /// <summary>
+        /// コンストラクタ
+        /// </summary>
         public SearchFolderSelectDialog()
         {
             InitializeComponent();
         }
 
+        /// <summary>
+        /// コンストラクタ（検索条件入力時用）
+        /// </summary>
+        /// <param name="mode">選択モード</param>
+        /// <param name="app">アプリケーションインスタンス</param>
+        /// <param name="inputFolderPath">現在入力されているフォルダパス</param>
         public SearchFolderSelectDialog(Core.Application app, string inputFolderPath)
         {
             InitializeComponent();
+            Mode = SelectMode.CONDITION;
             Application = app;
             InputFolderPath = inputFolderPath;
+        }
+
+        /// <summary>
+        /// コンストラクタ（ドリルダウン用）
+        /// </summary>
+        /// <param name="mode">選択モード</param>
+        /// <param name="app">アプリケーションインスタンス</param>
+        /// <param name="cond">検索条件オブジェクト</param>
+        public SearchFolderSelectDialog(
+              Core.Application app
+            , SearchEngine.Condition cond
+        )
+        {
+            InitializeComponent();
+            Mode = SelectMode.DRILLDOWN;
+            Application = app;
+            SearchCondition = cond;
         }
 
         private void BtnDecide_Click(object sender, EventArgs e)
         {
             this.DialogResult = DialogResult.OK;
-            Application.UserSettings.SaveLastSelectedSearchTargetDirPath(SelectedFolderPath);
+            if (Mode == SelectMode.CONDITION)
+            {
+                // 検索条件入力時は、選択したパスを記憶
+                Application.UserSettings.SaveLastSelectedSearchTargetDirPath(SelectedFolderPath);
+            }
             Close();
         }
 
@@ -79,7 +143,7 @@ namespace InazumaSearch.Forms
 
             // 検索条件に合致するフォルダパス情報を取得
             var searchEngine = new SearchEngine(Application);
-            var folderPaths = searchEngine.GetAllFolderPath();
+            var folderPaths = searchEngine.SearchAllFolderPath();
 
             // フォルダパス1件ごとに処理
             foreach (var pair in folderPaths)

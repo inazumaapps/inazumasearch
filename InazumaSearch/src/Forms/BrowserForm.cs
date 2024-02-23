@@ -160,10 +160,10 @@ namespace InazumaSearch.Forms
                 , string selectedFolderLabel = null
             )
             {
-                var queryFolderPath = (string)queryObject["folderPath"];
+                var cond = new Core.SearchEngine.Condition(queryObject, selectedFormat, selectedFolderLabel);
                 OwnerForm.InvokeOnUIThread((owner) =>
                 {
-                    var dialog = new SearchFolderSelectDialog(App, queryFolderPath);
+                    var dialog = new SearchFolderSelectDialog(App, cond);
                     var res = dialog.ShowDialog(owner);
 
                     if (res == DialogResult.OK)
@@ -582,22 +582,12 @@ namespace InazumaSearch.Forms
                     var sw = Stopwatch.StartNew();
 
                     // 全文検索の実行
-                    var queryKeyword = (string)queryObject["keyword"];
-                    var queryFolderPath = (string)queryObject["folderPath"];
-                    var queryFileName = (string)queryObject["fileName"];
-                    var queryBody = (string)queryObject["body"];
-                    var queryUpdated = (string)queryObject["updated"];
+                    var cond = new Core.SearchEngine.Condition(queryObject, selectedFormat, selectedFolderLabel);
 
                     var searchEngine = new SearchEngine(App);
                     var ret = searchEngine.Search(
-                        queryKeyword
-                        , queryFolderPath
-                        , queryFileName
-                        , queryBody
-                        , queryUpdated
+                          cond
                         , offset
-                        , selectedFormat
-                        , selectedFolderLabel
                         , selectedOrder
                         , selectedView
                     );
