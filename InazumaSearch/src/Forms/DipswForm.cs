@@ -24,6 +24,22 @@ namespace InazumaSearch.Forms
             InitializeComponent();
             Application = app;
         }
+
+        /// <summary>
+        /// 設定画面を表示中の状態であれば、文書カウント表示を更新する
+        /// </summary>
+        private void UpdateBrowserFormCounts()
+        {
+            foreach (var browserForm in Core.Application.BootingBrowserForms)
+            {
+                if (browserForm.SettingScreenShowing)
+                {
+                    browserForm.TryEvaluateJavaScriptAsync("updateCountsAsync();");
+                }
+            }
+        }
+
+
         private void BtnClearCrawledData_Click(object sender, EventArgs e)
         {
             if (Util.Confirm(this, "クロール時に収集した文書データと、文書のサムネイル画像をクリアします。\nよろしいですか？", defaultNo: true))
@@ -36,6 +52,9 @@ namespace InazumaSearch.Forms
 
                 });
                 UpdateLabels();
+
+                // 設定画面の文書カウント表示更新
+                UpdateBrowserFormCounts();
             }
         }
 

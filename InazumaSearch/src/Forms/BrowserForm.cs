@@ -1026,6 +1026,17 @@ namespace InazumaSearch.Forms
         }
 
         /// <summary>
+        /// 設定画面を表示中かどうか
+        /// </summary>
+        public bool SettingScreenShowing
+        {
+            get
+            {
+                return ChromeBrowser.Address.EndsWith("setting.html");
+            }
+        }
+
+        /// <summary>
         /// 指定したJavaScriptを非同期に実行する（CefSharpが実行可能と判断した場合のみ）
         /// </summary>
         /// <returns>実行成功...true / 実行失敗...false</returns>
@@ -1083,7 +1094,7 @@ namespace InazumaSearch.Forms
             if (AlwaysCrawlProgressTick >= AlwaysCrawlProgressTickEnd) AlwaysCrawlProgressTick = 0;
 
             // 設定画面を表示中の場合、一部ステップ時にカウント表示を更新
-            if (ChromeBrowser.Address.EndsWith("setting.html"))
+            if (SettingScreenShowing)
             {
                 switch (state.CurrentStep)
                 {
