@@ -705,7 +705,7 @@ namespace InazumaSearch.Forms
                 ISAutoUpdater.Check(ApplicationEnvironment.IsPortableMode(), (args) =>
                 {
                     var msg = $"新しいバージョン ({args.CurrentVersion.TrimEnd('0').TrimEnd('.')}) に更新可能です";
-                    ChromeBrowser.EvaluateScriptAsync($"$('#UPDATE-LINK .message').text('{msg}'); $('#UPDATE-LINK').show();");
+                    TryEvaluateJavaScriptAsync($"$('#UPDATE-LINK .message').text('{msg}'); $('#UPDATE-LINK').show();");
                 });
             }
         }
@@ -912,14 +912,14 @@ namespace InazumaSearch.Forms
                 }
             }
 
-            ChromeBrowser.EvaluateScriptAsync("$('#CRAWL-START').addClass('disabled'); $('#SETTING-LINK').addClass('disabled'); refreshLastCrawlTimeCaption();");
+            TryEvaluateJavaScriptAsync("$('#CRAWL-START').addClass('disabled'); $('#SETTING-LINK').addClass('disabled'); refreshLastCrawlTimeCaption();");
 
             var f = new CrawlProgressForm(App, cancelRequestingCallback: () =>
             {
-                ChromeBrowser.EvaluateScriptAsync("displayCrawlInterruptingMessageIfTakeLongTime();");
+                TryEvaluateJavaScriptAsync("displayCrawlInterruptingMessageIfTakeLongTime();");
             }, stoppedCallback: () =>
             {
-                ChromeBrowser.EvaluateScriptAsync("$('#CRAWL-START').removeClass('disabled'); $('#SETTING-LINK').removeClass('disabled'); refreshLastCrawlTimeCaption();");
+                TryEvaluateJavaScriptAsync("$('#CRAWL-START').removeClass('disabled'); $('#SETTING-LINK').removeClass('disabled'); refreshLastCrawlTimeCaption();");
             })
             {
                 TargetDirPaths = targetDirPaths
@@ -1025,6 +1025,23 @@ namespace InazumaSearch.Forms
             });
         }
 
+        /// <summary>
+        /// 指定したJavaScriptを非同期に実行する（CefSharpが実行可能と判断した場合のみ）
+        /// </summary>
+        /// <returns>実行成功...true / 実行失敗...false</returns>
+        public bool TryEvaluateJavaScriptAsync(string script)
+        {
+            if (ChromeBrowser.CanExecuteJavascriptInMainFrame)
+            {
+                ChromeBrowser.EvaluateScriptAsync("updateCountsAsync();");
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
         #region フォームイベント
 
         private void BrowserForm_Load(object sender, EventArgs e)
@@ -1076,10 +1093,7 @@ namespace InazumaSearch.Forms
                         // 前回から1秒以上経っている場合のみ更新
                         if (LastUpdatedCountDataInSettingPage == null || (DateTime.Now - LastUpdatedCountDataInSettingPage.Value).TotalMilliseconds >= 1000)
                         {
-                            if (ChromeBrowser.CanExecuteJavascriptInMainFrame)
-                            {
-                                ChromeBrowser.EvaluateScriptAsync("updateCountsAsync();");
-                            }
+                            TryEvaluateJavaScriptAsync("updateCountsAsync();");
                             LastUpdatedCountDataInSettingPage = DateTime.Now;
                         }
                         break;
