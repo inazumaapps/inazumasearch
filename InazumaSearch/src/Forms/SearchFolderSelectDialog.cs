@@ -140,6 +140,7 @@ namespace InazumaSearch.Forms
             // ツリーを一度初期化
             TreeFolder.Nodes.Clear();
             var allNodes = new List<TreeNode>();
+            var rootNodes = new List<TreeNode>();
             var systemImgListHandle = IntPtr.Zero;
 
             // 検索条件に合致するフォルダパス情報を取得
@@ -180,6 +181,7 @@ namespace InazumaSearch.Forms
                 var nodesOnPathRoute = new List<TreeNode>();
 
                 // パス要素1つごとに処理
+                var isRootNode = true;
                 foreach (var pathItem in pathItems)
                 {
                     var nodeAddFlag = true;
@@ -217,7 +219,15 @@ namespace InazumaSearch.Forms
 
                         nodesOnPathRoute.Add(newNode);
                         allNodes.Add(newNode);
+
+                        if (isRootNode)
+                        {
+                            rootNodes.Add(newNode);
+                        }
                     }
+
+                    // 次からはルートノードでない
+                    isRootNode = false;
                 }
 
                 // 経路上の全ノードに対して、文書カウントを追加
@@ -250,8 +260,36 @@ namespace InazumaSearch.Forms
                 // 初期パスと一致すれば選択・展開
                 if (defaultFolderPath != null && tag.Path == defaultFolderPath.TrimEnd('\\'))
                 {
-                    node.Expand();
                     TreeFolder.SelectedNode = node;
+                    TreeFolder.SelectedNode.Expand();
+                }
+            }
+
+            // どのノードも選択していない場合は、自動的に選択できる（1つしか選択肢がない）階層まで選択する
+            if (TreeFolder.SelectedNode == null)
+            {
+                // ルートノードが1つの場合のみ有効
+                if (rootNodes.Count == 1)
+                {
+                    var targetNode = rootNodes[0];
+
+                    // 1階層下をたどり、その下のノードが1つしか存在しないなら、さらに下を探索
+                    while (targetNode.Nodes.Count == 1)
+                    {
+                        var child = targetNode.Nodes[0];
+
+                        // 文書数が現在ノードと子ノードで異なる場合は、子を選択しない（この場合は現在フォルダの直下にも文書がある）
+                        if (((FolderNodeTag)targetNode.Tag).DocumentCount != ((FolderNodeTag)child.Tag).DocumentCount)
+                        {
+                            break;
+                        }
+
+                        targetNode = child;
+                    }
+
+                    // 対象ノードを選択・展開
+                    TreeFolder.SelectedNode = targetNode;
+                    TreeFolder.SelectedNode.Expand();
                 }
             }
 
