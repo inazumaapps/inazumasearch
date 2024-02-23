@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using Alphaleonis.Win32.Filesystem;
+using InazumaSearch.Groonga.Exceptions;
 using Microsoft.WindowsAPICodePack.Shell;
 
 namespace InazumaSearch.Core.Crawl.Work
@@ -348,7 +349,47 @@ namespace InazumaSearch.Core.Crawl.Work
                             };
 
             Logger.Trace($"Store to groonga DB");
-            _app.GM.Load(new[] { obj }, Table.Documents);
+            try
+            {
+                try
+                {
+                    _app.GM.Load(new[] { obj }, Table.Documents);
+                }
+                catch (GroongaCommandError ex)
+                {
+
+                    if (ex.ReturnCode == Groonga.CommandReturnCode.GRN_NO_MEMORY_AVAILABLE)
+                    {
+                        // メモリ不足の場合、Groongaを再起動してもう一度取込を試みる
+                        // それでも同じエラーが発生した場合は改めてスロー
+                        Logger.Warn(ex);
+                        Logger.Debug("Groonga Reboot");
+                        _app.GM.Reboot();
+                        _app.GM.Load(new[] { obj }, Table.Documents);
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.Warn(ex);
+
+                // 例外が発生した場合は、その文書の削除を試みる
+                _app.GM.Delete(Table.Documents, key);
+
+                // 登録失敗
+                return new UpdateResult(UpdateResult.ResultType.Failed)
+                {
+                    ErrorMessage = $"ファイルの文書DB登録処理でエラーが発生しました。",
+                    ErrorFilePath = FilePath,
+                    ErrorFileSize = _app.TryGetFileSize(FilePath),
+                    InnerException = ex
+                };
+
+            }
 
             Thread.Sleep(0); // 他のスレッドに処理を渡す
 
