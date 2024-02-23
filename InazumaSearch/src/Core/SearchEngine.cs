@@ -13,6 +13,228 @@ namespace InazumaSearch.Core
         #region 内部クラス
 
         /// <summary>
+        /// 検索条件
+        /// </summary>
+        public class Condition
+        {
+            /// <summary>
+            /// キーワード
+            /// </summary>
+            public string Keyword { get; set; }
+
+            /// <summary>
+            /// 対象フォルダパス。ドリルダウンで選択した場合もここにセットされる
+            /// </summary>
+            public string FolderPath { get; set; }
+
+            /// <summary>
+            /// ファイル名
+            /// </summary>
+            public string FileName { get; set; }
+
+            /// <summary>
+            /// 本文
+            /// </summary>
+            public string Body { get; set; }
+
+            /// <summary>
+            /// 更新日時
+            /// </summary>
+            public string Updated { get; set; }
+
+            /// <summary>
+            /// ドリルダウンで選択したファイル形式
+            /// </summary>
+            public string SelectedFormat { get; set; }
+
+            /// <summary>
+            /// ドリルダウンで選択したフォルダラベル
+            /// </summary>
+            public string SelectedFolderLabel { get; set; }
+
+            /// <summary>
+            /// コンストラクタ（JavaScript側から検索処理を呼び出す場合向け）
+            /// </summary>
+            /// <param name="queryObject">クエリ情報を格納したオブジェクト</param>
+            /// <param name="selectedFormat">ドリルダウンで選択したファイル形式</param>
+            /// <param name="selectedFolderLabel">ドリルダウンで選択したフォルダラベル</param>
+            public Condition(
+                  IDictionary<string, object> queryObject
+                , string selectedFormat = null
+                , string selectedFolderLabel = null
+            )
+            {
+                Keyword = (string)queryObject["keyword"];
+                FolderPath = (string)queryObject["folderPath"];
+                FileName = (string)queryObject["fileName"];
+                Body = (string)queryObject["body"];
+                Updated = (string)queryObject["updated"];
+                SelectedFormat = selectedFormat;
+                SelectedFolderLabel = selectedFolderLabel;
+            }
+
+            /// <summary>
+            /// Groongaに渡せるクエリ・フィルタ構文に変換
+            /// </summary>
+            /// <param name="formats">対応している全フォーマット一覧</param>
+            /// <returns>解析結果</returns>
+            public Query ToQuery(IList<Format> formats)
+            {
+                var res = new Query();
+
+                // キーワード、ファイル名、本文での絞り込みをエスケープして追加
+                if (!string.IsNullOrWhiteSpace(Keyword))
+                {
+                    // Groongaのクエリ構文は一部のみ有効
+                    // バックスラッシュ、シングルクォート、コロンなどの特殊記号はエスケープする
+                    // 有効なのは " - ( ) のみ
+                    res.GroongaQueries.Add(Keyword
+                                        .Replace(@"\", @"\\")
+                                        .Replace("'", @"\'")
+                                        .Replace(":", @"\:")
+                                        .Replace("+", @"\+"));
+                }
+                if (!string.IsNullOrWhiteSpace(FolderPath))
+                {
+                    // スラッシュは\に置き換え、最後に\マークが付いた状態にする
+                    var folderPath = FolderPath.Replace('/', '\\').TrimEnd('\\') + "\\";
+                    res.GroongaQueries.Add(string.Format("{0}:^{1}"
+                                                    , Column.Documents.FOLDER_PATH
+                                                    , Groonga.Util.EscapeForQuery(folderPath)));
+                    res.SubMessages.Add(string.Format("フォルダ: {0}", FolderPath));
+                }
+                if (!string.IsNullOrWhiteSpace(FileName))
+                {
+                    res.GroongaQueries.Add(string.Format("{0}:@{1}"
+                                                    , Column.Documents.FILE_NAME
+                                                    , Groonga.Util.EscapeForQuery(FileName)));
+                    res.SubMessages.Add(string.Format("ファイル名: 「{0}」", FileName));
+                }
+                if (!string.IsNullOrWhiteSpace(Body))
+                {
+                    res.GroongaQueries.Add(string.Format("{0}:@{1}"
+                                                    , Column.Documents.BODY
+                                                    , Groonga.Util.EscapeForQuery(Body)));
+                    res.SubMessages.Add(string.Format("本文: 「{0}」", Body));
+                }
+                // 拡張子での絞り込みを追加 (フォーマットから生成する)
+                if (SelectedFormat != null)
+                {
+                    if (SelectedFormat == "その他")
+                    {
+                        // 「その他」が指定された場合は、登録されている拡張子をすべて除外
+                        var excludeExtNames = new List<string>();
+                        foreach (var format in formats)
+                        {
+                            excludeExtNames.AddRange(format.Extensions);
+                        }
+
+                        var strings = excludeExtNames.Select(e => string.Format("\"{0}\"", e));
+                        if (!strings.Any()) strings = new[] { "\"\"" };
+                        res.GroongaFilters.Add(string.Format("!in_values({0},{1})"
+                                                        , Column.Documents.EXT
+                                                        , string.Join(", ", strings))
+                );
+                        res.SubMessages.Add("ファイル形式: その他");
+
+
+                    }
+                    else
+                    {
+                        var targetExtNames = new List<string>();
+                        foreach (var format in formats.Where(f => f.Label == SelectedFormat))
+                        {
+                            targetExtNames.AddRange(format.Extensions);
+                        };
+                        var strings = targetExtNames.Select(e => string.Format("\"{0}\"", e));
+                        if (!strings.Any()) strings = new[] { "\"\"" };
+                        res.GroongaFilters.Add(string.Format("in_values({0},{1})"
+                                                        , Column.Documents.EXT
+                                                        , string.Join(", ", strings))
+                                            );
+                        res.SubMessages.Add(string.Format("ファイル形式: {0}", SelectedFormat));
+
+                    }
+                }
+                // フォルダラベルでの絞り込みを追加
+                if (SelectedFolderLabel != null)
+                {
+                    res.GroongaQueries.Add(string.Format("{0}:{1}"
+                                                    , Column.Documents.FOLDER_LABELS
+                                                    , Groonga.Util.EscapeForQuery(SelectedFolderLabel)));
+                    res.SubMessages.Add(string.Format("フォルダラベル: {0}", SelectedFolderLabel));
+                }
+
+                // 日付範囲の指定があれば、その範囲を追加する
+                DateTime? updatedLeft = null;
+                string updatedRangeCaption = null;
+                switch (Updated)
+                {
+                    case "day":
+                        updatedLeft = DateTime.Now.AddDays(-1);
+                        updatedRangeCaption = "1日以内";
+                        break;
+                    case "week":
+                        updatedLeft = DateTime.Now.AddDays(-7);
+                        updatedRangeCaption = "1週間以内";
+                        break;
+                    case "month":
+                        updatedLeft = DateTime.Now.AddMonths(-1);
+                        updatedRangeCaption = "1ヶ月以内";
+                        break;
+                    case "half_year":
+                        updatedLeft = DateTime.Now.AddMonths(-6);
+                        updatedRangeCaption = "半年以内";
+                        break;
+                    case "year":
+                        updatedLeft = DateTime.Now.AddYears(-1);
+                        updatedRangeCaption = "1年以内";
+                        break;
+                    case "3years":
+                        updatedLeft = DateTime.Now.AddYears(-3);
+                        updatedRangeCaption = "3年以内";
+                        break;
+                }
+                if (updatedLeft != null)
+                {
+                    res.GroongaFilters.Add(string.Format("file_updated_at > \"{0}\"", Groonga.Util.ToExprTimeFormat(updatedLeft.Value)));
+                    res.SubMessages.Add(string.Format("更新日付: {0}", updatedRangeCaption));
+                }
+
+                return res;
+            }
+
+            /// <summary>
+            /// 検索条件を複製します。
+            /// </summary>
+            public Condition Clone()
+            {
+                return (Condition)MemberwiseClone();
+            }
+        }
+
+        /// <summary>
+        /// クエリオブジェクト（検索条件をもとに、Groonga用のクエリ・フィルタ構文に変換したもの）
+        /// </summary>
+        public class Query
+        {
+            /// <summary>
+            /// Groongaに渡すクエリのリスト
+            /// </summary>
+            public List<string> GroongaQueries { get; set; } = new List<string>();
+
+            /// <summary>
+            /// Groongaに渡すフィルタのリスト
+            /// </summary>
+            public List<string> GroongaFilters { get; set; } = new List<string>();
+
+            /// <summary>
+            /// キーワード以外の絞り込み条件を表すメッセージ（検索結果画面で表示）
+            /// </summary>
+            public List<string> SubMessages { get; set; } = new List<string>();
+        }
+
+        /// <summary>
         /// 検索の実行結果
         /// </summary>
         public class Result
@@ -58,6 +280,11 @@ namespace InazumaSearch.Core
             public IList<FormatDrilldownLink> formatDrilldownLinks { get; set; }
 
             /// <summary>
+            /// フォルダパスのドリルダウン結果
+            /// </summary>
+            public IList<FolderPathDrilldownLink> folderPathDrilldownLinks { get; set; }
+
+            /// <summary>
             /// フォルダラベルのドリルダウン結果
             /// </summary>
             public IList<FolderLabelDrilldownLink> folderLabelDrilldownLinks { get; set; }
@@ -98,6 +325,11 @@ namespace InazumaSearch.Core
         {
             public string name { get; set; }
             public string caption { get; set; }
+            public long nSubRecs { get; set; }
+        }
+        public class FolderPathDrilldownLink
+        {
+            public string folderPath { get; set; }
             public long nSubRecs { get; set; }
         }
         public class FolderLabelDrilldownLink
@@ -191,135 +423,20 @@ namespace InazumaSearch.Core
         /// <summary>
         /// 全文検索の実行
         /// </summary>
-        /// <param name="query"></param>
-        /// <param name="offset"></param>
-        /// <returns></returns>
+        /// <param name="cond">検索条件</param>
+        /// <param name="offset">オフセット（検索開始位置）</param>
+        /// <param name="selectedOrderType">並び順タイプ</param>
+        /// <param name="selectedView">表示形式</param>
+        /// <returns>検索結果（レコードリスト）</returns>
         public Result Search(
-              string queryKeyword
-            , string queryFileName = null
-            , string queryBody = null
-            , string queryUpdated = null
+              Condition cond
             , int offset = 0
-            , string selectedFormat = null
-            , string selectedFolderLabel = null
             , string selectedOrderType = null
             , string selectedView = null
         )
         {
-            var groongaQueries = new List<string>();
-            var groongaFilters = new List<string>();
-            var querySubMessages = new List<string>();
-
-            // キーワード、ファイル名、本文での絞り込みをエスケープして追加
-            if (!string.IsNullOrWhiteSpace(queryKeyword))
-            {
-                // Groongaのクエリ構文は一部のみ有効
-                // バックスラッシュ、シングルクォート、コロンなどの特殊記号はエスケープする
-                // 有効なのは " - ( ) のみ
-                groongaQueries.Add(queryKeyword
-                                    .Replace(@"\", @"\\")
-                                    .Replace("'", @"\'")
-                                    .Replace(":", @"\:")
-                                    .Replace("+", @"\+"));
-            }
-            if (!string.IsNullOrWhiteSpace(queryFileName))
-            {
-                groongaQueries.Add(string.Format("{0}:@{1}"
-                                                , Column.Documents.FILE_NAME
-                                                , Groonga.Util.EscapeForQuery(queryFileName)));
-                querySubMessages.Add(string.Format("ファイル名: 「{0}」", queryFileName));
-            }
-            if (!string.IsNullOrWhiteSpace(queryBody))
-            {
-                groongaQueries.Add(string.Format("{0}:@{1}"
-                                                , Column.Documents.BODY
-                                                , Groonga.Util.EscapeForQuery(queryBody)));
-                querySubMessages.Add(string.Format("本文: 「{0}」", queryBody));
-            }
-            // 拡張子での絞り込みを追加 (フォーマットから生成する)
-            if (selectedFormat != null)
-            {
-                if (selectedFormat == "その他")
-                {
-                    // 「その他」が指定された場合は、登録されている拡張子をすべて除外
-                    var excludeExtNames = new List<string>();
-                    foreach (var format in App.Formats)
-                    {
-                        excludeExtNames.AddRange(format.Extensions);
-                    }
-
-                    var strings = excludeExtNames.Select(e => string.Format("\"{0}\"", e));
-                    if (!strings.Any()) strings = new[] { "\"\"" };
-                    groongaFilters.Add(string.Format("!in_values({0},{1})"
-                                                    , Column.Documents.EXT
-                                                    , string.Join(", ", strings))
-                                        );
-                    querySubMessages.Add("ファイル形式: その他");
-
-
-                }
-                else
-                {
-                    var targetExtNames = new List<string>();
-                    foreach (var format in App.Formats.Where(f => f.Label == selectedFormat))
-                    {
-                        targetExtNames.AddRange(format.Extensions);
-                    };
-                    var strings = targetExtNames.Select(e => string.Format("\"{0}\"", e));
-                    if (!strings.Any()) strings = new[] { "\"\"" };
-                    groongaFilters.Add(string.Format("in_values({0},{1})"
-                                                    , Column.Documents.EXT
-                                                    , string.Join(", ", strings))
-                                        );
-                    querySubMessages.Add(string.Format("ファイル形式: {0}", selectedFormat));
-
-                }
-            }
-
-            // フォルダラベルでの絞り込みを追加
-            if (selectedFolderLabel != null)
-            {
-                groongaQueries.Add(string.Format("{0}:{1}"
-                                                , Column.Documents.FOLDER_LABELS
-                                                , Groonga.Util.EscapeForQuery(selectedFolderLabel)));
-                querySubMessages.Add(string.Format("フォルダラベル: {0}", selectedFolderLabel));
-            }
-
-            // 日付範囲の指定があれば、その範囲を追加する
-            DateTime? updatedLeft = null;
-            string updatedRangeCaption = null;
-            switch (queryUpdated)
-            {
-                case "day":
-                    updatedLeft = DateTime.Now.AddDays(-1);
-                    updatedRangeCaption = "1日以内";
-                    break;
-                case "week":
-                    updatedLeft = DateTime.Now.AddDays(-7);
-                    updatedRangeCaption = "1週間以内";
-                    break;
-                case "month":
-                    updatedLeft = DateTime.Now.AddMonths(-1);
-                    updatedRangeCaption = "1ヶ月以内";
-                    break;
-                case "half_year":
-                    updatedLeft = DateTime.Now.AddMonths(-6);
-                    updatedRangeCaption = "半年以内";
-                    break;
-                case "year":
-                    updatedLeft = DateTime.Now.AddYears(-1);
-                    updatedRangeCaption = "1年以内";
-                    break;
-                case "3years":
-                    updatedLeft = DateTime.Now.AddYears(-3);
-                    updatedRangeCaption = "3年以内";
-                    break;
-            }
-            if (updatedLeft != null)
-            {
-                groongaFilters.Add(string.Format("file_updated_at > \"{0}\"", Groonga.Util.ToExprTimeFormat(updatedLeft.Value)));
-                querySubMessages.Add(string.Format("更新日付: {0}", updatedRangeCaption));
-            }
+            // 検索条件をクエリオブジェクトに変換
+            var query = cond.ToQuery(App.Formats);
 
             var matchColumns = new[] {
                 Column.Documents.FILE_NAME + " * 1000"
@@ -388,8 +505,8 @@ namespace InazumaSearch.Core
 
 
             // SELECT実行
-            var joinedQuery = string.Join(" ", groongaQueries.Select(q => "(" + q + ")"));
-            var joinedFilter = string.Join(" && ", groongaFilters.Select(q => "(" + q + ")"));
+            var joinedQuery = string.Join(" ", query.GroongaQueries.Select(q => "(" + q + ")"));
+            var joinedFilter = string.Join(" && ", query.GroongaFilters.Select(q => "(" + q + ")"));
             var pageSize = (selectedView == ViewType.LIST ? App.UserSettings.DisplayPageSizeForListView : App.UserSettings.DisplayPageSizeForNormalView);
 
             Groonga.SelectResult selectRes = null;
@@ -402,12 +519,13 @@ namespace InazumaSearch.Core
                     , offset: offset
                     , limit: pageSize
                     //, drilldown: new[] { Column.Documents.EXT, Column.Documents.FILE_UPDATED_YEAR }
-                    , drilldown: new[] { Column.Documents.EXT, Column.Documents.FOLDER_LABELS }
-                    , drilldownSortKeys: new[] { Column.Documents.KEY }
+                    , drilldown: new[] { Column.Documents.EXT, Column.Documents.FOLDER_PATH, Column.Documents.FOLDER_LABELS }
+                    , drilldownSortKeys: new[] { Groonga.VColumn.KEY }
                     , sortKeys: sortKeys.ToArray()
                     , matchColumns: matchColumns
                     , outputColumns: new[] {
                                 Column.Documents.KEY
+                            , Column.Documents.FOLDER_PATH
                             , Column.Documents.FILE_PATH
                             , Groonga.VColumn.SCORE // 鮮度補正を加味していない生のスコア
                             , Column.Documents.TITLE
@@ -555,8 +673,20 @@ namespace InazumaSearch.Core
             }
 
             // ドリルダウン結果(フォーマットごとの件数)を元に、フォーマット絞り込み用のデータを作成
-            var folderLabelDrilldownLinks = new List<FolderLabelDrilldownLink>();
+            var folderPathDrilldownLinks = new List<FolderPathDrilldownLink>();
             foreach (var rec in selectRes.DrilldownResults[1].Records)
+            {
+                var link = new FolderPathDrilldownLink()
+                {
+                    folderPath = (string)rec.Key
+                    ,
+                    nSubRecs = rec.NSubRecs
+                };
+                folderPathDrilldownLinks.Add(link);
+            }
+
+            var folderLabelDrilldownLinks = new List<FolderLabelDrilldownLink>();
+            foreach (var rec in selectRes.DrilldownResults[2].Records)
             {
                 var link = new FolderLabelDrilldownLink()
                 {
@@ -577,19 +707,19 @@ namespace InazumaSearch.Core
             }
             else
             {
-                if (string.IsNullOrWhiteSpace(queryKeyword))
+                if (string.IsNullOrWhiteSpace(cond.Keyword))
                 {
                     searchResultMessage = string.Format("計{0}件見つかりました。", searchResult.NHits);
                 }
                 else
                 {
-                    searchResultMessage = string.Format("「{0}」で検索して、計{1}件見つかりました。", queryKeyword, searchResult.NHits);
+                    searchResultMessage = string.Format("「{0}」で検索して、計{1}件見つかりました。", cond.Keyword, searchResult.NHits);
                 }
             }
 
-            if (querySubMessages.Count >= 1)
+            if (query.SubMessages.Count >= 1)
             {
-                searchResultSubMessage = string.Format("({0})", string.Join("、", querySubMessages));
+                searchResultSubMessage = string.Format("({0})", string.Join("、", query.SubMessages));
             }
 
             var ret = new Result()
@@ -606,6 +736,8 @@ namespace InazumaSearch.Core
                 ,
                 formatDrilldownLinks = formatDrilldownLinks.OrderByDescending(l => l.nSubRecs).ToList() // 件数の多い順で並べる
                 ,
+                folderPathDrilldownLinks = folderPathDrilldownLinks.OrderByDescending(l => l.nSubRecs).ToList() // 件数の多い順で並べる
+                ,
                 folderLabelDrilldownLinks = folderLabelDrilldownLinks.OrderByDescending(l => l.nSubRecs).ToList() // 件数の多い順で並べる
                 ,
                 orderList = OrderList
@@ -614,35 +746,58 @@ namespace InazumaSearch.Core
             };
 
             return ret;
-
         }
 
         /// <summary>
-        /// 類似文書検索の実行
+        /// 検索結果に合致する全レコードのフォルダパスと、フォルダパスごとのヒット件数を取得
         /// </summary>
-        /// <param name="query"></param>
-        /// <param name="offset"></param>
-        /// <returns></returns>
-        public Groonga.SelectResult SearchSimilarDocuments(
-              string key
-        )
+        /// <param name="cond">検索条件</param>
+        /// <returns>フォルダパス、ヒット件数を格納したDictionary</returns>
+        public Dictionary<string, long> SearchAllFolderPath(Condition cond = null)
         {
-            // 対象文書の本文を取得
-            var targetRes = App.GM.Select(
-                  Table.Documents
-                , query: string.Format("{0}:{1}", Column.Documents.KEY, Groonga.Util.EscapeForQuery(key))
-            );
-            var body = targetRes.SearchResult.Records[0].GetTextValue(Column.Documents.BODY);
+            // クエリオブジェクトを生成
+            var query = (cond != null ? cond.ToQuery(App.Formats) : new Query());
 
-            var selectRes = App.GM.Select(
-                  Table.Documents
-                , filter: string.Format("{0} *S {1}", Column.Documents.BODY, Groonga.Util.EscapeForScript(body))
-            );
+            // SELECT実行
+            var joinedQuery = string.Join(" ", query.GroongaQueries.Select(q => "(" + q + ")"));
+            var joinedFilter = string.Join(" && ", query.GroongaFilters.Select(q => "(" + q + ")"));
+            var matchColumns = new[] {
+                Column.Documents.FILE_NAME
+                , Column.Documents.BODY
+            };
 
-            return selectRes;
+            Groonga.SelectResult selectRes = null;
+            try
+            {
+                selectRes = App.GM.Select(
+                  Table.Documents
+                    , query: joinedQuery
+                    , filter: joinedFilter
+                    , limit: 1
+                    , drilldown: new[] { Column.Documents.FOLDER_PATH }
+                    , drilldownLimit: -1
+                    , matchColumns: matchColumns
+                    , outputColumns: new string[] {
+                        Groonga.VColumn.KEY
+                    }
+            );
+            }
+            catch (GroongaCommandError ex)
+            {
+                // エラー時はnullを返す（通常発生しないはず）
+                Logger.Debug(ex.ToString());
+                return null;
+            }
+
+            // 結果を作成
+            var res = new Dictionary<string, long>();
+            foreach (var rec in selectRes.DrilldownResults[0].Records)
+            {
+                res[(string)rec.Key] = rec.NSubRecs;
+            }
+            return res;
 
         }
-
 
         #endregion
 

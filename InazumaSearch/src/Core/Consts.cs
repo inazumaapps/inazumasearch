@@ -47,6 +47,11 @@
             public const string BODY = "body";
 
             /// <summary>
+            /// フォルダパス
+            /// </summary>
+            public const string FOLDER_PATH = "folder_path";
+
+            /// <summary>
             /// ファイルパス
             /// </summary>
             public const string FILE_PATH = "file_path";

@@ -25,6 +25,14 @@ function handleDrop(e) {
     return false;
 }
 
+// フォルダドリルダウン（対象フォルダを変更して再検索）
+function folderDrilldown(folderPath){
+    g_lastQueryObject.folderPath = folderPath;
+
+    // 再検索
+    executeSearch(g_lastQueryObject, true, g_lastSelectedFormatName || null, g_lastSelectedFolderLabel || null, g_lastSelectedOrder || null, g_lastSelectedView || null);
+}
+
 // 検索実行
 function executeSearch(
     queryObject
@@ -100,7 +108,14 @@ function executeSearch(
             $('#DRILLDOWN-RESULT-EXT').html("");
         }
 
-
+        if(g_lastQueryObject.folderPath){
+            var resHtmlfolderPath = 'フォルダで絞り込む: <span class="selected-drilldown"><span class="path-value"></span></span> <a href="#" class="drilldown-folder-path-link">変更</a> <a href="#" class="drilldown-folder-path-reset-link">解除</a>';
+            $('#DRILLDOWN-RESULT-FOLDER-PATH').html(resHtmlfolderPath);
+            $('#DRILLDOWN-RESULT-FOLDER-PATH .path-value').text(g_lastQueryObject.folderPath);
+        } else {
+            var resHtmlfolderPath = 'フォルダで絞り込む: <a href="#" class="drilldown-folder-path-link">選択</a>';
+            $('#DRILLDOWN-RESULT-FOLDER-PATH').html(resHtmlfolderPath);
+        }
         if (data.folderLabelDrilldownLinks.length >= 2
             || (data.folderLabelDrilldownLinks.length === 1 && data.folderLabelDrilldownLinks[0].nSubRecs < data.nHits)
             || g_lastSelectedFolderLabel) {
@@ -461,10 +476,10 @@ $(async function () {
                     // 検索リクエストを実行
                     var queryObject = {
                         keyword: value
+                        , folderPath: ''
                         , fileName: ''
                         , body: ''
                         , updated: ''
-                        , tfIdf: ''
                     }
 
                     asyncApi.search(queryObject, false, 0, null, null, null, null, true).then(function (resJson) {
@@ -636,22 +651,24 @@ $(async function () {
 
     // 検索ボタンクリック
     $('.search-button').click(function(){
-        // キーワード、ファイル名、本文の入力値取得。空であれば何もしない
+        // 検索条件取得
         var keyword = $('input[name=keyword]').val();
-        var file_name = $('input[name=file_name]').val();
+        var folderPath = $('input[name=folder_path]').val();
+        var fileName = $('input[name=file_name]').val();
         var body = $('input[name=body]').val();
         var updated = $('select[name=updated]').val();
 
         // 詳細検索OFFの場合はキーワード以外を反映しない
         var detailSearchFlag = $('#DETAIL-SEARCH-SWITCH input:checkbox').is(':checked');
         if(!detailSearchFlag){
-            file_name = '';
+            fileName = '';
+            folderPath = '';
             body = '';
             updated = '';
         }
 
         // 検索語が入力されていなければエラー
-        if(keyword === '' && file_name === '' && body === ''){
+        if(keyword === '' && fileName === '' && body === ''){
             api.showErrorMessage(detailSearchFlag ? '検索キーワード、ファイル名、本文のいずれかを入力してください。' : '検索キーワードを入力してください。');
             return false;
         }
@@ -659,10 +676,10 @@ $(async function () {
         // 検索リクエストを実行
         var queryObject = {
             keyword: keyword
-            , fileName: file_name
+            , folderPath: folderPath
+            , fileName: fileName
             , body: body
             , updated: updated
-            , tfIdf: $('input:checkbox[name=tf_idf]').is(':checked')
         }
         executeSearch(queryObject);
 
@@ -674,7 +691,38 @@ $(async function () {
 
     });
 
-    // ドリルダウンクリック
+    // 検索対象フォルダ選択
+    $('#ADVSEARCH-FOLDER-PATH-SELECT-BUTTON').click(function(){
+        // フォルダ選択ダイアログを開く
+        api.openSearchFolderSelectForm($('#ADVSEARCH-FOLDER-PATH').val());
+
+        return false;
+    });
+
+
+    // フォルダ絞り込み
+    $('#SEARCH-RESULT-HEADER').on('click', '.drilldown-folder-path-link', function(){
+        // フォルダ絞り込みダイアログを開く
+        api.openSearchFolderDrilldownForm(g_lastQueryObject, g_lastSelectedFormatName || null, g_lastSelectedFolderLabel || null);
+
+        return false;
+    });
+
+    // フォルダ絞り込み解除
+    $('#SEARCH-RESULT-HEADER').on('click', '.drilldown-folder-path-reset-link', function(){
+        // 詳細検索欄のパスをクリア
+        $('#ADVSEARCH-FOLDER-PATH').val('');
+        M.updateTextFields(); // Materializeに入力フィールドの更新を反映
+
+        // フォルダパスの絞り込みを解除して再検索
+        g_lastQueryObject.folderPath = null;
+        executeSearch(g_lastQueryObject, true, g_lastSelectedFormatName || null, g_lastSelectedFolderLabel || null, g_lastSelectedOrder || null, g_lastSelectedView || null);
+
+        return false;
+    });
+
+
+    // 拡張子ドリルダウン
     $('#SEARCH-RESULT-HEADER').on('click', '.drilldown-ext-link', function(){
         var formatName = $(this).attr('data-value');
         if (formatName === '') formatName = null; // 解除
@@ -685,6 +733,7 @@ $(async function () {
         return false;
     });
 
+    // フォルダラベルドリルダウン
     $('#SEARCH-RESULT-HEADER').on('click', '.drilldown-folder-label-link', function(){
         var folderLabel = $(this).attr('data-value');
         if (folderLabel === '') folderLabel = null; // 解除

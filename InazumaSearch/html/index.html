@@ -92,6 +92,16 @@
 
             <form id="DETAIL-SEARCH" style="display: none">
                 <div class="row">
+                    <div class="input-field col s12">
+                        <i class="material-icons prefix orange-text text-lighten-2">folder</i>
+                        <input id="ADVSEARCH-FOLDER-PATH" name="folder_path" type="text" class="validate">
+                        <label for="ADVSEARCH-FOLDER-PATH">フォルダ</label>
+                        <a class="btn waves-effect waves-light " style="position: absolute;top: 0.5rem;height: 2rem;width: 2rem;padding: 0;right: 1rem;" id="ADVSEARCH-FOLDER-PATH-SELECT-BUTTON">...</a>
+                        <span class="helper-text" >※指定したフォルダ以下の文書ファイルのみを検索します。</span>
+                    </div>
+                </div><!-- /.row -->
+
+                <div class="row">
                     <div class="input-field col s4">
                         <input id="ADVSEARCH-FILE-NAME" name="file_name" type="text" class="validate">
                         <label for="ADVSEARCH-FILE-NAME">ファイル名</label>
@@ -124,12 +134,14 @@
             <div id="SEARCH-RESULT-HEADER" style="position: relative;">
                 <h3>検索結果</h3>
 
-                <div>
+                <div style="margin-bottom: 1em;">
                     <span id="SEARCH-RESULT-MESSAGE"></span>
                     <span id="SEARCH-PROCESS-TIME" style="color: silver; font-size: smaller; margin-left: 0.5rem;"></span>
+                    <p class="subtext" id="SEARCH-RESULT-SUB-MESSAGE"></p>
                 </div>
-                <p class="subtext" id="SEARCH-RESULT-SUB-MESSAGE"></p>
+                
 
+                <p class="drilldown-result" id="DRILLDOWN-RESULT-FOLDER-PATH"></p>
                 <p class="drilldown-result" id="DRILLDOWN-RESULT-EXT"></p>
                 <p class="drilldown-result" id="DRILLDOWN-RESULT-FOLDER-LABEL"></p>
                 <p class="drilldown-result" id="DRILLDOWN-ORDER"></p>
@@ -270,7 +282,7 @@
         <div class="modal-content">
             <h5>検索のヒント</h5>
             <ul>
-                <li>下記のような書き方をすることで、AND検索やOR検索などの特殊な検索を行うことができます。</li>
+                <li>下記のように書くことで、AND検索やOR検索などの特殊な検索を行うことができます。</li>
             </ul>
             <h6>例:</h6>
             <ul class="collection">

@@ -10,7 +10,7 @@ namespace InazumaSearch.Groonga
         /// <summary>
         /// アプリケーションが要求するスキーマバージョン
         /// </summary>
-        public const int AppSchemaVersion = 3;
+        public const int AppSchemaVersion = 4;
 
         /// <summary>
         /// スキーマのセットアップ(新規作成 or アップグレード)を実行
@@ -36,7 +36,7 @@ namespace InazumaSearch.Groonga
                 UpgradeSchemaTo(nextVer);
 
                 // 大きく変更が入る場合、再クロールが必要 (DBの新規作成時は除く)
-                if (!newMode)
+                if (!newMode && (nextVer == 2 || nextVer == 3))
                 {
                     reCrawlRequired = true;
                 }
@@ -239,9 +239,72 @@ namespace InazumaSearch.Groonga
 
             #endregion
 
+
+            #region 3 -> 4
+
+            if (nextSchemaVer == 4)
+            {
+                // フォルダパスの列を追加
+                ColumnCreate(
+                      Table.Documents
+                    , Column.Documents.FOLDER_PATH
+                    , new[] { ColumnCreateFlag.COLUMN_SCALAR }
+                    , DataType.ShortText
+                );
+
+                // インデックスにファイルパスのインデックスをセット
+                ColumnCreate(
+                      Table.DocumentsIndex
+                    , "documents_file_path"
+                    , new[] { ColumnCreateFlag.COLUMN_INDEX } // 全文検索対象とはしないので、WITH_POSITIONは不要
+                    , type: Table.Documents
+                    , source: Column.Documents.FILE_PATH
+                );
+
+                // 既存レコードのフォルダパスをセット
+                UpdateFolderPaths();
+            }
+
+            #endregion
+
             // 更新したスキーマの値を設定
             var meta = new Dictionary<string, object> { { Groonga.VColumn.ID, 1 }, { Column.MetaData.SCHEMA_VERSION, nextSchemaVer } };
             Load(table: Table.MetaData, values: new[] { meta });
+        }
+
+        /// <summary>
+        /// 文書データのフォルダパス情報を一括更新
+        /// </summary>
+        public virtual void UpdateFolderPaths()
+        {
+            var selectRes = Select(
+                  Table.Documents
+                , outputColumns: new[] { Column.Documents.KEY, Column.Documents.FILE_PATH }
+                , limit: -1
+                , sortKeys: new[] { Column.Documents.KEY }
+            );
+
+            var records = selectRes.SearchResult.Records;
+            var values = new List<IDictionary<string, object>>();
+            foreach (var record in records)
+            {
+                var key = (string)record.Key;
+                var filePath = (string)record.GetTextValue(Column.Documents.FILE_PATH);
+
+                var valueDict = new Dictionary<string, object>
+                {
+                    [Column.Documents.KEY] = key
+                };
+
+                if (!string.IsNullOrEmpty(filePath))
+                {
+                    valueDict[Column.Documents.FOLDER_PATH] = Path.GetDirectoryName(filePath);
+                }
+
+                values.Add(valueDict);
+            }
+
+            Load(table: Table.Documents, values: values);
         }
 
     }

@@ -132,7 +132,46 @@ namespace InazumaSearch.Forms
 
             }
 
+            /// <summary>
+            /// 検索フォルダ選択ダイアログを開く
+            /// </summary>
+            /// <param name="inputFolderPath">入力されているフォルダパス</param>
+            public void OpenSearchFolderSelectForm(string inputFolderPath)
+            {
+                OwnerForm.InvokeOnUIThread((owner) =>
+                {
+                    var dialog = new SearchFolderSelectDialog(App, inputFolderPath);
+                    var res = dialog.ShowDialog(owner);
 
+                    if (res == DialogResult.OK)
+                    {
+                        owner.SetSelectedFolderPath(dialog.SelectedFolderPath);
+                    }
+                });
+            }
+
+            /// <summary>
+            /// 検索フォルダ絞り込みダイアログを開く
+            /// </summary>
+            /// <param name="queryObject">最後の検索パラメータ</param>
+            public void OpenSearchFolderDrilldownForm(
+                IDictionary<string, object> queryObject
+                , string selectedFormat = null
+                , string selectedFolderLabel = null
+            )
+            {
+                var cond = new Core.SearchEngine.Condition(queryObject, selectedFormat, selectedFolderLabel);
+                OwnerForm.InvokeOnUIThread((owner) =>
+                {
+                    var dialog = new SearchFolderSelectDialog(App, cond);
+                    var res = dialog.ShowDialog(owner);
+
+                    if (res == DialogResult.OK)
+                    {
+                        owner.FolderDrilldown(dialog.SelectedFolderPath);
+                    }
+                });
+            }
 
             public void CrawlStart(string targetFoldersJSON = null)
             {
@@ -341,15 +380,6 @@ namespace InazumaSearch.Forms
                 });
             }
 
-            public string GetSimilarDocuments(string key)
-            {
-                return App.ExecuteInExceptionCatcher<string>(() =>
-                {
-                    var searchEngine = new SearchEngine(App);
-                    return JsonConvert.SerializeObject(searchEngine.SearchSimilarDocuments(key));
-                });
-            }
-
             public string GetHighlightedBody(string key, string queryKeyword, string queryBody)
             {
                 return App.ExecuteInExceptionCatcher<string>(() =>
@@ -552,20 +582,12 @@ namespace InazumaSearch.Forms
                     var sw = Stopwatch.StartNew();
 
                     // 全文検索の実行
-                    var queryKeyword = (string)queryObject["keyword"];
-                    var queryFileName = (string)queryObject["fileName"];
-                    var queryBody = (string)queryObject["body"];
-                    var queryUpdated = (string)queryObject["updated"];
+                    var cond = new Core.SearchEngine.Condition(queryObject, selectedFormat, selectedFolderLabel);
 
                     var searchEngine = new SearchEngine(App);
                     var ret = searchEngine.Search(
-                        queryKeyword
-                        , queryFileName
-                        , queryBody
-                        , queryUpdated
+                          cond
                         , offset
-                        , selectedFormat
-                        , selectedFolderLabel
                         , selectedOrder
                         , selectedView
                     );
@@ -872,6 +894,15 @@ namespace InazumaSearch.Forms
             InitializeChromium(htmlDirPath);
         }
 
+        protected virtual void SetSelectedFolderPath(string path)
+        {
+            TryEvaluateJavaScriptAsync($"$('#ADVSEARCH-FOLDER-PATH').val('{path.Replace("\\", "\\\\")}'); M.updateTextFields();");
+        }
+
+        protected virtual void FolderDrilldown(string path)
+        {
+            TryEvaluateJavaScriptAsync($"folderDrilldown('{path.Replace("\\", "\\\\")}');");
+        }
 
         protected virtual void CrawlStart(IEnumerable<string> targetDirPaths = null)
         {
@@ -1026,17 +1057,6 @@ namespace InazumaSearch.Forms
         }
 
         /// <summary>
-        /// 設定画面を表示中かどうか
-        /// </summary>
-        public bool SettingScreenShowing
-        {
-            get
-            {
-                return ChromeBrowser.Address.EndsWith("setting.html");
-            }
-        }
-
-        /// <summary>
         /// 指定したJavaScriptを非同期に実行する（CefSharpが実行可能と判断した場合のみ）
         /// </summary>
         /// <returns>実行成功...true / 実行失敗...false</returns>
@@ -1050,6 +1070,17 @@ namespace InazumaSearch.Forms
             else
             {
                 return false;
+            }
+        }
+
+        /// <summary>
+        /// 設定画面を表示中かどうか
+        /// </summary>
+        public bool SettingScreenShowing
+        {
+            get
+            {
+                return ChromeBrowser.Address.EndsWith("setting.html");
             }
         }
 
