@@ -381,9 +381,19 @@ namespace InazumaSearch.Core.Crawl.Work
                 _app.GM.Delete(Table.Documents, key);
 
                 // 登録失敗
+                string errorMessage;
+                if (ex is GroongaCommandError && ((GroongaCommandError)ex).ReturnCode == Groonga.CommandReturnCode.GRN_NO_MEMORY_AVAILABLE)
+                {
+                    errorMessage = $"ファイルの文書DB登録処理でメモリ不足エラーが発生しました。対象のファイルサイズが大きすぎる可能性があります。";
+                }
+                else
+                {
+                    errorMessage = $"ファイルの文書DB登録処理でエラーが発生しました。";
+                }
+
                 return new UpdateResult(UpdateResult.ResultType.Failed)
                 {
-                    ErrorMessage = $"ファイルの文書DB登録処理でエラーが発生しました。",
+                    ErrorMessage = errorMessage,
                     ErrorFilePath = FilePath,
                     ErrorFileSize = _app.TryGetFileSize(FilePath),
                     InnerException = ex
