@@ -222,7 +222,7 @@ namespace InazumaSearch.Forms
                         Table.Documents
                         , limit: 0
                         , outputColumns: new string[] { Groonga.VColumn.ID }
-                        , filter: $"{Column.Documents.KEY} @^ {Groonga.Util.EscapeForScript(Util.MakeDocumentDirKeyPrefix(path))}"
+                        , filter: $"{Column.Documents.KEY} @^ {Groonga.Util.EscapeForScriptStringValue(Util.MakeDocumentDirKeyPrefix(path))}"
                     );
                     return JsonConvert.SerializeObject(new { fileCount = res.SearchResult.NHits, pathHash = Util.HexDigest(App.HashProvider, path) });
                 });
@@ -368,7 +368,7 @@ namespace InazumaSearch.Forms
                             Table.Documents
                             , limit: 0
                             , outputColumns: new string[] { Groonga.VColumn.ID }
-                            , filter: $"{Column.Documents.KEY} @^ {Groonga.Util.EscapeForScript(Util.MakeDocumentDirKeyPrefix(folder.Path))}"
+                            , filter: $"{Column.Documents.KEY} @^ {Groonga.Util.EscapeForScriptStringValue(Util.MakeDocumentDirKeyPrefix(folder.Path))}"
                         );
                         pathHashes[folder.Path] = Util.HexDigest(App.HashProvider, folder.Path);
                         fileCounts[folder.Path] = res.SearchResult.NHits;
@@ -389,16 +389,22 @@ namespace InazumaSearch.Forms
 
                     if (!string.IsNullOrWhiteSpace(queryKeyword))
                     {
-                        // Groongaのクエリ構文有効。ただしバックスラッシュとシングルクォートはエスケープする
-                        groongaQueries.Add(queryKeyword.Replace(@"\", @"\\").Replace("'", @"\'"));
+                        // Groongaのクエリ構文は一部のみ有効
+                        // バックスラッシュ、シングルクォート、コロンなどの特殊記号はエスケープする
+                        // 有効なのは " - ( ) のみ
+                        groongaQueries.Add(queryKeyword
+                                            .Replace(@"\", @"\\")
+                                            .Replace("'", @"\'")
+                                            .Replace(":", @"\:")
+                                            .Replace("+", @"\+"));
                     }
                     if (!string.IsNullOrWhiteSpace(queryBody))
                     {
                         groongaQueries.Add(string.Format("{0}:@{1}"
                                                        , Column.Documents.BODY
-                                                       , Groonga.Util.EscapeForQuery(queryBody)));
+                                                       , Groonga.Util.EscapeForQueryValue(queryBody)));
                     }
-                    groongaFilters.Add(string.Format("{0} == {1}", Column.Documents.KEY, Groonga.Util.EscapeForScript(key)));
+                    groongaFilters.Add(string.Format("{0} == {1}", Column.Documents.KEY, Groonga.Util.EscapeForScriptStringValue(key)));
 
                     // SELECT実行
                     var joinedQuery = string.Join(" ", groongaQueries.Select(q => "(" + q + ")"));

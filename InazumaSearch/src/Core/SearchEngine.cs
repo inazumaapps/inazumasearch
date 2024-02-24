@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography;
+using System.Text;
 using Alphaleonis.Win32.Filesystem;
 using InazumaSearch.Groonga.Exceptions;
 
@@ -100,21 +101,88 @@ namespace InazumaSearch.Core
                     var folderPath = FolderPath.Replace('/', '\\').TrimEnd('\\') + "\\";
                     res.GroongaQueries.Add(string.Format("{0}:^{1}"
                                                     , Column.Documents.FOLDER_PATH
-                                                    , Groonga.Util.EscapeForQuery(folderPath)));
+                                                    , Groonga.Util.EscapeForQueryValue(folderPath)));
                     res.SubMessages.Add(string.Format("フォルダ: {0}", FolderPath));
                 }
                 if (!string.IsNullOrWhiteSpace(FileName))
                 {
-                    res.GroongaQueries.Add(string.Format("{0}:@{1}"
-                                                    , Column.Documents.FILE_NAME
-                                                    , Groonga.Util.EscapeForQuery(FileName)));
+                    // ;（セミコロン）または,（半角カンマ）で区切られた複数条件を処理する　前後の半角空白は削除
+                    var groongaFileNameExpressions = new List<string>();
+                    foreach (var fileNameExpr in FileName.Split(new char[] { ';', ',' }))
+                    {
+                        var usingFileNameExpr = fileNameExpr.Trim();
+                        var exceptSearch = false;
+
+                        // 先頭が-から始まっている場合は除外検索
+                        if (fileNameExpr.StartsWith("-"))
+                        {
+                            usingFileNameExpr = usingFileNameExpr.Remove(0, 1);
+                            exceptSearch = true;
+                        }
+
+                        // *（ワイルドカード）を含む場合は正規表現としてコンパイルする
+                        // そうでない場合は、全文検索
+                        string groongaExpr;
+                        if (fileNameExpr.Contains("*"))
+                        {
+                            var regExpBuf = new StringBuilder();
+                            regExpBuf.Append(@"\A"); // 文字列の先頭
+
+                            foreach (var c in usingFileNameExpr)
+                            {
+                                switch (c)
+                                {
+                                    case '*':
+                                        // ワイルドカード
+                                        regExpBuf.Append(@".*");
+                                        break;
+                                    case '\\':
+                                    case '|':
+                                    case '(':
+                                    case ')':
+                                    case '[':
+                                    case ']':
+                                    case '.':
+                                    case '+':
+                                    case '?':
+                                    case '{':
+                                    case '}':
+                                    case '^':
+                                    case '$':
+                                        // 正規表現として特別な意味を持つ文字はエスケープする
+                                        regExpBuf.Append($@"\{c}");
+                                        break;
+                                    default:
+                                        // それ以外の文字はエスケープせず、小文字変換する
+                                        // ※Groongaでは大文字を使った正規表現は、必ずマッチに失敗するため、小文字変換が必要
+                                        // <https://groonga.org/ja/docs/reference/regular_expression.html>
+                                        regExpBuf.Append(c.ToString().ToLower());
+                                        break;
+                                }
+                            }
+
+                            regExpBuf.Append(@"\z"); // 文字列の末尾
+
+                            groongaExpr = $"{Column.Documents.FILE_NAME} @~ {Groonga.Util.EscapeForScriptStringValue(regExpBuf.ToString())}";
+                        }
+                        else
+                        {
+                            groongaExpr = $"{Column.Documents.FILE_NAME} @ {Groonga.Util.EscapeForScriptStringValue(usingFileNameExpr)}";
+                        }
+
+                        groongaFileNameExpressions.Add(exceptSearch ? $"!({groongaExpr})" : groongaExpr);
+                    }
+
+                    // ORで結合
+                    var joinedExpr = string.Join(" || ", groongaFileNameExpressions.Select(expr => $"({expr})"));
+                    res.GroongaFilters.Add(joinedExpr);
                     res.SubMessages.Add(string.Format("ファイル名: 「{0}」", FileName));
                 }
                 if (!string.IsNullOrWhiteSpace(Body))
                 {
                     res.GroongaQueries.Add(string.Format("{0}:@{1}"
                                                     , Column.Documents.BODY
-                                                    , Groonga.Util.EscapeForQuery(Body)));
+                                                    , Groonga.Util.EscapeForQueryValue(Body)));
                     res.SubMessages.Add(string.Format("本文: 「{0}」", Body));
                 }
                 // 拡張子での絞り込みを追加 (フォーマットから生成する)
@@ -134,7 +202,7 @@ namespace InazumaSearch.Core
                         res.GroongaFilters.Add(string.Format("!in_values({0},{1})"
                                                         , Column.Documents.EXT
                                                         , string.Join(", ", strings))
-                );
+                        );
                         res.SubMessages.Add("ファイル形式: その他");
 
 
@@ -161,7 +229,7 @@ namespace InazumaSearch.Core
                 {
                     res.GroongaQueries.Add(string.Format("{0}:{1}"
                                                     , Column.Documents.FOLDER_LABELS
-                                                    , Groonga.Util.EscapeForQuery(SelectedFolderLabel)));
+                                                    , Groonga.Util.EscapeForQueryValue(SelectedFolderLabel)));
                     res.SubMessages.Add(string.Format("フォルダラベル: {0}", SelectedFolderLabel));
                 }
 

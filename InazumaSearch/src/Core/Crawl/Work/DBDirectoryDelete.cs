@@ -74,7 +74,7 @@ namespace InazumaSearch.Core.Crawl.Work
                 );
 
                 // 文書データを全削除
-                var filter = $"{Column.Documents.KEY} @^ {Groonga.Util.EscapeForScript(Util.MakeDocumentDirKeyPrefix(DirPath))}";
+                var filter = $"{Column.Documents.KEY} @^ {Groonga.Util.EscapeForScriptStringValue(Util.MakeDocumentDirKeyPrefix(DirPath))}";
                 _app.GM.Delete(Table.Documents, filter: filter);
 
                 // 常駐クロールの場合はクールタイムを挟む (処理の経過時間×3, 最低0.5秒)

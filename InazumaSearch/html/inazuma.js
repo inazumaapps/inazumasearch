@@ -504,6 +504,7 @@ $(async function () {
 
     $('#DISPLAY-HIGHLIGHT-MODAL').modal();
     $('#QUERY-GUIDE-MODAL').modal();
+    $('#FILE-NAME-GUIDE-MODAL').modal();
     $('#CRAWL-MODAL').modal({
         onCloseEnd: function () {
             // クロール実行ボタンを押していればクロール処理
@@ -588,6 +589,11 @@ $(async function () {
 
     $('#QUERY-GUIDE-MODAL-TRIGGER').click(function(){
         $('#QUERY-GUIDE-MODAL').modal('open');
+        return false;
+    });
+
+    $('#FILE-NAME-GUIDE-MODAL-TRIGGER').click(function(){
+        $('#FILE-NAME-GUIDE-MODAL').modal('open');
         return false;
     });
 

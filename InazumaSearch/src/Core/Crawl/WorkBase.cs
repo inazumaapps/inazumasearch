@@ -134,10 +134,10 @@ namespace InazumaSearch.Core.Crawl
             if (targetDirPaths != null)
             {
                 var targetKeyPrefixes1 = targetDirPaths.Select(dir => Util.MakeDocumentDirKeyPrefix(dir));
-                var exprs1 = targetKeyPrefixes1.Select(key => $"{Column.Documents.KEY} @^ {Groonga.Util.EscapeForScript(key)}");
+                var exprs1 = targetKeyPrefixes1.Select(key => $"{Column.Documents.KEY} @^ {Groonga.Util.EscapeForScriptStringValue(key)}");
 
                 var targetKeyPrefixes2 = _app.UserSettings.TargetFolders.Select(folder => Util.MakeDocumentDirKeyPrefix(folder.Path));
-                var exprs2 = targetKeyPrefixes2.Select(key => $"!({Column.Documents.KEY} @^ {Groonga.Util.EscapeForScript(key)})");
+                var exprs2 = targetKeyPrefixes2.Select(key => $"!({Column.Documents.KEY} @^ {Groonga.Util.EscapeForScriptStringValue(key)})");
 
                 filter = $"({string.Join(" || ", exprs1)}) || ({string.Join(" && ", exprs2)})";
             }

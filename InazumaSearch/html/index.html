@@ -105,6 +105,9 @@
                     <div class="input-field col s4">
                         <input id="ADVSEARCH-FILE-NAME" name="file_name" type="text" class="validate">
                         <label for="ADVSEARCH-FILE-NAME">ファイル名</label>
+                        <div class="right">
+                            <a href="#" id="FILE-NAME-GUIDE-MODAL-TRIGGER" class="help-link"><i class="material-icons tiny">help_outline</i> 検索のヒント</a>
+                        </div>
                     </div>
                     <div class="input-field col s4">
                         <input id="ADVSEARCH-BODY" type="text" name="body" class="validate">
@@ -305,6 +308,33 @@
                 <li class="collection-item row">
                     <div class="col m4 l2" style="font-weight: bold"><code>(雨 OR 嵐) 降水</code></div>
                     <div class="col m8 l10"> 「降水」が含まれ、かつ「雨」か「嵐」のいずれかが含まれる文書を検索（カッコによるグループ化）</div>
+                </li>
+            </ul>
+        </div>
+        <div class="modal-footer">
+            <a href="#!" class="modal-action modal-close waves-effect waves-green btn-flat">閉じる</a>
+        </div>
+    </div>
+
+    <div id="FILE-NAME-GUIDE-MODAL" class="modal modal-fixed-footer" style="width: 96% !important; height: 96% !important;">
+        <div class="modal-content">
+            <h5>ファイル名検索のヒント</h5>
+            <ul>
+                <li>下記のように書くことで、特殊なファイル名検索を行うことができます。</li>
+            </ul>
+            <h6>例:</h6>
+            <ul class="collection">
+                <li class="collection-item row">
+                    <div class="col m4 l2" style="font-weight: bold"><code>20_*.pdf</code></div>
+                    <div class="col m8 l10">ファイル名が「20_」から始まり、拡張子が「.pdf」であるファイルのみを検索（ワイルドカード）</div>
+                </li>
+                <li class="collection-item row">
+                    <div class="col m4 l2" style="font-weight: bold"><code>*.xls,*.xlsx,*.xlsm</code><br><code>*.xls;*.xlsx;*.xlsm</code></div>
+                    <div class="col m8 l10">拡張子が「.xls」「.xlsx」「.xlsm」のいずれかであるファイルのみを検索（OR検索）</div>
+                </li>
+                <li class="collection-item row">
+                    <div class="col m4 l2" style="font-weight: bold"><code>-*.pdf</code></div>
+                    <div class="col m8 l10">PDFではないファイルのみを検索（除外）　　※先頭に - 記号をつけた場合のみ有効</div>
                 </li>
             </ul>
         </div>

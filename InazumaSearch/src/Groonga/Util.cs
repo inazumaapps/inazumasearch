@@ -26,15 +26,22 @@ namespace InazumaSearch.Groonga
             return targetTime.ToString("yyyy-MM-dd HH:mm:ss.ffffff");
         }
 
-
-        public static string EscapeForQuery(string src)
+        /// <summary>
+        /// Groongaのクエリー構文の値用にエスケープ処理を行う　※検索キーワードには使用しない
+        /// </summary>
+        public static string EscapeForQueryValue(string src)
         {
-            return "\"" + src.Replace(@"\", @"\\") + "\"";
+            // 先頭・末尾をダブルクォートで囲い、中に含まれるバックスラッシュとダブルクォートをエスケープする
+            return "\"" + src.Replace(@"\", @"\\").Replace("\"", "\\\"") + "\"";
         }
 
-        public static string EscapeForScript(string src)
+        /// <summary>
+        /// Groongaのスクリプト構文の文字列値用にエスケープ処理を行う
+        /// </summary>
+        public static string EscapeForScriptStringValue(string src)
         {
-            return "\"" + src.Replace("\"", "\"\"").Replace(@"\", @"\\") + "\"";
+            // クエリー構文と同実装
+            return EscapeForQueryValue(src);
         }
 
     }
