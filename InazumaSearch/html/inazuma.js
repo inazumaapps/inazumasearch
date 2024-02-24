@@ -710,10 +710,6 @@ $(async function () {
 
     // フォルダ絞り込み解除
     $('#SEARCH-RESULT-HEADER').on('click', '.drilldown-folder-path-reset-link', function(){
-        // 詳細検索欄のパスをクリア
-        $('#ADVSEARCH-FOLDER-PATH').val('');
-        M.updateTextFields(); // Materializeに入力フィールドの更新を反映
-
         // フォルダパスの絞り込みを解除して再検索
         g_lastQueryObject.folderPath = null;
         executeSearch(g_lastQueryObject, true, g_lastSelectedFormatName || null, g_lastSelectedFolderLabel || null, g_lastSelectedOrder || null, g_lastSelectedView || null);

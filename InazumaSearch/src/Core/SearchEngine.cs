@@ -280,11 +280,6 @@ namespace InazumaSearch.Core
             public IList<FormatDrilldownLink> formatDrilldownLinks { get; set; }
 
             /// <summary>
-            /// フォルダパスのドリルダウン結果
-            /// </summary>
-            public IList<FolderPathDrilldownLink> folderPathDrilldownLinks { get; set; }
-
-            /// <summary>
             /// フォルダラベルのドリルダウン結果
             /// </summary>
             public IList<FolderLabelDrilldownLink> folderLabelDrilldownLinks { get; set; }
@@ -325,11 +320,6 @@ namespace InazumaSearch.Core
         {
             public string name { get; set; }
             public string caption { get; set; }
-            public long nSubRecs { get; set; }
-        }
-        public class FolderPathDrilldownLink
-        {
-            public string folderPath { get; set; }
             public long nSubRecs { get; set; }
         }
         public class FolderLabelDrilldownLink
@@ -519,13 +509,12 @@ namespace InazumaSearch.Core
                     , offset: offset
                     , limit: pageSize
                     //, drilldown: new[] { Column.Documents.EXT, Column.Documents.FILE_UPDATED_YEAR }
-                    , drilldown: new[] { Column.Documents.EXT, Column.Documents.FOLDER_PATH, Column.Documents.FOLDER_LABELS }
+                    , drilldown: new[] { Column.Documents.EXT, Column.Documents.FOLDER_LABELS }
                     , drilldownSortKeys: new[] { Groonga.VColumn.KEY }
                     , sortKeys: sortKeys.ToArray()
                     , matchColumns: matchColumns
                     , outputColumns: new[] {
                                 Column.Documents.KEY
-                            , Column.Documents.FOLDER_PATH
                             , Column.Documents.FILE_PATH
                             , Groonga.VColumn.SCORE // 鮮度補正を加味していない生のスコア
                             , Column.Documents.TITLE
@@ -658,7 +647,6 @@ namespace InazumaSearch.Core
                 formatCounts[label] += extRec.GetIntValue(Groonga.VColumn.NSUBRECS).Value;
             }
 
-
             foreach (var formatLabel in formatCounts.Keys)
             {
                 var link = new FormatDrilldownLink()
@@ -672,21 +660,9 @@ namespace InazumaSearch.Core
                 formatDrilldownLinks.Add(link);
             }
 
-            // ドリルダウン結果(フォーマットごとの件数)を元に、フォーマット絞り込み用のデータを作成
-            var folderPathDrilldownLinks = new List<FolderPathDrilldownLink>();
-            foreach (var rec in selectRes.DrilldownResults[1].Records)
-            {
-                var link = new FolderPathDrilldownLink()
-                {
-                    folderPath = (string)rec.Key
-                    ,
-                    nSubRecs = rec.NSubRecs
-                };
-                folderPathDrilldownLinks.Add(link);
-            }
-
+            // ドリルダウン結果(フォルダラベルごとの件数)を元に、フォルダラベル絞り込み用のデータを作成
             var folderLabelDrilldownLinks = new List<FolderLabelDrilldownLink>();
-            foreach (var rec in selectRes.DrilldownResults[2].Records)
+            foreach (var rec in selectRes.DrilldownResults[1].Records)
             {
                 var link = new FolderLabelDrilldownLink()
                 {
@@ -735,8 +711,6 @@ namespace InazumaSearch.Core
                 searchResultSubMessage = searchResultSubMessage
                 ,
                 formatDrilldownLinks = formatDrilldownLinks.OrderByDescending(l => l.nSubRecs).ToList() // 件数の多い順で並べる
-                ,
-                folderPathDrilldownLinks = folderPathDrilldownLinks.OrderByDescending(l => l.nSubRecs).ToList() // 件数の多い順で並べる
                 ,
                 folderLabelDrilldownLinks = folderLabelDrilldownLinks.OrderByDescending(l => l.nSubRecs).ToList() // 件数の多い順で並べる
                 ,
