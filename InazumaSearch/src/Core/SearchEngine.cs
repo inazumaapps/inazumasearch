@@ -750,6 +750,7 @@ namespace InazumaSearch.Core
                     , limit: 1
                     , drilldown: new[] { Column.Documents.FOLDER_PATH }
                     , drilldownLimit: -1
+                    , drilldownSortKeys: new[] { Groonga.VColumn.KEY }
                     , matchColumns: matchColumns
                     , outputColumns: new string[] {
                         Groonga.VColumn.KEY
