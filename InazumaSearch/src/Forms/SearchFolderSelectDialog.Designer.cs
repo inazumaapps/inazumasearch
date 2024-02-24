@@ -42,9 +42,9 @@
             // 
             this.BtnCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.BtnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.BtnCancel.Location = new System.Drawing.Point(337, 385);
+            this.BtnCancel.Location = new System.Drawing.Point(321, 386);
             this.BtnCancel.Name = "BtnCancel";
-            this.BtnCancel.Size = new System.Drawing.Size(89, 33);
+            this.BtnCancel.Size = new System.Drawing.Size(105, 33);
             this.BtnCancel.TabIndex = 15;
             this.BtnCancel.Text = "キャンセル";
             this.BtnCancel.UseVisualStyleBackColor = true;
@@ -70,7 +70,7 @@
             // 
             this.BtnDecide.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.BtnDecide.DialogResult = System.Windows.Forms.DialogResult.OK;
-            this.BtnDecide.Location = new System.Drawing.Point(207, 385);
+            this.BtnDecide.Location = new System.Drawing.Point(210, 386);
             this.BtnDecide.Name = "BtnDecide";
             this.BtnDecide.Size = new System.Drawing.Size(105, 33);
             this.BtnDecide.TabIndex = 18;
