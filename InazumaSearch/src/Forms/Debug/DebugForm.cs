@@ -283,9 +283,9 @@ namespace InazumaSearch.Forms
 
                     // メッセージを使って何かする
                     Console.WriteLine("[From]");
-                    Console.WriteLine(string.Join(Environment.NewLine, message.From.Select(a => a.ToString())));
+                    Console.WriteLine(string.Join(System.Environment.NewLine, message.From.Select(a => a.ToString())));
                     Console.WriteLine("[To]");
-                    Console.WriteLine(string.Join(Environment.NewLine, message.To.Select(a => a.ToString())));
+                    Console.WriteLine(string.Join(System.Environment.NewLine, message.To.Select(a => a.ToString())));
                     Console.WriteLine("[Subject]");
                     Console.WriteLine(message.Subject);
                     Console.WriteLine("[TextBody]");
@@ -293,7 +293,7 @@ namespace InazumaSearch.Forms
                     Console.WriteLine("[HtmlBody]");
                     Console.WriteLine(message.HtmlBody);
                     Console.WriteLine("[Attachments]");
-                    Console.WriteLine(string.Join(Environment.NewLine, message.Attachments.Select(a => a.ContentDisposition)));
+                    Console.WriteLine(string.Join(System.Environment.NewLine, message.Attachments.Select(a => a.ContentDisposition)));
                     Console.WriteLine();
                 }
             }

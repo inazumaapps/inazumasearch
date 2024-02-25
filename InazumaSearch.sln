@@ -22,6 +22,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InazumaSearchUnitTest", "In
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tools", "Tools\Tools.csproj", "{7ECE61E3-D27B-4C85-814D-34A52DF74D4B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InazumaSearchLib", "InazumaSearchLib\InazumaSearchLib.csproj", "{8B2ECFC2-ADCA-46EF-B707-A9BFD1E79694}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -154,6 +156,24 @@ Global
 		{7ECE61E3-D27B-4C85-814D-34A52DF74D4B}.Release|x64.Build.0 = Release|Any CPU
 		{7ECE61E3-D27B-4C85-814D-34A52DF74D4B}.Release|x86.ActiveCfg = Release|Any CPU
 		{7ECE61E3-D27B-4C85-814D-34A52DF74D4B}.Release|x86.Build.0 = Release|Any CPU
+		{8B2ECFC2-ADCA-46EF-B707-A9BFD1E79694}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8B2ECFC2-ADCA-46EF-B707-A9BFD1E79694}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8B2ECFC2-ADCA-46EF-B707-A9BFD1E79694}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{8B2ECFC2-ADCA-46EF-B707-A9BFD1E79694}.Debug|x64.Build.0 = Debug|Any CPU
+		{8B2ECFC2-ADCA-46EF-B707-A9BFD1E79694}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{8B2ECFC2-ADCA-46EF-B707-A9BFD1E79694}.Debug|x86.Build.0 = Debug|Any CPU
+		{8B2ECFC2-ADCA-46EF-B707-A9BFD1E79694}.Release (Portable)|Any CPU.ActiveCfg = Release|Any CPU
+		{8B2ECFC2-ADCA-46EF-B707-A9BFD1E79694}.Release (Portable)|Any CPU.Build.0 = Release|Any CPU
+		{8B2ECFC2-ADCA-46EF-B707-A9BFD1E79694}.Release (Portable)|x64.ActiveCfg = Release|Any CPU
+		{8B2ECFC2-ADCA-46EF-B707-A9BFD1E79694}.Release (Portable)|x64.Build.0 = Release|Any CPU
+		{8B2ECFC2-ADCA-46EF-B707-A9BFD1E79694}.Release (Portable)|x86.ActiveCfg = Release|Any CPU
+		{8B2ECFC2-ADCA-46EF-B707-A9BFD1E79694}.Release (Portable)|x86.Build.0 = Release|Any CPU
+		{8B2ECFC2-ADCA-46EF-B707-A9BFD1E79694}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8B2ECFC2-ADCA-46EF-B707-A9BFD1E79694}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8B2ECFC2-ADCA-46EF-B707-A9BFD1E79694}.Release|x64.ActiveCfg = Release|Any CPU
+		{8B2ECFC2-ADCA-46EF-B707-A9BFD1E79694}.Release|x64.Build.0 = Release|Any CPU
+		{8B2ECFC2-ADCA-46EF-B707-A9BFD1E79694}.Release|x86.ActiveCfg = Release|Any CPU
+		{8B2ECFC2-ADCA-46EF-B707-A9BFD1E79694}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

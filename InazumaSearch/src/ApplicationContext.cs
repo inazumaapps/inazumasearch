@@ -2,8 +2,6 @@
 using System.Runtime.Remoting;
 using System.Runtime.Remoting.Channels;
 using System.Runtime.Remoting.Channels.Ipc;
-using Alphaleonis.Win32.Filesystem;
-using InazumaSearch.Core;
 using InazumaSearch.src.Forms;
 
 namespace InazumaSearch
@@ -37,7 +35,7 @@ namespace InazumaSearch
             var bootSuccess = app.Boot();
             if (!bootSuccess)
             {
-                Environment.Exit(0);
+                System.Environment.Exit(0);
             }
 
             // メインコンポーネントの生成

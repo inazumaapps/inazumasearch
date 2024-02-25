@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
-using InazumaSearch.Core;
+using InazumaSearchLib.Core;
 
 namespace InazumaSearch.Forms
 {
