@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
+using System.Linq;
 using System.Windows.Forms;
 using InazumaSearch.Core;
 using InazumaSearch.Forms.CustomControls;
@@ -12,6 +12,16 @@ namespace InazumaSearch.Forms
     /// </summary>
     public partial class SearchFolderSelectDialog : Form
     {
+        /// <summary>
+        /// ツリーノードに設定するフォルダ情報
+        /// </summary>
+        public class FolderNodeTag
+        {
+            public string Path { get; set; }
+            public string FolderName { get; set; }
+            public long DocumentCount { get; set; }
+        }
+
         /// <summary>
         /// 仮想ノード。
         /// 最初にこの仮想ノードを用いてツリーを構築し、ツリー展開操作が行われたタイミングで実際のノードを生成する
@@ -44,6 +54,11 @@ namespace InazumaSearch.Forms
             public FolderNodeTag Tag { get; set; }
 
             /// <summary>
+            /// 実体化後のノード
+            /// </summary>
+            public TreeNodeEx RealNode { get; set; } = null;
+
+            /// <summary>
             /// 子ノードを追加
             /// </summary>
             public void AddChild(VirtualNode child)
@@ -69,8 +84,19 @@ namespace InazumaSearch.Forms
             DRILLDOWN = 2,
         }
 
+        /// <summary>
+        /// メインアプリケーションインスタンス
+        /// </summary>
         public Core.Application Application { get; set; }
+
+        /// <summary>
+        /// 選択ダイアログを開く前の時点で入力済・選択済のフォルダパス
+        /// </summary>
         public string InputFolderPath { get; set; }
+
+        /// <summary>
+        /// 検索条件（ドリルダウン時のみ設定）
+        /// </summary>
         public SearchEngine.Condition SearchCondition { get; set; }
 
         /// <summary>
@@ -208,7 +234,6 @@ namespace InazumaSearch.Forms
             }
             var folderPaths = searchEngine.SearchAllFolderPath(usingCond);
 
-
             // 仮想ノードツリーの構築を行う
             BuildVirtualNodeTree(folderPaths);
 
@@ -223,11 +248,15 @@ namespace InazumaSearch.Forms
             }
 
             // 初期パスと一致するノードがあれば、そのノードを展開
-            //if (defaultFolderPath != null && tag.Path == defaultFolderPath.TrimEnd('\\'))
-            //{
-            //    TreeFolder.SelectedNode = vNode;
-            //    TreeFolder.SelectedNode.Expand();
-            //}
+            if (DefaultSelectedFolderPath != null)
+            {
+                var targetPath = DefaultSelectedFolderPath.TrimEnd('\\');
+                if (AllVirtualNodeDict.ContainsKey(targetPath))
+                {
+                    var vNode = AllVirtualNodeDict[targetPath];
+                    ExpandTreeToVirtualNode(vNode);
+                }
+            }
 
             // どのノードも選択していない場合は、自動的に選択できる（1つしか選択肢がない）階層まで選択する
             if (TreeFolder.SelectedNode == null)
@@ -252,8 +281,7 @@ namespace InazumaSearch.Forms
                     }
 
                     // 対象ノードを選択・展開
-                    //TreeFolder.SelectedNode = targetVNode;
-                    //TreeFolder.SelectedNode.Expand();
+                    ExpandTreeToVirtualNode(targetVNode);
                 }
             }
 
@@ -267,12 +295,6 @@ namespace InazumaSearch.Forms
         /// <param name="folderDocCounts">フォルダパスをキー、そのフォルダ内（直下）の文書件数を値として格納したDictionary</param>
         protected void BuildVirtualNodeTree(Dictionary<string, long> folderDocCounts)
         {
-            var stopwatches = new Dictionary<string, Stopwatch>();
-            stopwatches.Add("loopTotal", new Stopwatch());
-            stopwatches.Add("childrenSearch", new Stopwatch());
-            stopwatches.Add("nodeAdd", new Stopwatch());
-            stopwatches.Add("iconFetch", new Stopwatch());
-
             // 現在の仮想ノードをクリア
             VirtualRootNodes.Clear();
             AllVirtualNodeDict.Clear();
@@ -280,7 +302,6 @@ namespace InazumaSearch.Forms
             // フォルダパス1件ごとに処理
             foreach (var pair in folderDocCounts)
             {
-                stopwatches["loopTotal"].Start();
                 var folderPath = pair.Key;
                 var docCount = pair.Value;
                 if (string.IsNullOrEmpty(folderPath)) continue;
@@ -311,7 +332,6 @@ namespace InazumaSearch.Forms
                     currentPath = (currentPath == null ? pathItem : currentPath += (@"\" + pathItem));
 
                     // 現在の対象ノードの子に、同じ名前を持つノードがいるかどうかを探索
-                    stopwatches["childrenSearch"].Start();
                     var addTargetNodes = (currentNode == null ? (IReadOnlyList<VirtualNode>)VirtualRootNodes : currentNode.Nodes);
                     foreach (var node in addTargetNodes)
                     {
@@ -323,13 +343,11 @@ namespace InazumaSearch.Forms
                             nodeAddFlag = false;
                             nodesOnPathRoute.Add(node);
                         }
-                    }
-                    stopwatches["childrenSearch"].Stop();
+                    };
 
                     // 新ノードの追加を行う場合
                     if (nodeAddFlag)
                     {
-                        stopwatches["nodeAdd"].Start();
                         var newNode = new VirtualNode()
                         {
                             Tag = new FolderNodeTag() { DocumentCount = 0, Path = currentPath, FolderName = pathItem }
@@ -344,7 +362,6 @@ namespace InazumaSearch.Forms
                             // 子ノード追加
                             currentNode.AddChild(newNode);
                         }
-                        stopwatches["nodeAdd"].Stop();
 
                         currentNode = newNode;
                         nodesOnPathRoute.Add(newNode);
@@ -358,21 +375,7 @@ namespace InazumaSearch.Forms
                     var tag = (FolderNodeTag)node.Tag;
                     tag.DocumentCount += docCount;
                 }
-                stopwatches["loopTotal"].Stop();
-
-                Application.Logger.Info($"[elapsed]");
-                foreach (var pair2 in stopwatches)
-                {
-                    var label = pair2.Key;
-                    var sw = pair2.Value;
-
-                    Application.Logger.Info($"  {label}: {sw.ElapsedMilliseconds}ms");
-                }
             }
-            Application.Logger.Info($"first loop finish.");
-
-            // 初期選択フォルダパスを取得
-            var defaultFolderPath = DefaultSelectedFolderPath;
 
             // 全仮想ノード処理
             foreach (var vNode in AllVirtualNodeDict.Values)
@@ -392,80 +395,21 @@ namespace InazumaSearch.Forms
         }
 
         /// <summary>
-        /// 仮想ノードの実体化
+        /// 表示後少ししてから実行する処理
         /// </summary>
-        public TreeNodeEx RealizeVirtualNode(VirtualNode vNode)
-        {
-            var stopwatches = new Dictionary<string, Stopwatch>();
-            stopwatches.Add("total", new Stopwatch());
-            stopwatches.Add("iconFetch", new Stopwatch());
-            stopwatches.Add("dummyNodeAdd", new Stopwatch());
-            stopwatches.Add("setImageList", new Stopwatch());
-            stopwatches["total"].Start();
-
-            var node = new TreeNodeEx(vNode.Text);
-            node.Tag = vNode.Tag;
-
-            // フォルダアイコンのイメージリストを取得して、そのノードにセット
-            stopwatches["iconFetch"].Start();
-            var systemImgListHandle = IntPtr.Zero;
-            int iconImageIndex;
-            if (IconFetcher.GetSystemImageListInfo(vNode.Tag.Path, out systemImgListHandle, out iconImageIndex))
-            {
-                System.Console.WriteLine($"IconFetcher: systemImgListHandle={systemImgListHandle}, iconImageIndex={iconImageIndex}");
-                node.ImageIndex = iconImageIndex;
-                node.SelectedImageIndex = iconImageIndex;
-            };
-            stopwatches["iconFetch"].Stop();
-
-            // 子がいればダミーノード追加（展開可能とするため）
-            if (vNode.Nodes.Count > 0)
-            {
-                stopwatches["dummyNodeAdd"].Start();
-                node.Nodes.Add(new TreeNodeEx("[dummy]"));
-                stopwatches["dummyNodeAdd"].Stop();
-            }
-
-            // 初回実体化時のみ、ツリーにシステム画像のハンドルを設定
-            if (!isSetTreeFolderIconImageList)
-            {
-                stopwatches["setImageList"].Start();
-                IconFetcher.SetImageListToTreeView(TreeFolder, systemImgListHandle);
-                isSetTreeFolderIconImageList = true;
-                stopwatches["setImageList"].Stop();
-            }
-
-            stopwatches["total"].Stop();
-            Application.Logger.Info($"[realize time] ({vNode.Tag.Path})");
-            foreach (var pair in stopwatches)
-            {
-                var label = pair.Key;
-                var sw = pair.Value;
-
-                Application.Logger.Info($"  {label}: {sw.ElapsedMilliseconds}ms");
-            }
-
-            // 結果を返却
-            return node;
-        }
-
         private void delayTimer_Tick(object sender, EventArgs e)
         {
-            UpdateFolderTree();
             delayTimer.Stop();
+            UpdateFolderTree();
         }
 
+        /// <summary>
+        /// ノード選択時処理
+        /// </summary>
         private void TreeFolder_AfterSelect(object sender, TreeViewEventArgs e)
         {
             var tag = (FolderNodeTag)e.Node.Tag;
             SelectedFolderPath = tag.Path;
-        }
-
-        public class FolderNodeTag
-        {
-            public string Path { get; set; }
-            public string FolderName { get; set; }
-            public long DocumentCount { get; set; }
         }
 
         /// <summary>
@@ -490,8 +434,75 @@ namespace InazumaSearch.Forms
                     var newNode = RealizeVirtualNode(vChildNode);
                     node.Nodes.Add(newNode);
                 }
+
                 node.SubFoldersAdded = true;
             }
+        }
+
+        /// <summary>
+        /// 仮想ノードの実体化
+        /// </summary>
+        private TreeNodeEx RealizeVirtualNode(VirtualNode vNode)
+        {
+            var node = new TreeNodeEx(vNode.Text);
+            node.Tag = vNode.Tag;
+
+            // フォルダアイコンのイメージリストを取得して、そのノードにセット
+            var systemImgListHandle = IntPtr.Zero;
+            int iconImageIndex;
+            if (IconFetcher.GetSystemImageListInfo(vNode.Tag.Path, out systemImgListHandle, out iconImageIndex))
+            {
+                node.ImageIndex = iconImageIndex;
+                node.SelectedImageIndex = iconImageIndex;
+            };
+
+            // 子がいればダミーノード追加（展開可能とするため）
+            if (vNode.Nodes.Count > 0)
+            {
+                node.Nodes.Add(new TreeNodeEx("[dummy]"));
+            }
+
+            // 初回実体化時のみ、ツリーにシステム画像のハンドルを設定
+            if (!isSetTreeFolderIconImageList)
+            {
+                IconFetcher.SetImageListToTreeView(TreeFolder, systemImgListHandle);
+                isSetTreeFolderIconImageList = true;
+            }
+
+            // 仮想ノードと実体ノードを紐付け
+            vNode.RealNode = node;
+
+            // 結果を返却
+            return node;
+        }
+
+        /// <summary>
+        /// ツリーを対象の仮想ノード部分まで展開する
+        /// </summary>
+        /// <param name="vNode">対象仮想ノード</param>
+        private void ExpandTreeToVirtualNode(VirtualNode vNode)
+        {
+            var ancestorVirtualNodes = new List<VirtualNode>() { }; // 仮想ノードリスト。子→親の順で格納する
+
+            // 親をたどる
+            ancestorVirtualNodes.Add(vNode);
+            var targetNode = vNode;
+            while (targetNode.Parent != null)
+            {
+                ancestorVirtualNodes.Add(targetNode.Parent);
+                targetNode = targetNode.Parent;
+            }
+
+            // ルートから子に向けて、1段ずつ実ノードを展開（このタイミングで実体化も行う）
+            TreeNodeEx lastNode = null;
+            foreach (var vNode2 in ((IEnumerable<VirtualNode>)ancestorVirtualNodes).Reverse())
+            {
+                vNode2.RealNode.Expand();
+                lastNode = vNode2.RealNode;
+            }
+
+            // 対象ノードを選択
+            TreeFolder.SelectedNode = lastNode;
         }
     }
 
