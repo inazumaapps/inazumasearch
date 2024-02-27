@@ -59,6 +59,7 @@
             this.TreeFolder.Name = "TreeFolder";
             this.TreeFolder.Size = new System.Drawing.Size(387, 277);
             this.TreeFolder.TabIndex = 16;
+            this.TreeFolder.BeforeExpand += new System.Windows.Forms.TreeViewCancelEventHandler(this.TreeFolder_BeforeExpand);
             this.TreeFolder.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.TreeFolder_AfterSelect);
             // 
             // delayTimer
