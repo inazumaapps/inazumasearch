@@ -1,6 +1,6 @@
 ﻿using System.Windows.Forms;
 
-namespace InazumaSearch.src.Forms
+namespace InazumaSearch.Forms
 {
     public partial class BackgroundMainForm : Form
     {

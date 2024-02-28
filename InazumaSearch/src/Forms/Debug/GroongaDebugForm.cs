@@ -7,7 +7,7 @@ namespace InazumaSearch.Forms
     public partial class GroongaDebugForm : Form
     {
         public string Body { get; set; }
-        public Groonga.Manager GM { get; set; }
+        public InazumaSearchLib.Groonga.Manager GM { get; set; }
 
         public GroongaDebugForm()
         {

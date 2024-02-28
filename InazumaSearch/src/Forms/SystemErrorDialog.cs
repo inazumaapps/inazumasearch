@@ -5,7 +5,7 @@ using System.Drawing;
 using System.Net.Http;
 using System.Text;
 using System.Windows.Forms;
-using InazumaSearch.Core;
+using InazumaSearchLib.Core;
 
 namespace InazumaSearch.Forms
 {
@@ -113,7 +113,7 @@ namespace InazumaSearch.Forms
         private void BtnQuitAndRestart_Click(object sender, EventArgs e)
         {
             if (ChkErrorReportSend.Checked) ReportSend();
-            Core.Application.Restart();
+            Application.Restart();
         }
 
         private void SystemErrorDialog_Shown(object sender, EventArgs e)
@@ -182,7 +182,7 @@ namespace InazumaSearch.Forms
             }
             catch (Exception)
             {
-                Util.ShowErrorMessage(this, "エラー情報の送信に失敗しました。");
+                GUIUtil.ShowErrorMessage(this, "エラー情報の送信に失敗しました。");
             }
         }
 

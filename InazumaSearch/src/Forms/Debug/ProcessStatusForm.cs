@@ -2,7 +2,7 @@
 using System.Diagnostics;
 using System.Text;
 using System.Windows.Forms;
-using InazumaSearch.Core;
+using InazumaSearchLib.Core;
 
 namespace InazumaSearch.Forms
 {

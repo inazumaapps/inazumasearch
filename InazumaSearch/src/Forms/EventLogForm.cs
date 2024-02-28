@@ -1,14 +1,14 @@
 ﻿using System;
 using System.Text;
 using System.Windows.Forms;
-using InazumaSearch.Core;
+using InazumaSearchLib.Core;
 using Newtonsoft.Json;
 
-namespace InazumaSearch.src.Forms
+namespace InazumaSearch.Forms
 {
     public partial class EventLogForm : Form
     {
-        public Core.Application App { get; set; }
+        public Application App { get; set; }
 
         /// <summary>
         /// コンストラクタ（引数なし）
@@ -22,7 +22,7 @@ namespace InazumaSearch.src.Forms
         /// コンストラクタ
         /// </summary>
         /// <param name="app"></param>
-        public EventLogForm(Core.Application app) : this()
+        public EventLogForm(Application app) : this()
         {
             App = app;
         }
@@ -116,7 +116,7 @@ namespace InazumaSearch.src.Forms
 
                 System.IO.File.WriteAllText(path, buf.ToString());
 
-                Util.ShowInformationMessage($"出力を完了しました。\n「OK」ボタンを押下すると、エクスプローラで出力先のフォルダを開きます。");
+                GUIUtil.ShowInformationMessage($"出力を完了しました。\n「OK」ボタンを押下すると、エクスプローラで出力先のフォルダを開きます。");
 
                 System.Diagnostics.Process.Start("explorer.exe", $"/select,\"{path}\"");
             }

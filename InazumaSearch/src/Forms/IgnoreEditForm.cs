@@ -5,7 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Alphaleonis.Win32.Filesystem;
-using InazumaSearch.Core;
+using InazumaSearchLib.Core;
 
 namespace InazumaSearch.Forms
 {
@@ -29,14 +29,14 @@ namespace InazumaSearch.Forms
         private readonly EditMode editMode;
         private readonly string baseDirPath;
         private readonly string defaultPattern;
-        private readonly InazumaSearch.Core.Application _app;
+        private readonly InazumaSearch.Application _app;
 
         private bool isShown = false;
 
         /// <summary>
         /// コンストラクタ
         /// </summary>
-        public IgnoreEditForm(EditMode editMode, string baseDirPath, string defaultPattern, InazumaSearch.Core.Application app)
+        public IgnoreEditForm(EditMode editMode, string baseDirPath, string defaultPattern, InazumaSearch.Application app)
         {
             InitializeComponent();
             this.editMode = editMode;

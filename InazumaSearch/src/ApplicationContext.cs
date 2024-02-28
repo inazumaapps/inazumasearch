@@ -2,7 +2,9 @@
 using System.Runtime.Remoting;
 using System.Runtime.Remoting.Channels;
 using System.Runtime.Remoting.Channels.Ipc;
-using InazumaSearch.src.Forms;
+using Alphaleonis.Win32.Filesystem;
+using InazumaSearch.Forms;
+using InazumaSearchLib.Core;
 
 namespace InazumaSearch
 {
@@ -18,7 +20,7 @@ namespace InazumaSearch
         ) : base()
         {
             // アプリケーション生成
-            var app = new Core.Application
+            var app = new Application
             {
                 DebugMode = appDebugMode,
                 HtmlDirPath = htmlDirPath
@@ -42,12 +44,12 @@ namespace InazumaSearch
             var comp = new MainComponent(app);
 
             // 通知アイコンをアプリケーションのstaticプロパティに設定
-            Core.Application.NotifyIcon = comp.NotifyIcon;
+            Application.NotifyIcon = comp.NotifyIcon;
 
             // 常駐クロールモードであれば、通知アイコンを表示する
             if (app.UserSettings.AlwaysCrawlMode)
             {
-                Core.Application.NotifyIcon.Visible = true;
+                Application.NotifyIcon.Visible = true;
             }
 
             // メインフォームの生成（画面には表示しない）

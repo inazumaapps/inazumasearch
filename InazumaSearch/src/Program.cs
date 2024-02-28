@@ -3,8 +3,8 @@ using System.Runtime.Remoting.Channels;
 using System.Runtime.Remoting.Channels.Ipc;
 using System.Threading;
 using Alphaleonis.Win32.Filesystem;
-using InazumaSearch.Core;
 using InazumaSearch.Forms;
+using InazumaSearchLib.Core;
 
 namespace InazumaSearch
 {
@@ -49,17 +49,17 @@ namespace InazumaSearch
 
                 // コマンドライン引数の解析
                 string errorMessage;
-                var opts = Core.Application.ParseCommandLineOptions(args, out errorMessage);
+                var opts = Application.ParseCommandLineOptions(args, out errorMessage);
                 if (opts == null)
                 {
-                    Core.Util.ShowErrorMessage(errorMessage);
+                    GUIUtil.ShowErrorMessage(errorMessage);
                     return;
                 }
 
                 // HTMLフォルダが存在しなければエラー
                 if (!Directory.Exists(opts.HtmlFullPath))
                 {
-                    Core.Util.ShowErrorMessage("htmlフォルダが見つかりませんでした。\nデバッグ起動の場合は、コマンドライン引数の --html-path でhtmlフォルダのパスを指定してください。");
+                    GUIUtil.ShowErrorMessage("htmlフォルダが見つかりませんでした。\nデバッグ起動の場合は、コマンドライン引数の --html-path でhtmlフォルダのパスを指定してください。");
                     return;
                 }
 

@@ -16,18 +16,5 @@ namespace InazumaSearchLib
             // アセンブリバージョンをSemVer形式とする
             return new SemVersion(asmVer.Major, asmVer.Minor, asmVer.Build);
         }
-
-        /// <summary>
-        /// ポータブル版かどうかを判定
-        /// </summary>
-        /// <returns></returns>
-        public static bool IsPortableMode()
-        {
-#if PORTABLE
-            return true;
-#else
-            return false;
-#endif
-        }
     }
 }

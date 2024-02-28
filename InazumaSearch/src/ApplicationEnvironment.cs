@@ -1,4 +1,5 @@
-﻿using Semver;
+﻿using Alphaleonis.Win32.Filesystem;
+using Semver;
 
 namespace InazumaSearch
 {
@@ -59,6 +60,7 @@ namespace InazumaSearch
                     return Path.Combine(System.Environment.GetFolderPath(System.Environment.SpecialFolder.LocalApplicationData), @"Inazuma Search\db");
                 }
             }
+
         }
 
         /// <summary>
@@ -73,6 +75,17 @@ namespace InazumaSearch
         }
 
         /// <summary>
+        /// プレリリースバージョン
+        /// </summary>
+        public static string PreReleaseVersion
+        {
+            get
+            {
+                return null;
+            }
+        }
+
+        /// <summary>
         /// バージョンを取得 (セマンティックバージョニング準拠)
         /// </summary>
         public static SemVersion GetVersion()
@@ -82,7 +95,7 @@ namespace InazumaSearch
             var asmVer = asm.GetName().Version;
 
             // アセンブリバージョンをSemVer形式とする
-            return new SemVersion(asmVer.Major, asmVer.Minor, asmVer.Build, SystemConst.PreReleaseVersion);
+            return new SemVersion(asmVer.Major, asmVer.Minor, asmVer.Build, PreReleaseVersion);
         }
 
         /// <summary>
@@ -101,6 +114,19 @@ namespace InazumaSearch
         public static string GetPlatform()
         {
             return (System.Environment.Is64BitProcess ? "x64" : "x86");
+        }
+
+        /// <summary>
+        /// ポータブル版かどうかを判定
+        /// </summary>
+        /// <returns></returns>
+        public static bool IsPortableMode()
+        {
+#if PORTABLE
+            return true;
+#else
+            return false;
+#endif
         }
     }
 }

@@ -26,7 +26,7 @@ namespace InazumaSearch.Forms
             DRILLDOWN = 2,
         }
 
-        public Core.Application Application { get; set; }
+        public Application Application { get; set; }
         public string InputFolderPath { get; set; }
         public IList<string> DirPaths { get; set; }
         public SearchEngine.Condition SearchCondition { get; set; }
@@ -84,7 +84,7 @@ namespace InazumaSearch.Forms
         /// <param name="mode">選択モード</param>
         /// <param name="app">アプリケーションインスタンス</param>
         /// <param name="inputFolderPath">現在入力されているフォルダパス</param>
-        public SearchFolderSelectDialog(Core.Application app, string inputFolderPath)
+        public SearchFolderSelectDialog(Application app, string inputFolderPath)
         {
             InitializeComponent();
             Mode = SelectMode.CONDITION;
@@ -99,7 +99,7 @@ namespace InazumaSearch.Forms
         /// <param name="app">アプリケーションインスタンス</param>
         /// <param name="cond">検索条件オブジェクト</param>
         public SearchFolderSelectDialog(
-              Core.Application app
+              Application app
             , SearchEngine.Condition cond
         )
         {

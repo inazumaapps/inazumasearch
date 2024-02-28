@@ -8,8 +8,8 @@ using System.Windows.Forms;
 using Alphaleonis.Win32.Filesystem;
 using CefSharp;
 using CefSharp.WinForms;
-using InazumaSearch.Core;
-using InazumaSearch.Core.Crawl;
+using InazumaSearchLib.Core;
+using InazumaSearchLib.Core.Crawl;
 using Microsoft.WindowsAPICodePack.Dialogs;
 using Newtonsoft.Json;
 
@@ -18,7 +18,7 @@ namespace InazumaSearch.Forms
     public partial class BrowserForm : Form
     {
         public ChromiumWebBrowser ChromeBrowser { get; set; }
-        public Core.Application App { get; set; }
+        public Application App { get; set; }
         public DBStateApi DBState { get; set; }
         public CefApi Api { get; set; }
         public CefAsyncApi AsyncApi { get; set; }
@@ -40,7 +40,7 @@ namespace InazumaSearch.Forms
         public class CefApi
         {
             public BrowserForm OwnerForm { get; set; }
-            public Core.Application App { get; set; }
+            public Application App { get; set; }
 
             public CefApi()
             {
@@ -96,7 +96,7 @@ namespace InazumaSearch.Forms
 
             public void ShowErrorMessage(string message)
             {
-                OwnerForm.InvokeOnUIThread((f) => Util.ShowErrorMessage(f,
+                OwnerForm.InvokeOnUIThread((f) => GUIUtil.ShowErrorMessage(f,
                     message
                 ));
             }
@@ -160,7 +160,7 @@ namespace InazumaSearch.Forms
                 , string selectedFolderLabel = null
             )
             {
-                var cond = new Core.SearchEngine.Condition(queryObject, selectedFormat, selectedFolderLabel);
+                var cond = new SearchEngine.Condition(queryObject, selectedFormat, selectedFolderLabel);
                 OwnerForm.InvokeOnUIThread((owner) =>
                 {
                     var dialog = new SearchFolderSelectDialog(App, cond);
@@ -221,8 +221,8 @@ namespace InazumaSearch.Forms
                     var res = App.GM.Select(
                         Table.Documents
                         , limit: 0
-                        , outputColumns: new string[] { Groonga.VColumn.ID }
-                        , filter: $"{Column.Documents.KEY} @^ {Groonga.Util.EscapeForScript(Util.MakeDocumentDirKeyPrefix(path))}"
+                        , outputColumns: new string[] { InazumaSearchLib.Groonga.VColumn.ID }
+                        , filter: $"{Column.Documents.KEY} @^ {InazumaSearchLib.Groonga.Util.EscapeForScript(Util.MakeDocumentDirKeyPrefix(path))}"
                     );
                     return JsonConvert.SerializeObject(new { fileCount = res.SearchResult.NHits, pathHash = Util.HexDigest(App.HashProvider, path) });
                 });
@@ -325,7 +325,7 @@ namespace InazumaSearch.Forms
 
             public ChromiumWebBrowser Browser { get; set; }
             public BrowserForm OwnerForm { get; set; }
-            public Core.Application App { get; set; }
+            public Application App { get; set; }
 
             public IList<Tuple<DateTime, string>> UserInputLogs { get; protected set; }
 
@@ -367,8 +367,8 @@ namespace InazumaSearch.Forms
                         var res = App.GM.Select(
                             Table.Documents
                             , limit: 0
-                            , outputColumns: new string[] { Groonga.VColumn.ID }
-                            , filter: $"{Column.Documents.KEY} @^ {Groonga.Util.EscapeForScript(Util.MakeDocumentDirKeyPrefix(folder.Path))}"
+                            , outputColumns: new string[] { InazumaSearchLib.Groonga.VColumn.ID }
+                            , filter: $"{Column.Documents.KEY} @^ {InazumaSearchLib.Groonga.Util.EscapeForScript(Util.MakeDocumentDirKeyPrefix(folder.Path))}"
                         );
                         pathHashes[folder.Path] = Util.HexDigest(App.HashProvider, folder.Path);
                         fileCounts[folder.Path] = res.SearchResult.NHits;
@@ -396,22 +396,22 @@ namespace InazumaSearch.Forms
                     {
                         groongaQueries.Add(string.Format("{0}:@{1}"
                                                        , Column.Documents.BODY
-                                                       , Groonga.Util.EscapeForQuery(queryBody)));
+                                                       , InazumaSearchLib.Groonga.Util.EscapeForQuery(queryBody)));
                     }
-                    groongaFilters.Add(string.Format("{0} == {1}", Column.Documents.KEY, Groonga.Util.EscapeForScript(key)));
+                    groongaFilters.Add(string.Format("{0} == {1}", Column.Documents.KEY, InazumaSearchLib.Groonga.Util.EscapeForScript(key)));
 
                     // SELECT実行
                     var joinedQuery = string.Join(" ", groongaQueries.Select(q => "(" + q + ")"));
                     var joinedFilter = string.Join(" && ", groongaFilters.Select(q => "(" + q + ")"));
 
-                    Groonga.SelectResult selectRes = null;
+                    InazumaSearchLib.Groonga.SelectResult selectRes = null;
                     var expr = "highlight_html(body)";
                     selectRes = App.GM.Select(
                           Table.Documents
                         , query: joinedQuery
                         , filter: joinedFilter
                         , matchColumns: new[] { "body" }
-                        , outputColumns: new[] { expr, Groonga.VColumn.SCORE }
+                        , outputColumns: new[] { expr, InazumaSearchLib.Groonga.VColumn.SCORE }
                         , limit: 1
                     );
                     var searchResult = selectRes.SearchResult;
@@ -469,7 +469,7 @@ namespace InazumaSearch.Forms
                         }
 
                         // ハイライトされたHTML
-                        var res = new { body = string.Join("\r\n", outLines), hitCount = searchResult.Records[0].GetIntValue(Groonga.VColumn.SCORE) };
+                        var res = new { body = string.Join("\r\n", outLines), hitCount = searchResult.Records[0].GetIntValue(InazumaSearchLib.Groonga.VColumn.SCORE) };
                         return JsonConvert.SerializeObject(res);
                     }
                     else
@@ -490,17 +490,17 @@ namespace InazumaSearch.Forms
                         var pluginExtNames = App.GetPluginExtNames();
                         var extRes = App.ExtractFile(filePath, textExtNames, pluginExtNames);
 
-                        if (extRes is Core.Application.ExtractFileSuccess)
+                        if (extRes is Application.ExtractFileSuccess)
                         {
                             var dialog = new FileBodyViewDialog
                             {
-                                Body = ((Core.Application.ExtractFileSuccess)extRes).Body
+                                Body = ((Application.ExtractFileSuccess)extRes).Body
                             };
                             dialog.ShowDialog(f);
                         }
                         else
                         {
-                            Util.ShowErrorMessage(((Core.Application.ExtractFileFailed)extRes).ErrorMessage);
+                            GUIUtil.ShowErrorMessage(((Application.ExtractFileFailed)extRes).ErrorMessage);
                         }
 
                     });
@@ -555,7 +555,7 @@ namespace InazumaSearch.Forms
                                 var data = new Dictionary<string, object>
                                 {
                                     ["sequence"] = "1",
-                                    ["time"] = Groonga.Util.ToUnixTime(log.Item1),
+                                    ["time"] = InazumaSearchLib.Groonga.Util.ToUnixTime(log.Item1),
                                     ["item"] = log.Item2
                                 };
                                 learnData.Add(data);
@@ -563,7 +563,7 @@ namespace InazumaSearch.Forms
                             var submitData = new Dictionary<string, object>
                             {
                                 ["sequence"] = "1",
-                                ["time"] = Groonga.Util.ToUnixTime(DateTime.Now),
+                                ["time"] = InazumaSearchLib.Groonga.Util.ToUnixTime(DateTime.Now),
                                 ["item"] = (string)queryObject["keyword"],
                                 ["type"] = "submit"
                             };
@@ -582,7 +582,7 @@ namespace InazumaSearch.Forms
                     var sw = Stopwatch.StartNew();
 
                     // 全文検索の実行
-                    var cond = new Core.SearchEngine.Condition(queryObject, selectedFormat, selectedFolderLabel);
+                    var cond = new SearchEngine.Condition(queryObject, selectedFormat, selectedFolderLabel);
 
                     var searchEngine = new SearchEngine(App);
                     var ret = searchEngine.Search(
@@ -597,7 +597,7 @@ namespace InazumaSearch.Forms
                     {
                         if (!ignoreError)
                         {
-                            OwnerForm.InvokeOnUIThread((f) => Util.ShowErrorMessage(f,
+                            OwnerForm.InvokeOnUIThread((f) => GUIUtil.ShowErrorMessage(f,
                                 "検索語の解析時にエラーが発生しました。\n単語をダブルクォート (\") で囲んで試してみてください。"
                             ));
                         }
@@ -647,7 +647,7 @@ namespace InazumaSearch.Forms
                     App.ChangeAlwaysCrawlMode(f, @checked);
                     if (@checked)
                     {
-                        Util.ShowInformationMessage(f, "常駐クロールを開始しました。\nウインドウを閉じた後も、クロール処理を継続します。\n\nInazuma Searchを完全に終了したい場合は\nタスクバー内通知エリアのアイコンを右クリックして\n「終了」を選択してください。");
+                        GUIUtil.ShowInformationMessage(f, "常駐クロールを開始しました。\nウインドウを閉じた後も、クロール処理を継続します。\n\nInazuma Searchを完全に終了したい場合は\nタスクバー内通知エリアのアイコンを右クリックして\n「終了」を選択してください。");
                     }
                 });
 
@@ -716,7 +716,7 @@ namespace InazumaSearch.Forms
             {
                 var selectRes1 = App.GM.Select(Table.Documents
                     , limit: 0
-                    , outputColumns: new[] { Groonga.VColumn.ID }
+                    , outputColumns: new[] { InazumaSearchLib.Groonga.VColumn.ID }
                 );
 
                 DBState.DocumentCount = selectRes1.SearchResult.NHits;
@@ -748,7 +748,7 @@ namespace InazumaSearch.Forms
         internal class MenuHandler : IContextMenuHandler
         {
             public BrowserForm OwnerForm { get; set; }
-            public Core.Application Application { get; set; }
+            public Application Application { get; set; }
             private const int ShowDevTools = 26501;
             private const int ShowDBBrowser = 26505;
             private const int GroongaDebug = 26506;
@@ -756,7 +756,7 @@ namespace InazumaSearch.Forms
             private const int OpenFile = 26503;
             private const int OpenFolder = 26504;
 
-            public MenuHandler(BrowserForm ownerForm, Core.Application app)
+            public MenuHandler(BrowserForm ownerForm, Application app)
             {
                 OwnerForm = ownerForm;
                 Application = app;
@@ -911,7 +911,7 @@ namespace InazumaSearch.Forms
             {
                 if (!Directory.Exists(dirPath))
                 {
-                    Util.ShowErrorMessage(this, $"下記の検索対象フォルダが見つかりませんでした。\n{dirPath}\n\n検索対象フォルダの設定を変更してから、再度クロールを行ってください。");
+                    GUIUtil.ShowErrorMessage(this, $"下記の検索対象フォルダが見つかりませんでした。\n{dirPath}\n\n検索対象フォルダの設定を変更してから、再度クロールを行ってください。");
                     return;
                 }
             }
@@ -995,7 +995,7 @@ namespace InazumaSearch.Forms
         {
             if (!File.Exists(path))
             {
-                Util.ShowErrorMessage(this,
+                GUIUtil.ShowErrorMessage(this,
                     "ファイルが存在しません。\n前回のクロール後に、移動または削除された可能性があるため、再度クロールを実行してください。"
                 );
                 return;
@@ -1004,7 +1004,7 @@ namespace InazumaSearch.Forms
             // ファイルパスがWindowsの標準最大長を超えている場合は確認
             if (path.Length > SystemConst.WindowsMaxPath)
             {
-                if (!Util.Confirm($"ファイルパスが{SystemConst.WindowsMaxPath}文字を越えているため、このファイルを正しく開けない可能性があります。\n（エクスプローラを含む多くのアプリケーションでは、{SystemConst.WindowsMaxPath}文字を超えるパスのファイルを正しく扱えません）\n\n開いてもよろしいですか？"))
+                if (!GUIUtil.Confirm($"ファイルパスが{SystemConst.WindowsMaxPath}文字を越えているため、このファイルを正しく開けない可能性があります。\n（エクスプローラを含む多くのアプリケーションでは、{SystemConst.WindowsMaxPath}文字を超えるパスのファイルを正しく扱えません）\n\n開いてもよろしいですか？"))
                 {
                     return;
                 }
@@ -1019,14 +1019,14 @@ namespace InazumaSearch.Forms
             catch (Exception ex)
             {
                 App.Logger.Error(ex);
-                Util.ShowErrorMessage(this, $"下記のエラーにより、ファイルを開くことができませんでした。\n\n{ex.Message}");
+                GUIUtil.ShowErrorMessage(this, $"下記のエラーにより、ファイルを開くことができませんでした。\n\n{ex.Message}");
                 return;
             }
 
             var valueDict = new Dictionary<string, object>
             {
-                [Column.Documents.KEY] = Core.Util.MakeDocumentFileKey(path),
-                [Column.Documents.RESULT_SELECTED_AT] = Groonga.Util.ToUnixTime(DateTime.Now)
+                [Column.Documents.KEY] = Util.MakeDocumentFileKey(path),
+                [Column.Documents.RESULT_SELECTED_AT] = InazumaSearchLib.Groonga.Util.ToUnixTime(DateTime.Now)
             };
             App.GM.Load(table: Table.Documents, values: new[] { valueDict });
         }
@@ -1035,7 +1035,7 @@ namespace InazumaSearch.Forms
         {
             if (!File.Exists(path))
             {
-                Util.ShowErrorMessage(this,
+                GUIUtil.ShowErrorMessage(this,
                     "ファイルが存在しません。\n前回のクロール後に、移動または削除された可能性があるため、再度クロールを実行してください。"
                 );
                 return;
@@ -1108,10 +1108,10 @@ namespace InazumaSearch.Forms
         private void BrowserForm_FormClosed(object sender, FormClosedEventArgs e)
         {
             // 起動中のフォーム一覧から削除
-            Core.Application.BootingBrowserForms.Remove(this);
+            Application.BootingBrowserForms.Remove(this);
 
             // 常駐クロールモードでない場合は、全フォームを閉じたタイミングで終了
-            if (!App.UserSettings.AlwaysCrawlMode && Core.Application.BootingBrowserForms.Count == 0)
+            if (!App.UserSettings.AlwaysCrawlMode && Application.BootingBrowserForms.Count == 0)
             {
                 System.Windows.Forms.Application.Exit();
             }

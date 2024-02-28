@@ -133,6 +133,10 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\InazumaSearchLib\InazumaSearchLib.csproj">
+      <Project>{8b2ecfc2-adca-46ef-b707-a9bfd1e79694}</Project>
+      <Name>InazumaSearchLib</Name>
+    </ProjectReference>
     <ProjectReference Include="..\InazumaSearch\InazumaSearch.csproj">
       <Project>{e5c67d6e-d69e-41fc-84a3-17ab964f243c}</Project>
       <Name>InazumaSearch</Name>

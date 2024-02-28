@@ -67,17 +67,17 @@ namespace InazumaSearchLib.Core
         /// <summary>
         /// dataディレクトリパス
         /// </summary>
-        public string DataDirPath { get; protected set; }
+        public abstract string DataDirPath { get; }
 
         /// <summary>
         /// groonga.exeのパス
         /// </summary>
-        public string GroongaExePath { get; protected set; }
+        public abstract string GroongaExePath { get; }
 
         /// <summary>
         /// xdoc2txt.exeのパス
         /// </summary>
-        public string XDoc2TxtExePath { get; protected set; }
+        public abstract string XDoc2TxtExePath { get; }
 
         #endregion
 
@@ -148,22 +148,6 @@ namespace InazumaSearchLib.Core
         /// ユーザー設定ファイルのパス
         /// </summary>
         public virtual string UserSettingPath { get { return Path.Combine(UserSettingDirPath, @"UserSettings.json"); } }
-
-        /// <summary>
-        /// スタートアップフォルダに配置するショートカットのパス
-        /// </summary>
-        public virtual string StartupShortcutPath { get { return Path.Combine(System.Environment.GetFolderPath(System.Environment.SpecialFolder.Startup), @"Inazuma Search.lnk"); } }
-
-        #endregion
-
-        #region コンストラクタ
-
-        public ApplicationBase(string dataDirPath, string groongaExePath, string xDoc2TxtExePath)
-        {
-            DataDirPath = dataDirPath;
-            GroongaExePath = groongaExePath;
-            XDoc2TxtExePath = xDoc2TxtExePath;
-        }
 
         #endregion
 

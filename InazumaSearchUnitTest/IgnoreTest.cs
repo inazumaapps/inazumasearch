@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using InazumaSearch.Core;
+using InazumaSearchLib.Core;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace InazumaSearchUnitTest

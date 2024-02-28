@@ -5,21 +5,20 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Alphaleonis.Win32.Filesystem;
-using InazumaSearch.Core;
-using InazumaSearch.src.Forms;
+using InazumaSearchLib.Core;
 using Microsoft.WindowsAPICodePack.Dialogs;
 
 namespace InazumaSearch.Forms
 {
     public partial class DipswForm : Form
     {
-        public Core.Application Application { get; set; }
+        public Application Application { get; set; }
 
         public DipswForm()
         {
             InitializeComponent();
         }
-        public DipswForm(Core.Application app)
+        public DipswForm(Application app)
         {
             InitializeComponent();
             Application = app;
@@ -30,7 +29,7 @@ namespace InazumaSearch.Forms
         /// </summary>
         private void UpdateBrowserFormCounts()
         {
-            foreach (var browserForm in Core.Application.BootingBrowserForms)
+            foreach (var browserForm in Application.BootingBrowserForms)
             {
                 if (browserForm.SettingScreenShowing)
                 {
@@ -42,7 +41,7 @@ namespace InazumaSearch.Forms
 
         private void BtnClearCrawledData_Click(object sender, EventArgs e)
         {
-            if (Util.Confirm(this, "クロール時に収集した文書データと、文書のサムネイル画像をクリアします。\nよろしいですか？", defaultNo: true))
+            if (GUIUtil.Confirm(this, "クロール時に収集した文書データと、文書のサムネイル画像をクリアします。\nよろしいですか？", defaultNo: true))
             {
                 Application.InvokeWithProgressFormWithoutAlwaysCrawl(this, "文書データをクリアしています...", () =>
                 {
@@ -60,7 +59,7 @@ namespace InazumaSearch.Forms
 
         private void BtnClearAllData_Click(object sender, EventArgs e)
         {
-            if (Util.Confirm(this, "ユーザー設定を含む全てのデータを初期化します。\nこの操作は取り消せません。\n\nよろしいですか？", defaultNo: true))
+            if (GUIUtil.Confirm(this, "ユーザー設定を含む全てのデータを初期化します。\nこの操作は取り消せません。\n\nよろしいですか？", defaultNo: true))
             {
                 // 常駐クロール実行中の場合、中断した上で実行する
                 Application.InvokeWithProgressFormWithoutAlwaysCrawl(this, "全てのデータを初期化しています...", () =>
@@ -81,7 +80,7 @@ namespace InazumaSearch.Forms
                 });
 
                 // アプリケーションを再起動
-                Core.Application.Restart();
+                Application.Restart();
             }
         }
 
@@ -223,7 +222,7 @@ namespace InazumaSearch.Forms
 
 保存先フォルダを変更してよろしいですか？
 ";
-            if (Util.Confirm(this, msg.Trim(), defaultNo: true))
+            if (GUIUtil.Confirm(this, msg.Trim(), defaultNo: true))
             {
                 using (var dialog = new CommonOpenFileDialog())
                 {
@@ -260,7 +259,7 @@ namespace InazumaSearch.Forms
             // 元フォルダと同じならエラー
             if (Application.DBDirPath.ToLower() == newDirPath.ToLower())
             {
-                Util.ShowErrorMessage(this, "現在の保存先と同じフォルダです。");
+                GUIUtil.ShowErrorMessage(this, "現在の保存先と同じフォルダです。");
                 return;
             }
 
@@ -275,7 +274,7 @@ namespace InazumaSearch.Forms
                 confirmMsg = $"文書データベースの保存先を下記フォルダに変更します。\nよろしいですか？\n{newDirPath}";
             }
 
-            if (!Util.Confirm(this, confirmMsg, defaultNo: true))
+            if (!GUIUtil.Confirm(this, confirmMsg, defaultNo: true))
             {
                 // キャンセルした場合は中断
                 return;
@@ -290,7 +289,7 @@ namespace InazumaSearch.Forms
                 string errorMessage;
                 if (!Application.ChangeDocumentDBDir(newDirPath, out errorMessage, progress))
                 {
-                    Util.ShowErrorMessage(this, errorMessage);
+                    GUIUtil.ShowErrorMessage(this, errorMessage);
                 }
             });
             var f = new ProgressForm(t, "文書データベースの保存先を変更しています...");
@@ -351,7 +350,7 @@ namespace InazumaSearch.Forms
 
         private void BtnRebootDebugMode_Click(object sender, EventArgs e)
         {
-            Core.Application.Restart(forceDebug: true);
+            Application.Restart(forceDebug: true);
         }
 
         private void lnlEventLogForm_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)

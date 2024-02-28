@@ -1,4 +1,5 @@
 ﻿using System;
+using InazumaSearch;
 using InazumaSearch.Forms;
 
 namespace InazumaSearch_Debug
@@ -23,10 +24,10 @@ namespace InazumaSearch_Debug
 
             // コマンドライン引数の解析
             string errorMessage;
-            var opts = InazumaSearch.Core.Application.ParseCommandLineOptions(args, out errorMessage);
+            var opts = InazumaSearch.Application.ParseCommandLineOptions(args, out errorMessage);
             if (opts == null)
             {
-                InazumaSearch.Core.Util.ShowErrorMessage(errorMessage);
+                GUIUtil.ShowErrorMessage(errorMessage);
                 return;
             }
 

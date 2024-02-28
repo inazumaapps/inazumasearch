@@ -3,20 +3,20 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
 using Alphaleonis.Win32.Filesystem;
-using InazumaSearch.Core;
+using InazumaSearchLib.Core;
 
 namespace InazumaSearch.Forms
 {
     public partial class DBBrowserForm : Form
     {
-        public Core.Application Application { get; set; }
-        public IList<Groonga.RecordSet.Record> DocumentRecords { get; set; }
+        public Application Application { get; set; }
+        public IList<InazumaSearchLib.Groonga.RecordSet.Record> DocumentRecords { get; set; }
 
         public DBBrowserForm()
         {
             InitializeComponent();
         }
-        public DBBrowserForm(Core.Application app)
+        public DBBrowserForm(Application app)
         {
             InitializeComponent();
             Application = app;
@@ -171,7 +171,7 @@ namespace InazumaSearch.Forms
                 var res = Application.GM.Select(
                       table: Table.Documents
                     , outputColumns: new[] { Column.Documents.KEY, Column.Documents.BODY }
-                    , query: string.Format("{0}:{1}", Column.Documents.KEY, Groonga.Util.EscapeForQuery(documentKey))
+                    , query: string.Format("{0}:{1}", Column.Documents.KEY, InazumaSearchLib.Groonga.Util.EscapeForQuery(documentKey))
                 );
 
                 var body = res.SearchResult.Records[0].GetTextValue(Column.Documents.BODY);

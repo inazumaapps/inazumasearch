@@ -2,17 +2,17 @@
 
 namespace InazumaSearch
 {
-    public class Util
+    public class GUIUtil
     {
         #region ダイアログボックス表示
 
-        public static void ShowInformationMessage(string message)
+        public static void ShowInformationMessage(string message, string title = "情報")
         {
-            MessageBox.Show(message, "情報", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            MessageBox.Show(message, title, MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
-        public static void ShowInformationMessage(IWin32Window owner, string message)
+        public static void ShowInformationMessage(IWin32Window owner, string message, string title = "情報")
         {
-            MessageBox.Show(owner, message, "情報", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            MessageBox.Show(owner, message, title, MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
         public static void ShowErrorMessage(string message)
         {

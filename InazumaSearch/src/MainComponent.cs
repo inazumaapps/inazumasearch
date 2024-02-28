@@ -1,14 +1,13 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Windows.Forms;
-using InazumaSearch.Core;
 using InazumaSearch.Forms;
 
 namespace InazumaSearch
 {
     public partial class MainComponent : Component
     {
-        public Core.Application App { get; set; }
+        public Application App { get; set; }
 
         /// <summary>
         /// 前回のタイマーTick処理時に、「常駐クロールの再起動が必要である」と判定されたかどうか
@@ -28,7 +27,7 @@ namespace InazumaSearch
             NotifyIcon.Dispose();
         }
 
-        public MainComponent(Core.Application app) : this()
+        public MainComponent(Application app) : this()
         {
             App = app;
         }
@@ -46,7 +45,7 @@ namespace InazumaSearch
                 {
                     App = App
                 };
-                Core.Application.BootingBrowserForms.Add(form);
+                Application.BootingBrowserForms.Add(form);
                 form.Show();
             }
             catch (System.IO.FileNotFoundException ex)
@@ -54,14 +53,14 @@ namespace InazumaSearch
                 App.Logger.Error(ex);
                 App.Logger.Error($"見つからなかったファイル: {ex.FileName}");
                 App.Logger.Error($"FusionLog: {ex.FusionLog}");
-                Util.ShowErrorMessage("必要なファイルが読み込めなかったため、ブラウザコントロールの初期化に失敗しました。");
-                Core.Application.Quit();
+                GUIUtil.ShowErrorMessage("必要なファイルが読み込めなかったため、ブラウザコントロールの初期化に失敗しました。");
+                Application.Quit();
             }
         }
 
         protected void MenuItem_Quit_Click(object sender, EventArgs e)
         {
-            Core.Application.Quit();
+            Application.Quit();
         }
 
 

@@ -3,8 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using InazumaSearch.Core.Crawl;
-using InazumaSearch.src.Forms;
+using InazumaSearchLib.Core.Crawl;
 using Microsoft.WindowsAPICodePack.Taskbar;
 
 namespace InazumaSearch.Forms
@@ -12,7 +11,7 @@ namespace InazumaSearch.Forms
     public partial class CrawlProgressForm : Form
     {
         protected DateTime StartingTime { get; set; }
-        public Core.Application App { get; set; }
+        public Application App { get; set; }
 
         /// <summary>
         /// 処理の中断を要求したときに実行する処理
@@ -40,7 +39,7 @@ namespace InazumaSearch.Forms
         /// <param name="app"></param>
         /// <param name="cancelRequestingCallback">処理の中断を要求したときに実行する処理</param>
         /// <param name="stoppedCallback">クロール処理が終了したときに実行する処理（完了 or キャンセルは問わない）</param>
-        public CrawlProgressForm(Core.Application app, Action cancelRequestingCallback = null, Action stoppedCallback = null) : this()
+        public CrawlProgressForm(Application app, Action cancelRequestingCallback = null, Action stoppedCallback = null) : this()
         {
             App = app;
             CancelRequestingCallback = cancelRequestingCallback;
