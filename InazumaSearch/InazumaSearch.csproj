@@ -246,6 +246,7 @@
       <DependentUpon>BrowserForm.cs</DependentUpon>
     </Compile>
     <Compile Include="src\Core\ExcelTextExtractor.cs" />
+    <Compile Include="src\Forms\CustomControls\TreeNodeEx.cs" />
     <Compile Include="src\Forms\SearchFolderSelectDialog.cs">
       <SubType>Form</SubType>
     </Compile>
