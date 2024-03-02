@@ -705,6 +705,19 @@ $(async function () {
         return false;
 
     });
+    
+    // 条件クリアリンククリック
+    $('#SEARCH-CONDITION-CLEAR-LINK').click(function(){
+        $('input[name=keyword]').val('').removeClass('valid');
+        $('input[name=folder_path]').val('').removeClass('valid');
+        $('input[name=file_name]').val('').removeClass('valid');
+        $('input[name=body]').val('').removeClass('valid');
+        $('select[name=updated]').val('').removeClass('valid');
+        const caption = $('select[name=updated] option:first').text();
+        $('select[name=updated]').siblings().filter('.dropdown-trigger').val(caption);
+        M.updateTextFields();
+
+    });
 
     // 検索対象フォルダ選択
     $('#ADVSEARCH-FOLDER-PATH-SELECT-BUTTON').click(function(){
