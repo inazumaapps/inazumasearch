@@ -5,6 +5,8 @@ var g_lastSelectedFolderLabel = null;
 var g_lastSelectedOrder = null;
 var g_lastSelectedView = null;
 var g_lastSearchOffset = 0;
+
+var g_searched = false;
 var g_searchFinished = false;
 
 // functions
@@ -155,6 +157,9 @@ function executeSearch(
 
         // 検索結果の各行を表示
         displayResultRows(data, g_lastSelectedView);
+
+        // 検索実行済フラグon
+        g_searched = true;
     });
 }
 
@@ -479,6 +484,7 @@ $(async function () {
                         keyword: value
                         , folderPath: ''
                         , fileName: ''
+                        , excludingFileName: ''
                         , body: ''
                         , updated: ''
                     }
@@ -670,6 +676,7 @@ $(async function () {
         var keyword = $('input[name=keyword]').val();
         var folderPath = $('input[name=folder_path]').val();
         var fileName = $('input[name=file_name]').val();
+        var excludingFileName = $('input[name=excluding_file_name]').val();
         var body = $('input[name=body]').val();
         var updated = $('select[name=updated]').val();
 
@@ -677,6 +684,7 @@ $(async function () {
         var detailSearchFlag = $('#DETAIL-SEARCH-SWITCH input:checkbox').is(':checked');
         if(!detailSearchFlag){
             fileName = '';
+            excludingFileName = '';
             folderPath = '';
             body = '';
             updated = '';
@@ -693,6 +701,7 @@ $(async function () {
             keyword: keyword
             , folderPath: folderPath
             , fileName: fileName
+            , excludingFileName: excludingFileName
             , body: body
             , updated: updated
         }
@@ -711,6 +720,7 @@ $(async function () {
         $('input[name=keyword]').val('').removeClass('valid');
         $('input[name=folder_path]').val('').removeClass('valid');
         $('input[name=file_name]').val('').removeClass('valid');
+        $('input[name=excluding_file_name]').val('').removeClass('valid');
         $('input[name=body]').val('').removeClass('valid');
         $('select[name=updated]').val('').removeClass('valid');
         const caption = $('select[name=updated] option:first').text();
@@ -813,7 +823,7 @@ $(async function () {
     // Each time the user scrolls
     var win = $(window);
     win.scroll(function () {
-        if (location.href.endsWith('index.html')) {
+        if (location.href.endsWith('index.html') && g_searched) {
             // End of the document reached?
             if (($(document).height() - win.height() - 100) <= win.scrollTop()) {
                 var userSetting = JSON.parse(api.getUserSettings());

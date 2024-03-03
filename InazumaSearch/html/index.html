@@ -101,11 +101,19 @@
 
                     <div class="row">
                         <div class="input-field col s4">
-                            <input id="ADVSEARCH-FILE-NAME" name="file_name" type="text" class="validate">
-                            <label for="ADVSEARCH-FILE-NAME">ファイル名</label>
-                            <div class="right">
-                                <a href="#" id="FILE-NAME-GUIDE-MODAL-TRIGGER" class="help-link"><i class="material-icons tiny">help_outline</i> 検索のヒント</a>
-                            </div>
+                            <div class="row">
+                                <div class="input-field col s12" style="margin-top: 0; margin-bottom: 0.5rem;">
+                                    <input id="ADVSEARCH-FILE-NAME" name="file_name" type="text" class="validate">
+                                    <label for="ADVSEARCH-FILE-NAME">ファイル名</label>
+                                </div><!-- /.col -->
+                                <div class="input-field col s12" style=" margin-top: 0.5rem; margin-bottom: 0;">
+                                    <input id="ADVSEARCH-EXCLUDE-FILE-NAME" name="excluding_file_name" type="text" class="validate">
+                                    <label for="ADVSEARCH-EXCLUDE-FILE-NAME">除外ファイル名</label>
+                                    <div class="right">
+                                        <a href="#" id="FILE-NAME-GUIDE-MODAL-TRIGGER" class="help-link"><i class="material-icons tiny">help_outline</i> ファイル名検索のヒント</a>
+                                    </div>
+                                </div><!-- /.col -->
+                            </div><!-- /.row -->
                         </div>
                         <div class="input-field col s4">
                             <input id="ADVSEARCH-BODY" type="text" name="body" class="validate">
@@ -122,9 +130,10 @@
                                 <option value="3years">3年以内</option>
                             </select>
                             <label>更新日付</label>
-                            <div class="right">
+                            <div class="right" style="margin-top: 4.5rem">
                                 <a href="#" class="help-link" id="SEARCH-CONDITION-CLEAR-LINK">条件クリア</a>
                             </div>
+
                         </div>
                     </div><!-- /.row -->
                 </div><!-- /#DETAIL-SEARCH -->
@@ -333,10 +342,6 @@
                 <li class="collection-item row">
                     <div class="col m4 l2" style="font-weight: bold"><code>*.xls,*.xlsx,*.xlsm</code><br><code>*.xls;*.xlsx;*.xlsm</code></div>
                     <div class="col m8 l10">拡張子が「.xls」「.xlsx」「.xlsm」のいずれかであるファイルのみを検索（OR検索）</div>
-                </li>
-                <li class="collection-item row">
-                    <div class="col m4 l2" style="font-weight: bold"><code>-*.pdf</code></div>
-                    <div class="col m8 l10">PDFではないファイルのみを検索（除外）　　※先頭に - 記号をつけた場合のみ有効</div>
                 </li>
             </ul>
         </div>
