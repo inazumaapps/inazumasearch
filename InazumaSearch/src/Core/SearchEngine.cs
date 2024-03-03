@@ -114,13 +114,13 @@ namespace InazumaSearch.Core
                 // ファイル名条件
                 if (!string.IsNullOrWhiteSpace(FileName))
                 {
-                    res.GroongaFilters.Add(convertFileNameExpressionToGroongaScript(FileName));
+                    res.GroongaFilters.Add(convertFileNameExpressionToGroongaScript(FileName, excluding: false));
                     res.SubMessages.Add($"ファイル名: 「{FileName}」");
                 }
                 // 除外ファイル名条件
                 if (!string.IsNullOrWhiteSpace(ExcludingFileName))
                 {
-                    res.GroongaFilters.Add($"!({convertFileNameExpressionToGroongaScript(ExcludingFileName)})"); // not検索
+                    res.GroongaFilters.Add(convertFileNameExpressionToGroongaScript(ExcludingFileName, excluding: true));
                     res.SubMessages.Add($"除外ファイル名: 「{ExcludingFileName}」");
                 }
 
@@ -229,7 +229,7 @@ namespace InazumaSearch.Core
             /// <summary>
             /// ファイル名の指定をGroongaスクリプト形式に変換
             /// </summary>
-            protected static string convertFileNameExpressionToGroongaScript(string fileNameExpr)
+            protected static string convertFileNameExpressionToGroongaScript(string fileNameExpr, bool excluding)
             {
                 // ;（セミコロン）または,（半角カンマ）で区切られた複数条件を処理する　前後の半角空白は削除
                 var groongaFileNameExpressions = new List<string>();
@@ -237,10 +237,14 @@ namespace InazumaSearch.Core
                 {
                     var usingExpr = fileNameExprElement.Trim();
 
-                    // *（ワイルドカード）を含む場合は正規表現としてコンパイルする
-                    // そうでない場合は、全文検索
+                    // ワイルドカード「*」を含まない場合は、全文検索する（※キーワードハイライトはスクリプトの正規表現では機能しないため）
+                    // そうでない場合は、正規表現にコンパイルする
                     string groongaExpr;
-                    if (usingExpr.Contains("*"))
+                    if (!usingExpr.Contains("*"))
+                    {
+                        groongaExpr = $"{Column.Documents.FILE_NAME} @ {Groonga.Util.EscapeForScriptStringValue(usingExpr)}";
+                    }
+                    else
                     {
                         var regExpBuf = new StringBuilder();
                         regExpBuf.Append(@"\A"); // 文字列の先頭
@@ -282,16 +286,12 @@ namespace InazumaSearch.Core
 
                         groongaExpr = $"{Column.Documents.FILE_NAME} @~ {Groonga.Util.EscapeForScriptStringValue(regExpBuf.ToString())}";
                     }
-                    else
-                    {
-                        groongaExpr = $"{Column.Documents.FILE_NAME} @ {Groonga.Util.EscapeForScriptStringValue(usingExpr)}";
-                    }
-
                     groongaFileNameExpressions.Add(groongaExpr);
                 }
 
                 // ORで結合して返す
-                return string.Join(" || ", groongaFileNameExpressions.Select(expr => $"({expr})"));
+                var joinedExpr = string.Join(" || ", groongaFileNameExpressions.Select(expr => $"({expr})"));
+                return (excluding ? $"!{joinedExpr}" : joinedExpr);
             }
         }
 
