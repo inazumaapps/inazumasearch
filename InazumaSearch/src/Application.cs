@@ -58,7 +58,7 @@ namespace InazumaSearch
                 }
                 else
                 {
-                    return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), @"Inazuma Search\log");
+                    return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), @"Inazuma Search");
                 }
             }
         }
@@ -68,7 +68,7 @@ namespace InazumaSearch
         {
             get
             {
-                return $"externals/{ApplicationEnvironment.GetPlatform()}/xdoc2txt/xdoc2txt.exe";
+                return Path.Combine(System.Windows.Forms.Application.StartupPath, $"externals/{ApplicationEnvironment.GetPlatform()}/groonga/bin/groonga.exe");
             }
         }
 
