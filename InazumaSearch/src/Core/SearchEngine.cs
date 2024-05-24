@@ -561,6 +561,17 @@ namespace InazumaSearch.Core
                     }
 
                 }
+                else if (ex.ReturnCode == Groonga.CommandReturnCode.GRN_FILE_CORRUPT)
+                {
+                    Logger.Error(ex.ToString());
+
+                    var errorRet = new Result
+                    {
+                        success = false,
+                        errorMessage = "検索時にシステムエラー（GRN_FILE_CORRUPT）が発生しました。\n全文検索用の文書データベースが破損している可能性があります。\n\nお手数ですが、設定＞詳細設定と特殊機能　から「クロールした文書データをクリア」ボタンを押下し、そのあとに再度クロールを行ってください。"
+                    };
+                    return errorRet;
+                }
 
                 throw;
             }
