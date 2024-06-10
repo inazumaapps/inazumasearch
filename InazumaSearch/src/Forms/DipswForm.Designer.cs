@@ -70,6 +70,7 @@
             this.label12 = new System.Windows.Forms.Label();
             this.label13 = new System.Windows.Forms.Label();
             this.NumTextFileMaxSizeByMB = new System.Windows.Forms.NumericUpDown();
+            this.label11 = new System.Windows.Forms.Label();
             this.tblDebug.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.tableLayoutPanel2.SuspendLayout();
@@ -106,7 +107,7 @@
             // 
             // BtnClearAllData
             // 
-            this.BtnClearAllData.Location = new System.Drawing.Point(12, 53);
+            this.BtnClearAllData.Location = new System.Drawing.Point(12, 73);
             this.BtnClearAllData.Name = "BtnClearAllData";
             this.BtnClearAllData.Size = new System.Drawing.Size(268, 23);
             this.BtnClearAllData.TabIndex = 1;
@@ -117,7 +118,7 @@
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(12, 79);
+            this.label1.Location = new System.Drawing.Point(12, 99);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(350, 15);
             this.label1.TabIndex = 17;
@@ -130,7 +131,7 @@
             this.tblDebug.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 38.53659F));
             this.tblDebug.Controls.Add(this.lblDocumentDBSize, 1, 0);
             this.tblDebug.Controls.Add(this.label6, 0, 0);
-            this.tblDebug.Location = new System.Drawing.Point(15, 219);
+            this.tblDebug.Location = new System.Drawing.Point(15, 239);
             this.tblDebug.Name = "tblDebug";
             this.tblDebug.RowCount = 1;
             this.tblDebug.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 47.76119F));
@@ -164,7 +165,7 @@
             this.groupBox2.Controls.Add(this.BtnResetDocumentDBDirPath);
             this.groupBox2.Controls.Add(this.BtnChangeDocumentDBDirPath);
             this.groupBox2.Controls.Add(this.TxtDocumentDBDirPath);
-            this.groupBox2.Location = new System.Drawing.Point(13, 130);
+            this.groupBox2.Location = new System.Drawing.Point(13, 150);
             this.groupBox2.Name = "groupBox2";
             this.groupBox2.Size = new System.Drawing.Size(399, 80);
             this.groupBox2.TabIndex = 2;
@@ -571,11 +572,21 @@
             0});
             this.NumTextFileMaxSizeByMB.ValueChanged += new System.EventHandler(this.NumTextFileMaxSizeByMB_ValueChanged);
             // 
+            // label11
+            // 
+            this.label11.AutoSize = true;
+            this.label11.Location = new System.Drawing.Point(12, 38);
+            this.label11.Name = "label11";
+            this.label11.Size = new System.Drawing.Size(169, 15);
+            this.label11.TabIndex = 34;
+            this.label11.Text = "※設定情報は初期化されません。";
+            // 
             // DipswForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.ClientSize = new System.Drawing.Size(841, 556);
+            this.Controls.Add(this.label11);
             this.Controls.Add(this.groupBox5);
             this.Controls.Add(this.lnlEventLogForm);
             this.Controls.Add(this.groupBox4);
@@ -660,6 +671,7 @@
         private System.Windows.Forms.Label label12;
         private System.Windows.Forms.Label label13;
         private System.Windows.Forms.NumericUpDown NumTextFileMaxSizeByMB;
+        private System.Windows.Forms.Label label11;
     }
 }
 
