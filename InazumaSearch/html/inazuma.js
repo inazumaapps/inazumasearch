@@ -332,6 +332,29 @@ function displayResultRows_ListView(getJsonData, searchOffset){
 
 }
 
+// 残りの検索結果があれば表示
+function displayNextPageResultsIfExists(){
+    var userSetting = JSON.parse(api.getUserSettings());
+    var pageSize = (g_lastSelectedView === 'list' ? userSetting.DisplayPageSizeForListView : userSetting.DisplayPageSizeForNormalView);
+    var offset = g_lastSearchOffset + pageSize;
+
+    if (offset > g_lastSearchOffset && !g_searchFinished) {
+        g_lastSearchOffset = offset;
+
+        asyncApi.search(g_lastQueryObject, false, offset, g_lastSelectedFormatName, g_lastSelectedFolderLabel, g_lastSelectedOrder, g_lastSelectedView).then(function (resJson) {
+            var data = JSON.parse(resJson);
+
+            // 全結果の表示が完了していれば、完了フラグを立てる
+            if (offset + data.pageSize >= data.nHits) {
+                g_searchFinished = true;
+            }
+
+            // 検索結果の各行を表示
+            displayResultRows(data, g_lastSelectedView, offset);
+        });
+    }
+}
+
 // クロール実行前モーダルにフォルダ表示を追加
 function addFolderToCrawlModal(path, label, fileCount, checked) {
     var $newItem = $('.folder-item.cloning-base').clone().removeClass('cloning-base');
@@ -756,6 +779,12 @@ $(async function () {
         return false;
     });
 
+    // 「次のページ」リンクをクリック
+    $('#DISPLAY-NEXT-PAGE-LINK').click(function(){
+        displayNextPageResultsIfExists();
+        return false;
+    });
+
     $('#DEVTOOL').click(function(){
         api.showDevTool();
     });
@@ -787,26 +816,10 @@ $(async function () {
     win.scroll(function () {
         if (location.href.endsWith('index.html')) {
             // End of the document reached?
-            if (($(document).height() - win.height() - 100) <= win.scrollTop()) {
-                var userSetting = JSON.parse(api.getUserSettings());
-                var pageSize = (g_lastSelectedView === 'list' ? userSetting.DisplayPageSizeForListView : userSetting.DisplayPageSizeForNormalView);
-                var offset = g_lastSearchOffset + pageSize;
-
-                if (offset > g_lastSearchOffset && !g_searchFinished) {
-                    g_lastSearchOffset = offset;
-
-                    asyncApi.search(g_lastQueryObject, false, offset, g_lastSelectedFormatName, g_lastSelectedFolderLabel, g_lastSelectedOrder, g_lastSelectedView).then(function (resJson) {
-                        var data = JSON.parse(resJson);
-
-                        // 全結果の表示が完了していれば、完了フラグを立てる
-                        if (offset + data.pageSize >= data.nHits) {
-                            g_searchFinished = true;
-                        }
-
-                        // 検索結果の各行を表示
-                        displayResultRows(data, g_lastSelectedView, offset);
-                    });
-                }
+            const scrollBottom = win.scrollTop() + win.height();
+            if (scrollBottom + 100 >= $(document).height()) {
+                // 残りの検索結果があれば表示
+                displayNextPageResultsIfExists();
             }
         }
     });
