@@ -292,7 +292,7 @@ namespace InazumaSearch.Core
 
                 // ORで結合して返す
                 var joinedExpr = string.Join(" || ", groongaFileNameExpressions.Select(expr => $"({expr})"));
-                return (excluding ? $"!{joinedExpr}" : joinedExpr);
+                return (excluding ? $"!({joinedExpr})" : joinedExpr);
             }
         }
 
