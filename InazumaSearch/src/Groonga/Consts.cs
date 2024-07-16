@@ -93,6 +93,7 @@
         public const int GRN_SUCCESS = 0;
         public const int GRN_INVALID_ARGUMENT = -22;
         public const int GRN_NO_MEMORY_AVAILABLE = -35;
+        public const int GRN_FILE_CORRUPT = -53;
         public const int GRN_SYNTAX_ERROR = -63;
     }
 
