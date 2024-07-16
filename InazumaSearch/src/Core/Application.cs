@@ -783,7 +783,7 @@ namespace InazumaSearch.Core
                 , outputColumns: new[] { Column.Documents.KEY, Column.Documents.FILE_PATH }
                 , limit: -1
                 , sortKeys: new[] { Column.Documents.KEY }
-                , filter: $"{Column.Documents.KEY} @^ {Groonga.Util.EscapeForScript(Util.MakeDocumentDirKeyPrefix(ignoreSetting.DirPathLower))}" // ベースフォルダパスから始まるキーを検索
+                , filter: $"{Column.Documents.KEY} @^ {Groonga.Util.EscapeForScriptStringValue(Util.MakeDocumentDirKeyPrefix(ignoreSetting.DirPathLower))}" // ベースフォルダパスから始まるキーを検索
             );
 
             // 無視対象の文書データをリストに格納して返す
@@ -823,7 +823,7 @@ namespace InazumaSearch.Core
 
             foreach (var recsInChunk in chunks)
             {
-                var subExprs = recsInChunk.Select(r => $"{Column.Documents.KEY} == {Groonga.Util.EscapeForScript(r.Key)}");
+                var subExprs = recsInChunk.Select(r => $"{Column.Documents.KEY} == {Groonga.Util.EscapeForScriptStringValue(r.Key)}");
                 GM.Delete(Table.Documents, filter: string.Join(" || ", subExprs));
             };
         }

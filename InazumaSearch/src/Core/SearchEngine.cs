@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography;
+using System.Text;
 using Alphaleonis.Win32.Filesystem;
 using InazumaSearch.Groonga.Exceptions;
 
@@ -31,6 +32,11 @@ namespace InazumaSearch.Core
             /// ファイル名
             /// </summary>
             public string FileName { get; set; }
+
+            /// <summary>
+            /// 除外ファイル名
+            /// </summary>
+            public string ExcludingFileName { get; set; }
 
             /// <summary>
             /// 本文
@@ -67,6 +73,7 @@ namespace InazumaSearch.Core
                 Keyword = (string)queryObject["keyword"];
                 FolderPath = (string)queryObject["folderPath"];
                 FileName = (string)queryObject["fileName"];
+                ExcludingFileName = (string)queryObject["excludingFileName"];
                 Body = (string)queryObject["body"];
                 Updated = (string)queryObject["updated"];
                 SelectedFormat = selectedFormat;
@@ -92,7 +99,8 @@ namespace InazumaSearch.Core
                                         .Replace(@"\", @"\\")
                                         .Replace("'", @"\'")
                                         .Replace(":", @"\:")
-                                        .Replace("+", @"\+"));
+                                        .Replace("+", @"\+")
+                                        .Replace("*", @"\*"));
                 }
                 if (!string.IsNullOrWhiteSpace(FolderPath))
                 {
@@ -100,21 +108,28 @@ namespace InazumaSearch.Core
                     var folderPath = FolderPath.Replace('/', '\\').TrimEnd('\\') + "\\";
                     res.GroongaQueries.Add(string.Format("{0}:^{1}"
                                                     , Column.Documents.FOLDER_PATH
-                                                    , Groonga.Util.EscapeForQuery(folderPath)));
+                                                    , Groonga.Util.EscapeForQueryValue(folderPath)));
                     res.SubMessages.Add(string.Format("フォルダ: {0}", FolderPath));
                 }
+
+                // ファイル名条件
                 if (!string.IsNullOrWhiteSpace(FileName))
                 {
-                    res.GroongaQueries.Add(string.Format("{0}:@{1}"
-                                                    , Column.Documents.FILE_NAME
-                                                    , Groonga.Util.EscapeForQuery(FileName)));
-                    res.SubMessages.Add(string.Format("ファイル名: 「{0}」", FileName));
+                    res.GroongaFilters.Add(convertFileNameExpressionToGroongaScript(FileName, excluding: false));
+                    res.SubMessages.Add($"ファイル名: 「{FileName}」");
                 }
+                // 除外ファイル名条件
+                if (!string.IsNullOrWhiteSpace(ExcludingFileName))
+                {
+                    res.GroongaFilters.Add(convertFileNameExpressionToGroongaScript(ExcludingFileName, excluding: true));
+                    res.SubMessages.Add($"除外ファイル名: 「{ExcludingFileName}」");
+                }
+
                 if (!string.IsNullOrWhiteSpace(Body))
                 {
                     res.GroongaQueries.Add(string.Format("{0}:@{1}"
                                                     , Column.Documents.BODY
-                                                    , Groonga.Util.EscapeForQuery(Body)));
+                                                    , Groonga.Util.EscapeForQueryValue(Body)));
                     res.SubMessages.Add(string.Format("本文: 「{0}」", Body));
                 }
                 // 拡張子での絞り込みを追加 (フォーマットから生成する)
@@ -134,7 +149,7 @@ namespace InazumaSearch.Core
                         res.GroongaFilters.Add(string.Format("!in_values({0},{1})"
                                                         , Column.Documents.EXT
                                                         , string.Join(", ", strings))
-                );
+                        );
                         res.SubMessages.Add("ファイル形式: その他");
 
 
@@ -161,7 +176,7 @@ namespace InazumaSearch.Core
                 {
                     res.GroongaQueries.Add(string.Format("{0}:{1}"
                                                     , Column.Documents.FOLDER_LABELS
-                                                    , Groonga.Util.EscapeForQuery(SelectedFolderLabel)));
+                                                    , Groonga.Util.EscapeForQueryValue(SelectedFolderLabel)));
                     res.SubMessages.Add(string.Format("フォルダラベル: {0}", SelectedFolderLabel));
                 }
 
@@ -210,6 +225,74 @@ namespace InazumaSearch.Core
             public Condition Clone()
             {
                 return (Condition)MemberwiseClone();
+            }
+
+            /// <summary>
+            /// ファイル名の指定をGroongaスクリプト形式に変換
+            /// </summary>
+            protected static string convertFileNameExpressionToGroongaScript(string fileNameExpr, bool excluding)
+            {
+                // ;（セミコロン）または,（半角カンマ）で区切られた複数条件を処理する　前後の半角空白は削除
+                var groongaFileNameExpressions = new List<string>();
+                foreach (var fileNameExprElement in fileNameExpr.Split(new char[] { ';', ',' }))
+                {
+                    var usingExpr = fileNameExprElement.Trim();
+
+                    // ワイルドカード「*」を含まない場合は、全文検索する（※キーワードハイライトはスクリプトの正規表現では機能しないため）
+                    // そうでない場合は、正規表現にコンパイルする
+                    string groongaExpr;
+                    if (!usingExpr.Contains("*"))
+                    {
+                        groongaExpr = $"{Column.Documents.FILE_NAME} @ {Groonga.Util.EscapeForScriptStringValue(usingExpr)}";
+                    }
+                    else
+                    {
+                        var regExpBuf = new StringBuilder();
+                        regExpBuf.Append(@"\A"); // 文字列の先頭
+
+                        foreach (var c in usingExpr)
+                        {
+                            switch (c)
+                            {
+                                case '*':
+                                    // ワイルドカード
+                                    regExpBuf.Append(@".*");
+                                    break;
+                                case '\\':
+                                case '|':
+                                case '(':
+                                case ')':
+                                case '[':
+                                case ']':
+                                case '.':
+                                case '+':
+                                case '?':
+                                case '{':
+                                case '}':
+                                case '^':
+                                case '$':
+                                    // 正規表現として特別な意味を持つ文字はエスケープする
+                                    regExpBuf.Append($@"\{c}");
+                                    break;
+                                default:
+                                    // それ以外の文字はエスケープせず、小文字変換する
+                                    // ※Groongaでは大文字を使った正規表現は、必ずマッチに失敗するため、小文字変換が必要
+                                    // <https://groonga.org/ja/docs/reference/regular_expression.html>
+                                    regExpBuf.Append(c.ToString().ToLower());
+                                    break;
+                            }
+                        }
+
+                        regExpBuf.Append(@"\z"); // 文字列の末尾
+
+                        groongaExpr = $"{Column.Documents.FILE_NAME} @~ {Groonga.Util.EscapeForScriptStringValue(regExpBuf.ToString())}";
+                    }
+                    groongaFileNameExpressions.Add(groongaExpr);
+                }
+
+                // ORで結合して返す
+                var joinedExpr = string.Join(" || ", groongaFileNameExpressions.Select(expr => $"({expr})"));
+                return (excluding ? $"!({joinedExpr})" : joinedExpr);
             }
         }
 

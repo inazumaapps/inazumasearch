@@ -171,7 +171,7 @@ namespace InazumaSearch.Forms
                 var res = Application.GM.Select(
                       table: Table.Documents
                     , outputColumns: new[] { Column.Documents.KEY, Column.Documents.BODY }
-                    , query: string.Format("{0}:{1}", Column.Documents.KEY, Groonga.Util.EscapeForQuery(documentKey))
+                    , query: string.Format("{0}:{1}", Column.Documents.KEY, Groonga.Util.EscapeForQueryValue(documentKey))
                 );
 
                 var body = res.SearchResult.Records[0].GetTextValue(Column.Documents.BODY);

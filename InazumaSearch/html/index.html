@@ -30,7 +30,7 @@
             <a class="btn-floating btn-large waves-effect waves-light blue lighten-2" href="#PAGETOP"><i class="material-icons">keyboard_arrow_up</i></a>
         </div>
 
-        <div class="section" id="SEARCH-FORM">
+        <div class="section">
             <div class="card lime lighten-5" id="MESSAGE-AREA" style="display: none; margin-bottom: 2em;">
                 <div class="background-icon"><i class="material-icons">warning</i></div>
                 <div class="card-content" id="FOLDER-ADD-REQUIRED-MESSAGE" style="display: none;">
@@ -60,10 +60,10 @@
                 <p id="PROGRESS-MESSAGE"></p>
             </div>
 
-            <div class="row">
-                <div class="col s8">
-                    <div class="row">
-                        <form>
+            <div id="SEARCH-FORM">
+                <div class="row">
+                    <div class="col s8">
+                        <div class="row">
                             <div class="input-field col s9">
                                 <input placeholder="検索キーワードを入力" type="text" class="validate" value="" name="keyword" id="KEYWORD-INPUT" autofocus>
                                 <div class="left subtext" id="BACKGROUND-SEARCH-RESULT" style="font-size: 0.8rem"></div>
@@ -72,58 +72,72 @@
                                 </div>
                             </div>
                             <div class="input-field col s3">
-                                <button class="btn waves-effect waves-light search-button" name="action">
+                                <button class="btn waves-effect waves-light" id="SEARCH-BUTTON" name="action">
                                     検索
                                     <i class="mdi-action-search right"></i>
                                 </button>
                             </div>
 
-                        </form>
+                        </div><!-- /.row -->
 
+                    </div><!-- /.col -->
+
+                    <div class="col s4">
+                        <label>詳細検索</label>
+                        <div class="switch" id="DETAIL-SEARCH-SWITCH"><label>Off<input type="checkbox"><span class="lever"></span>On</label></div>
+                    </div><!-- /.col -->
+                </div><!-- /.row -->
+
+                <div id="DETAIL-SEARCH" style="display: none">
+                    <div class="row">
+                        <div class="input-field col s12">
+                            <i class="material-icons prefix orange-text text-lighten-2">folder</i>
+                            <input id="ADVSEARCH-FOLDER-PATH" name="folder_path" type="text" class="validate">
+                            <label for="ADVSEARCH-FOLDER-PATH">フォルダ</label>
+                            <a class="btn waves-effect waves-light " style="position: absolute;top: 0.5rem;height: 2rem;width: 2rem;padding: 0;right: 1rem;" id="ADVSEARCH-FOLDER-PATH-SELECT-BUTTON">...</a>
+                            <span class="helper-text" >※指定したフォルダ以下の文書ファイルのみを検索します。</span>
+                        </div>
                     </div><!-- /.row -->
 
-                </div><!-- /.col -->
+                    <div class="row">
+                        <div class="input-field col s4">
+                            <div class="row">
+                                <div class="input-field col s12" style="margin-top: 0; margin-bottom: 0.5rem;">
+                                    <input id="ADVSEARCH-FILE-NAME" name="file_name" type="text" class="validate">
+                                    <label for="ADVSEARCH-FILE-NAME">ファイル名</label>
+                                </div><!-- /.col -->
+                                <div class="input-field col s12" style=" margin-top: 0.5rem; margin-bottom: 0;">
+                                    <input id="ADVSEARCH-EXCLUDE-FILE-NAME" name="excluding_file_name" type="text" class="validate">
+                                    <label for="ADVSEARCH-EXCLUDE-FILE-NAME">除外ファイル名</label>
+                                    <div class="right">
+                                        <a href="#" id="FILE-NAME-GUIDE-MODAL-TRIGGER" class="help-link"><i class="material-icons tiny">help_outline</i> ファイル名検索のヒント</a>
+                                    </div>
+                                </div><!-- /.col -->
+                            </div><!-- /.row -->
+                        </div>
+                        <div class="input-field col s4">
+                            <input id="ADVSEARCH-BODY" type="text" name="body" class="validate">
+                            <label for="ADVSEARCH-BODY">本文</label>
+                        </div>
+                        <div class="input-field col s4">
+                            <select name="updated">
+                                <option value="">指定なし</option>
+                                <option value="day">1日以内</option>
+                                <option value="week">1週間以内</option>
+                                <option value="month">1ヶ月以内</option>
+                                <option value="half_year">半年以内</option>
+                                <option value="year">1年以内</option>
+                                <option value="3years">3年以内</option>
+                            </select>
+                            <label>更新日付</label>
+                            <div class="right" style="margin-top: 4.5rem">
+                                <a href="#" class="help-link" id="SEARCH-CONDITION-CLEAR-LINK">条件クリア</a>
+                            </div>
 
-                <div class="col s4">
-                    <label>詳細検索</label>
-                    <div class="switch" id="DETAIL-SEARCH-SWITCH"><label>Off<input type="checkbox"><span class="lever"></span>On</label></div>
-                </div><!-- /.col -->
-            </div><!-- /.row -->
-
-            <form id="DETAIL-SEARCH" style="display: none">
-                <div class="row">
-                    <div class="input-field col s12">
-                        <i class="material-icons prefix orange-text text-lighten-2">folder</i>
-                        <input id="ADVSEARCH-FOLDER-PATH" name="folder_path" type="text" class="validate">
-                        <label for="ADVSEARCH-FOLDER-PATH">フォルダ</label>
-                        <a class="btn waves-effect waves-light " style="position: absolute;top: 0.5rem;height: 2rem;width: 2rem;padding: 0;right: 1rem;" id="ADVSEARCH-FOLDER-PATH-SELECT-BUTTON">...</a>
-                        <span class="helper-text" >※指定したフォルダ以下の文書ファイルのみを検索します。</span>
-                    </div>
-                </div><!-- /.row -->
-
-                <div class="row">
-                    <div class="input-field col s4">
-                        <input id="ADVSEARCH-FILE-NAME" name="file_name" type="text" class="validate">
-                        <label for="ADVSEARCH-FILE-NAME">ファイル名</label>
-                    </div>
-                    <div class="input-field col s4">
-                        <input id="ADVSEARCH-BODY" type="text" name="body" class="validate">
-                        <label for="ADVSEARCH-BODY">本文</label>
-                    </div>
-                    <div class="input-field col s4">
-                        <select name="updated">
-                            <option value="">指定なし</option>
-                            <option value="day">1日以内</option>
-                            <option value="week">1週間以内</option>
-                            <option value="month">1ヶ月以内</option>
-                            <option value="half_year">半年以内</option>
-                            <option value="year">1年以内</option>
-                            <option value="3years">3年以内</option>
-                        </select>
-                        <label>更新日付</label>
-                    </div>
-                </div><!-- /.row -->
-            </form>
+                        </div>
+                    </div><!-- /.row -->
+                </div><!-- /#DETAIL-SEARCH -->
+            </div><!-- /#SEARCH-FORM -->
         </div><!-- /.section -->
         <div class="progress" id="SEARCH-PROGRESS-BAR" style="opacity: 0;">
             <div class="indeterminate"></div>
@@ -306,6 +320,29 @@
                 <li class="collection-item row">
                     <div class="col m4 l2" style="font-weight: bold"><code>(雨 OR 嵐) 降水</code></div>
                     <div class="col m8 l10"> 「降水」が含まれ、かつ「雨」か「嵐」のいずれかが含まれる文書を検索（カッコによるグループ化）</div>
+                </li>
+            </ul>
+        </div>
+        <div class="modal-footer">
+            <a href="#!" class="modal-action modal-close waves-effect waves-green btn-flat">閉じる</a>
+        </div>
+    </div>
+
+    <div id="FILE-NAME-GUIDE-MODAL" class="modal modal-fixed-footer" style="width: 96% !important; height: 96% !important;">
+        <div class="modal-content">
+            <h5>ファイル名検索のヒント</h5>
+            <ul>
+                <li>下記のように書くことで、ワイルドカードやOR検索などの特殊なファイル名検索を行うことができます。</li>
+            </ul>
+            <h6>例:</h6>
+            <ul class="collection">
+                <li class="collection-item row">
+                    <div class="col m4 l2" style="font-weight: bold"><code>20_*.pdf</code></div>
+                    <div class="col m8 l10">ファイル名が「20_」から始まり、拡張子が「.pdf」であるファイルのみを検索（ワイルドカード）</div>
+                </li>
+                <li class="collection-item row">
+                    <div class="col m4 l2" style="font-weight: bold"><code>*.xls,*.xlsx,*.xlsm</code><br><code>*.xls;*.xlsx;*.xlsm</code></div>
+                    <div class="col m8 l10">拡張子が「.xls」「.xlsx」「.xlsm」のいずれかであるファイルのみを検索（OR検索）</div>
                 </li>
             </ul>
         </div>
