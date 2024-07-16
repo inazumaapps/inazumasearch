@@ -99,7 +99,8 @@ namespace InazumaSearch.Core
                                         .Replace(@"\", @"\\")
                                         .Replace("'", @"\'")
                                         .Replace(":", @"\:")
-                                        .Replace("+", @"\+"));
+                                        .Replace("+", @"\+")
+                                        .Replace("*", @"\*"));
                 }
                 if (!string.IsNullOrWhiteSpace(FolderPath))
                 {
