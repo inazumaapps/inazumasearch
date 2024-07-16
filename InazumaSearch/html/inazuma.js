@@ -749,7 +749,7 @@ $(async function () {
         const caption = $('select[name=updated] option:first').text();
         $('select[name=updated]').siblings().filter('.dropdown-trigger').val(caption);
         M.updateTextFields();
-
+        return false;
     });
 
     // 検索対象フォルダ選択
