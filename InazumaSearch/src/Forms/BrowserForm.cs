@@ -1031,7 +1031,7 @@ namespace InazumaSearch.Forms
 
             var valueDict = new Dictionary<string, object>
             {
-                [Column.Documents.KEY] = Core.Util.MakeDocumentFileKey(path),
+                [Column.Documents.KEY] = Core.Util.MakeDocumentFileKey(path).TrimEnd('f'),
                 [Column.Documents.RESULT_SELECTED_AT] = Groonga.Util.ToUnixTime(DateTime.Now)
             };
             App.GM.Load(table: Table.Documents, values: new[] { valueDict });

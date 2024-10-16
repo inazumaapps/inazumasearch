@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Runtime.Remoting.Channels;
-using System.Runtime.Remoting.Channels.Ipc;
 using System.Threading;
 using Alphaleonis.Win32.Filesystem;
-using InazumaSearch.Core;
 using InazumaSearch.Forms;
 
 namespace InazumaSearch
@@ -32,11 +29,8 @@ namespace InazumaSearch
             if (!createdNew)
             {
                 // 初期所有権が付与されなかった場合は二重起動とみなし
-                // すでに起動中のプロセスに対して、プロセス間通信で接続し、新しいウインドウを開かせてそのまま終了
-                var client = new IpcClientChannel();
-                ChannelServices.RegisterChannel(client, true);
-                var ipcReceiver = (IPCReceiver)Activator.GetObject(typeof(IPCReceiver), $"ipc://{IPCReceiver.GetIPCPortName()}/{IPCReceiver.UriName}");
-                ipcReceiver.OnDoubleBoot();
+                // すでに起動中のプロセスのウインドウをフォアグラウンドに出して、自プロセスはそのまま終了する
+                // ★
 
                 return;
             }
