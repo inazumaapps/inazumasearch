@@ -218,7 +218,18 @@ namespace InazumaSearch.Core.Crawl.Work
 
             // ファイル情報取得
             var fileInfo = new FileInfo(FilePath);
-            var fileUpdated = fileInfo.LastWriteTime;
+
+            DateTime fileUpdated;
+            try
+            {
+                fileUpdated = fileInfo.LastWriteTime;
+            }
+            catch (Exception ex) // 不正な日付の場合はArgumentOutOfRangeExceptionが発生することがある
+            {
+                // 仮の日付を設定
+                Logger.Warn(ex.ToString());
+                fileUpdated = DateTime.MinValue;
+            }
             var fileSize = fileInfo.Length;
             var key = Util.MakeDocumentFileKey(FilePath);
 
