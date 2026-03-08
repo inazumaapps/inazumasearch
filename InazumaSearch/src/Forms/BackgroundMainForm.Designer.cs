@@ -1,5 +1,5 @@
 ﻿
-namespace InazumaSearch.src.Forms
+namespace InazumaSearch.Forms
 {
     partial class BackgroundMainForm
     {

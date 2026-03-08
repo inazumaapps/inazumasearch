@@ -1,9 +1,12 @@
-﻿using System;
-using System.Runtime.InteropServices;
+﻿using System.Runtime.InteropServices;
 using System.Windows.Forms;
 
-namespace InazumaSearch.src.Forms
+namespace InazumaSearch.Forms
 {
+    /// <summary>
+    /// アプリケーションのバックグラウンド処理を担うメインフォーム。画面には表示されず、
+    /// 二重起動時に他プロセスからのウィンドウメッセージを受信する窓口として機能します。
+    /// </summary>
     public partial class BackgroundMainForm : Form
     {
         private MainComponent _mainComponent;

@@ -43,10 +43,14 @@ namespace InazumaSearch
             {
                 // 初期所有権が付与されなかった場合は二重起動とみなし、
                 // 既存のプロセスのBackgroundMainFormを探してメッセージを送信
-                var hWnd = FindWindow(null, InazumaSearch.src.Forms.BackgroundMainForm.WindowTitle);
+                var hWnd = FindWindow(null, BackgroundMainForm.WindowTitle);
                 if (hWnd != IntPtr.Zero)
                 {
                     PostMessage(hWnd, WM_SHOW_BROWSER, IntPtr.Zero, IntPtr.Zero);
+                }
+                else
+                {
+                    Core.Util.ShowErrorMessage("Inazuma Searchの二重起動に失敗しました。\n一度既存のInazuma Searchウインドウをすべて閉じてから、再度起動してみてください。");
                 }
                 return;
             }

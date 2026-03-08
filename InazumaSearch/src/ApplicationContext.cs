@@ -1,7 +1,6 @@
 ﻿using System;
 using Alphaleonis.Win32.Filesystem;
-using InazumaSearch.Core;
-using InazumaSearch.src.Forms;
+using InazumaSearch.Forms;
 
 namespace InazumaSearch
 {
