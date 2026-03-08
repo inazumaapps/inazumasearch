@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Diagnostics;
+using System.Runtime.InteropServices;
 using System.Threading;
 using Alphaleonis.Win32.Filesystem;
 using InazumaSearch.Core;
@@ -8,6 +10,16 @@ namespace InazumaSearch
 {
     internal static class Program
     {
+        [DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
+        private static extern int RegisterWindowMessage(string lpString);
+
+        [DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
+        private static extern IntPtr FindWindow(string lpClassName, string lpWindowName);
+
+        [DllImport("user32.dll", SetLastError = true)]
+        private static extern bool PostMessage(IntPtr hWnd, int Msg, IntPtr wParam, IntPtr lParam);
+
+        private static readonly int WM_SHOW_BROWSER = RegisterWindowMessage("InazumaSearch_ShowBrowser");
         /// <summary>
         /// アプリケーションのメイン エントリ ポイントです。
         /// </summary>
@@ -29,7 +41,13 @@ namespace InazumaSearch
             //ミューテックスの初期所有権が付与されたか調べる
             if (!createdNew)
             {
-                // 初期所有権が付与されなかった場合は二重起動とみなし、そのまま終了
+                // 初期所有権が付与されなかった場合は二重起動とみなし、
+                // 既存のプロセスのBackgroundMainFormを探してメッセージを送信
+                var hWnd = FindWindow(null, InazumaSearch.src.Forms.BackgroundMainForm.WindowTitle);
+                if (hWnd != IntPtr.Zero)
+                {
+                    PostMessage(hWnd, WM_SHOW_BROWSER, IntPtr.Zero, IntPtr.Zero);
+                }
                 return;
             }
 

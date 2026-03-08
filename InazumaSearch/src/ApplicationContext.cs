@@ -51,6 +51,7 @@ namespace InazumaSearch
 
             // メインフォームの生成（画面には表示しない）
             var mainForm = new BackgroundMainForm();
+            mainForm.SetMainComponent(comp);
             mainForm.Show();
             mainForm.Hide();
 
