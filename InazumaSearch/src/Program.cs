@@ -32,7 +32,7 @@ namespace InazumaSearch
             System.AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
 
             // Mutex名
-            const string mutexName = "inazumaapps.info/InazumaSearch";
+            const string mutexName = "InazumaSearch";
 
             // Mutexオブジェクトを作成する
             bool createdNew;
@@ -92,7 +92,10 @@ namespace InazumaSearch
             finally
             {
                 //ミューテックスを解放する
-                mutex.ReleaseMutex();
+                if (createdNew)
+                {
+                    mutex.ReleaseMutex();
+                }
                 mutex.Close();
             }
 
