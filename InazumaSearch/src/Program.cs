@@ -1,6 +1,6 @@
 ﻿using System;
-using System.Runtime.Remoting.Channels;
-using System.Runtime.Remoting.Channels.Ipc;
+using System.Diagnostics;
+using System.Runtime.InteropServices;
 using System.Threading;
 using Alphaleonis.Win32.Filesystem;
 using InazumaSearch.Core;
@@ -10,6 +10,16 @@ namespace InazumaSearch
 {
     internal static class Program
     {
+        [DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
+        private static extern int RegisterWindowMessage(string lpString);
+
+        [DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
+        private static extern IntPtr FindWindow(string lpClassName, string lpWindowName);
+
+        [DllImport("user32.dll", SetLastError = true)]
+        private static extern bool PostMessage(IntPtr hWnd, int Msg, IntPtr wParam, IntPtr lParam);
+
+        private static readonly int WM_SHOW_BROWSER = RegisterWindowMessage("InazumaSearch_ShowBrowser");
         /// <summary>
         /// アプリケーションのメイン エントリ ポイントです。
         /// </summary>
@@ -22,7 +32,7 @@ namespace InazumaSearch
             System.AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
 
             // Mutex名
-            const string mutexName = "inazumaapps.info/InazumaSearch";
+            const string mutexName = "InazumaSearch";
 
             // Mutexオブジェクトを作成する
             bool createdNew;
@@ -31,13 +41,17 @@ namespace InazumaSearch
             //ミューテックスの初期所有権が付与されたか調べる
             if (!createdNew)
             {
-                // 初期所有権が付与されなかった場合は二重起動とみなし
-                // すでに起動中のプロセスに対して、プロセス間通信で接続し、新しいウインドウを開かせてそのまま終了
-                var client = new IpcClientChannel();
-                ChannelServices.RegisterChannel(client, true);
-                var ipcReceiver = (IPCReceiver)Activator.GetObject(typeof(IPCReceiver), $"ipc://{IPCReceiver.GetIPCPortName()}/{IPCReceiver.UriName}");
-                ipcReceiver.OnDoubleBoot();
-
+                // 初期所有権が付与されなかった場合は二重起動とみなし、
+                // 既存のプロセスのBackgroundMainFormを探してメッセージを送信
+                var hWnd = FindWindow(null, BackgroundMainForm.WindowTitle);
+                if (hWnd != IntPtr.Zero)
+                {
+                    PostMessage(hWnd, WM_SHOW_BROWSER, IntPtr.Zero, IntPtr.Zero);
+                }
+                else
+                {
+                    Core.Util.ShowErrorMessage("Inazuma Searchの二重起動に失敗しました。\n一度既存のInazuma Searchウインドウをすべて閉じてから、再度起動してみてください。");
+                }
                 return;
             }
 
@@ -78,7 +92,10 @@ namespace InazumaSearch
             finally
             {
                 //ミューテックスを解放する
-                mutex.ReleaseMutex();
+                if (createdNew)
+                {
+                    mutex.ReleaseMutex();
+                }
                 mutex.Close();
             }
 
