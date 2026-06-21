@@ -700,8 +700,13 @@ namespace InazumaSearch.Forms
                 Cef.Initialize(settings);
             }
 
-            // Create a browser component
-            ChromeBrowser = new ChromiumWebBrowser(Path.Combine(htmlDirPath, "index.html"));
+            var indexPath = Path.Combine(htmlDirPath, "index.html");
+
+            DBState = new DBStateApi();
+            PrepareInitialDBState();
+
+            // Create a browser component after all objects exposed to JavaScript are ready.
+            ChromeBrowser = new ChromiumWebBrowser("about:blank");
             ChromeBrowser.BrowserSettings.AcceptLanguageList = "ja-JP";
             BrowserPanel.Controls.Add(ChromeBrowser);
 
@@ -709,26 +714,35 @@ namespace InazumaSearch.Forms
             ChromeBrowser.JavascriptObjectRepository.Register("api", Api, isAsync: false);
             AsyncApi = new CefAsyncApi(ChromeBrowser);
             ChromeBrowser.JavascriptObjectRepository.Register("asyncApi", AsyncApi, isAsync: true);
-            DBState = new DBStateApi();
             ChromeBrowser.JavascriptObjectRepository.Register("dbState", DBState, isAsync: false);
 
+            Api.App = App;
+            Api.OwnerForm = this;
+            AsyncApi.App = App;
+            AsyncApi.OwnerForm = this;
+
             ChromeBrowser.IsBrowserInitializedChanged += ChromeBrowser_IsBrowserInitializedChanged;
-            ChromeBrowser.FrameLoadStart += ChromeBrowser_FrameLoadStart;
+            ChromeBrowser.FrameLoadEnd += ChromeBrowser_FrameLoadEnd;
+
+            ChromeBrowser.Load(indexPath);
         }
 
-        private void ChromeBrowser_FrameLoadStart(object sender, FrameLoadStartEventArgs e)
+        private void PrepareInitialDBState()
         {
-            if (e.Url.EndsWith("index.html"))
+            var selectRes1 = App.GM.Select(Table.Documents
+                , limit: 0
+                , outputColumns: new[] { Groonga.VColumn.ID }
+            );
+
+            DBState.DocumentCount = selectRes1.SearchResult.NHits;
+            DBState.TargetFolderCount = App.UserSettings.TargetFolders.Count;
+            DBState.AlwaysCrawlMode = App.UserSettings.AlwaysCrawlMode;
+        }
+
+        private void ChromeBrowser_FrameLoadEnd(object sender, FrameLoadEndEventArgs e)
+        {
+            if (e.Frame.IsMain && e.Url.EndsWith("index.html"))
             {
-                var selectRes1 = App.GM.Select(Table.Documents
-                    , limit: 0
-                    , outputColumns: new[] { Groonga.VColumn.ID }
-                );
-
-                DBState.DocumentCount = selectRes1.SearchResult.NHits;
-                DBState.TargetFolderCount = App.UserSettings.TargetFolders.Count;
-                DBState.AlwaysCrawlMode = App.UserSettings.AlwaysCrawlMode;
-
                 // 更新の有無をチェック
                 ISAutoUpdater.Check(ApplicationEnvironment.IsPortableMode(), (args) =>
                 {
@@ -892,9 +906,10 @@ namespace InazumaSearch.Forms
             }
         }
 
-        public BrowserForm(string htmlDirPath)
+        public BrowserForm(string htmlDirPath, Core.Application app)
         {
             InitializeComponent();
+            App = app;
 
             // Start the browser after initialize global component
             InitializeChromium(htmlDirPath);
