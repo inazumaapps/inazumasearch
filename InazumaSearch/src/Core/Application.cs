@@ -46,6 +46,11 @@ namespace InazumaSearch.Core
         public string HtmlDirPath { get; set; }
 
         /// <summary>
+        /// Chromiumのリモートデバッグポート
+        /// </summary>
+        public int RemoteDebuggingPort { get; set; } = 0;
+
+        /// <summary>
         /// ログ出力用オブジェクト
         /// </summary>
         public NLog.Logger Logger { get; protected set; }
@@ -112,6 +117,11 @@ namespace InazumaSearch.Core
         {
             get
             {
+                if (ApplicationEnvironment.DataDirPath != null)
+                {
+                    return Path.Combine(ApplicationEnvironment.DataDirPath, "thumbnail");
+                }
+
                 if (ApplicationEnvironment.IsPortableMode())
                 {
                     return Path.Combine(System.Windows.Forms.Application.StartupPath, @"..\data\thumbnail");
@@ -129,6 +139,11 @@ namespace InazumaSearch.Core
         {
             get
             {
+                if (ApplicationEnvironment.DataDirPath != null)
+                {
+                    return Path.Combine(ApplicationEnvironment.DataDirPath, "log");
+                }
+
                 if (ApplicationEnvironment.IsPortableMode())
                 {
                     return Path.Combine(System.Windows.Forms.Application.StartupPath, @"..\data\log");
@@ -147,6 +162,11 @@ namespace InazumaSearch.Core
         {
             get
             {
+                if (ApplicationEnvironment.DataDirPath != null)
+                {
+                    return ApplicationEnvironment.DataDirPath;
+                }
+
                 if (ApplicationEnvironment.IsPortableMode())
                 {
                     return Path.Combine(System.Windows.Forms.Application.StartupPath, @"..\data");

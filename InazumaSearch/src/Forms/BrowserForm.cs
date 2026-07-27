@@ -692,6 +692,12 @@ namespace InazumaSearch.Forms
                     Locale = "ja-JP"
                 };
 
+                // 画面自動テストからChromiumへ接続できるようにする
+                if (App.RemoteDebuggingPort > 0)
+                {
+                    settings.RemoteDebuggingPort = App.RemoteDebuggingPort;
+                }
+
                 // レンダリングを最適化
                 // from <https://teratail.com/questions/136022>
                 settings.SetOffScreenRenderingBestPerformanceArgs();

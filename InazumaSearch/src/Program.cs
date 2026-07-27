@@ -77,6 +77,9 @@ namespace InazumaSearch
                     return;
                 }
 
+                // テスト用データを実利用データから分離
+                Core.ApplicationEnvironment.DataDirPath = opts.DataFullPath;
+
                 var appDebugMode = false;
 #if DEBUG
                 appDebugMode = true;
@@ -87,6 +90,7 @@ namespace InazumaSearch
                       htmlDirPath: opts.HtmlFullPath
                     , showBrowser: !opts.BackgroundMode
                     , appDebugMode: appDebugMode
+                    , remoteDebuggingPort: opts.RemoteDebuggingPort
                 ));
             }
             finally

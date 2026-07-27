@@ -10,12 +10,22 @@ namespace InazumaSearch.Core
     public static class ApplicationEnvironment
     {
         /// <summary>
+        /// データ保存先の上書きパス
+        /// </summary>
+        public static string DataDirPath { get; set; }
+
+        /// <summary>
         /// 文書DBディレクトリの初期パス
         /// </summary>
         public static string DefaultDBDirPath
         {
             get
             {
+                if (DataDirPath != null)
+                {
+                    return Path.Combine(DataDirPath, "db");
+                }
+
                 if (IsPortableMode())
                 {
                     return Path.Combine(System.Windows.Forms.Application.StartupPath, @"..\data\db");

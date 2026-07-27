@@ -10,6 +10,12 @@ namespace InazumaSearch.Core
         [CommandLine.Option("background")]
         public bool BackgroundMode { get; set; }
 
+        [CommandLine.Option("data-path")]
+        public string DataPath { get; set; }
+
+        [CommandLine.Option("remote-debugging-port")]
+        public int RemoteDebuggingPort { get; set; }
+
         public string HtmlFullPath
         {
             get
@@ -23,6 +29,14 @@ namespace InazumaSearch.Core
                     var exeLocation = System.Reflection.Assembly.GetExecutingAssembly().Location;
                     return Path.GetFullPath(Path.Combine(Path.GetDirectoryName(exeLocation), "html"));
                 }
+            }
+        }
+
+        public string DataFullPath
+        {
+            get
+            {
+                return DataPath == null ? null : Path.GetFullPath(DataPath);
             }
         }
     }

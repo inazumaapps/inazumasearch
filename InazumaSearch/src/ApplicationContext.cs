@@ -13,13 +13,15 @@ namespace InazumaSearch
               string htmlDirPath
             , bool showBrowser = true
             , bool appDebugMode = false
+            , int remoteDebuggingPort = 0
         ) : base()
         {
             // アプリケーション生成
             var app = new Core.Application
             {
                 DebugMode = appDebugMode,
-                HtmlDirPath = htmlDirPath
+                HtmlDirPath = htmlDirPath,
+                RemoteDebuggingPort = remoteDebuggingPort
             };
 
             // ロガー用にログディレクトリパスを設定
