@@ -12,7 +12,7 @@ unless asmLines
 	return
 end
 
-MSBUILD = 'C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\MSBuild\\Current\\Bin\\MSBuild.exe'
+MSBUILD = 'C:\\Program Files\\Microsoft Visual Studio\\2022\\Professional\\MSBuild\\Current\\Bin\\MSBuild.exe'
 EXEPRESS = 'C:\\Program Files (x86)\\OPTPiX\\EXEpress 6\\EXEpress.exe'
 
 PLATFORMS = ['x86', 'x64']
@@ -50,6 +50,9 @@ OUTDIR = 'out'
 directory OUTDIR
 
 task :default => ['exe', 'zip:portable']
+
+desc "-"
+task :zip => ['zip:standard', 'zip:portable']
 
 desc "-"
 task 'exe' => DEST_EXES.values
