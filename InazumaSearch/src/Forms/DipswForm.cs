@@ -65,12 +65,9 @@ namespace InazumaSearch.Forms
                 // 常駐クロール実行中の場合、中断した上で実行する
                 Application.InvokeWithProgressFormWithoutAlwaysCrawl(this, "全てのデータを初期化しています...", () =>
                 {
-                    // Groongaを停止し、データをクリアして再起動
+                    // Groongaを停止し、データをクリア
                     Application.GM.Shutdown();
                     CleanDBFiles();
-                    Application.GM.Boot();
-                    var dummy = false;
-                    Application.GM.SetupSchema(0, out dummy);
                     Application.DeleteAllThumbnailFiles();
 
                     // ユーザー設定を初期化
