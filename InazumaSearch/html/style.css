@@ -253,3 +253,170 @@ pre .keyword {
 .card:hover {
 	left: 50px;
 }*/
+
+/* ダークモード */
+html.dark-mode {
+	color-scheme: dark;
+}
+
+html.dark-mode body {
+	background-color: #121212;
+	color: #e8eaed;
+}
+
+html.dark-mode nav.light-blue.lighten-1 {
+	background-color: #263238 !important;
+}
+
+.theme-toggle {
+	-webkit-app-region: no-drag;
+	width: 40px;
+	padding: 0 8px !important;
+	text-align: center;
+}
+
+.theme-toggle .material-icons {
+	margin: 0 !important;
+}
+
+.theme-toggle:hover,
+.theme-toggle:focus {
+	background-color: rgba(255, 255, 255, 0.08);
+}
+
+html.dark-mode a {
+	color: #90caf9;
+}
+
+html.dark-mode nav a,
+html.dark-mode .btn,
+html.dark-mode .btn-flat {
+	color: #ffffff;
+}
+
+html.dark-mode .card,
+html.dark-mode .card .card-action,
+html.dark-mode .collection,
+html.dark-mode .collection .collection-item,
+html.dark-mode .modal,
+html.dark-mode .modal-footer,
+html.dark-mode .dropdown-content {
+	background-color: #1e1e1e !important;
+	color: #e8eaed;
+}
+
+html.dark-mode .card .card-action,
+html.dark-mode .collection,
+html.dark-mode .collection .collection-item {
+	border-color: #424242;
+}
+
+html.dark-mode .divider,
+html.dark-mode table,
+html.dark-mode th,
+html.dark-mode td {
+	border-color: #424242;
+}
+
+html.dark-mode table {
+	color: #e8eaed;
+}
+
+html.dark-mode table.striped > tbody > tr:nth-child(odd) {
+	background-color: #252525;
+}
+
+html.dark-mode input:not([type]),
+html.dark-mode input[type=text],
+html.dark-mode input[type=password],
+html.dark-mode input[type=email],
+html.dark-mode input[type=search],
+html.dark-mode textarea,
+html.dark-mode select {
+	color: #e8eaed;
+	background-color: #2b2b2b;
+	border-color: #9aa0a6;
+}
+
+html.dark-mode input:focus,
+html.dark-mode textarea:focus {
+	border-bottom-color: #90caf9 !important;
+	box-shadow: 0 1px 0 0 #90caf9 !important;
+}
+
+html.dark-mode .select-wrapper input.select-dropdown {
+	color: #e8eaed;
+	border-bottom-color: #9aa0a6;
+}
+
+html.dark-mode .select-wrapper input.select-dropdown:focus {
+	border-bottom-color: #90caf9 !important;
+}
+
+html.dark-mode .select-wrapper .caret,
+html.dark-mode .select-wrapper i {
+	fill: #b0b8c0;
+	color: #b0b8c0;
+}
+
+html.dark-mode .select-dropdown.dropdown-content li.selected,
+html.dark-mode .select-dropdown.dropdown-content li:hover {
+	background-color: #303030;
+}
+
+html.dark-mode .select-dropdown.dropdown-content li.disabled,
+html.dark-mode .select-dropdown.dropdown-content li.optgroup {
+	color: #757575;
+}
+
+html.dark-mode select option {
+	background-color: #1e1e1e;
+	color: #e8eaed;
+}
+
+html.dark-mode label,
+html.dark-mode .subtext,
+html.dark-mode .document-information-footer {
+	color: #b0b8c0;
+}
+
+html.dark-mode .dropdown-content li > a,
+html.dark-mode .dropdown-content li > span {
+	color: #e8eaed;
+}
+
+html.dark-mode .dropdown-content li:hover,
+html.dark-mode .dropdown-content li.active {
+	background-color: #303030;
+}
+
+html.dark-mode .progress {
+	background-color: #37474f;
+}
+
+html.dark-mode .keyword {
+	background-color: #806000;
+	color: #ffffff;
+}
+
+html.dark-mode pre,
+html.dark-mode .body-snippets > div {
+	background-color: #252525;
+	border-color: #424242 !important;
+	color: #e8eaed;
+}
+
+html.dark-mode .row .card:before,
+html.dark-mode .background-icon i.material-icons {
+	color: #3d4650;
+}
+
+html.dark-mode .modal-overlay {
+	background-color: #000000;
+}
+
+html.dark-mode [style*="color: black"],
+html.dark-mode [style*="color: gray"],
+html.dark-mode [style*="color: silver"] {
+	color: #b0b8c0 !important;
+}

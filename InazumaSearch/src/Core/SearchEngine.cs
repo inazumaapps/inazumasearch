@@ -508,6 +508,9 @@ namespace InazumaSearch.Core
             , string selectedView = null
         )
         {
+            if (App.SymbolIndexMigrationIsRunning)
+                throw new InvalidOperationException("検索データベースの更新中は検索できません。");
+
             // 検索条件をクエリオブジェクトに変換
             var query = cond.ToQuery(App.Formats);
 

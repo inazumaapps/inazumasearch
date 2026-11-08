@@ -64,6 +64,8 @@
     public class Tokenizer
     {
         public const string TokenBigram = "TokenBigram";
+        /// <summary>連続する記号も分割するトークナイザー</summary>
+        public const string TokenBigramSplitSymbol = "TokenBigramSplitSymbol";
     }
     public class Normalizer
     {

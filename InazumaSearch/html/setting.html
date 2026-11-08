@@ -10,6 +10,7 @@
     <link href="style.css" type="text/css" rel="stylesheet" media="screen,projection" />
     <link href="material-icons/material-icons.css" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="tooltipster/css/tooltipster.bundle.min.css" />
+    <script src="theme.js"></script>
 </head>
 <body style="-webkit-app-region: drag">
     <nav class="light-blue lighten-1" role="navigation">
@@ -18,6 +19,7 @@
             <ul id="nav-mobile" class="right">
                 <li><a href="index.html"><i class="material-icons left">search</i>検索</a></li>
                 <li class="active"><a href="setting.html"><i class="material-icons left">settings</i>設定</a></li>
+                <li><a href="#!" id="THEME-TOGGLE" class="theme-toggle" role="button" aria-label="ダークモードに切り替え" aria-pressed="false" title="ダークモードに切り替え"><i class="material-icons" aria-hidden="true">brightness_2</i></a></li>
             </ul>
         </div>
     </nav>
@@ -63,6 +65,16 @@
                 ※変更の内容は、次のクロール実行まで反映されません。<br>
                 ※フォルダにラベルを付けると、検索実行後にラベルによる絞り込みを行うことができるようになります。
             </p>
+
+            <div id="SYMBOL-INDEX-SECTION" style="display: none;">
+            <h5 style="margin-top: 2em;">検索データベース</h5>
+            <div id="SYMBOL-INDEX-MIGRATION" style="display: none;">
+                <p>記号を含む語句が検索に出ない問題を改善します。</p>
+                <p class="subtext">文書が多い場合、更新に時間がかかることがあります。<br>
+                    再クロールは不要です。</p>
+                <button type="button" class="waves-effect waves-light btn" id="SYMBOL-INDEX-UPDATE">データベースを更新</button>
+            </div>
+            </div>
 
             <h5 style="margin-top: 2em;">その他</h5>
 

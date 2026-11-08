@@ -47,6 +47,8 @@ namespace InazumaSearch.Core
             public virtual bool AlwaysCrawlMode { get; set; } = false;
             public virtual bool StartUp { get; set; } = false;
             public virtual string LastBootVersion { get; set; } = null;
+            /// <summary>記号検索用DB更新の起動時確認を表示済みかどうか</summary>
+            public virtual bool SymbolIndexMigrationPrompted { get; set; } = false;
             public virtual Dictionary<string, int> LastLoadedPluginVersionNumbers { get; set; } = new Dictionary<string, int>();
             public virtual List<Extension> TextExtensions { get; set; } = new List<Extension>();
             public virtual string DocumentDBDirPath { get; set; } = null;

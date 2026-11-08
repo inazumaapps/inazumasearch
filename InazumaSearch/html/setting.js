@@ -86,7 +86,20 @@ function updateCountsAsync() {
     });
 }
 
+// DBの実際の構成を確認し、未更新時だけ更新操作を表示する
+function refreshSymbolIndexMigration() {
+    var required = api.isSymbolIndexMigrationRequired();
+    $('#SYMBOL-INDEX-SECTION').toggle(required);
+    $('#SYMBOL-INDEX-MIGRATION').toggle(required);
+    $('#SYMBOL-INDEX-UPDATE').prop('disabled', false);
+}
+
 $(function () {
+    refreshSymbolIndexMigration();
+    $('#SYMBOL-INDEX-UPDATE').on('click', function () {
+        $(this).prop('disabled', true);
+        asyncApi.migrateSymbolIndex();
+    });
     var userSettings = JSON.parse(api.getUserSettings());
     console.log(userSettings);
 

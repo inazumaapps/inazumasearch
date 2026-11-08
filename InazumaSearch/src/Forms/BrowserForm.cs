@@ -66,6 +66,12 @@ namespace InazumaSearch.Forms
                 return JsonConvert.SerializeObject(App.UserSettings.PlainData);
             }
 
+            /// <summary>設定画面に表示する検索DBの更新状態を取得する</summary>
+            public bool IsSymbolIndexMigrationRequired()
+            {
+                return App.GM.GetSchemaVersion() == Groonga.Manager.RequiredSchemaVersion;
+            }
+
             public string GetVersionCaption()
             {
                 return ApplicationEnvironment.GetVersionCaption();
@@ -175,6 +181,7 @@ namespace InazumaSearch.Forms
 
             public void CrawlStart(string targetFoldersJSON = null)
             {
+                if (App.SymbolIndexMigrationIsRunning) return;
                 string[] targetFolders = null;
                 if (targetFoldersJSON != null)
                 {
@@ -333,6 +340,16 @@ namespace InazumaSearch.Forms
             {
                 Browser = browser;
                 UserInputLogs = new List<Tuple<DateTime, string>>();
+            }
+
+            /// <summary>Chromiumをブロックせず、UIスレッドでDB更新を確認・実行する</summary>
+            public void MigrateSymbolIndex()
+            {
+                OwnerForm.InvokeOnUIThread(owner =>
+                {
+                    if (App.RequestSymbolIndexMigration(owner))
+                        owner.TryEvaluateJavaScriptAsync("refreshSymbolIndexMigration();");
+                });
             }
 
             public string SearchTargetDirectories(string order = null)
@@ -648,6 +665,7 @@ namespace InazumaSearch.Forms
             /// <param name="checked"></param>
             public void ChangeAlwaysCrawlMode(bool @checked)
             {
+                if (App.SymbolIndexMigrationIsRunning) return;
                 OwnerForm.InvokeOnUIThread((f) =>
                 {
                     App.ChangeAlwaysCrawlMode(f, @checked);
@@ -689,7 +707,11 @@ namespace InazumaSearch.Forms
             {
                 var settings = new CefSettings
                 {
-                    Locale = "ja-JP"
+                    Locale = "ja-JP",
+                    // テーマなどのブラウザ設定をユーザーデータ領域へ保存する
+                    CachePath = Path.GetFullPath(Path.Combine(
+                        Core.ApplicationEnvironment.DataDirPath ?? Core.ApplicationEnvironment.UserSettingDirPath,
+                        "BrowserCache"))
                 };
 
                 // 画面自動テストからChromiumへ接続できるようにする
@@ -1144,6 +1166,9 @@ namespace InazumaSearch.Forms
 
         private void BrowserForm_FormClosed(object sender, FormClosedEventArgs e)
         {
+            // 閉じたフォームへの進捗通知を停止
+            App.Crawler.AlwaysCrawlProgress.ProgressChanged -= AlwaysCrawlProgress_ProgressChanged;
+
             // 起動中のフォーム一覧から削除
             Core.Application.BootingBrowserForms.Remove(this);
 
@@ -1158,6 +1183,21 @@ namespace InazumaSearch.Forms
 
         private void AlwaysCrawlProgress_ProgressChanged(object sender, ProgressState state)
         {
+            // 進捗通知は別スレッドから届くため、表示の更新をUIスレッドへ渡す
+            if (!IsHandleCreated || IsDisposed) return;
+            if (InvokeRequired)
+            {
+                try
+                {
+                    BeginInvoke((MethodInvoker)(() => AlwaysCrawlProgress_ProgressChanged(sender, state)));
+                }
+                catch (InvalidOperationException)
+                {
+                    // 通知を渡す直前にフォームが閉じられた場合は破棄する
+                }
+                return;
+            }
+
             AlwaysCrawlProgressTick++;
             if (AlwaysCrawlProgressTick >= AlwaysCrawlProgressTickEnd) AlwaysCrawlProgressTick = 0;
 

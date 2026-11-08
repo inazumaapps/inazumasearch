@@ -16,6 +16,17 @@ namespace InazumaSearch.Forms
         /// </summary>
         public int MinimumWait { get; set; }
 
+        /// <summary>DB更新など、中断できない処理の実行中は閉じる操作を禁止する</summary>
+        public bool PreventCloseWhileRunning { get; set; }
+
+        /// <summary>中断不可の処理が完了するまでダイアログを維持する</summary>
+        protected override void OnFormClosing(FormClosingEventArgs e)
+        {
+            if (PreventCloseWhileRunning && MainTask != null && !MainTask.IsCompleted)
+                e.Cancel = true;
+            base.OnFormClosing(e);
+        }
+
         public ProgressForm()
         {
             InitializeComponent();

@@ -188,6 +188,12 @@ test('設定画面へ移動して検索画面へ戻れる', async () => {
     '設定画面へ移動できませんでした。',
   );
   assert.equal(await evaluate('document.querySelector("#ALWAYS-CRAWL-MODE") !== null'), true);
+  await waitForCondition(
+    'typeof api.isSymbolIndexMigrationRequired === "function" && !api.isSymbolIndexMigrationRequired()',
+    '新規DBの更新状態を確認できませんでした。',
+  );
+  assert.equal(await evaluate('document.querySelector("#SYMBOL-INDEX-MIGRATION").style.display'), 'none');
+  assert.equal(await evaluate('document.querySelector("#SYMBOL-INDEX-SECTION").style.display'), 'none');
 
   // 検索画面へ戻り、主要入力欄が再表示されることを確認
   await evaluate(`

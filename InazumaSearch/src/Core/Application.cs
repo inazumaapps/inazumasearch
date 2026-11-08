@@ -40,6 +40,9 @@ namespace InazumaSearch.Core
         /// </summary>
         public bool DebugMode { get; set; } = false;
 
+        /// <summary>DB更新ダイアログの重複実行を防ぐフラグ（UIスレッドで操作）</summary>
+        public bool SymbolIndexMigrationIsRunning { get; private set; }
+
         /// <summary>
         /// HTMLフォルダのパス
         /// </summary>
@@ -295,11 +298,27 @@ namespace InazumaSearch.Core
                 return false;
             }
 
+            // 前回中断した索引切り替えを、検索・クロール開始前に復旧する
+            if (GM.ObjectExist(Groonga.Manager.SymbolIndexBuilding) || GM.ObjectExist(Groonga.Manager.SymbolIndexBackup))
+            {
+                try
+                {
+                    RunDatabaseUpdate(null, "データベースの更新状態を確認しています...", GM.RecoverSymbolIndexMigration);
+                }
+                catch (Exception ex)
+                {
+                    Logger.Error(ex, "データベースの復旧に失敗しました。");
+                    Util.ShowErrorMessage("データベースの更新状態を復旧できませんでした。\n文書情報を保護するため、アプリケーションを終了します。");
+                    Quit();
+                    return false;
+                }
+            }
+
             // 現在DBのスキーマバージョンが、アプリケーションが要求するスキーマバージョンより低い場合は
             // DBの新規作成orアップグレード処理を実行
 
 
-            if (schemaVer < Groonga.Manager.AppSchemaVersion)
+            if (firstBoot || schemaVer < Groonga.Manager.RequiredSchemaVersion)
             {
                 var reCrawlRequired = false;
                 var t = Task.Run(() =>
@@ -318,6 +337,13 @@ namespace InazumaSearch.Core
 
                 // ユーザー設定を再読み込み (スキーマ更新で影響が及ぶ場合があるため)
                 UserSettings.Load();
+            }
+
+            // 任意の索引更新は初回のみ確認し、見送った場合は設定画面から実行する
+            if (!firstBoot && GM.GetSchemaVersion() == Groonga.Manager.RequiredSchemaVersion
+                && !UserSettings.PlainData.SymbolIndexMigrationPrompted)
+            {
+                if (!RequestSymbolIndexMigration(null)) return false;
             }
 
             // プラグイン構成に変更があれば、確認ダイアログを削除してクロール結果を削除
@@ -379,6 +405,91 @@ namespace InazumaSearch.Core
 
             // 正常起動
             return true;
+        }
+
+        /// <summary>ユーザーの同意後に記号検索用DBへ更新する（UIスレッドで呼び出す）</summary>
+        public virtual bool RequestSymbolIndexMigration(IWin32Window owner)
+        {
+            if (SymbolIndexMigrationIsRunning || GM.GetSchemaVersion() != Groonga.Manager.RequiredSchemaVersion) return true;
+            if (Crawler.ManualCrawlIsRunning)
+            {
+                Util.ShowInformationMessage(owner, "クロールの終了後に、設定画面からデータベースを更新してください。");
+                return true;
+            }
+
+            SymbolIndexMigrationIsRunning = true;
+            var resumeAlwaysCrawl = Crawler.AlwaysCrawlIsRunning;
+            var usable = true;
+            try
+            {
+                // アプリのバージョンとは別に、今回の更新を案内したことを記録する
+                UserSettings.PlainData.SymbolIndexMigrationPrompted = true;
+                UserSettings.Save();
+                if (!Util.Confirm(owner,
+                    "検索データベースを更新しますか？\n\n"
+                    + "文書が多いと時間がかかります。空き容量も必要です。\n"
+                    + "更新中は検索・クロールを使えません。アプリを終了しないでください。\n\n"
+                    + "再クロールは不要です。更新は後から設定画面でも行えます。", defaultNo: true)) return true;
+
+                // 常駐クロールの停止から復旧まで、クロールの自動再起動を禁止する
+                Crawler.DisableAlwaysCrawlAutoReboot(() =>
+                {
+                    try
+                    {
+                        RunDatabaseUpdate(owner, "検索データベースを更新しています。しばらくお待ちください...", () =>
+                        {
+                            Crawler.StopAlwaysCrawlIfRunningAsync().GetAwaiter().GetResult();
+                            GM.MigrateSymbolIndex();
+                        });
+                        Util.ShowInformationMessage(owner, "検索データベースを更新しました。\n再クロールは不要です。");
+                    }
+                    catch (Exception ex)
+                    {
+                        Logger.Error(ex, "記号検索用データベースの更新に失敗しました。");
+                        try
+                        {
+                            RunDatabaseUpdate(owner, "データベースを復旧しています...", GM.RecoverSymbolIndexMigration);
+                            Util.ShowErrorMessage(owner, GM.GetSchemaVersion() == Groonga.Manager.AppSchemaVersion
+                                ? "データベースの更新は完了しましたが、後処理でエラーが発生しました。\n再クロールは不要です。"
+                                : "データベースを更新できませんでした。従来の構成で動作します。\n空き容量などを確認し、設定画面から再試行してください。");
+                        }
+                        catch (Exception recoveryError)
+                        {
+                            usable = false;
+                            Logger.Error(recoveryError, "索引の復旧に失敗しました。");
+                            Util.ShowErrorMessage(owner, "データベースを復旧できませんでした。\n文書情報を保護するため、アプリケーションを終了します。\n次回起動時に復旧を再試行します。");
+                        }
+                    }
+                    finally
+                    {
+                        if (usable && resumeAlwaysCrawl && UserSettings.AlwaysCrawlMode && !Crawler.AlwaysCrawlIsRunning)
+                            Crawler.StartAlwaysCrawl();
+                    }
+                });
+            }
+            finally
+            {
+                SymbolIndexMigrationIsRunning = false;
+                if (!usable) Quit();
+            }
+            return usable;
+        }
+
+        /// <summary>例外をUIスレッドへ戻し、中断不可の既存進捗ダイアログでDB処理を実行する</summary>
+        private void RunDatabaseUpdate(IWin32Window owner, string message, Action action)
+        {
+            Exception error = null;
+            var task = Task.Run(() =>
+            {
+                try { action(); }
+                catch (Exception ex) { error = ex; }
+            });
+            using (var form = new ProgressForm(task, message) { PreventCloseWhileRunning = true, ControlBox = false })
+            {
+                form.ShowDialog(owner);
+            }
+            task.GetAwaiter().GetResult();
+            if (error != null) System.Runtime.ExceptionServices.ExceptionDispatchInfo.Capture(error).Throw();
         }
 
         /// <summary>

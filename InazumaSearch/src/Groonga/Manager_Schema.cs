@@ -10,7 +10,16 @@ namespace InazumaSearch.Groonga
         /// <summary>
         /// アプリケーションが要求するスキーマバージョン
         /// </summary>
-        public const int AppSchemaVersion = 4;
+        public const int AppSchemaVersion = 5;
+
+        /// <summary>同意なしで適用する従来の必須スキーマバージョン</summary>
+        public const int RequiredSchemaVersion = 4;
+
+        /// <summary>構築中の記号検索用索引</summary>
+        public const string SymbolIndexBuilding = "DocumentsIndexSymbolBuilding";
+
+        /// <summary>切り替え中に退避する従来索引</summary>
+        public const string SymbolIndexBackup = "DocumentsIndexSymbolBackup";
 
         /// <summary>
         /// スキーマのセットアップ(新規作成 or アップグレード)を実行
@@ -31,7 +40,8 @@ namespace InazumaSearch.Groonga
             }
 
             // スキーマを更新する
-            for (var nextVer = currentSchemaVer + 1; nextVer <= AppSchemaVersion; nextVer++)
+            var targetVersion = newMode ? AppSchemaVersion : RequiredSchemaVersion;
+            for (var nextVer = currentSchemaVer + 1; nextVer <= targetVersion; nextVer++)
             {
                 UpgradeSchemaTo(nextVer);
 
@@ -193,6 +203,13 @@ namespace InazumaSearch.Groonga
 
         public void UpgradeSchemaTo(long nextSchemaVer)
         {
+            // 記号検索の更新は専用処理で、索引の切り替え後にバージョンを記録する
+            if (nextSchemaVer == 5)
+            {
+                MigrateSymbolIndex();
+                return;
+            }
+
             #region 1 -> 2
 
             if (nextSchemaVer == 2)
@@ -270,6 +287,100 @@ namespace InazumaSearch.Groonga
             // 更新したスキーマの値を設定
             var meta = new Dictionary<string, object> { { Groonga.VColumn.ID, 1 }, { Column.MetaData.SCHEMA_VERSION, nextSchemaVer } };
             Load(table: Table.MetaData, values: new[] { meta });
+        }
+
+        /// <summary>保存済み文書から記号検索用索引を構築し、従来索引と切り替える</summary>
+        public void MigrateSymbolIndex()
+        {
+            lock (Locker)
+            {
+                RecoverSymbolIndexMigration();
+                if (GetSchemaVersion() == AppSchemaVersion) return;
+                if (GetSchemaVersion() != RequiredSchemaVersion)
+                    throw new System.InvalidOperationException("記号検索の更新にはスキーマバージョン4が必要です。");
+
+                try
+                {
+                    // 不正な参照元で索引カラムを作るとGroongaに壊れたカラムが残るため、先に確認する
+                    foreach (var column in new[] { Column.Documents.TITLE, Column.Documents.FILE_NAME, Column.Documents.BODY, Column.Documents.FILE_PATH })
+                    {
+                        if (!ObjectExist(Table.Documents + "." + column))
+                            throw new System.InvalidOperationException("索引の参照元が見つかりません: " + column);
+                    }
+
+                    // 文書データは変更せず、一時テーブルに全索引を構築する
+                    TableCreate(SymbolIndexBuilding, flags: new[] { TableCreateFlag.TABLE_PAT_KEY },
+                        keyType: DataType.ShortText, defaultTokenizer: Tokenizer.TokenBigramSplitSymbol,
+                        normalizer: Normalizer.NormalizerAuto);
+                    foreach (var column in new[] { Column.Documents.TITLE, Column.Documents.FILE_NAME, Column.Documents.BODY, Column.Documents.FILE_PATH })
+                    {
+                        var flags = column == Column.Documents.FILE_PATH
+                            ? new[] { ColumnCreateFlag.COLUMN_INDEX }
+                            : new[] { ColumnCreateFlag.COLUMN_INDEX, ColumnCreateFlag.WITH_POSITION };
+                        ColumnCreate(SymbolIndexBuilding, "documents_" + column, flags,
+                            type: Table.Documents, source: column);
+                    }
+                    ExecuteCommand("io_flush");
+
+                    // 各段階を永続化し、中断してもバージョン4なら旧索引へ戻せるようにする
+                    TableRename(Table.DocumentsIndex, SymbolIndexBackup);
+                    ExecuteCommand("io_flush");
+                    TableRename(SymbolIndexBuilding, Table.DocumentsIndex);
+                    ExecuteCommand("io_flush");
+                    Load(table: Table.MetaData, values: new[] { new Dictionary<string, object>
+                    {
+                        { VColumn.ID, 1 }, { Column.MetaData.SCHEMA_VERSION, AppSchemaVersion }
+                    } });
+                    ExecuteCommand("io_flush");
+                }
+                catch
+                {
+                    // 更新失敗時は、確定済みのバージョンに対応する索引へ復旧する
+                    RecoverSymbolIndexMigration();
+                    throw;
+                }
+
+                // 更新は確定済み。退避索引の削除失敗は次回起動時に再試行する
+                try
+                {
+                    RecoverSymbolIndexMigration();
+                }
+                catch (System.Exception ex)
+                {
+                    Logger.Warn(ex, "更新済み索引の退避データを削除できませんでした。次回起動時に再試行します。");
+                }
+            }
+        }
+
+        /// <summary>中断した索引切り替えを復旧する。検索・クロールの開始前に呼び出す</summary>
+        public void RecoverSymbolIndexMigration()
+        {
+            lock (Locker)
+            {
+                var schemaVersion = GetSchemaVersion();
+                if (ObjectExist(SymbolIndexBackup))
+                {
+                    if (schemaVersion < AppSchemaVersion)
+                    {
+                        // 新索引への切り替えが未確定なら、旧索引を正規名に戻す
+                        if (ObjectExist(Table.DocumentsIndex)) TableRemove(Table.DocumentsIndex);
+                        TableRename(SymbolIndexBackup, Table.DocumentsIndex);
+                        ExecuteCommand("io_flush");
+                    }
+                    else
+                    {
+                        // 新構成の確定後は、正規索引が存在する場合だけ旧索引を削除する
+                        if (!ObjectExist(Table.DocumentsIndex))
+                            throw new System.InvalidOperationException("更新済みの検索索引が見つかりません。");
+                        ExecuteCommand("io_flush");
+                        TableRemove(SymbolIndexBackup);
+                    }
+                }
+
+                // 構築途中の一時索引は、旧索引の復旧後に削除する
+                if (ObjectExist(SymbolIndexBuilding)) TableRemove(SymbolIndexBuilding);
+                ExecuteCommand("io_flush");
+            }
         }
 
         /// <summary>
