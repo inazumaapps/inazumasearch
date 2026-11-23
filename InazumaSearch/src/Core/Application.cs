@@ -69,11 +69,6 @@ namespace InazumaSearch.Core
         public Groonga.Manager GM { get; protected set; }
 
         /// <summary>
-        /// プラグイン管理用オブジェクト
-        /// </summary>
-        public Plugin.Manager PluginManager { get; protected set; }
-
-        /// <summary>
         /// 対応しているすべてのフォーマットリスト
         /// </summary>
         public IList<Format> Formats { get; protected set; } = new List<Format>();
@@ -230,18 +225,8 @@ namespace InazumaSearch.Core
         /// </summary>
         public void RefreshFormats()
         {
-            // フォーマット関連の変数を初期化
-            // (1)プラグインが対応している形式
-            // (2)テキストファイルとして設定されている形式
-            // (3)デフォルト形式
-            // の順で全フォーマットを登録
+            // テキストファイルとユーザー指定の拡張子を先に登録し、既定形式を追加
             var formats = new List<Format>();
-            foreach (var pair in PluginManager.GetTextExtNameToLabelMap())
-            {
-                var extName = pair.Key;
-                var label = pair.Value;
-                formats.Add(new Format("plugindoc", label, new[] { extName }));
-            }
             formats.Add(new Format("text", "テキストファイル", new[] { "txt" }));
             foreach (var ext in UserSettings.TextExtensions)
             {
@@ -275,10 +260,6 @@ namespace InazumaSearch.Core
                 return false;
             }
             GM.Boot();
-
-            // プラグインの読み込み
-            PluginManager = new Plugin.Manager();
-            var loadedPluginVersionNumbers = PluginManager.LoadPlugins();
 
             // 対応フォーマット一覧の更新
             RefreshFormats();
@@ -346,30 +327,6 @@ namespace InazumaSearch.Core
                 if (!RequestSymbolIndexMigration(null)) return false;
             }
 
-            // プラグイン構成に変更があれば、確認ダイアログを削除してクロール結果を削除
-            foreach (var pair in loadedPluginVersionNumbers)
-            {
-                var pluginFullName = pair.Key;
-                var versionNumber = pair.Value;
-
-                if (!UserSettings.LastLoadedPluginVersionNumbers.ContainsKey(pluginFullName)
-                    || versionNumber != UserSettings.LastLoadedPluginVersionNumbers[pluginFullName])
-                {
-                    if (Util.Confirm("プラグインの構成が変更されています。\nこの変更により、クロール結果に差異が出る可能性があります。\n\nInazuma Searchが保持している、クロール済みの文書情報を削除してもよろしいですか？\n（文書ファイルは削除されません）"))
-                    {
-                        var t = Task.Run(() =>
-                        {
-                            GM.Truncate(Table.Documents);
-                            GM.Truncate(Table.DocumentsIndex);
-                            DeleteAllThumbnailFiles();
-                        });
-                        var f = new ProgressForm(t, "文書データをクリアしています...");
-                        f.ShowDialog();
-                    };
-                    break;
-                }
-            }
-
             // DBがすでに存在しており、かつ前回の最終起動バージョンが0.21.0以前であれば、再クロールを促す
             if (!firstBoot && (UserSettings.LastBootVersion == null || UserSettings.LastBootVersion != null && UserSettings.LastBootVersion <= new SemVersion(0, 21, 0)))
             {
@@ -391,8 +348,8 @@ namespace InazumaSearch.Core
             // サムネイルフォルダが存在しなければ作成
             Directory.CreateDirectory(ThumbnailDirPath);
 
-            // 起動完了時の更新処理（最終起動バージョンの更新、プラグイン構成の保存）
-            UserSettings.SaveOnAfterBoot(new Dictionary<string, int>(loadedPluginVersionNumbers));
+            // 最終起動バージョンを保存
+            UserSettings.SaveOnAfterBoot();
 
             // ログ出力
             Logger.Info("アプリケーションを起動しました");
@@ -519,22 +476,14 @@ namespace InazumaSearch.Core
         }
 
         /// <summary>
-        /// プラグインで扱うファイル拡張子の一覧を取得。結果にドット記号は含まない (例: "xdw")
-        /// </summary>
-        public virtual List<string> GetPluginExtNames()
-        {
-            return PluginManager.GetTextExtNameToLabelMap().Keys.ToList();
-        }
-
-        /// <summary>
-        /// <see cref="ExtractFile(string, IEnumerable{string}, IEnumerable{string})" />で抽出した結果を表すクラスです。
+        /// <see cref="ExtractFile(string, IEnumerable{string})" />で抽出した結果を表すクラスです。
         /// </summary>
         public abstract class ExtractFileResult
         {
         }
 
         /// <summary>
-        /// <see cref="ExtractFile(string, IEnumerable{string}, IEnumerable{string})" />で抽出した結果（成功）を表すクラスです。
+        /// <see cref="ExtractFile(string, IEnumerable{string})" />で抽出した結果（成功）を表すクラスです。
         /// </summary>
         public class ExtractFileSuccess : ExtractFileResult
         {
@@ -543,7 +492,7 @@ namespace InazumaSearch.Core
         }
 
         /// <summary>
-        /// <see cref="ExtractFile(string, IEnumerable{string}, IEnumerable{string})" />で抽出した結果（失敗）を表すクラスです。
+        /// <see cref="ExtractFile(string, IEnumerable{string})" />で抽出した結果（失敗）を表すクラスです。
         /// </summary>
         public class ExtractFileFailed : ExtractFileResult
         {
@@ -558,18 +507,11 @@ namespace InazumaSearch.Core
         public virtual ExtractFileResult ExtractFile(
             string path
             , IEnumerable<string> textExtNames
-            , IEnumerable<string> pluginExtNames
         )
         {
             var ext = Path.GetExtension(path).TrimStart('.').ToLower();
 
-            if (pluginExtNames.Contains(ext))
-            {
-                // プラグインが対応している場合は、プラグインを使用してテキスト抽出
-                Logger.Trace($"Extract by plugin - {path}");
-                return new ExtractFileSuccess() { Body = PluginManager.ExtractText(path) };
-            }
-            else if (ext == "eml")
+            if (ext == "eml")
             {
                 // メールの場合は、MIMEKitでパース
                 using (var stream = File.OpenRead(path))

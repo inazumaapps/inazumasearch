@@ -204,7 +204,6 @@ namespace InazumaSearch.Core.Crawl.Work
 
             // 展開対象の拡張子一覧を取得
             var textExtNames = _app.GetTextExtNames();
-            var pluginExtNames = _app.GetPluginExtNames();
 
             // 実行時、指定ファイルがすでに削除(もしくは移動)されている場合は、処理をスキップ
             if (!File.Exists(FilePath))
@@ -270,7 +269,7 @@ namespace InazumaSearch.Core.Crawl.Work
             // 拡張子に応じてテキストを抽出する
             try
             {
-                var extRes = _app.ExtractFile(FilePath, textExtNames, pluginExtNames);
+                var extRes = _app.ExtractFile(FilePath, textExtNames);
                 if (extRes is Application.ExtractFileSuccess)
                 {
                     extResSuccess = (Application.ExtractFileSuccess)extRes;

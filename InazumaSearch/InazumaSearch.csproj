@@ -356,8 +356,6 @@
       <DependentUpon>DipswForm.cs</DependentUpon>
     </Compile>
     <Compile Include="src\Groonga\Manager.cs" />
-    <Compile Include="src\Plugin\API.cs" />
-    <Compile Include="src\Plugin\Manager.cs" />
     <Compile Include="src\Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="src\Core\XDoc2TxtApi.cs" />
@@ -472,10 +470,6 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\PluginSDK\PluginSDK.csproj">
-      <Project>{6b771d8d-254a-4f55-8e21-dda644ff9266}</Project>
-      <Name>PluginSDK</Name>
-    </ProjectReference>
     <ProjectReference Include="..\restarter\restart.csproj">
       <Project>{b33751a6-1854-4803-a443-fe41fa7c8f10}</Project>
       <Name>restart</Name>

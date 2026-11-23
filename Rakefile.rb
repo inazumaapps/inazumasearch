@@ -181,8 +181,6 @@ task :clean do
     rmdir_if_exists 'InazumaSearch_Debug/obj'
 	rmdir_if_exists 'InazumaSearchUnitTest/bin'
     rmdir_if_exists 'InazumaSearchUnitTest/obj'
-	rmdir_if_exists 'PluginSDK/bin'
-    rmdir_if_exists 'PluginSDK/obj'
 	rmdir_if_exists 'portableLaunch/bin'
     rmdir_if_exists 'portableLaunch/obj'
 	rmdir_if_exists 'restarter/bin'
@@ -201,9 +199,8 @@ def make_zip(conf_type, platform, dest_zip_path)
 	    rm dest_zip_path if File.exist?(dest_zip_path)
 	    
 	    cd "InazumaSearch/bin/#{conf_type}/#{platform}" do
-	        mkpath 'plugins'
-	        sh %Q|7z a -x!*.pdb -x!data -x!NLog.config -x!GPUCache -x!*.vshost.exe -x!*.vshost.exe.* -x!_DebugExeTemporary -x!locales -x!swiftshader -x!debug.log "../../../../#{dest_zip_path}" .|
-	        sh %Q|7z a "../../../../#{dest_zip_path}" InazumaSearch*.pdb|
+	        sh %Q|7z a -x!*.pdb -x!plugins -x!InazumaSearch.PluginSDK.dll -x!data -x!NLog.config -x!GPUCache -x!*.vshost.exe -x!*.vshost.exe.* -x!_DebugExeTemporary -x!locales -x!swiftshader -x!debug.log "../../../../#{dest_zip_path}" .|
+	        sh %Q|7z a "../../../../#{dest_zip_path}" InazumaSearch.pdb|
 	        sh %Q|7z a "../../../../#{dest_zip_path}" restart.pdb|
 	        sh %Q|7z a "../../../../#{dest_zip_path}" locales/ja.pak|
 	    end
@@ -227,12 +224,9 @@ def make_portable_zip(conf_type, platform, dest_zip_path)
 	    end	    
 	    
 	    cd "InazumaSearch/bin/#{conf_type}/#{platform}" do
-	    	# pluginsディレクトリ追加
-	        mkpath 'program/plugins'
-	        
 	        # 圧縮
-	        sh %Q|7z a -x!program/*.pdb -x!portableLaunch.exe.config -x!data -x!program/NLog.config -x!program/GPUCache -x!program/*.vshost.exe -x!program/*.vshost.exe.* -x!program/_DebugExeTemporary -x!program/locales/*.pak -x!program/swiftshader -x!program/debug.log "../../../../#{dest_zip_path}" .|
-	        sh %Q|7z a "../../../../#{dest_zip_path}" program/InazumaSearch*.pdb|
+	        sh %Q|7z a -x!program/*.pdb -x!program/plugins -x!program/InazumaSearch.PluginSDK.dll -x!portableLaunch.exe.config -x!data -x!program/NLog.config -x!program/GPUCache -x!program/*.vshost.exe -x!program/*.vshost.exe.* -x!program/_DebugExeTemporary -x!program/locales/*.pak -x!program/swiftshader -x!program/debug.log "../../../../#{dest_zip_path}" .|
+	        sh %Q|7z a "../../../../#{dest_zip_path}" program/InazumaSearch.pdb|
 	        sh %Q|7z a "../../../../#{dest_zip_path}" program/restart.pdb|
 	        sh %Q|7z a "../../../../#{dest_zip_path}" ../anycpu/InazumaSearchPortable.exe|
 	        sh %Q|7z a "../../../../#{dest_zip_path}" program/locales/ja.pak|
@@ -244,7 +238,7 @@ def make_portable_zip(conf_type, platform, dest_zip_path)
 	    cp_r 'InazumaSearch/html', 'out/_portable_tmp/program'
 	    
 	    cd 'out/_portable_tmp' do
-	        sh %Q|7z a "../../#{dest_zip_path}" program|
+	        sh %Q|7z a "../../#{dest_zip_path}" program/html|
 	    end
 
     rescue

@@ -510,8 +510,7 @@ namespace InazumaSearch.Forms
                     {
                         // ファイル本文の抽出
                         var textExtNames = App.GetTextExtNames();
-                        var pluginExtNames = App.GetPluginExtNames();
-                        var extRes = App.ExtractFile(filePath, textExtNames, pluginExtNames);
+                        var extRes = App.ExtractFile(filePath, textExtNames);
 
                         if (extRes is Core.Application.ExtractFileSuccess)
                         {

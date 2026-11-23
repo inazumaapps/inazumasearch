@@ -49,7 +49,6 @@ namespace InazumaSearch.Core
             public virtual string LastBootVersion { get; set; } = null;
             /// <summary>記号検索用DB更新の起動時確認を表示済みかどうか</summary>
             public virtual bool SymbolIndexMigrationPrompted { get; set; } = false;
-            public virtual Dictionary<string, int> LastLoadedPluginVersionNumbers { get; set; } = new Dictionary<string, int>();
             public virtual List<Extension> TextExtensions { get; set; } = new List<Extension>();
             public virtual string DocumentDBDirPath { get; set; } = null;
             public virtual string LastSelectedSearchTargetDirPath { get; set; } = null;
@@ -187,12 +186,6 @@ namespace InazumaSearch.Core
             }
 
             /// <summary>
-            /// 最後にロードしたプラグインのバージョン番号
-            /// </summary>
-            public Dictionary<string, int> LastLoadedPluginVersionNumbers { get { return PlainData.LastLoadedPluginVersionNumbers; } }
-
-
-            /// <summary>
             /// テキストファイルとして登録する拡張子
             /// </summary>
             public List<Extension> TextExtensions { get { return PlainData.TextExtensions; } }
@@ -320,12 +313,11 @@ namespace InazumaSearch.Core
             #region 一括更新処理
 
             /// <summary>
-            /// 起動完了時の更新処理（最終起動バージョン、最後にロードしたプラグインのバージョン番号を更新する）
+            /// 起動完了時に最終起動バージョンを保存
             /// </summary>
-            public void SaveOnAfterBoot(Dictionary<string, int> lastLoadedPluginVersionNumbers)
+            public void SaveOnAfterBoot()
             {
                 PlainData.LastBootVersion = ApplicationEnvironment.GetVersion().ToString();
-                PlainData.LastLoadedPluginVersionNumbers = lastLoadedPluginVersionNumbers;
                 Save();
             }
 

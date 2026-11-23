@@ -117,7 +117,6 @@
         public const string Application = "Application";
         public const string Groonga = "Groonga";
         public const string Crawler = "Crawler";
-        public const string PluginManager = "PluginManager";
         public const string SearchEngine = "SearchEngine";
     }
 
